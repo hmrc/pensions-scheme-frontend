@@ -143,9 +143,6 @@
         </li>
 
         <li aria-labelledby="section-establishers-header">
-            <h2 id="section-establishers-header" class="govuk-heading-l">
-            @messages("messages__schemeTaskList__sectionEstablishers_header")
-            </h2>
             @taskSections.addEstablisherHeader.map { spoke =>
                 @spoke.entities.map { entity =>
                     <p class="govuk-body">
@@ -155,9 +152,6 @@
                         @messages(entity.link.text)
                         </a>
                     </p>
-                }
-                @for((p1Text, i) <- spoke.p1.zipWithIndex) {
-                    <p class="govuk-body">@messages(p1Text)</p>
                 }
             }
         </li>

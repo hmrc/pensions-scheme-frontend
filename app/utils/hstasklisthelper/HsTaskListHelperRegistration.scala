@@ -73,7 +73,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       beforeYouStartSection(answers),
       aboutSection(answers, NormalMode, srn),
       workingKnowledgeSection(answers),
-      addEstablisherHeader(answers, NormalMode, srn),
+      addEstablisherHeaderToggleOff(answers, NormalMode, srn),
       establishersSection(answers, NormalMode, srn),
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
@@ -142,6 +142,13 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
                                           mode: Mode,
                                           srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers,
+      mode, srn, viewOnly = false), None))
+  }
+
+  private[utils] def addEstablisherHeaderToggleOff(userAnswers: UserAnswers,
+                                          mode: Mode,
+                                          srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+    Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers,
       mode, srn, viewOnly = false), None))
   }
 

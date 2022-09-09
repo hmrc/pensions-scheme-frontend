@@ -185,6 +185,22 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
+  def getAddEstablisherHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  : Seq[EntitySpoke] = {
+    if (answers.allEstablishersAfterDelete(mode).isEmpty) {
+      Seq(EntitySpoke(
+        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
+            .allEstablishers(mode).size, srn).url), None)
+      )
+    } else {
+      Seq(EntitySpoke(
+        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+      )
+    }
+  }
+
   def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
