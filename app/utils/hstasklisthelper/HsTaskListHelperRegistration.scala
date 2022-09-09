@@ -134,6 +134,8 @@ object HsTaskListHelperRegistration {
       case (Some(true), Some(false)) => 7
       case (Some(false), Some(true)) => 5
       case (Some(false), _) => 6
+      case (_, Some(false)) => 7
+      case (_, Some(true)) => 6
       case _ => 7
     }
   }
