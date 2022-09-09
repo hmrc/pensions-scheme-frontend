@@ -87,8 +87,8 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           case (None, Some(userAnswers), Some(schemeName)) =>
             featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
               case true =>
-                Ok(viewRegistration(hsTaskListHelperRegistration.taskListToggleOn(userAnswers, None, srn, date), schemeName))
-              case _ => Ok(oldView(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
+                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
+              case _ => Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
             }
 
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
