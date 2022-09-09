@@ -78,6 +78,11 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                     href = result.editLink(mode, srn).getOrElse(""),
                     content = Text(Messages("site.change")),
                     visuallyHiddenText = Some(result.name)
+                  ),
+                  ActionItem(
+                    href = result.deleteLink(mode, srn).getOrElse(""),
+                    content = Text(Messages("site.remove")),
+                    visuallyHiddenText = Some(result.name)
                   )
                 )
               ))
