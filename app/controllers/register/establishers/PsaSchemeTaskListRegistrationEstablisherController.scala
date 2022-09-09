@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeNameId
@@ -25,10 +24,9 @@ import models.AuthEntity.PSA
 import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
-import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
+import utils.hstasklisthelper.HsTaskListHelperRegistration
 import views.html.psaTaskListRegistrationEstablishers
 
 import javax.inject.Inject
@@ -40,30 +38,23 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                    getData: DataRetrievalAction,
                                                                    @TaskList allowAccess: AllowAccessActionProvider,
                                                                    val controllerComponents: MessagesControllerComponents,
-                                                                   featureToggleService: FeatureToggleService,
                                                                    val viewRegistration: psaTaskListRegistrationEstablishers,
-                                                                   hsTaskListHelperRegistration: HsTaskListHelperRegistration,
-                                                                   hsTaskListHelperVariations: HsTaskListHelperVariations,
-                                                                   dataCacheConnector: UserAnswersCacheConnector
+                                                                   hsTaskListHelperRegistration: HsTaskListHelperRegistration
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false)
     andThen allowAccess(srn)).async {
     implicit request =>
-      println("\n + TEST")
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-
-          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn, index), schemeName)))
-
-        case (Some(_), Some(_), Some(_)) =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-
+          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablishers(userAnswers, None, srn, index),
+            schemeName,
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url
+          )))
         case (Some(_), _, _) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
       }

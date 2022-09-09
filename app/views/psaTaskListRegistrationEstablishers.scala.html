@@ -35,7 +35,7 @@
     incompleteAlert: components_refactored.incomplete_alert
 )
 
-@(taskSections: SchemeDetailsTaskListEstablishers, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(taskSections: SchemeDetailsTaskListEstablishers, schemeName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {
@@ -101,6 +101,6 @@
     </ol>
 
     <p class="govuk-body govuk-!-margin-top-7">
-        @button_link("site.save_and_continue", taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn)), "submit")
+        @button_link("site.save_and_continue", returnUrl, "submit")
     </p>
 }
