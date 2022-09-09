@@ -30,7 +30,8 @@
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components_refactored.input_yes_no,
     add_entity_list: components_refactored.add_entity_list,
-    submit_button: components_refactored.submit_button
+    submit_button: components_refactored.submit_button,
+    govukSummaryList : GovukSummaryList
 )
 @(
     form: Form[_],
@@ -55,7 +56,50 @@
             @components_refactored.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
-            @add_entity_list(establishers, mode, srn, messages("messages__establishers__add__title"))
+<!--            @add_entity_list(establishers, mode, srn, messages("messages__establishers__add__title"))-->
+
+            @govukSummaryList(SummaryList(
+                        rows = Seq(
+                            SummaryListRow(
+                                key = Key(
+                                    content = Text("Event"),
+                                    classes = "govuk-visually-hidden"
+                                ),
+                                value = Value(
+                                    content = Text("Event 18: Scheme chargeable payment"),
+                                    classes = "govuk-!-font-weight-bold govuk-!-width-full"
+                                ),
+                                actions = Some(Actions(
+                                    items = Seq(
+                                        ActionItem(
+                                            href = "/pension-scheme-event-reporting-frontend/new-report/event-18-confirmation?waypoints=event-18-check-answers",
+                                            content = Text("Change"),
+                                            visuallyHiddenText = Some("Event 18: Scheme chargeable payment")
+                                        )
+                                    )
+                                ))
+                            ),
+                            SummaryListRow(
+                                key = Key(
+                                    content = Text("Event"),
+                                    classes = "govuk-visually-hidden"
+                                ),
+                                value = Value(
+                                    content = Text("Scheme has wound up"),
+                                    classes = "govuk-!-font-weight-bold govuk-!-font-weight-bold govuk-!-width-full"
+                                ),
+                                actions = Some(Actions(
+                                items = Seq(
+                                    ActionItem(
+                                        href = "/pension-scheme-event-reporting-frontend/windup?waypoints=event-0-check-answers",
+                                        content = Text("Change"),
+                                        visuallyHiddenText = Some("Scheme has wound up")
+                                    )
+                                )
+                                ))
+                            )
+                        )
+                    ))
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),

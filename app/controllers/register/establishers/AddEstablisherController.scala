@@ -31,6 +31,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FeatureToggleService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
@@ -54,7 +55,27 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
 
   private def renderPage(establishers: Seq[Establisher[_]], mode: Mode, srn: Option[String], form:Form[Option[Boolean]], status: Status)(implicit request:  DataRequest[AnyContent]): Future[Result] ={
       featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-        case true => status(view(form, mode, establishers, existingSchemeName, srn))
+        case true => val x = establishers.map{ result =>
+          SummaryListRow(
+            key = Key(
+              content = Text("Event"),
+              classes = "govuk-visually-hidden"
+            ),
+            value = Value(
+              content = Text("Event 18: Scheme chargeable payment"),
+              classes = "govuk-!-font-weight-bold govuk-!-width-full"
+            ),
+            actions = Some(Actions(
+              items = Seq(
+                ActionItem(
+                  href = "/pension-scheme-event-reporting-frontend/new-report/event-18-confirmation?waypoints=event-18-check-answers",
+                  content = Text("Change"),
+                  visuallyHiddenText = Some("Event 18: Scheme chargeable payment")
+                )
+              )
+            ))
+          )
+          status(view(form, mode, x, existingSchemeName, srn))
         case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
       }
   }
