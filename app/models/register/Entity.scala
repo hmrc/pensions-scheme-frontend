@@ -127,26 +127,6 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def index: Int = id.index
 }
 
-case class EstablisherCompanyEntityToggleOn(id: EstablisherCompanyDetailsId, name: String, isDeleted: Boolean,
-                                    isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int) extends
-  Establisher[EstablisherCompanyDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
-
-  override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
-    mode match {
-      case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
-          EstablisherKind.Company, srn).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
-          EstablisherKind.Company, srn).url)
-      case _ => None
-    }
-  }
-
-  override def index: Int = id.index
-}
-
 case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDeleted: Boolean,
                                        isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int) extends
   Establisher[EstablisherNameId] {
