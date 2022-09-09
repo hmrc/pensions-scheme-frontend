@@ -77,7 +77,11 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                 items = Seq(
                   ActionItem(
                     href = result.editLink(mode, srn).getOrElse(""),
-                    content = Text(Messages("site.change")),
+                    content = if(result.isCompleted) {
+                      Text(Messages("site.change"))
+                    } else {
+                      Text(Messages("messages__schemeTaskList__addDetails"))
+                    },
                     visuallyHiddenText = Some(result.name)
                   ),
                   ActionItem(

@@ -1328,6 +1328,7 @@ messages__schemeTaskList__sectionEstablishers_schemeIncomplete = You need to ent
 messages__schemeTaskList__sectionTrustees_schemeIncomplete = You need to enter scheme details before you can add a trustee
 
 messages__schemeTaskList__completed = Completed
+messages__schemeTaskList__addDetails = Add details
 messages__schemeTaskList__inProgress = In progress
 messages__schemeTaskList__incomplete = Incomplete
 
