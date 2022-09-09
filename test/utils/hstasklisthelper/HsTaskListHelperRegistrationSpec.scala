@@ -194,8 +194,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
       when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 

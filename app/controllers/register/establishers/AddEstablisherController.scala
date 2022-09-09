@@ -21,14 +21,19 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
+
 import javax.inject.Inject
-import models.Mode
+import models.{FeatureToggleName, Mode}
+import models.register.Establisher
+import models.requests.DataRequest
 import navigators.Navigator
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
-import views.html.register.establishers.addEstablisher
+import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,17 +45,25 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider,
+                                         featureToggleService: FeatureToggleService,
                                          val controllerComponents: MessagesControllerComponents,
-                                         val view: addEstablisher
+                                         val view: addEstablisher,
+                                         val addEstablisherOldview: addEstablisherOld
                                         )(implicit val ec: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
+
+  private def renderPage(establishers: Seq[Establisher[_]], mode: Mode, srn: Option[String], form:Form[Option[Boolean]], status: Status)(implicit request:  DataRequest[AnyContent]): Future[Result] ={
+      featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
+        case true => status(view(form, mode, establishers, existingSchemeName, srn))
+        case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
+      }
+  }
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
-        Future.successful(Ok(view(formProvider(establishers), mode,
-          establishers, existingSchemeName, srn)))
+        renderPage(establishers, mode, srn, formProvider(establishers), Ok)
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
@@ -59,8 +72,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode,
-            establishers, existingSchemeName, srn))),
+          renderPage(establishers, mode, srn, formWithErrors, BadRequest),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
       )

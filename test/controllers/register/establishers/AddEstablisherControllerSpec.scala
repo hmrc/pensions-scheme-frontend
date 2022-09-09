@@ -17,26 +17,39 @@
 package controllers.register.establishers
 
 import controllers.ControllerSpecBase
+import controllers.PsaSchemeTaskListControllerSpec.{fakeHsTaskListHelperRegistration, mockFeatureToggleService, mockMinimalPsaConnector, mockUserAnswersCacheConnector, reset, when}
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
+import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, FeatureToggle, NormalMode, PSAMinimalFlags}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.mock
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.FakeNavigator
-import views.html.register.establishers.addEstablisher
+import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 
-class AddEstablisherControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
 
   import AddEstablisherControllerSpec._
 
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "AddEstablisher Controller" must {
 
@@ -120,8 +133,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
   }
 }
 
-object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
-
+object AddEstablisherControllerSpec extends AddEstablisherControllerSpec{
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddEstablisherFormProvider()
@@ -130,6 +142,8 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
   private val view = injector.instanceOf[addEstablisher]
+  private val addEstablisherOldview = injector.instanceOf[addEstablisherOld]
+  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
     new AddEstablisherController(
@@ -141,12 +155,14 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
+      mockFeatureToggleService,
       controllerComponents,
-      view
+      view,
+      addEstablisherOldview
     )
 
   private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
-    view(
+    addEstablisherOldview(
       form,
       NormalMode,
       allEstablishers,
