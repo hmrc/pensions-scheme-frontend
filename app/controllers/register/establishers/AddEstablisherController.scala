@@ -73,13 +73,13 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                 classes = "govuk-!-font-weight-bold govuk-!-width-full"
               ),
               actions = Some(Actions(
-                items = result.editLink(NormalMode, None).toSeq.map { href =>
+                items = Seq(
                   ActionItem(
-                    href = href,
+                    href = result.editLink(mode, srn).getOrElse(""),
                     content = Text(Messages("site.change")),
                     visuallyHiddenText = Some(result.name)
                   )
-                }
+                )
               ))
             )
           val completeEstablishers = establishers.filter(_.isCompleted).map(func)
