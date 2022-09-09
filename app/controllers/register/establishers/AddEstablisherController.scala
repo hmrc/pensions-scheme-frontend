@@ -70,9 +70,10 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
               ),
               value = Value(
                 content = Text(result.name),
-                classes = "govuk-!-font-weight-bold govuk-!-width-full"
+                classes = "govuk-!-width-full"
               ),
               actions = Some(Actions(
+                classes = "govuk-!-width-full",
                 items = Seq(
                   ActionItem(
                     href = result.editLink(mode, srn).getOrElse(""),
