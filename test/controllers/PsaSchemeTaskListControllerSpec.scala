@@ -105,7 +105,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(fakeHsTaskListHelperRegistration.taskListToggleOn(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 

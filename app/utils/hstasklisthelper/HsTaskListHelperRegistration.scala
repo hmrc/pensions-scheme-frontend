@@ -202,16 +202,18 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       }
     }
 
-    private[utils] def totalSections(userAnswers: UserAnswers): Int = {
-      (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
-        case (Some(false), Some(false)) => 6
-        case (Some(true), Some(true)) => 6
-        case (Some(true), Some(false)) => 7
-        case (Some(false), Some(true)) => 5
-        case (Some(false), _) => 6
-        case _ => 7
-      }
+  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
+      case (Some(false), Some(false)) => 6
+      case (Some(true), Some(true)) => 6
+      case (Some(true), Some(false)) => 7
+      case (Some(false), Some(true)) => 5
+      case (Some(false), _) => 6
+      case (_, Some(false)) => 7
+      case (_, Some(true)) => 6
+      case _ => 7
     }
+  }
 
     private def toInt(completionQ1: Boolean, completionQ2: Boolean = true): Int = if (completionQ1) {
       if (completionQ2) 1 else 0
