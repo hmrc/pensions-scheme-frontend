@@ -21,11 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
-
-import javax.inject.Inject
-import models.{FeatureToggleName, Mode, NormalMode}
 import models.register.Establisher
 import models.requests.DataRequest
+import models.{FeatureToggleName, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -37,6 +35,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
@@ -54,10 +53,16 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                         )(implicit val ec: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
 
-  private def renderPage(establishers: Seq[Establisher[_]], mode: Mode, srn: Option[String], form:Form[Option[Boolean]], status: Status)(implicit request:  DataRequest[AnyContent]): Future[Result] ={
-      featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-        case true =>
-          val func: Establisher[_] => SummaryListRow = result => {
+  private def renderPage(
+                          establishers: Seq[Establisher[_]],
+                          mode: Mode,
+                          srn: Option[String],
+                          form: Form[Option[Boolean]], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+
+    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+      (isEnabled, mode) match {
+        case (true, NormalMode) =>
+          val func: Establisher[_] => SummaryListRow = result =>
             SummaryListRow(
               key = Key(
                 content = Text(result.name),
@@ -68,23 +73,21 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                 classes = "govuk-!-font-weight-bold govuk-!-width-full"
               ),
               actions = Some(Actions(
-                items = Seq(
+                items = result.editLink(NormalMode, None).toSeq.map { href =>
                   ActionItem(
-                    href = result.editLink(NormalMode, None).getOrElse(""),
+                    href = href,
                     content = Text(Messages("site.change")),
                     visuallyHiddenText = Some(result.name)
                   )
-                )
+                }
               ))
             )
-          }
-
           val completeEstablishers = establishers.filter(_.isCompleted).map(func)
           val incompleteEstablishers = establishers.filter(!_.isCompleted).map(func)
-
           status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
         case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
       }
+    }
   }
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
