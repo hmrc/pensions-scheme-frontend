@@ -54,13 +54,17 @@
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
             }
-            @components_refactored.heading(
-                headingKey=messages("messages__establishers__add__title")
-            )
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">@messages("messages__establishers__add__title")</h1>
 
-            @govukSummaryList(SummaryList(rows = completeEstablishers))
+            @if(incompleteEstablishers.nonEmpty) {
+                 <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("messages__schemeTaskList__incomplete")</h2>
+                @govukSummaryList(SummaryList(rows = incompleteEstablishers))
+            }
 
-            @govukSummaryList(SummaryList(rows = incompleteEstablishers))
+            @if(completeEstablishers.nonEmpty) {
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("messages__schemeTaskList__completed")</h2>
+                @govukSummaryList(SummaryList(rows = completeEstablishers))
+            }
 
             @input_yes_no(
                 field = form("value"),
