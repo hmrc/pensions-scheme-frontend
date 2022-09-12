@@ -39,7 +39,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
 
   "PsaSchemeTaskListRegistrationEstablisher Controller" must {
     "return OK and the correct view for a GET when scheme name is present" in {
-      when(mockHsTaskListHelperRegistration.taskListEstablishers(any(), any(), any(), any()))
+      when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
@@ -50,7 +50,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
     }
 
         "redirect to Session Expired for a GET if srn specified" in {
-          when(mockHsTaskListHelperRegistration.taskListEstablishers(any(), any(), any(), any()))
+          when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
             .thenReturn(schemeDetailsTaskListEstablishers)
 
           val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))

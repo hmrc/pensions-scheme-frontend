@@ -83,7 +83,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  def taskListEstablishers(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
+  def taskListEstablisher(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
+    println("\n>est ind>>" + establisherIndex)// index before deletion
     val totalCompletedSections = establishersSection(answers, NormalMode, srn)(establisherIndex).entities
       .count(_.isCompleted.contains(true))
     SchemeDetailsTaskListEstablishers(
