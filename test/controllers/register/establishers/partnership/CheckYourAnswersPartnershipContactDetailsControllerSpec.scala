@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FeatureToggleService
@@ -73,7 +74,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val view = injector.instanceOf[checkYourAnswers]
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
-                   title:Message, h1:Message): String =
+                   title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -101,7 +102,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+
+          val bindings = modules(fullAnswers.dataRetrievalAction)
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+          )
+
+          running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)

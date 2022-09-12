@@ -29,6 +29,7 @@ import models.person.PersonName
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FeatureToggleService
@@ -104,7 +105,13 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+
+          val bindings = modules(fullAnswers.dataRetrievalAction)
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+          )
+
+          running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)

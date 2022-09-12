@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.individual
 
+import connectors.UpdateSchemeCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
@@ -54,7 +55,10 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
+          val app = applicationBuilder(
+            fullAnswers.dataRetrievalAction,
+            extraModules = Seq(bind[FeatureToggleService].toInstance(mockFeatureToggleService))
+          ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
