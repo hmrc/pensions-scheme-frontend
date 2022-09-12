@@ -19,19 +19,27 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
+import controllers.register.establishers.partnership.CheckYourAnswersPartnershipDetailsControllerSpec.mock
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.UserAnswers
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   private val index = Index(0)
   private val srn = Some("test-srn")
@@ -82,6 +90,14 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         h1 = h1
       )
     )(fakeRequest, messages).toString
+
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "CheckYourAnswersContactDetailsController" when {
 

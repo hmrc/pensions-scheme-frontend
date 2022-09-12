@@ -19,19 +19,25 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.partnership.CheckYourAnswersPartnershipAddressControllerSpec.mock
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import scala.concurrent.Future
 
 class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
@@ -81,6 +87,14 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
         h1 = h1
       )
     )(fakeRequest, messages).toString
+
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "CheckYourAnswersPartnershipContactDetailsController" when {
 

@@ -19,11 +19,15 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.CompanyConfirmPreviousAddressId
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, FeatureToggleService}
@@ -31,9 +35,17 @@ import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersCompanyAddressControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "Check Your Answers Company Address Controller " when {
     "on Page load in Normal Mode" must {

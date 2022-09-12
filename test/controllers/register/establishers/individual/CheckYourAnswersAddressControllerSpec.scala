@@ -19,22 +19,36 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.partnership.CheckYourAnswersPartnershipAddressControllerSpec.mockFeatureToggleService
+import controllers.register.establishers.partnership.CheckYourAnswersPartnershipDetailsControllerSpec.mock
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
 import models.person.PersonName
 import navigators.Navigator
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, running, status, _}
+import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersAddressControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
@@ -139,7 +153,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

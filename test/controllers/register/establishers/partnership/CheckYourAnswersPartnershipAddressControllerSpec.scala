@@ -21,9 +21,12 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import identifiers.register.establishers.partnership.PartnershipConfirmPreviousAddressId
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FeatureToggleService
@@ -31,8 +34,16 @@ import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
   import CheckYourAnswersPartnershipAddressControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "Check Your Answers Partnership Address Controller " when {
     "on Page load in Normal Mode" must {

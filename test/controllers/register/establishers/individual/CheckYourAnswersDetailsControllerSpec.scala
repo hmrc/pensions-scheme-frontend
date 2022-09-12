@@ -20,11 +20,14 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
+import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import identifiers.register.establishers.individual._
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import models.person.PersonName
-import org.scalatest.OptionValues
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, FeatureToggleService}
@@ -33,10 +36,17 @@ import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersDetailsControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "Check Your Answers Individual Details Controller " when {
     "when in registration journey" must {
