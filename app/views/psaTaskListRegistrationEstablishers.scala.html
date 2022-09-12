@@ -68,9 +68,9 @@
     @taskSections.statsSection.map{ section =>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
             @if(taskSections.allComplete) {
-                @messages("taskList.complete")
+                @messages("taskList.establishers.completed")
             } else {
-                @messages("taskList.incomplete")
+                @messages("taskList.establishers.incomplete")
             }
         </p>
         <p class="govuk-body">@messages("taskList.status", section.sectionsCompleted, section.totalSections)</p>
@@ -78,13 +78,6 @@
 
     <ol class="app-task-list govuk-list govuk-!-margin-top-8">
         <li aria-labelledby="section-establishers-header">
-            <h2 id="section-establishers-header" class="govuk-heading-l">
-                @messages("messages__schemeTaskList__sectionEstablishers_header")
-            </h2>
-
-            @taskSections.establisher.header.map{hdr=>
-                <h3 class="app-task-list__section">@messages(hdr)</h3>
-            }
             <ul class="app-task-list__items">
                 @for((entity, j) <- taskSections.establisher.entities.zipWithIndex){
                     <li class="app-task-list__item">

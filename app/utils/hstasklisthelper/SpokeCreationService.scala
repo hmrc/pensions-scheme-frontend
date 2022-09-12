@@ -52,7 +52,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def  getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
                                   index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -159,7 +159,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddEstablisherHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (_, true) =>
@@ -185,18 +185,22 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddEstablisherHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
   : Seq[EntitySpoke] = {
-    if (answers.allEstablishersAfterDelete(mode).isEmpty) {
+
+    val establishers = answers.allEstablishersAfterDelete(mode)
+
+    if (establishers.isEmpty) {
       Seq(EntitySpoke(
         TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
           controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
             .allEstablishers(mode).size, srn).url), None)
       )
     } else {
+      val isAllEstablishersComplete = if (establishers.isEmpty) None else Some(establishers.forall(_.isCompleted))
       Seq(EntitySpoke(
         TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
       )
     }
   }

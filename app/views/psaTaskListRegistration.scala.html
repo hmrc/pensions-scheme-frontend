@@ -105,7 +105,7 @@
                         @messages(spoke.link.text)
                         </a>
                     </span>
-                    <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                    <span class="app-task-list__tag @statusClass(isCompleted)" id="section-beforeYouStart-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                 }
             </li>
         }
@@ -119,7 +119,7 @@
                         aria-describedby="section-about-status-@i"}>@messages(item.link.text)</a>
                 </span>
                 @item.isCompleted.map { isCompleted =>
-                    <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-about-status-@i"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                    <span class="app-task-list__tag @statusClass(isCompleted)" id="section-about-status-@i"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                 }
             </li>
         }
@@ -132,24 +132,25 @@
                             aria-describedby="section-working-knowledge-status"}>@messages(wk.link.text)</a>
                     </span>
                     @wk.isCompleted.map { isCompleted =>
-                        <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
+                        <span class="app-task-list__tag @statusClass(isCompleted)" id="section-working-knowledge-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
                     }
                 </li>
             }
         }
 
         @taskSections.addEstablisherHeader.map { spoke =>
-            <li aria-labelledby="section-establishers-header">
             @spoke.entities.map { entity =>
-                <p class="govuk-body">
-                    <a id="section-establishers-link" class="govuk-link" href="@{
-                        entity.link.target
-                        }" >
-                    @messages(entity.link.text)
-                    </a>
-                </p>
+                <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                        <a id="section-establishers-link" class="govuk-link" href="@{
+                            entity.link.target
+                        }" >@messages(entity.link.text)</a>
+                    </span>
+            @entity.isCompleted.map { isCompleted =>
+                <span class="app-task-list__tag @statusClass(isCompleted)" id="section-establisher-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</span>
             }
             </li>
+        }
         }
 
         <li aria-labelledby="section-trustees-header" class="govuk-!-margin-top-7">
