@@ -22,11 +22,13 @@ import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneNumberId}
+
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -47,7 +49,8 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
                                                                     allowChangeHelper: AllowChangeHelper,
                                                                     val
                                                                     controllerComponents: MessagesControllerComponents,
-                                                                    val view: checkYourAnswers
+                                                                    val view: checkYourAnswers,
+                                                                    featureToggleService: FeatureToggleService
                                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
 
@@ -68,19 +71,29 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__contactDetailsFor", Message("messages__thePartnership"))
 
-        val vm = CYAViewModel(
-          answerSections = Seq(contactDetailsSection),
-          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly || notNewEstablisher,
-          srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
-            mode),
-          title = title,
-          h1 = headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
-        )
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+            case _ =>
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+          }
+        }
+        saveURL.flatMap { url =>
+          val vm = CYAViewModel(
+            answerSections = Seq(contactDetailsSection),
+            href = url,
+            schemeName = existingSchemeName,
+            returnOverview = false,
+            hideEditLinks = request.viewOnly || notNewEstablisher,
+            srn = srn,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+              mode),
+            title = title,
+            h1 = headingContactDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          )
 
-        Future.successful(Ok(view(vm)))
+          Future.successful(Ok(view(vm)))
+        }
     }
 }

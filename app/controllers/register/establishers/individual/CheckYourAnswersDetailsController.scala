@@ -22,13 +22,14 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
+
 import javax.inject.Inject
 import models.Mode._
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -49,7 +50,8 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                   requireData: DataRequiredAction,
                                                   implicit val countryOptions: CountryOptions,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  val view: checkYourAnswers
+                                                  val view: checkYourAnswers,
+                                                  featureToggleService: FeatureToggleService
                                                  )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -80,9 +82,18 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__detailsFor", Message("messages__thePerson"))
 
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+            case _ =>
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+          }
+        }
+        saveURL.flatMap { url =>
         val vm = CYAViewModel(
           answerSections = establisherIndividualDetails,
-          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
+          href = url,
           schemeName = existingSchemeName,
           returnOverview = false,
           hideEditLinks = request.viewOnly || !userAnswers.get(IsEstablisherNewId(index)).forall(identity),
@@ -94,5 +105,6 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
         )
 
         Future.successful(Ok(view(vm)))
+        }
     }
 }
