@@ -19,6 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
@@ -26,7 +27,7 @@ import models.person.PersonName
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -255,7 +256,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     )
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersDetailsController =
     new CheckYourAnswersDetailsController(
@@ -270,7 +271,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection],

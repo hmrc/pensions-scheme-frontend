@@ -26,7 +26,7 @@ import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -169,6 +169,8 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   private val view = injector.instanceOf[checkYourAnswers]
 
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(
@@ -183,7 +185,8 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,

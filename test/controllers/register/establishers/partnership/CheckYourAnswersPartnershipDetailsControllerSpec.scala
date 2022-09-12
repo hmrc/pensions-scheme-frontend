@@ -19,6 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.Mode.checkMode
@@ -26,6 +27,7 @@ import models._
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -250,7 +252,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(hiddenLabel))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach,
                  isToggleOn: Boolean = false): CheckYourAnswersPartnershipDetailsController =
@@ -264,7 +266,8 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

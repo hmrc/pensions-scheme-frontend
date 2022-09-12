@@ -83,7 +83,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
         saveURL.flatMap { url =>
           val vm = CYAViewModel(
             answerSections = answerSections,
-            href = PsaSchemeTaskListController.onPageLoad(mode, srn),
+            href = url,
             schemeName = existingSchemeName,
             returnOverview = false,
             hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),

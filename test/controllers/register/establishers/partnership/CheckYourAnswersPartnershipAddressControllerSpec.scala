@@ -19,12 +19,14 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import identifiers.register.establishers.partnership.PartnershipConfirmPreviousAddressId
 import models.Mode.checkMode
 import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -174,7 +176,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipAddressController =
     new CheckYourAnswersPartnershipAddressController(
@@ -187,7 +189,8 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,

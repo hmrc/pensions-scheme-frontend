@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
@@ -28,7 +29,7 @@ import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -61,7 +62,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     ))
   }
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
     new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
@@ -74,7 +75,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       allowChangeHelper,
       FakeUserAnswersService,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
