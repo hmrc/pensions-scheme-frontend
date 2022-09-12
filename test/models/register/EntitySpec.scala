@@ -138,8 +138,9 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
       individualEntity.index mustEqual 1
     }
 
-    "have no edit link" in {
-      individualEntity.editLink(NormalMode, None) mustBe None
+    "have correct edit link" in {
+      val expectedEditLink = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(1).url
+      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {

@@ -130,7 +130,15 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
 case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDeleted: Boolean,
                                        isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int) extends
   Establisher[EstablisherNameId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
+        None
+      case _ => None
+    }
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
