@@ -199,7 +199,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     } else {
       val isAllEstablishersComplete = if (establishers.isEmpty) None else Some(establishers.forall(_.isCompleted))
       Seq(EntitySpoke(
-        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_change_link"),
           controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
       )
     }

@@ -91,7 +91,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have no edit link" in {
-      partnershipEntity.editLink(NormalMode, None) mustBe None
+      partnershipEntity.editLink(NormalMode, None) mustBe Some("/2/establisher-tasklist")
     }
 
     "have correct delete link" in {
@@ -114,8 +114,8 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
       companyEntity.index mustEqual 1
     }
 
-    "have no edit link" in {
-      companyEntity.editLink(NormalMode, None) mustBe None
+    "have correct edit link" in {
+      companyEntity.editLink(NormalMode, None) mustBe Some("/2/establisher-tasklist")
     }
 
     "have correct delete link" in {

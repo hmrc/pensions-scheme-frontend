@@ -660,9 +660,9 @@ class SpokeCreationServiceSpec
     }
   }
 
-  "getAddEstablisherHeaderSpokes" must {
+  "getAddEstablisherHeaderSpokesWithToggleOff" must {
     "return no spokes when no establishers and view only" in {
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
       result mustBe Nil
     }
 
@@ -673,7 +673,7 @@ class SpokeCreationServiceSpec
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(UpdateMode, 0, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -688,7 +688,7 @@ class SpokeCreationServiceSpec
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(UpdateMode, srn).url), None)
         )
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers, UpdateMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -703,6 +703,46 @@ class SpokeCreationServiceSpec
             Message("messages__schemeTaskList__sectionEstablishers_change_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
           None
+        ))
+
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+  }
+
+  "getAddEstablisherHeaderSpokes (with toggle on)" must {
+    "return no spokes when no establishers and view only" in {
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url), None)
+        )
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when no establishers and NOT view only" in {
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(UpdateMode, 0, srn).url), None)
+        )
+
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when establishers and NOT view only and no srn is defined" in {
+      val userAnswers = userAnswersWithSchemeName
+        .establisherKind(0, EstablisherKind.Indivdual)
+        .establishersIndividualName(0, personName)
+
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
+          Some(false)
         ))
 
       val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
