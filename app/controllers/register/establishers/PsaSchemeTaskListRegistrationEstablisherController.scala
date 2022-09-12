@@ -46,8 +46,6 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false)
     andThen allowAccess(srn)).async {
     implicit request =>
-      println("\n>>>" + index)
-      println("\n>dd>>" + index.id)
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>

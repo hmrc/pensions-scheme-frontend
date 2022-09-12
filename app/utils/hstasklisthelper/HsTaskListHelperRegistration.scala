@@ -84,13 +84,12 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 
   def taskListEstablisher(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
-    println("\n>est ind>>" + establisherIndex)// index before deletion
-    val totalCompletedSections = establishersSection(answers, NormalMode, srn)(establisherIndex).entities
-      .count(_.isCompleted.contains(true))
+    val section = establisherSection(answers, NormalMode, srn, establisherIndex)
+    val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
     SchemeDetailsTaskListEstablishers(
       answers.get(SchemeNameId).getOrElse(""),
       None,
-      establisherSection(answers, NormalMode, srn, establisherIndex),
+      section,
       isAllEstablishersCompleted(answers, NormalMode),
       Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
     )
@@ -147,8 +146,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 
   private[utils] def addEstablisherHeaderToggleOff(userAnswers: UserAnswers,
-                                          mode: Mode,
-                                          srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+                                                   mode: Mode,
+                                                   srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers,
       mode, srn, viewOnly = false), None))
   }
