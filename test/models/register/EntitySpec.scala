@@ -77,7 +77,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
   }
 
   "EstablisherPartnershipEntity" must {
-    val partnershipEntity = EstablisherPartnershipEntity(
+    def partnershipEntity = EstablisherPartnershipEntity(
       PartnershipDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
@@ -101,7 +101,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
   }
 
   "EstablisherCompanyEntity" must {
-    val companyEntity = EstablisherCompanyEntity(
+    def companyEntity = EstablisherCompanyEntity(
       EstablisherCompanyDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
