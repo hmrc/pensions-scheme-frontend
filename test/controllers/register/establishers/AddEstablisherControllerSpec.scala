@@ -17,7 +17,7 @@
 package controllers.register.establishers
 
 import controllers.ControllerSpecBase
-import controllers.PsaSchemeTaskListControllerSpec.{fakeHsTaskListHelperRegistration, mockFeatureToggleService, mockMinimalPsaConnector, mockUserAnswersCacheConnector, reset, when}
+import controllers.PsaSchemeTaskListControllerSpec.{reset, when}
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -27,7 +27,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
-import models.{CompanyDetails, FeatureToggle, NormalMode, PSAMinimalFlags}
+import models.{CompanyDetails, FeatureToggle, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.mock
 import org.scalatest.BeforeAndAfterEach

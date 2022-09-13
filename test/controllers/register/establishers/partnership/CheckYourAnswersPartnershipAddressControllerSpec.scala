@@ -19,7 +19,6 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
 import identifiers.register.establishers.partnership.PartnershipConfirmPreviousAddressId
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode

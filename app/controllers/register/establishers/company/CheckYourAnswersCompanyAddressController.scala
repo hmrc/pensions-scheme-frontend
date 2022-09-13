@@ -20,11 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
-import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
-
-import javax.inject.Inject
 import models.Mode.checkMode
 import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
@@ -38,6 +35,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppConfig,

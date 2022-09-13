@@ -19,8 +19,6 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
-import controllers.register.establishers.partnership.CheckYourAnswersPartnershipAddressControllerSpec.mockFeatureToggleService
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.FeatureToggleName.SchemeRegistration

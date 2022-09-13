@@ -50,7 +50,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def submitUrlUpdateMode(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  private def submitUrlUpdateMode(mode: Mode, srn: Option[String]): Call =
     PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {

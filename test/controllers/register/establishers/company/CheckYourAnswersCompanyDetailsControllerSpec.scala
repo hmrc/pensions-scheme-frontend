@@ -17,16 +17,14 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
+import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
-import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company._
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models.register.DeclarationDormant
-import models.{Index, NormalMode, _}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call

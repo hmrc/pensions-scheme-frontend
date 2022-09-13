@@ -27,7 +27,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import views.html.psaTaskListRegistrationEstablishers
+import views.html.register.establishers.psaTaskListRegistrationEstablishers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

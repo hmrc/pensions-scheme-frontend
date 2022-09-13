@@ -20,11 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
-import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
-
-import javax.inject.Inject
 import models.Mode.checkMode
 import models.{FeatureToggleName, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,6 +34,7 @@ import utils.{AllowChangeHelper, CountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,

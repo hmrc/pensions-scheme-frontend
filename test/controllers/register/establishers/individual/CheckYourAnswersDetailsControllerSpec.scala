@@ -19,8 +19,6 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
-import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import identifiers.register.establishers.individual._
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode._

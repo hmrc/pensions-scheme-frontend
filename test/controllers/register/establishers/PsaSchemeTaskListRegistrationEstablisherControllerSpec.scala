@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import viewmodels.{Message, SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListEstablishers, StatsSection}
-import views.html.psaTaskListRegistrationEstablishers
+import views.html.register.establishers.psaTaskListRegistrationEstablishers
 
 class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
