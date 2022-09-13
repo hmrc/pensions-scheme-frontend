@@ -24,56 +24,65 @@
 @import models.register.Establisher
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
+
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components_refactored.input_yes_no,
-    add_entity_list: components_refactored.add_entity_list,
+    add_entity_list: components_refactored.add_entity_list_v2,
     submit_button: components_refactored.submit_button,
-    govukSummaryList : GovukSummaryList
 )
+
 @(
     form: Form[_],
     mode: Mode,
-    completeEstablishers: Seq[SummaryListRow],
-    incompleteEstablishers: Seq[SummaryListRow],
+    completeEstablishers: Seq[Establisher[_]],
+    incompleteEstablishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String]
+    srn: Option[String],
 )(implicit request: Request[_], messages: Messages)
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
+
+@allEstablishers = @{ completeEstablishers ++ incompleteEstablishers }
+
+@layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
+
     @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
-        @if(completeEstablishers.isEmpty && incompleteEstablishers.isEmpty) {
-            @components_refactored.heading(
-                headingKey=messages("messages__establishers__add__title")
-            )
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
+
+        @components_refactored.heading(messages("messages__establishers__add__title"))
+
+        @if(allEstablishers.isEmpty) {
+
             @components_refactored.paragraph_text(messages("messages__establishers__add_hint"))
+
             @submit_button("site.continue", true)
+
         } else {
-            @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
-            }
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">@messages("messages__establishers__add__title")</h1>
 
             @if(incompleteEstablishers.nonEmpty) {
-                 <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("messages__schemeTaskList__incomplete")</h2>
-                @govukSummaryList(SummaryList(rows = incompleteEstablishers))
+                @add_entity_list(incompleteEstablishers, mode, srn, messages("messages__schemeTaskList__incomplete"))
             }
 
             @if(completeEstablishers.nonEmpty) {
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@messages("messages__schemeTaskList__completed")</h2>
-                @govukSummaryList(SummaryList(rows = completeEstablishers))
+                @add_entity_list(completeEstablishers, mode, srn, messages("messages__schemeTaskList__completed"))
             }
 
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),
-                legendClass = Some("heading-medium"),
+                legendClass = Some("govuk-heading-m"),
                 hint = None
             )
+
             @submit_button("site.save_and_continue", true)
+
         }
+
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

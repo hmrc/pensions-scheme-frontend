@@ -26,11 +26,9 @@ import models.requests.DataRequest
 import models.{FeatureToggleName, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FeatureToggleService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
@@ -62,38 +60,8 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
       (isEnabled, mode) match {
         case (true, NormalMode) =>
-          val func: Establisher[_] => SummaryListRow = result =>
-            SummaryListRow(
-              key = Key(
-                content = Text(result.name),
-                classes = "govuk-visually-hidden"
-              ),
-              value = Value(
-                content = Text(result.name),
-                classes = "govuk-!-width-full"
-              ),
-              actions = Some(Actions(
-                classes = "govuk-!-width-full",
-                items = Seq(
-                  ActionItem(
-                    href = result.editLink(mode, srn).getOrElse(""),
-                    content = if(result.isCompleted) {
-                      Text(Messages("site.change"))
-                    } else {
-                      Text(Messages("messages__schemeTaskList__addDetails"))
-                    },
-                    visuallyHiddenText = Some(result.name)
-                  ),
-                  ActionItem(
-                    href = result.deleteLink(mode, srn).getOrElse(""),
-                    content = Text(Messages("site.remove")),
-                    visuallyHiddenText = Some(result.name)
-                  )
-                )
-              ))
-            )
-          val completeEstablishers = establishers.filter(_.isCompleted).map(func)
-          val incompleteEstablishers = establishers.filter(!_.isCompleted).map(func)
+          val completeEstablishers = establishers.filter(_.isCompleted)
+          val incompleteEstablishers = establishers.filterNot(_.isCompleted)
           status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
         case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
       }
