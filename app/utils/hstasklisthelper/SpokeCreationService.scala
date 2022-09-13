@@ -81,9 +81,11 @@ class SpokeCreationService extends Enumerable.Implicits {
       }
     }
 
-    if (entityList.isEmpty)
+    if (entityList.isEmpty){
       EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
-    else
+    } else if (entityList.nonEmpty && isComplete.contains(false)) {
+      EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
+    } else
       EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
   }
 
