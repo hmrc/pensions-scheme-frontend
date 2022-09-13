@@ -1281,6 +1281,7 @@ messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
 
 messages__schemeTaskList__change_details = Change details for {0}
+messages__schemeTaskList__continue_details = Continue adding details for {0}
 messages__schemeTaskList__view_details = View details for {0}
 messages__schemeTaskList__change_address = Change address for {0}
 messages__schemeTaskList__view_address = View address for {0}
