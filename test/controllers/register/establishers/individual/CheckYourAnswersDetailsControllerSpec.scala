@@ -45,7 +45,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "Check Your Answers Individual Details Controller " when {
@@ -151,7 +151,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
             _.set(EstablisherNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 

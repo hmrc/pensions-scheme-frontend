@@ -44,7 +44,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "Check Your Answers Company Address Controller " when {
@@ -127,7 +127,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 

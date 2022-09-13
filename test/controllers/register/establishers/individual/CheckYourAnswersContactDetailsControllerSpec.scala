@@ -50,7 +50,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
@@ -95,7 +95,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "CheckYourAnswersContactDetailsController" when {

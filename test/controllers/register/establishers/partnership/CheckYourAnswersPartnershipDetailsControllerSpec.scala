@@ -44,7 +44,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "Check Your Answers Partnership Details Controller " when {
@@ -125,8 +125,13 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call = {
+    if (mode == NormalMode) {
+      controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    } else {
+      controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    }
+  }
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -286,7 +291,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     view(
       CYAViewModel(
         answerSections = answerSections,
-        href = onwardRoute(mode, srn),
+        href =  onwardRoute(mode, srn),
         schemeName = None,
         returnOverview = false,
         hideEditLinks = false,

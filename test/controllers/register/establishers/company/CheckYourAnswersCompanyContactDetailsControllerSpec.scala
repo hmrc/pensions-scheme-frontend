@@ -19,8 +19,6 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.company.CheckYourAnswersCompanyAddressControllerSpec.mock
-import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.FeatureToggleName.SchemeRegistration
@@ -50,6 +48,9 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+
+  private def submitUrlUpdateMode(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
@@ -103,7 +104,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
@@ -129,7 +130,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrlUpdateMode(UpdateMode, srn), srn = srn,
             title = Message("messages__contactDetailsFor", Message("messages__theCompany")),
             h1 = Message("messages__contactDetailsFor", name))
         }

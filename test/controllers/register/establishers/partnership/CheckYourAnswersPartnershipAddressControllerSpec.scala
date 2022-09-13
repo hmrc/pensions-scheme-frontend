@@ -42,7 +42,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "Check Your Answers Partnership Address Controller " when {
@@ -125,7 +125,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def postUrlUpdateMode: Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)

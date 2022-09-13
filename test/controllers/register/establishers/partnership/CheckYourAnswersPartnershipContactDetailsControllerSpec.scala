@@ -52,7 +52,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
@@ -93,7 +93,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "CheckYourAnswersPartnershipContactDetailsController" when {

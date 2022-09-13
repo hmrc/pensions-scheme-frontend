@@ -46,7 +46,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "Check Your Answers Individual Address Controller " when {
@@ -126,7 +126,8 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     establishersIndividualAddressYears(index, addressYearsUnderAYear).
     establishersIndividualPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
