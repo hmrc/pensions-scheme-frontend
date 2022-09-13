@@ -56,7 +56,7 @@ trait DetailsSpoke extends Spoke {
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index])
   : TaskListLink = TaskListLink(
-    dynamicLinkText(name, srn, "messages__schemeTaskList__continue_details",
+    dynamicLinkText(name, srn, "messages__schemeTaskList__change_details",
       "messages__schemeTaskList__view_details"),
     addLinkUrl(mode, srn, index).url
   )

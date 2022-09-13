@@ -35,7 +35,7 @@ case object WorkingKnowledgeSpoke extends Spoke {
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
-      Message("messages__schemeTaskList__continue_details", name), controllers.routes
+      Message("messages__schemeTaskList__change_details", name), controllers.routes
         .WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url
     )
 
