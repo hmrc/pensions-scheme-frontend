@@ -16,12 +16,9 @@
 
 package controllers.register.establishers.individual
 
-import connectors.UpdateSchemeCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.partnership.CheckYourAnswersPartnershipAddressControllerSpec.mockFeatureToggleService
-import controllers.register.establishers.partnership.CheckYourAnswersPartnershipDetailsControllerSpec.mock
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
@@ -31,6 +28,7 @@ import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, running, status, _}
 import services.FeatureToggleService
@@ -72,14 +70,16 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
 
         "Update Mode" in {
 
-          running(_.overrides(
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
-          )) {
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersAddressController]

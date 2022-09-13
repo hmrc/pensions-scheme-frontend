@@ -19,7 +19,6 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.partnership.CheckYourAnswersPartnershipAddressControllerSpec.mock
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
@@ -121,10 +120,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
         }
 
         "Update Mode" in {
-          running(_.overrides(
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
-            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))) {
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
