@@ -115,8 +115,6 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
     mode match {
       case NormalMode | CheckMode =>
         Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        None
       case _ => None
     }
   }
@@ -143,8 +141,6 @@ case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDe
     mode match {
       case NormalMode | CheckMode =>
         Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        None
       case _ => None
     }
   }
@@ -172,8 +168,6 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
     mode match {
       case NormalMode | CheckMode =>
         Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
-      case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        None
       case _ => None
     }
   }
