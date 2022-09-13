@@ -64,9 +64,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]],
-                                 spoke: Spoke,
-                                 mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
+  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
         case (NormalMode | UpdateMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
@@ -81,12 +79,14 @@ class SpokeCreationService extends Enumerable.Implicits {
       }
     }
 
-    if (entityList.isEmpty){
-      EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
-    } else if (entityList.nonEmpty && isComplete.contains(false)) {
-      EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
-    } else
-      EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
+    (entityList.isEmpty, isComplete) match {
+      case (true, _) =>
+        EntitySpoke(spoke.addLink(name)(mode, srn, index), isComplete)
+      case (false, Some(false)) =>
+        EntitySpoke(spoke.incompleteChangeLink(name)(mode, srn, index), isComplete)
+      case _ =>
+        EntitySpoke(spoke.changeLink(name)(mode, srn, index), isComplete)
+    }
   }
 
   def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,

@@ -178,7 +178,7 @@ case object EstablisherPartnershipPartner extends Spoke {
   override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn,
-        registrationLinkText = "messages__schemeTaskList__change_partners",
+        registrationLinkText = "messages__schemeTaskList__continue_partners",
         variationsLinkText = "messages__schemeTaskList__view_partners"),
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, indexToInt(index.getOrElse(Index(0))), srn).url
     )

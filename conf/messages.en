@@ -1301,6 +1301,7 @@ messages__schemeTaskList__add_partners = Add partners for {0}
 messages__schemeTaskList__change_directors = Change directors for {0}
 messages__schemeTaskList__view_directors = View directors for {0}
 messages__schemeTaskList__change_partners = Change partners for {0}
+messages__schemeTaskList__continue_partners = Continue adding partners for {0}
 messages__schemeTaskList__view_partners = View partners for {0}
 
 messages__schemeTaskList__sectionIndividual_change_details = Change {0}’s details
