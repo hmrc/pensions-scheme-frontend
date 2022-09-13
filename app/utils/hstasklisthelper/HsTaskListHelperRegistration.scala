@@ -37,8 +37,6 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   import HsTaskListHelperRegistration._
 
-  //DATE FORMATIING HELPER METHODS
-
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
   private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
@@ -239,8 +237,6 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
     val bankCount = toInt(userAnswers.isBankDetailsCompleted.contains(true))
     val benefitsCount = toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
     val estCount = toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
-
-    //println(s"\nCounts:\ntrustees=$trusteesCount\nworkingknowledge=$workingKnowledgeCount\nbefore=$beforeYouStartCount\nmembers=$membersCount\nbank=$bankCount\nbenefits=$benefitsCount\nest=$estCount")
 
     val totalCount = trusteesCount +
       workingKnowledgeCount +
