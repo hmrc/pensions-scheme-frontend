@@ -16,6 +16,7 @@
 
 package utils.hstasklisthelper
 
+import config.FrontendAppConfig
 import helpers.DataCompletionHelper
 import identifiers._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -24,24 +25,31 @@ import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
 
-class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper {
+class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
   import HsTaskListHelperRegistrationSpec._
 
   private val mockSpokeCreationService = mock[SpokeCreationService]
-  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService)
+  private val mockAppConfig = mock[FrontendAppConfig]
+  private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
+
+  override protected def beforeEach(): Unit = {
+    reset(mockAppConfig, mockSpokeCreationService)
+    when(mockAppConfig.daysDataSaved).thenReturn(10)
+  }
 
   "h1" must {
     "display appropriate heading" in {
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
-      helper.taskList(userAnswers, None, None).h1 mustBe name
+      helper.taskList(userAnswers, None, None, None).h1 mustBe name
     }
   }
 
@@ -189,7 +197,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None)
+      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
@@ -208,7 +216,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
           SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
-        None
+        None,
+        Some(StatsSection(0, 5, Some("15 September 2022")))
       )
     }
 
@@ -230,13 +239,110 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None)
-
+      val result = helper.taskList(userAnswers, None, None, None)
 
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
         SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke2, Some("test partnership 1"))
       )
+    }
+  }
+
+  "totalSections" must {
+    "return 7 when neither trustees nor declaration question answered" in {
+      HsTaskListHelperRegistration.totalSections(userAnswersWithSchemeName) mustBe 7
+    }
+    "return 6 when both trustees and declaration question answered as yes" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(true).asOpt.value
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+    }
+    "return 7 when trustees question answered as yes and declaration question answered as no" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(true).asOpt.value
+        .set(DeclarationDutiesId)(value = false).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
+    }
+    "return 5 when trustees question answered as no and declaration question answered as yes" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
+    }
+    "return 6 when trustees question answered as no and declaration question answered as no" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = false).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+    }
+
+    "return 7 when trustees question not answered and declaration question answered as no" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(DeclarationDutiesId)(value = false).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
+    }
+
+    "return 6 when trustees question not answered and declaration question answered as yes" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+    }
+  }
+
+  "completedSectionCount" must {
+    "return 0 when no sections are complete" in {
+      HsTaskListHelperRegistration.completedSectionCount(userAnswersWithSchemeName) mustBe 0
+    }
+    "return 2 when before start complete and have any trustees is answered as yes and trustees section is complete" in {
+      val userAnswers = answersData(isCompleteBeforeStart = true, isCompleteTrustees = true)
+        .setOrException(HaveAnyTrusteesId)(true)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 2
+    }
+
+    "return 1 when before start complete and have any trustees is answered as yes and trustees section is incomplete" in {
+      val userAnswers = answersData(isCompleteBeforeStart = true, isCompleteTrustees = false)
+        .setOrException(HaveAnyTrusteesId)(true)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 1
+    }
+
+    "return 1 when before start complete and have any trustees is answered as no" in {
+      val userAnswers = answersData(isCompleteBeforeStart = true)
+        .setOrException(HaveAnyTrusteesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 1
+    }
+
+    "return 1 when before start complete and working knowledge is answered as no and working knowledge section is incomplete" in {
+      val userAnswers = answersData(isCompleteBeforeStart = true)
+        .setOrException(DeclarationDutiesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 1
+    }
+
+    "return 2 when before start complete and working knowledge is answered as no and working knowledge section is complete" in {
+      val userAnswers = answersData(isCompleteBeforeStart = true, isCompleteWk = true)
+        .setOrException(DeclarationDutiesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 2
+    }
+
+    "return 7 when all complete and working knowledge answered as no and trustees as yes" in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(false)
+        .setOrException(HaveAnyTrusteesId)(true)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 7
+    }
+
+    "return 6 when all complete and working knowledge answered as no and trustees as no" in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(false)
+        .setOrException(HaveAnyTrusteesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 6
+    }
+
+    "return 5 when all complete and working knowledge answered as yes and trustees as no" in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(true)
+        .setOrException(HaveAnyTrusteesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
   }
 }
@@ -282,12 +388,33 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
                                      isChangedInsuranceDetails: Boolean = true,
                                      isChangedEstablishersTrustees: Boolean = true
                                     ): UserAnswers = {
-    setCompleteBeforeYouStart(isCompleteBeforeStart,
-      setCompleteMembers(isCompleteAboutMembers,
-        setCompleteBank(isCompleteAboutBank,
-          setCompleteBenefits(isCompleteAboutBenefits,
-            setCompleteEstIndividual(0,
-              setCompleteTrusteeIndividual(0,
-                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName)))))))
+    val ua = setCompleteWorkingKnowledge(isCompleteWk,
+      setCompleteBeforeYouStart(isCompleteBeforeStart,
+        setCompleteMembers(isCompleteAboutMembers,
+          setCompleteBank(isCompleteAboutBank,
+            setCompleteBenefits(isCompleteAboutBenefits, userAnswersWithSchemeName)))))
+    val uaAfterTrusteesUpdate = if (isCompleteTrustees) setCompleteTrusteeIndividual(0, ua) else ua
+    if (isCompleteEstablishers) setCompleteEstIndividual(0, uaAfterTrusteesUpdate) else uaAfterTrusteesUpdate
   }
+
+  private def answersData(isCompleteBeforeStart: Boolean,
+                          isCompleteAboutMembers: Boolean = false,
+                          isCompleteAboutBank: Boolean = false,
+                          isCompleteAboutBenefits: Boolean = false,
+                          isCompleteWk: Boolean = false,
+                          isCompleteEstablishers: Boolean = false,
+                          isCompleteTrustees: Boolean = false,
+                          isChangedInsuranceDetails: Boolean = false,
+                          isChangedEstablishersTrustees: Boolean = false
+                         ): UserAnswers =
+    answersDataAllComplete(isCompleteBeforeStart,
+      isCompleteAboutMembers,
+      isCompleteAboutBank,
+      isCompleteAboutBenefits,
+      isCompleteWk,
+      isCompleteEstablishers,
+      isCompleteTrustees,
+      isChangedInsuranceDetails,
+      isChangedEstablishersTrustees
+    )
 }

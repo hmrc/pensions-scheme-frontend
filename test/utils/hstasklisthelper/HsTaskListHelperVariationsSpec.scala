@@ -18,7 +18,7 @@ package utils.hstasklisthelper
 
 import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
-import identifiers.{SchemeNameId, _}
+import identifiers._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
@@ -223,7 +223,8 @@ class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with Mock
           Some("messages__schemeTaskList__sectionDeclaration_header"),
           "messages__schemeTaskList__sectionDeclaration_incomplete_v1",
           "messages__schemeTaskList__sectionDeclaration_incomplete_v2")),
-        Some(false)
+        Some(false),
+        None
       )
     }
   }

@@ -17,18 +17,29 @@
 package utils.hstasklisthelper
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import identifiers._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.{Mode, NormalMode}
+import models.{LastUpdated, Mode, NormalMode}
 import utils.UserAnswers
 import viewmodels._
 
-class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService) extends HsTaskListHelper(
+import java.sql.Timestamp
+import java.time.format.DateTimeFormatter
+
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
   spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 
-  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String]): SchemeDetailsTaskList =
+  private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
+
+  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
+    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
+
+  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+                        lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+    val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       None,
@@ -40,8 +51,11 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
-      None
+      None,
+      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
+  }
+
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
@@ -111,8 +125,44 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
 object HsTaskListHelperRegistration {
 
-  private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean =
+  private[utils] def totalSections(userAnswers: UserAnswers): Int = {
+    (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
+      case (Some(false), Some(false)) => 6
+      case (Some(true), Some(true)) => 6
+      case (Some(true), Some(false)) => 7
+      case (Some(false), Some(true)) => 5
+      case (Some(false), _) => 6
+      case (_, Some(false)) => 7
+      case (_, Some(true)) => 6
+      case _ => 7
+    }
+  }
+
+  private def toInt(completionQ1: Boolean, completionQ2: Boolean = true): Int =
+    if (completionQ1 && completionQ2) 1 else 0
+
+  private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
+    val trusteesCount = toInt(userAnswers.get(HaveAnyTrusteesId).contains(true), isAllTrusteesCompleted(userAnswers))
+    val workingKnowledgeCount = toInt(userAnswers.get(DeclarationDutiesId).contains(false), userAnswers.isWorkingKnowledgeCompleted.contains(true))
+    val beforeYouStartCount = toInt(userAnswers.isBeforeYouStartCompleted(NormalMode))
+    val membersCount = toInt(userAnswers.isMembersCompleted.contains(true))
+    val bankCount = toInt(userAnswers.isBankDetailsCompleted.contains(true))
+    val benefitsCount = toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
+    val estCount = toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
+
+    val totalCount = trusteesCount +
+      workingKnowledgeCount +
+      beforeYouStartCount +
+      membersCount +
+      bankCount +
+      benefitsCount +
+      estCount
+    totalCount
+  }
+
+  private def isAllTrusteesCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+  }
 
   private def isAllEstablishersCompleted(userAnswers: UserAnswers, mode: Mode): Boolean =
     userAnswers.allEstablishersAfterDelete(mode).nonEmpty &&

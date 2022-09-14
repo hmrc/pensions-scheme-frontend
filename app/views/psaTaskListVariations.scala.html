@@ -70,12 +70,9 @@
 
     @components_refactored.heading(taskSections.h1)
 
-    <ol class="app-task-list">
 
+    <ol class="app-task-list">
         <li aria-labelledby="section-before-you-start-header">
-            <h2 id="section-before-you-start-header" class="govuk-heading-l">
-                @messages("messages__scheme_details__title")
-            </h2>
 
             @taskSections.beforeYouStart.header.map{ item=>
                 <h3 id="section-information-h3" class="app-task-list__section">

@@ -109,15 +109,15 @@ class SpokeCreationServiceSpec
         result mustBe expectedSpoke
       }
 
-      "display all the spokes with link to first page, in progress status if the spoke is in progress" in {
+      "display all the spokes with link to first page, incomplete status if the spoke is in progress" in {
         val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true).
           ukBankAccount(ukBankAccount = true)
         val expectedSpoke = Seq(
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_continue", schemeName),
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_continue", schemeName),
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text", schemeName),
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_continue", schemeName),
             controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), Some(false))
         )
 

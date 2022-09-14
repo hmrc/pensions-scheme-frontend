@@ -28,7 +28,8 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
   override def taskList(
                          answers: UserAnswers,
                          viewOnlyOpt: Option[Boolean],
-                         srn: Option[String]
+                         srn: Option[String],
+                         lastUpdatedDate: Option[LastUpdated] = None
                        ): SchemeDetailsTaskList = {
     val viewOnly = viewOnlyOpt.getOrElse(false)
     SchemeDetailsTaskList(
@@ -42,7 +43,8 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
       addTrusteeHeader = addTrusteeHeader(answers, UpdateMode, srn, viewOnly),
       trustees = trusteesSection(answers, UpdateMode, srn),
       declaration = declarationSection(answers, srn, viewOnly),
-      isAllSectionsComplete = Some(answers.areVariationChangesCompleted)
+      isAllSectionsComplete = Some(answers.areVariationChangesCompleted),
+      statsSection = None
     )
   }
 
