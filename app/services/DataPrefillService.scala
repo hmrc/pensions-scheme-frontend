@@ -18,10 +18,11 @@ package services
 
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorEnterNINOId, DirectorNameId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId}
-import identifiers.register.trustees.{TrusteeKindId, TrusteesId}
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeEnterNINOId, TrusteeNameId}
+import identifiers.register.trustees.{TrusteeKindId, TrusteesId}
 import models.ReferenceValue
 import models.person.PersonName
+import models.prefill.IndividualDetails
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import play.api.libs.functional.syntax._
@@ -61,7 +62,9 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
         seqIndexes.map { index =>
           arr.value(index).transform(copyTrusteeToDirector) match {
             case JsSuccess(value, _) => value
-            case _ => Json.obj()
+            case JsError(errors) =>
+              println("\n>>ERR:" + errors)
+              Json.obj()
           }
         }
       case _ => Nil
@@ -92,24 +95,43 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     (__ \ 'trusteeDetails \ 'firstName).json.copyFrom((__ \ 'directorDetails \ 'firstName).json.pick) and
       (__ \ 'trusteeDetails \ 'lastName).json.copyFrom((__ \ 'directorDetails \ 'lastName).json.pick) and
       (__ \ 'trusteeKind).json.put(JsString("individual")) and
-      (__ \ 'phone).json.copyFrom((__ \ 'directorContactDetails \ 'phoneNumber).json.pick) and
-      (__ \ 'email).json.copyFrom((__ \ 'directorContactDetails \ 'emailAddress).json.pick) and
+      (__ \ 'trusteeContactDetails \ 'phone).json.copyFrom((__ \ 'directorContactDetails \ 'phoneNumber).json.pick) and
+      (__ \ 'trusteeContactDetails \ 'email).json.copyFrom((__ \ 'directorContactDetails \ 'emailAddress).json.pick) and
+      (__ \ 'trusteeAddressId).json.copyFrom((__ \ 'directorAddressId).json.pick) and
+      (__ \ 'trusteeAddressYears).json.copyFrom((__ \ 'companyDirectorAddressYears).json.pick) and
+      ((__ \ 'trusteePreviousAddress).json.copyFrom((__ \ 'previousAddress).json.pick) orElse __.json.put(Json.obj())) and
+      (__ \ "hasNino").read[Boolean].flatMap {
+        case true =>
+          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
+            (__ \ 'trusteeNino).json.copyFrom((__ \ 'directorNino).json.pick) reduce
+        case false =>
+          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
+            (__ \ 'noNinoReason).json.copyFrom((__ \ 'noNinoReason).json.pick) reduce
+      } and
       commonReads reduce
   }
 
   private def copyTrusteeToDirector: Reads[JsObject] = {
     (__ \ 'directorDetails \ 'firstName).json.copyFrom((__ \ 'trusteeDetails \ 'firstName).json.pick) and
       (__ \ 'directorDetails \ 'lastName).json.copyFrom((__ \ 'trusteeDetails \ 'lastName).json.pick) and
-      (__ \ 'directorContactDetails \ 'phoneNumber).json.copyFrom((__ \ 'phone).json.pick) and
-      (__ \ 'directorContactDetails \ 'emailAddress).json.copyFrom((__ \ 'email).json.pick) and
+      (__ \ 'directorContactDetails \ 'phoneNumber).json.copyFrom((__ \ 'trusteeContactDetails \ 'phoneNumber).json.pick) and
+      (__ \ 'directorContactDetails \ 'emailAddress).json.copyFrom((__ \ 'trusteeContactDetails \ 'emailAddress).json.pick) and
+      (__ \ 'directorAddressId).json.copyFrom((__ \ 'trusteeAddressId).json.pick) and
+      (__ \ 'companyDirectorAddressYears).json.copyFrom((__ \ 'trusteeAddressYears).json.pick) and
+      ((__ \ 'previousAddress).json.copyFrom((__ \ 'trusteePreviousAddress).json.pick) orElse __.json.put(Json.obj())) and
+      (__ \ "hasNino").read[Boolean].flatMap {
+        case true =>
+          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
+            (__ \ 'directorNino).json.copyFrom((__ \ 'trusteeNino).json.pick) reduce
+        case false =>
+          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
+            (__ \ 'noNinoReason).json.copyFrom((__ \ 'noNinoReason).json.pick) reduce
+      } and
       commonReads reduce
   }
 
   private def commonReads: Reads[JsObject] = {
     (__ \ 'dateOfBirth).json.copyFrom((__ \ 'dateOfBirth).json.pick) and
-      (__ \ 'address).json.copyFrom((__ \ 'address).json.pick) and
-      (__ \ 'addressYears).json.copyFrom((__ \ 'addressYears).json.pick) and
-      ((__ \ 'previousAddress).json.copyFrom((__ \ 'previousAddress).json.pick) orElse __.json.put(Json.obj())) and
       (__ \ "hasUtr").read[Boolean].flatMap {
         case true =>
           (__ \ 'hasUtr).json.copyFrom((__ \ 'hasUtr).json.pick) and
@@ -117,21 +139,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
         case false =>
           (__ \ 'hasUtr).json.copyFrom((__ \ 'hasUtr).json.pick) and
             (__ \ 'noUtrReason).json.copyFrom((__ \ 'noUtrReason).json.pick) reduce
-      } and
-      (__ \ "hasNino").read[Boolean].flatMap {
-        case true =>
-          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
-            (__ \ 'nino).json.copyFrom((__ \ 'nino).json.pick) reduce
-        case false =>
-          (__ \ 'hasNino).json.copyFrom((__ \ 'hasNino).json.pick) and
-            (__ \ 'noNinoReason).json.copyFrom((__ \ 'noNinoReason).json.pick) reduce
       } reduce
-  }
-
-// Copied from migration fe as need nino
-  case class IndividualDetails(firstName: String, lastName: String, isDeleted: Boolean, nino: Option[String],
-                               dob: Option[LocalDate], index: Int, isComplete: Boolean, mainIndex: Option[Int] = None) {
-    def fullName: String = s"$firstName $lastName"
   }
 
   def getListOfDirectorsToBeCopied(implicit ua: UserAnswers): Seq[IndividualDetails] = {

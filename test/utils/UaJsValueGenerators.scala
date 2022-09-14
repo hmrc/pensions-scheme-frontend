@@ -60,7 +60,7 @@ trait UaJsValueGenerators {
     )
   }
 
-  def addressJsValueGen: Gen[JsValue] = for {
+  private def addressJsValueGen(nodeName: String): Gen[JsValue] = for {
     line1 <- addressLineGen
     line2 <- addressLineGen
     line3 <- addressLineGen
@@ -68,15 +68,17 @@ trait UaJsValueGenerators {
     postcode <- postalCodeGem
     country <- countryCode
   } yield {
-    Json.obj(
-      "address" -> Json.obj(
-        "addressLine1" -> line1,
+    Json.obj(nodeName ->
+      Json.obj(
+          "addressLine1" -> line1,
           "addressLine2" -> line2,
           "addressLine3" -> line3,
-        "addressLine4" ->line4,
-          "postcode" -> {if (country == "GB") "ZZ11ZZ" else postcode},
+          "addressLine4" -> line4,
+          "postcode" -> {
+            if (country == "GB") "ZZ11ZZ" else postcode
+          },
           "country" -> country
-        )
+      )
     )
   }
 
@@ -86,7 +88,7 @@ trait UaJsValueGenerators {
   } yield {
     Json.obj(
       "establishers" -> Seq(estComDetails),
-        "trustees" -> Seq(trusteeDetails)
+      "trustees" -> Seq(trusteeDetails)
     )
   }
 
@@ -142,65 +144,43 @@ trait UaJsValueGenerators {
       "trustees" -> Seq(trusteeDetails)
     )
   }
-  def trusteeIndividualJsValueGen(isNinoAvailable: Boolean, index: Int): Gen[JsObject] = for {
-    referenceOrNino <- Gen.const(s"CS700${index}00A")
-    email <- Gen.const("aaa@gmail.com")
-    phone <- Gen.listOfN[Char](randomNumberFromRange(1, 24), Gen.numChar).map(_.mkString)
-    address <- addressJsValueGen
-    date <- Gen.const(s"1999-0${index}-13")
-  } yield {
-    Json.obj(
-      "trusteeKind" -> "individual",
-      "trusteeDetails" -> Json.obj(
-        "firstName" -> "Test",
-        "lastName" -> s"User $index",
-      ),
-      "dateOfBirth" -> date,
-      "email" -> email,
-      "phone" -> phone,
-      "hasUtr" -> false,
-      "noUtrReason" -> "no utr",
-      "addressYears" -> true
-    ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino).as[JsObject]
-  }
+
 
   def estCompanyWithNinoInDirJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
     orgName <- nameGenerator
-    address <- addressJsValueGen
+    address <- addressJsValueGen("address")
     directorDetails1 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 1)
     directorDetails2 <- directorJsValueGen(isDeleted = true, isNinoAvailable, index = 2)
     directorDetails3 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 3)
   } yield {
     Json.obj(
       "establisherKind" -> "company",
-      "haveCompanyNumber" -> false,
-      "havePaye" -> false,
-      "haveVat" -> false,
-      "noCompanyNumberReason" -> "fsdfdsf",
-      "phone" -> "23234",
-      "email" -> "sdf@sdf",
-      "companyDyDetails" -> Json.obj(
-        "companyName" -> orgName
+      "hasCrn" -> false,
+      "hasPaye" -> false,
+      "hasVat" -> false,
+      "noCrnReason" -> "fsdfdsf",
+      "companyContactDetails" -> Json.obj(
+        "phoneNumber" -> "23234",
+        "emailAddress" -> "sdf@sdf"
       )
     ) ++ address.as[JsObject] ++ Json.obj("director" -> Seq(directorDetails1.as[JsObject],
       directorDetails2.as[JsObject], directorDetails3.as[JsObject]))
   }
 
-  def singleDirJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
+  private def singleDirJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
     orgName <- nameGenerator
-    address <- addressJsValueGen
+    address <- addressJsValueGen("address")
     directorDetails <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 1)
   } yield {
     Json.obj(
       "establisherKind" -> "company",
-      "haveCompanyNumber" -> false,
-      "havePaye" -> false,
-      "haveVat" -> false,
-      "noCompanyNumberReason" -> "fsdfdsf",
-      "phone" -> "23234",
-      "email" -> "sdf@sdf",
-      "companyDyDetails" -> Json.obj(
-        "companyName" -> orgName
+      "hasCrn" -> false,
+      "hasPaye" -> false,
+      "hasVat" -> false,
+      "noCrnReason" -> "fsdfdsf",
+      "companyContactDetails" -> Json.obj(
+        "phoneNumber" -> "23234",
+        "emailAddress" -> "sdf@sdf",
       )
     ) ++ address.as[JsObject] ++ Json.obj("director" -> directorDetails.as[JsObject])
   }
@@ -208,7 +188,7 @@ trait UaJsValueGenerators {
   def directorJsValueGen(isDeleted: Boolean, isNinoAvailable: Boolean, index: Int): Gen[JsValue] = for {
     referenceOrNino <- Gen.const(s"CS700${index}00A")
     contactDetails <- contactDetailsJsValueGen
-    address <- addressJsValueGen
+    address <- addressJsValueGen("directorAddressId")
     date <- Gen.const(s"1999-0${index}-13")
   } yield {
     Json.obj(
@@ -221,15 +201,39 @@ trait UaJsValueGenerators {
       "directorContactDetails" -> contactDetails,
       "hasUtr" -> false,
       "noUtrReason" -> "no utr",
-      "addressYears" -> true
-    ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino).as[JsObject]
+      "companyDirectorAddressYears" -> "over_a_year"
+    ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino, "director").as[JsObject]
   }
 
-  def ninoJsValue(isNinoAvailable: Boolean, referenceOrNino: String): JsValue = {
+  def trusteeIndividualJsValueGen(isNinoAvailable: Boolean, index: Int): Gen[JsObject] = for {
+    referenceOrNino <- Gen.const(s"CS700${index}00A")
+    email <- Gen.const("aaa@gmail.com")
+    phone <- Gen.listOfN[Char](randomNumberFromRange(1, 24), Gen.numChar).map(_.mkString)
+    address <- addressJsValueGen("trusteeAddressId")
+    date <- Gen.const(s"1999-0${index}-13")
+  } yield {
+    Json.obj(
+      "trusteeKind" -> "individual",
+      "trusteeDetails" -> Json.obj(
+        "firstName" -> "Test",
+        "lastName" -> s"User $index",
+      ),
+      "dateOfBirth" -> date,
+      "trusteeContactDetails" -> Json.obj(
+        "emailAddress" -> email,
+        "phoneNumber" -> phone,
+      ),
+      "hasUtr" -> false,
+      "noUtrReason" -> "no utr",
+      "trusteeAddressYears" -> "over_a_year"
+    ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino, "trustee").as[JsObject]
+  }
+
+  private def ninoJsValue(isNinoAvailable: Boolean, referenceOrNino: String, nodeName: String): JsValue = {
     if (isNinoAvailable) {
       Json.obj(
         "hasNino" -> true,
-        "nino" -> Json.obj(
+        s"${nodeName}Nino" -> Json.obj(
           "value" -> referenceOrNino,
           "isEditable" -> false
         )

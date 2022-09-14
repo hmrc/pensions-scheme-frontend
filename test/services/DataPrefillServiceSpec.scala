@@ -21,6 +21,7 @@ import matchers.JsonMatchers
 import models.prefill.IndividualDetails
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
+
 import java.time.LocalDate
 
 class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.Implicits with UaJsValueGenerators {
@@ -32,7 +33,7 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
         ua => {
           val result = dataPrefillService.copyAllDirectorsToTrustees(UserAnswers(ua), Seq(1), 0)
           val path = result.json \ "trustees"
-          (path \ 0 \ "nino" \ "value").as[String] mustBe "CS700100A"
+          (path \ 0 \ "trusteeNino" \ "value").as[String] mustBe "CS700100A"
           (path \ 0 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 0 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 1"
         }
@@ -57,6 +58,7 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
     "return the directors which are non deleted, completed and their nino is not matching with any of the existing trustees" in {
       forAll(uaJsValueWithNino) {
         ua => {
+          println("\nUA=" + ua)
           val result = dataPrefillService.getListOfDirectorsToBeCopied(UserAnswers(ua))
           result mustBe Seq(IndividualDetails("Test", "User 3", false, Some("CS700300A"), Some(LocalDate.parse("1999-03-13")), 2, true, Some(0)))
         }
