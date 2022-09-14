@@ -67,13 +67,12 @@ class SpokeCreationService extends Enumerable.Implicits {
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
+        case (NormalMode | UpdateMode, true) => Some(false)
         case (NormalMode | UpdateMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
           Some(false)
         case (NormalMode, false) =>
           Some(entityList.forall(_.isCompleted))
         case (UpdateMode, false) if entityList.exists(!_.isCompleted) =>
-          Some(false)
-        case (UpdateMode, true) =>
           Some(false)
         case _ => None
       }
@@ -148,6 +147,7 @@ class SpokeCreationService extends Enumerable.Implicits {
 
     val isChangeLink = spoke.completeFlag(answers, index, mode)
     val isComplete: Option[Boolean] = (mode, isChangeLink) match {
+      case (NormalMode, Some(false) | None) => Some(false)
       case (NormalMode, _) => isChangeLink
       case (UpdateMode, Some(false) | None) => Some(false)
       case _ => None
