@@ -27,8 +27,8 @@ object DataPrefillRadio {
   final case class Radio(label: Text, value: String)
   def radios(values: Seq[DataPrefillIndividualDetails])(implicit messages: Messages): Seq[InputOption] = {
     val noneValue = "-1"
-    val items = values.map(indvDetails => InputOption(indvDetails.fullName, indvDetails.index.toString)) :+
-      InputOption(messages("messages__prefill__label__none"), noneValue)
+    val items = values.map(indvDetails => InputOption(indvDetails.index.toString, indvDetails.fullName)) :+
+      InputOption(noneValue, messages("messages__prefill__label__none"))
     items
   }
 }

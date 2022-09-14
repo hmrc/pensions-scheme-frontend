@@ -62,8 +62,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
         seqIndexes.map { index =>
           arr.value(index).transform(copyTrusteeToDirector) match {
             case JsSuccess(value, _) => value
-            case JsError(errors) =>
-              println("\n>>ERR:" + errors)
+            case JsError(_) =>
               Json.obj()
           }
         }
@@ -236,8 +235,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     ua.json.validate[Seq[Option[IndividualDetails]]](readsTrustees) match {
       case JsSuccess(trustees, _) =>
         trustees.flatten
-      case JsError(_) =>
-        Nil
+      case JsError(eee) => Nil
     }
   }
 

@@ -52,11 +52,10 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
   def onPageLoad(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
-        println("\nMMM")
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           implicit val ua: UserAnswers = request.userAnswers
           val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
-          // Returning empty list!!!!
+          println("\nseq of trustees=" + seqTrustee)
           if (seqTrustee.nonEmpty) {
             val pageHeading = Messages("messages__directors__prefill__title")
             val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
@@ -74,9 +73,9 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
       implicit request =>
         implicit val ua: UserAnswers = request.userAnswers
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
-          val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
+              val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
               val pageHeading = Messages.apply("messages__directors__prefill__title")
               val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
               val options = DataPrefillRadio.radios(seqTrustee)
@@ -84,13 +83,15 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
               Future.successful(BadRequest(view(formWithErrors, Some(schemeName), pageHeading, titleMessage, options, postCall)))
             },
             value => {
+              println("\n>>>>VALUE=" + value)
               def uaAfterCopy: UserAnswers = (if (value < 0) {
                 ua
               } else {
                 dataPrefillService.copyAllTrusteesToDirectors(ua, Seq(value), establisherIndex)
               }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
 
-              userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
+              Future.successful( true ).map { _ =>
+              //userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                 Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
               }
             }
