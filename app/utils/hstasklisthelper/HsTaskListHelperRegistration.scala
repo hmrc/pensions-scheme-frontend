@@ -138,11 +138,8 @@ object HsTaskListHelperRegistration {
     }
   }
 
-  private def toInt(completionQ1: Boolean, completionQ2: Boolean = true): Int = if (completionQ1) {
-    if (completionQ2) 1 else 0
-  } else {
-    0
-  }
+  private def toInt(completionQ1: Boolean, completionQ2: Boolean = true): Int =
+    if (completionQ1 && completionQ2) 1 else 0
 
   private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
     val trusteesCount = toInt(userAnswers.get(HaveAnyTrusteesId).contains(true), isAllTrusteesCompleted(userAnswers))
