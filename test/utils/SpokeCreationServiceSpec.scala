@@ -712,14 +712,7 @@ class SpokeCreationServiceSpec
 
   "getAddEstablisherHeaderSpokes (with toggle on)" must {
     "return no spokes when no establishers and view only" in {
-//      val expectedSpoke =
-//        Seq(EntitySpoke(
-//          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-//            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0, None).url), None)
-//        )
-//      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
-//      result mustBe expectedSpoke
-      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
       result mustBe Nil
     }
 
