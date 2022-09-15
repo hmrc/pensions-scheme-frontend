@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /*
  * Copyright 2022 HM Revenue & Customs
@@ -66,7 +81,13 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
   private val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
 
-  private val seqTrustee = Seq(
+  private val seqOneTrustee = Seq(
+    DataPrefillIndividualDetails(
+      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
+    )
+  )
+
+  private val seqTwoTrustees = Seq(
     DataPrefillIndividualDetails(
       firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
     ),
@@ -84,16 +105,13 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
 
   override def beforeEach: Unit = {
     reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
-
-    when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
-      .thenReturn(seqTrustee)
-
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
-
   }
 
-  "onPageLoad" must {
+  "onPageLoad when only one trustee" must {
     "return Ok and the correct view on a GET request" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(seqOneTrustee)
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
@@ -106,23 +124,27 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqTrustee), postCall)(fakeRequest, messages).toString
+          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall)(fakeRequest, messages).toString
       }
     }
   }
 
-  "onSubmit" must {
-    "behave correctly when item other than None is chosen" in {
+
+  "onSubmit when two trustees" must {
+    "behave correctly item other than None is chosen" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(seqTwoTrustees)
       val emptyUA = UserAnswers()
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
-      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1)), any())).thenReturn(emptyUA)
+      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1, 2)), any())).thenReturn(emptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val request = fakeRequest.withFormUrlEncodedBody(
-          "value" -> "1"
+          "value[0]" -> "1",
+          "value[1]" -> "2"
         )
         val result = controller.onSubmit(establisherIndex = 0)(request)
         status(result) mustBe SEE_OTHER
@@ -131,7 +153,9 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       }
     }
 
-    "behave correctly when item None is chosen" in {
+    "behave correctly item None is chosen" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(seqTwoTrustees)
       val emptyUA = UserAnswers()
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
@@ -141,7 +165,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val request = fakeRequest.withFormUrlEncodedBody(
-          "value" -> "-1"
+          "value[0]" -> "-1"
         )
         val result = controller.onSubmit(establisherIndex = 0)(request)
 
@@ -151,7 +175,9 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       }
     }
 
-    "return bad request when error displayed" in {
+    "return bad request when field not filled in" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(seqTwoTrustees)
       val emptyUA = UserAnswers()
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))

@@ -230,12 +230,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
           answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
             if (addCompanyDirectors) {
-              // TODO: PODS-7251 Redirect to new page
-//              mode match {
-//                case NormalMode | CheckMode =>
-//              }
-              controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              mode match {
+                case NormalMode | CheckMode =>
+                  controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
+                    .onPageLoad(index)
+                case _ => controllers.register.establishers.company.director.routes.DirectorNameController
+                  .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
+              }
+
             } else {
               if (mode == CheckMode || mode == NormalMode) {
                 PsaSchemeTaskListController.onPageLoad(mode, srn)
