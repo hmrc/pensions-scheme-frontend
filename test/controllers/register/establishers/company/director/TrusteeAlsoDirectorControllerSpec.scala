@@ -24,18 +24,22 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio}
 import navigators.{EstablishersCompanyDirectorNavigator, Navigator}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito.never
+import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.DataPrefillService
+import services.{DataPrefillService, UserAnswersService}
 import utils.UserAnswers
 import views.html.dataPrefillRadio
+
+import scala.concurrent.Future
 
 class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
   private val onwardRoute: Call = Call("GET", "/dummy")
@@ -54,7 +58,8 @@ class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAn
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
   private val mockDataPrefillService = mock[DataPrefillService]
-  private val mockNavigator = mock[EstablishersCompanyDirectorNavigator] // = new FakeNavigator(desiredRoute = onwardRoute)
+  private val mockNavigator = mock[EstablishersCompanyDirectorNavigator]
+  private val mockUserAnswersService = mock[UserAnswersService]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
@@ -72,11 +77,12 @@ class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAn
   private val extraModules: Seq[GuiceableModule] = Seq(
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
-    bind[EstablishersCompanyDirectorNavigator].toInstance(mockNavigator)
+    bind[EstablishersCompanyDirectorNavigator].toInstance(mockNavigator),
+    bind[UserAnswersService].toInstance(mockUserAnswersService)
   )
 
   override def beforeEach: Unit = {
-    reset(mockDataPrefillService)
+    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
 
     when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
       .thenReturn(seqTrustee)
@@ -87,8 +93,6 @@ class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAn
 
   "onPageLoad" must {
     "return Ok and the correct view on a GET request" in {
-
-
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteeAlsoDirectorController]
@@ -107,10 +111,11 @@ class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAn
   }
 
   "onSubmit" must {
-    "redirect to correct location on a POST request" in {
+    "behave correctly when item other than None is chosen" in {
       val emptyUA = UserAnswers()
 
-      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), any(), any())).thenReturn(emptyUA)
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1)), any())).thenReturn(emptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
@@ -119,9 +124,43 @@ class TrusteeAlsoDirectorControllerSpec extends ControllerSpecBase with BeforeAn
           "value" -> "1"
         )
         val result = controller.onSubmit(establisherIndex = 0)(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        verify(mockDataPrefillService, atLeastOnce).copyAllTrusteesToDirectors(any(), any(), any())
+      }
+    }
+
+    "behave correctly when item None is chosen" in {
+      val emptyUA = UserAnswers()
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), any(), any())).thenReturn(emptyUA)
+
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[TrusteeAlsoDirectorController]
+        val request = fakeRequest.withFormUrlEncodedBody(
+          "value" -> "-1"
+        )
+        val result = controller.onSubmit(establisherIndex = 0)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
+        verify(mockDataPrefillService, never).copyAllTrusteesToDirectors(any(), any(), any())
+      }
+    }
+
+    "return bad request when error displayed" in {
+      val emptyUA = UserAnswers()
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1)), any())).thenReturn(emptyUA)
+
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[TrusteeAlsoDirectorController]
+        val result = controller.onSubmit(establisherIndex = 0)(fakeRequest)
+        status(result) mustBe BAD_REQUEST
       }
     }
   }

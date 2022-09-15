@@ -56,15 +56,11 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           implicit val ua: UserAnswers = request.userAnswers
           val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
-          if (seqTrustee.nonEmpty) {
-            val pageHeading = Messages("messages__directors__prefill__title")
-            val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
-            val options = DataPrefillRadio.radios(seqTrustee)
-            val postCall = controllers.register.establishers.company.director.routes.TrusteeAlsoDirectorController.onSubmit(establisherIndex)
-            Future.successful(Ok(view(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
-          } else {
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-          }
+          val pageHeading = Messages("messages__directors__prefill__title")
+          val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
+          val options = DataPrefillRadio.radios(seqTrustee)
+          val postCall = controllers.register.establishers.company.director.routes.TrusteeAlsoDirectorController.onSubmit(establisherIndex)
+          Future.successful(Ok(view(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
         }
     }
 
@@ -89,8 +85,7 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
                 dataPrefillService.copyAllTrusteesToDirectors(ua, Seq(value), establisherIndex)
               }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
 
-              Future.successful(true).map { _ =>
-                //userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
+              userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                 Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
               }
             }
