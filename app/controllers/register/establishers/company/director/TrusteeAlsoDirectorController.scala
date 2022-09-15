@@ -23,12 +23,13 @@ import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.TrusteeAlsoDirectorId
 import models.{DataPrefillRadio, Index, NormalMode}
-import navigators.CompoundNavigator
+import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, UserAnswers}
 import views.html.dataPrefillRadio
 
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeAlsoDirectorController @Inject()(override val messagesApi: MessagesApi,
                                               userAnswersService: UserAnswersService,
-                                              navigator: CompoundNavigator,
+                                              @EstablishersCompanyDirector val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
@@ -60,7 +61,7 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
             val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
             val options = DataPrefillRadio.radios(seqTrustee)
             val postCall = controllers.register.establishers.company.director.routes.TrusteeAlsoDirectorController.onSubmit(establisherIndex)
-            Future.successful(BadRequest(view(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+            Future.successful(Ok(view(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
           } else {
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
           }
@@ -88,8 +89,8 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
                 dataPrefillService.copyAllTrusteesToDirectors(ua, Seq(value), establisherIndex)
               }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
 
-              Future.successful( true ).map { _ =>
-              //userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
+              Future.successful(true).map { _ =>
+                //userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                 Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
               }
             }
@@ -97,6 +98,5 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
         }
     }
 
-  private def form: Form[Int] =
-    formProvider("messages__directors__prefill__single__error__required")
+  private def form: Form[Int] = formProvider("messages__directors__prefill__single__error__required")
 }

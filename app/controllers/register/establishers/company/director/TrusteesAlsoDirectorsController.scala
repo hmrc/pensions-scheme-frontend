@@ -39,12 +39,13 @@ import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.TrusteesAlsoDirectorsId
 import models.{DataPrefillCheckbox, Index, NormalMode}
-import navigators.CompoundNavigator
+import navigators.{CompoundNavigator, Navigator}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, UserAnswers}
 import views.html.dataPrefillCheckbox
 
@@ -53,7 +54,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: MessagesApi,
                                                 userAnswersService: UserAnswersService,
-                                                navigator: CompoundNavigator,
+                                                @EstablishersCompanyDirector val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
