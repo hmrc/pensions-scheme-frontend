@@ -18,6 +18,7 @@ package forms.dataPrefill
 
 import base.SpecBase
 import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
 class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with SpecBase {
 
@@ -41,10 +42,11 @@ class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with Sp
         "value[1]" -> "4"
       ))
     }
-    //    "fail to bind when empty" in {
-    //      val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-    //      result.errors mustEqual Seq(lengthError)
-    //    }
+
+    "fail to bind when empty" in {
+      val result = form.bind(Map[String, String]())
+      result.errors mustEqual Seq(FormError(fieldName, requiredKey))
+    }
 
   }
 }
