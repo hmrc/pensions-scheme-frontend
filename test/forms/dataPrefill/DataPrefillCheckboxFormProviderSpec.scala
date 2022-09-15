@@ -40,10 +40,11 @@ class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with Sp
         "value[0]" -> "2",
         "value[1]" -> "4"
       ))
-      //    "fail to bind when empty" in {
-      //      val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-      //      result.errors mustEqual Seq(lengthError)
-      //    }
-
     }
+    //    "fail to bind when empty" in {
+    //      val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
+    //      result.errors mustEqual Seq(lengthError)
+    //    }
+
   }
+}
