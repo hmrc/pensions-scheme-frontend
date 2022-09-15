@@ -38,8 +38,9 @@ import play.api.data.Forms.list
 
 import javax.inject.Inject
 
-class DataPrefillCheckboxFormProvider @Inject() extends Mappings with DataPrefillConstraints {
 
+
+class DataPrefillCheckboxFormProvider @Inject() extends Mappings with DataPrefillConstraints {
   def apply(entityCount: Int, requiredError: String, noneSelectedWithValueError: String, moreThanTenError: String): Form[List[Int]] =
     Form(
       "value" -> list[Int](int(requiredError)).verifying(
