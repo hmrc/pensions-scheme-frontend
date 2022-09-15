@@ -55,7 +55,6 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           implicit val ua: UserAnswers = request.userAnswers
           val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
-          println("\nseq of trustees=" + seqTrustee)
           if (seqTrustee.nonEmpty) {
             val pageHeading = Messages("messages__directors__prefill__title")
             val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)

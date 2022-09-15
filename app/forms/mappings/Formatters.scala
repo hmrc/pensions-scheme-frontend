@@ -80,8 +80,6 @@ trait Formatters {
       private val baseFormatter = stringFormatter(requiredKey)
 
       override def bind(key: String, data: Map[String, String]) = {
-        println("\n>>>key=" + key)
-        println("\n>>>data=" + data)
         baseFormatter
           .bind(key, data)
           .right.map(_.replace(",", ""))

@@ -38,33 +38,31 @@ import forms.dataPrefill.DataPrefillCheckboxFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.TrusteesAlsoDirectorsId
-import models.{DataPrefillCheckbox, DataPrefillRadio, Index, NormalMode}
+import models.{DataPrefillCheckbox, Index, NormalMode}
 import navigators.CompoundNavigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{DataPrefillService, UserAnswersService}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
-import views.html.{dataPrefillCheckbox, dataPrefillRadio}
+import views.html.dataPrefillCheckbox
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: MessagesApi,
-                                              userAnswersService: UserAnswersService,
-                                              navigator: CompoundNavigator,
-                                              authenticate: AuthAction,
-                                              getData: DataRetrievalAction,
-                                              allowAccess: AllowAccessActionProvider,
-                                              requireData: DataRequiredAction,
-                                              formProvider: DataPrefillCheckboxFormProvider,
-                                              dataPrefillService: DataPrefillService,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              val view: dataPrefillCheckbox
-                                             )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
+                                                userAnswersService: UserAnswersService,
+                                                navigator: CompoundNavigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                allowAccess: AllowAccessActionProvider,
+                                                requireData: DataRequiredAction,
+                                                formProvider: DataPrefillCheckboxFormProvider,
+                                                dataPrefillService: DataPrefillService,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                val view: dataPrefillCheckbox
+                                               )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits {
 
   def onPageLoad(establisherIndex: Index): Action[AnyContent] =
@@ -74,7 +72,6 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           implicit val ua: UserAnswers = request.userAnswers
           val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
-          println("\nseq of trustees=" + seqTrustee)
           if (seqTrustee.nonEmpty) {
             val pageHeading = Messages("messages__directors__prefill__title")
             val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
@@ -108,7 +105,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                 dataPrefillService.copyAllTrusteesToDirectors(ua, value, establisherIndex)
               }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
-              Future.successful( true ).map { _ =>
+              Future.successful(true).map { _ =>
                 //userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                 Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, None))
               }
@@ -119,12 +116,12 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     }
 
   private def form(index: Index)(implicit ua: UserAnswers, messages: Messages): Form[List[Int]] = {
-      val existingDirCount = ua.allDirectorsAfterDelete(index).size
-      formProvider(
-        existingDirCount,
-        "messages__directors__prefill__multi__error__required",
-        "messages__directors__prefill__multi__error__noneWithValue",
-        messages("messages__directors__prefill__multi__error__moreThanTen", existingDirCount, /*config.maxDirectors*/ 10 - existingDirCount)
-      )
+    val existingDirCount = ua.allDirectorsAfterDelete(index).size
+    formProvider(
+      existingDirCount,
+      "messages__directors__prefill__multi__error__required",
+      "messages__directors__prefill__multi__error__noneWithValue",
+      messages("messages__directors__prefill__multi__error__moreThanTen", existingDirCount, /*config.maxDirectors*/ 10 - existingDirCount)
+    )
   }
 }
