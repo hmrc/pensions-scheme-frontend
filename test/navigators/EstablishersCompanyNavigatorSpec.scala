@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.TrusteeAlsoDirectorId
+import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.Mode.checkMode
@@ -86,6 +86,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           row(AddCompanyDirectorsId(0))(false, taskList(NormalMode), ua = Some(addOneCompanyDirectors)),
           row(TrusteeAlsoDirectorId(0))(-1, directorName(NormalMode, 0)),
           row(TrusteeAlsoDirectorId(0))(1, addCompanyDirectors(0, NormalMode),
+            ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector)),
+          row(TrusteesAlsoDirectorsId(0))(Seq(-1), directorName(NormalMode, 0)),
+          row(TrusteesAlsoDirectorsId(0))(Seq(1), addCompanyDirectors(0, NormalMode),
             ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector))
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)

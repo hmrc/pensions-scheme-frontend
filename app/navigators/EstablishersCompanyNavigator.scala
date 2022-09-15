@@ -24,7 +24,7 @@ import controllers.register.establishers.company.{routes => establisherCompanyRo
 import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.TrusteeAlsoDirectorId
+import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
 import models.Mode._
 import models._
 import utils.UserAnswers
@@ -108,17 +108,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
-      case TrusteeAlsoDirectorId(index) =>
-        NavigateTo.dontSave(
-          from.userAnswers.get(TrusteeAlsoDirectorId(index)) match {
-            case Some(v) if v > -1 =>
-              controllers.register.establishers.company.routes.AddCompanyDirectorsController
-                .onPageLoad(mode, srn, index)
-            case _ => controllers.register.establishers.company.director.routes.DirectorNameController
-              .onPageLoad(mode, index, from.userAnswers.allDirectors(index).size, srn)
-          }
-        )
-      case OtherDirectorsId(index) =>
+      case TrusteeAlsoDirectorId(index) => trusteeAlsoDirectorNav(from.userAnswers, index, NormalMode, srn)
+      case TrusteesAlsoDirectorsId(index) => trusteesAlsoDirectorsNav(from.userAnswers, index, NormalMode, srn)
+      case OtherDirectorsId(_) =>
         if (mode == CheckMode || mode == NormalMode) {
           NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(mode, srn))
         } else {
@@ -231,6 +223,31 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
+  }
+
+  private def trusteeAlsoDirectorNav(userAnswers: UserAnswers, index:Int, mode:Mode, srn:Option[String]) = {
+    NavigateTo.dontSave(
+      userAnswers.get(TrusteeAlsoDirectorId(index)) match {
+        case Some(v) if v > -1 =>
+          controllers.register.establishers.company.routes.AddCompanyDirectorsController
+            .onPageLoad(mode, srn, index)
+        case _ => controllers.register.establishers.company.director.routes.DirectorNameController
+          .onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
+      }
+    )
+  }
+
+  private def trusteesAlsoDirectorsNav(userAnswers: UserAnswers, index:Int, mode:Mode, srn:Option[String]) = {
+    NavigateTo.dontSave(
+      userAnswers.get(TrusteesAlsoDirectorsId(index)) match {
+        case Some(v) if v.contains(-1) =>
+          controllers.register.establishers.company.director.routes.DirectorNameController
+            .onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
+
+        case _ => controllers.register.establishers.company.routes.AddCompanyDirectorsController
+          .onPageLoad(mode, srn, index)
+      }
+    )
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: Option[String]): Option[NavigateTo] = {
