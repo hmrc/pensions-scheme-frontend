@@ -39,7 +39,7 @@ import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio}
-import navigators.{EstablishersCompanyDirectorNavigator, Navigator}
+import navigators.{EstablishersCompanyDirectorNavigator, EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.never
@@ -74,7 +74,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
   private val mockDataPrefillService = mock[DataPrefillService]
-  private val mockNavigator = mock[EstablishersCompanyDirectorNavigator]
+  private val mockNavigator = mock[EstablishersCompanyNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
@@ -99,7 +99,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val extraModules: Seq[GuiceableModule] = Seq(
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
-    bind[EstablishersCompanyDirectorNavigator].toInstance(mockNavigator),
+    bind[EstablishersCompanyNavigator].toInstance(mockNavigator),
     bind[UserAnswersService].toInstance(mockUserAnswersService)
   )
 

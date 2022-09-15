@@ -47,7 +47,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.EstablishersCompanyDirector
+import utils.annotations.EstablishersCompany
 import utils.{Enumerable, UserAnswers}
 import views.html.{dataPrefillCheckbox, dataPrefillRadio}
 
@@ -56,7 +56,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: MessagesApi,
                                                 userAnswersService: UserAnswersService,
-                                                @EstablishersCompanyDirector val navigator: Navigator,
+                                                @EstablishersCompany val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
