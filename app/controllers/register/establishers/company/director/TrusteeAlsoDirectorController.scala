@@ -83,7 +83,6 @@ class TrusteeAlsoDirectorController @Inject()(override val messagesApi: Messages
               Future.successful(BadRequest(view(formWithErrors, Some(schemeName), pageHeading, titleMessage, options, postCall)))
             },
             value => {
-              println("\n>>>>VALUE=" + value)
               def uaAfterCopy: UserAnswers = (if (value < 0) {
                 ua
               } else {

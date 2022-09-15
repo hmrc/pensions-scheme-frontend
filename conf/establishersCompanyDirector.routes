@@ -136,3 +136,6 @@ GET         /:establisherIndex/company/director/:directorIndex/already-deleted/:
 
 GET         /:establisherIndex/company/director/trustee-also-director                         controllers.register.establishers.company.director.TrusteeAlsoDirectorController.onPageLoad(establisherIndex: Index)
 POST        /:establisherIndex/company/director/trustee-also-director                          controllers.register.establishers.company.director.TrusteeAlsoDirectorController.onSubmit(establisherIndex: Index)
+
+GET         /:establisherIndex/company/director/trustees-also-directors                         controllers.register.establishers.company.director.TrusteesAlsoDirectorsController.onPageLoad(establisherIndex: Index)
+POST        /:establisherIndex/company/director/trustees-also-directors                          controllers.register.establishers.company.director.TrusteesAlsoDirectorsController.onSubmit(establisherIndex: Index)
