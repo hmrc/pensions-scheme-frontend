@@ -90,12 +90,10 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onSubmit(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
-        println("\n>R:" + request.body)
         implicit val ua: UserAnswers = request.userAnswers
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           form(establisherIndex).bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
-              println("\nERR:" + formWithErrors)
               val seqTrustee = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)
               val pageHeading = Messages.apply("messages__directors__prefill__title")
               val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
