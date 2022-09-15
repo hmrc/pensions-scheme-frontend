@@ -15,16 +15,9 @@
  *@
 
 @import config.FrontendAppConfig
-@import play.api.mvc.Call
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF, _}
 @import viewmodels.SchemeDetailsTaskList
-@import models.NormalMode
-@import controllers.register.establishers.routes._
-@import controllers.register.trustees.routes._
+@import views.html._
 
 @this(
         layout: templates.Layout,
@@ -81,7 +74,7 @@
         <p class="govuk-body">@messages("taskList.status", section.sectionsCompleted, section.totalSections)</p>
         <p class="govuk-body">
             <span class="govuk-!-font-weight-bold">
-                @messages("taskList.saveAnswers")
+            @messages("taskList.saveAnswers")
             </span>
             @section.dateExpiry.map { date =>
                 <span class="govuk-!-display-block govuk-!-margin-top-1 govuk-!-font-weight-normal">@date</span>

@@ -67,13 +67,12 @@ class SpokeCreationService extends Enumerable.Implicits {
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
+        case (NormalMode | UpdateMode, true) => Some(false)
         case (NormalMode | UpdateMode, false) if spoke == EstablisherPartnershipPartner && entityList.size == 1 =>
           Some(false)
         case (NormalMode, false) =>
           Some(entityList.forall(_.isCompleted))
         case (UpdateMode, false) if entityList.exists(!_.isCompleted) =>
-          Some(false)
-        case (UpdateMode, true) =>
           Some(false)
         case _ => None
       }
@@ -148,6 +147,7 @@ class SpokeCreationService extends Enumerable.Implicits {
 
     val isChangeLink = spoke.completeFlag(answers, index, mode)
     val isComplete: Option[Boolean] = (mode, isChangeLink) match {
+      case (NormalMode, Some(false) | None) => Some(false)
       case (NormalMode, _) => isChangeLink
       case (UpdateMode, Some(false) | None) => Some(false)
       case _ => None
@@ -193,23 +193,31 @@ class SpokeCreationService extends Enumerable.Implicits {
     val establishers = answers.allEstablishersAfterDelete(mode)
     val isAllEstablishersComplete = if (establishers.isEmpty) None else Some(establishers.forall(_.isCompleted))
 
-    if (establishers.isEmpty) {
-      Seq(EntitySpoke(
-        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
-            .allEstablishers(mode).size, srn).url), None)
-      )
-    } else if(establishers.nonEmpty && !establishers.forall(_.isCompleted)) {
-      Seq(EntitySpoke(
-        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
-      )
-    }
-    else {
-      Seq(EntitySpoke(
-        TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_change_link"),
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
-      )
+    (establishers.isEmpty, viewOnly) match {
+      case (_, true) =>
+        Nil
+      case (true, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
+              .allEstablishers(mode).size, srn).url), Some(false))
+        )
+      case (false, false) if srn.isDefined =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+        )
+      case (false, false) if !establishers.forall(_.isCompleted) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
+        )
+      case (false, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
+        )
     }
   }
 
