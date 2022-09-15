@@ -1270,6 +1270,7 @@ messages__is_dormant__error = Select yes if the establisher has been dormant in 
 messages__schemeTaskList__sectionAbout_header = About the scheme
 
 messages__schemeTaskList__sectionEstablishers_header = Establishers
+messages__schemeTaskList__sectionEstablishers_title = Establisher details
 messages__schemeTaskList__sectionEstablishers_add_link = Add establishers
 messages__schemeTaskList__sectionEstablishers_change_link = Change establishers
 messages__schemeTaskList__sectionEstablishers_continue_link = Continue adding establishers
