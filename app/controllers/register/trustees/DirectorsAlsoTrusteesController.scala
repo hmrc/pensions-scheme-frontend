@@ -82,7 +82,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       Right(formRadio)
     }
 
-  def onPageLoad(): Action[AnyContent] =
+  def onPageLoad: Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
@@ -101,10 +101,10 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     }
 
   //scalastyle:off method.length
-  def onSubmit(establisherIndex: Index): Action[AnyContent] =
+  def onSubmit: Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
-        val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+        val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.right.map { schemeName =>
           if (seqTrustee.size > 1) {
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
@@ -113,7 +113,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {
-                  dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
+                  dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, value, seqTrustee.headOption.flatMap(_.mainIndex).getOrElse(0))
                 }).setOrException(DirectorsAlsoTrusteesId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
