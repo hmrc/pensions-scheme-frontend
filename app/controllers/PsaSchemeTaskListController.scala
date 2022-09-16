@@ -29,7 +29,7 @@ import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
+import views.html.{oldPsaTaskList, psaTaskListRegistration}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
