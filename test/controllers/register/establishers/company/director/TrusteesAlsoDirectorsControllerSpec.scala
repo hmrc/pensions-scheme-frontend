@@ -32,6 +32,7 @@
 
 package controllers.register.establishers.company.director
 
+import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
@@ -39,7 +40,7 @@ import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio}
-import navigators.{EstablishersCompanyDirectorNavigator, EstablishersCompanyNavigator, Navigator}
+import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.never
@@ -76,6 +77,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val mockDataPrefillService = mock[DataPrefillService]
   private val mockNavigator = mock[EstablishersCompanyNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
+  private val mockConfig = mock[FrontendAppConfig]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
@@ -100,12 +102,14 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
     bind[EstablishersCompanyNavigator].toInstance(mockNavigator),
-    bind[UserAnswersService].toInstance(mockUserAnswersService)
+    bind[UserAnswersService].toInstance(mockUserAnswersService),
+    bind[FrontendAppConfig].toInstance(mockConfig)
   )
 
   override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
+    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator, mockConfig)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
+    when(mockConfig.maxDirectors).thenReturn(4)
   }
 
   "onPageLoad when only one trustee" must {

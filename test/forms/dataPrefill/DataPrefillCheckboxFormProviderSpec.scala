@@ -27,7 +27,7 @@ class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with Sp
   private val moreThanTenErrorKey = "moreten"
 
   private val form = new DataPrefillCheckboxFormProvider().apply(
-    entityCount = 4,
+    entityCount = 2,
     requiredError = requiredKey,
     noneSelectedWithValueError = noneSelectedWithValueErrorKey,
     moreThanTenError = moreThanTenErrorKey
@@ -41,6 +41,7 @@ class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with Sp
         "value[0]" -> "2",
         "value[1]" -> "4"
       ))
+      result.value mustBe Some(List(2,4))
     }
 
     "fail to bind when empty" in {
@@ -48,5 +49,48 @@ class DataPrefillCheckboxFormProviderSpec extends BooleanFieldBehaviours with Sp
       result.errors mustEqual Seq(FormError(fieldName, requiredKey))
     }
 
+    "fail to bind when None selected with value" in {
+      val form = new DataPrefillCheckboxFormProvider().apply(
+        entityCount = 2,
+        requiredError = requiredKey,
+        noneSelectedWithValueError = noneSelectedWithValueErrorKey,
+        moreThanTenError = moreThanTenErrorKey
+      )
+      val result = form.bind(Map(
+        "value[0]" -> "-1",
+        "value[1]" -> "4",
+        "value[2]" -> "5"
+      ))
+      result.errors mustEqual Seq(FormError(fieldName, noneSelectedWithValueErrorKey))
+    }
+
+    "bind when trying to add results in exactly ten directors" in {
+      val form = new DataPrefillCheckboxFormProvider().apply(
+        entityCount = 8,
+        requiredError = requiredKey,
+        noneSelectedWithValueError = noneSelectedWithValueErrorKey,
+        moreThanTenError = moreThanTenErrorKey
+      )
+      val result = form.bind(Map(
+        "value[0]" -> "2",
+        "value[1]" -> "4"
+      ))
+      result.value mustBe Some(List(2,4))
+    }
+
+    "fail to bind when trying to add results in more than ten directors" in {
+      val form = new DataPrefillCheckboxFormProvider().apply(
+        entityCount = 8,
+        requiredError = requiredKey,
+        noneSelectedWithValueError = noneSelectedWithValueErrorKey,
+        moreThanTenError = moreThanTenErrorKey
+      )
+      val result = form.bind(Map(
+        "value[0]" -> "2",
+        "value[1]" -> "4",
+        "value[2]" -> "5"
+      ))
+      result.errors mustEqual Seq(FormError(fieldName, moreThanTenErrorKey))
+    }
   }
 }

@@ -17,7 +17,6 @@
 package models
 
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import utils.InputOption

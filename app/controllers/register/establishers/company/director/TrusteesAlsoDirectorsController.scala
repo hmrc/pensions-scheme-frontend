@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company.director
 
+import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.dataPrefill.{DataPrefillCheckboxFormProvider, DataPrefillRadioFormProvider}
@@ -50,32 +51,40 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                                                 dataPrefillService: DataPrefillService,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val checkBoxView: dataPrefillCheckbox,
-                                                val radioView: dataPrefillRadio
+                                                val radioView: dataPrefillRadio,
+                                                config: FrontendAppConfig
                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits {
 
-
   private def renderView(status: Status,
                          seqTrustee: Seq[IndividualDetails],
-                         formCheckBox: => Form[List[Int]],
-                         formRadio: => Form[Int],
+                         eitherForm: Either[Form[List[Int]], Form[Int]],
                          establisherIndex: Int,
                          companyName: CompanyDetails,
                          schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    if (seqTrustee.size > 1) {
-      val pageHeading = Messages("messages__directors__prefill__title")
-      val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
-      val options = DataPrefillCheckbox.checkboxes(seqTrustee)
-      val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
-      Future.successful(status(checkBoxView(formCheckBox, Some(schemeName), pageHeading, titleMessage, options, postCall)))
-    } else {
-      val pageHeading = Messages("messages__directors__prefill__title")
-      val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
-      val options = DataPrefillRadio.radios(seqTrustee)
-      val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
-      Future.successful(status(radioView(formRadio, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+    eitherForm match {
+      case Left(form) =>
+        val pageHeading = Messages("messages__directors__prefill__title")
+        val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
+        val options = DataPrefillCheckbox.checkboxes(seqTrustee)
+        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+      case Right(form) =>
+        val pageHeading = Messages("messages__directors__prefill__title")
+        val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
+        val options = DataPrefillRadio.radios(seqTrustee)
+        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
     }
   }
+
+  private def getFormAsEither(seqTrustee: Seq[IndividualDetails],
+                              establisherIndex: Int)(implicit request: DataRequest[AnyContent]): Either[Form[List[Int]], Form[Int]] =
+    if (seqTrustee.size > 1) {
+      Left(formCheckBox(establisherIndex)(request.userAnswers, implicitly))
+    } else {
+      Right(formRadio(establisherIndex))
+    }
 
   def onPageLoad(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
@@ -84,8 +93,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
           val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
           renderView(Ok,
             seqTrustee,
-            formCheckBox(establisherIndex)(request.userAnswers, implicitly),
-            formRadio(establisherIndex)(request.userAnswers, implicitly),
+            getFormAsEither(seqTrustee, establisherIndex),
             establisherIndex,
             companyName,
             schemeName
@@ -108,21 +116,21 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                 } else {
                   dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
                 }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
+
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                   Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
                   seqTrustee,
-                  boundForm,
-                  formRadio(establisherIndex)(request.userAnswers, implicitly),
+                  Left(boundForm),
                   establisherIndex,
                   companyName,
                   schemeName
                 )
             }
           } else {
-            val boundForm = formRadio(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
+            val boundForm: Form[Int] = formRadio(establisherIndex).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
                 def uaAfterCopy: UserAnswers = (if (value < 0) {
@@ -130,14 +138,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                 } else {
                   dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
                 }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                   Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
                   seqTrustee,
-                  formCheckBox(establisherIndex)(request.userAnswers, implicitly),
-                  boundForm,
+                  Right(boundForm),
                   establisherIndex,
                   companyName,
                   schemeName
@@ -154,10 +162,10 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       "messages__directors__prefill__multi__error__required",
       "messages__directors__prefill__multi__error__noneWithValue",
       messages("messages__directors__prefill__multi__error__moreThanTen",
-        existingDirCount, /*config.maxDirectors*/ 10 - existingDirCount)
+        existingDirCount, config.maxDirectors - existingDirCount)
     )
   }
 
-  private def formRadio(index: Index)(implicit ua: UserAnswers, messages: Messages): Form[Int] =
+  private def formRadio(index: Index): Form[Int] =
     formProviderRadio("messages__directors__prefill__single__error__required")
 }
