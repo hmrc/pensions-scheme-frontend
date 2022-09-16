@@ -49,8 +49,6 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
         case (None, Some(userAnswers), Some(schemeName)) =>
-          val test = hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index.id)
-          println(s"\n sdfasdfaf $test")
           Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index.id),
             schemeName,
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url

@@ -236,7 +236,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
             } else {
               if (mode == CheckMode || mode == NormalMode) { // TODO: Remove Json code below when SchemeRegistration toggle is removed
                 (answers.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-                  case Some(toggleValue) if toggleValue =>
+                  case Some(true) =>
                     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
                   case _ =>
                     PsaSchemeTaskListController.onPageLoad(mode, srn)

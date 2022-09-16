@@ -107,7 +107,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "AddCompanyDirectors Controller" must {
