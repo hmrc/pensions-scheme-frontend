@@ -88,7 +88,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       answers.get(SchemeNameId).getOrElse(""),
       None,
       section,
-      isAllEstablishersCompleted(answers, NormalMode),
+      section.entities.forall(_.isCompleted.contains(true)),
       Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
     )
   }

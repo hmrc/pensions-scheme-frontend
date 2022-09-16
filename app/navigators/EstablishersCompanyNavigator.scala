@@ -25,6 +25,7 @@ import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import utils.UserAnswers
@@ -225,7 +226,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     }
   }
 
-  private def trusteeAlsoDirectorNav(userAnswers: UserAnswers, index:Int, mode:Mode, srn:Option[String]) = {
+  private def trusteeAlsoDirectorNav(userAnswers: UserAnswers, index: Int, mode: Mode, srn: Option[String]) = {
     NavigateTo.dontSave(
       userAnswers.get(TrusteeAlsoDirectorId(index)) match {
         case Some(v) if v > -1 =>
@@ -237,7 +238,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     )
   }
 
-  private def trusteesAlsoDirectorsNav(userAnswers: UserAnswers, index:Int, mode:Mode, srn:Option[String]) = {
+  private def trusteesAlsoDirectorsNav(userAnswers: UserAnswers, index: Int, mode: Mode, srn: Option[String]) = {
     NavigateTo.dontSave(
       userAnswers.get(TrusteesAlsoDirectorsId(index)) match {
         case Some(v) if v.contains(-1) =>
@@ -265,10 +266,14 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
               case _ => controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             }
-
           } else {
-            if (mode == CheckMode || mode == NormalMode) {
-              PsaSchemeTaskListController.onPageLoad(mode, srn)
+            if (mode == CheckMode || mode == NormalMode) { // TODO: Remove Json code below when SchemeRegistration toggle is removed
+              (answers.json \ SchemeRegistration.asString).asOpt[Boolean] match {
+                case Some(true) =>
+                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+                case _ =>
+                  PsaSchemeTaskListController.onPageLoad(mode, srn)
+              }
             } else {
               AnyMoreChangesController.onPageLoad(srn)
             }
