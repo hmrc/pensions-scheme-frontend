@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.dataPrefill.{DataPrefillCheckboxFormProvider, DataPrefillRadioFormProvider}
 import identifiers.SchemeNameId
+import identifiers.register.trustees.{DirectorAlsoTrusteeId, DirectorsAlsoTrusteesId}
 import models._
 import models.prefill.IndividualDetails
 import models.requests.DataRequest
@@ -63,13 +64,13 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(seqTrustee)
-        val postCall = controllers.register.routes.DirectorsAlsoTrusteesController.onSubmit
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillRadio.radios(seqTrustee)
-        val postCall = controllers.register.routes.DirectorsAlsoTrusteesController.onSubmit
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
         Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
     }
   }
@@ -104,9 +105,9 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-        (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
+        SchemeNameId.retrieve.right.map { schemeName =>
           if (seqTrustee.size > 1) {
-            val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
+            val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
@@ -122,30 +123,26 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 renderView(BadRequest,
                   seqTrustee,
                   Left(boundForm),
-                  establisherIndex,
-                  companyName,
                   schemeName
                 )
             }
           } else {
-            val boundForm: Form[Int] = formRadio(establisherIndex).bindFromRequest()
+            val boundForm: Form[Int] = formRadio.bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
                 def uaAfterCopy: UserAnswers = (if (value < 0) {
                   request.userAnswers
                 } else {
                   dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
-                }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+                }).setOrException(DirectorAlsoTrusteeId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
+                  Redirect(navigator.nextPage(DirectorAlsoTrusteeId, NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
                   seqTrustee,
                   Right(boundForm),
-                  establisherIndex,
-                  companyName,
                   schemeName
                 )
             }
