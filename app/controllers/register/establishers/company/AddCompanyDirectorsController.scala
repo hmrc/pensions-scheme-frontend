@@ -96,10 +96,11 @@ class AddCompanyDirectorsController @Inject()(
       }
   }
 
+  //TODO: Remove whole method once toggle is removed
   private def tempToggleAmend(ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { toggleValue =>
       val uaAsJsObject = ua.json.as[JsObject]
-      val updatedJson = uaAsJsObject \ Json.obj(SchemeRegistration.asString -> toggleValue)
+      val updatedJson = uaAsJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue)
       UserAnswers(updatedJson)
     }
   }

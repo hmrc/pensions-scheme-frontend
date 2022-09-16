@@ -63,7 +63,9 @@
 
 @layout( pageTitle = pageTitle ) {
 
-    @components_refactored.heading(taskSections.establisher.header.get)
+    @taskSections.establisher.header.map{ hdr =>
+        @components_refactored.heading(hdr)
+    }
 
     @taskSections.statsSection.map{ section =>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
