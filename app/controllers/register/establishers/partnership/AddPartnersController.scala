@@ -21,13 +21,19 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
+import models.FeatureToggleName.SchemeRegistration
+
 import javax.inject.Inject
-import models.Mode
+import models.{FeatureToggleName, Mode}
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.UserAnswers
 import views.html.register.addPartners
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +48,8 @@ class AddPartnersController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       val view: addPartners
+                                       val view: addPartners,
+                                       featureToggleService: FeatureToggleService
                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -86,12 +93,22 @@ class AddPartnersController @Inject()(
                 )
             },
           value => {
-            val ua = request.userAnswers.set(AddPartnersId(index))(value).asOpt.getOrElse(request.userAnswers)
-            Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, ua, srn)))
+            tempToggleAmend(request.userAnswers.set(AddPartnersId(index))(value).asOpt.getOrElse(request.userAnswers)).map{ updatedUA =>
+            Redirect(navigator.nextPage(AddPartnersId(index), mode, updatedUA, srn))
+            }
           }
         )
       }
   }
+
+  //TODO: Remove whole method once toggle is removed
+private def tempToggleAmend(ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
+  featureToggleService.get(FeatureToggleName.SchemeRegistration).map{ toggleValue =>
+    val uaAJsObject = ua.json.as[JsObject]
+    val updatedJson = uaAJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue.isEnabled)
+    UserAnswers(updatedJson)
+  }
+}
 
   private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
     routes.AddPartnersController.onSubmit(mode, index, srn)

@@ -22,18 +22,25 @@ import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.PartnerEntity
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{FeatureToggle, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
-class AddPartnersControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   appRunning()
 
@@ -49,6 +56,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
   private val establisherIndex = 0
 
   private val view = injector.instanceOf[addPartners]
+  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def controller(
                           dataRetrievalAction: DataRetrievalAction,
@@ -64,7 +72,8 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
@@ -93,11 +102,17 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          PartnershipDetailsId.toString -> PartnershipDetails(partnershipName, false),
+          PartnershipDetailsId.toString -> PartnershipDetails(partnershipName),
           "partner" -> partners.map(d => Json.obj(PartnerNameId.toString -> Json.toJson(d)))
         )
       )
     )
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "AddPartners Controller" must {
