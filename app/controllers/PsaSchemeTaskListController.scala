@@ -82,7 +82,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
             }
 
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
-              Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
+            Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
 
           case (Some(_), _, _) =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
