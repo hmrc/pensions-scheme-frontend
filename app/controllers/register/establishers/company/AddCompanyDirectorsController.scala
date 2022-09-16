@@ -82,6 +82,7 @@ class AddCompanyDirectorsController @Inject()(
             ),
           value => {
             val ua = request.userAnswers.set(AddCompanyDirectorsId(index))(value).asOpt.getOrElse(request.userAnswers)
+              .json \
             Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, ua, srn)))
           }
         )
