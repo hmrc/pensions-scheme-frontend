@@ -73,7 +73,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       workingKnowledgeSection(answers),
       addEstablisherHeaderToggleOff(answers, NormalMode, srn),
       establishersSection(answers, NormalMode, srn),
-      addTrusteeHeader(answers, NormalMode, srn),
+      addTrusteeHeaderToggleOff(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
@@ -150,9 +150,17 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       mode, srn, viewOnly = false), None))
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
-  : Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
+      case Nil => None
+      case trusteeHeaderSpokes => Some(
+        SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
+    }
+  }
+
+  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : Option[SchemeDetailsTaskListEntitySection] = {
+    spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes => Some(
         SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))

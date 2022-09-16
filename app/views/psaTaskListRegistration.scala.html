@@ -146,45 +146,20 @@
             }
         }
 
-        <li aria-labelledby="section-trustees-header" class="govuk-!-margin-top-7">
-            @taskSections.addTrusteeHeader.map { spoke =>
-                <h2 id="section-trustees-header" class="govuk-heading-l">
-                    @messages("messages__schemeTaskList__sectionTrustees_header")
-                </h2>
+        @taskSections.addTrusteeHeader.map { spoke =>
             @spoke.entities.map { entity =>
-                <p class="govuk-body">
-                    <a id="section-trustees-link" class="govuk-link" href="@{
-                        entity.link.target
-                    }" @if(entity.isCompleted.nonEmpty) {
-                        aria-describedby="section-trustees-status"}>
-                    @messages(entity.link.text)
-                    </a>
-                </p>
-            }
-            @for((p1Text, i) <- spoke.p1.zipWithIndex) {
-                <p id="section-trustees-header-additional-text-@i" class="govuk-body">@messages(p1Text)</p>
-            }
-            }
-            @for((item, i) <- taskSections.trustees.zipWithIndex) {
-                @item.header.map { hdr =>
-                    <h3 class="app-task-list__section">@messages(hdr)</h3>
-                }
-                <ul class="app-task-list__items">
-                @for((entity, j) <- item.entities.zipWithIndex) {
-                    <li class="app-task-list__item">
+            <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                            <a id="section-trustees-link-@i-@j" href="@{entity.link.target}" @if(entity.isCompleted.nonEmpty) {aria-describedby="section-trustees-status-@i-@j"}>
+                            <a id="section-trustees-link" class="govuk-link" href="@{entity.link.target}">
                                 @messages(entity.link.text)
                             </a>
                         </span>
-                        @entity.isCompleted.map { isCompleted =>
-                            <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-trustees-status-@i-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
-                        }
-                    </li>
+                @entity.isCompleted.map { isCompleted =>
+                <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-trustee-status"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
                 }
-                </ul>
+            </li>
             }
-        </li>
+        }
     </ol>
 
     @taskSections.declaration.map { declarationSection =>

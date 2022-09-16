@@ -1317,6 +1317,7 @@ messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add trustees
 messages__schemeTaskList__sectionTrustees_add_additional_text = There must be a minimum of 1 trustee. If you want to remove this trustee, you must first add a new one.
 messages__schemeTaskList__sectionTrustees_change_link = Change trustees
+messages__schemeTaskList__sectionTrustees_continue_link = Continue adding trustees
 messages__schemeTaskList__sectionTrustees_view_link = View trustees
 messages__schemeTaskList__sectionTrustees_no_trustees = No trustees
 
@@ -1931,3 +1932,5 @@ taskList.status = You have completed {0} of {1} sections
 taskList.saveAnswers = We will save your answers until
 taskList.establishers.incomplete = Establisher details are incomplete
 taskList.establishers.complete = Establisher details are complete
+taskList.trustees.incomplete = Trustee details are incomplete
+taskList.trustees.complete = Trustee details are complete

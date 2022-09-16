@@ -221,7 +221,34 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+
+    (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
+      case (None | Some(true), false, false) if srn.isDefined =>
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
+        )
+      case (None | Some(true), false, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
+          None
+        ))
+      case (None | Some(true), true, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size,
+              srn).url),
+          None
+        ))
+      case _ =>
+        Nil
+    }
+  }
+
+  def getAddTrusteeHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
       case (None | Some(true), false, false) if srn.isDefined =>
