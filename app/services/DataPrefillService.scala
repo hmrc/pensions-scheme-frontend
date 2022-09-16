@@ -181,8 +181,9 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
   def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     ua.json.validate[Seq[Option[Seq[IndividualDetails]]]](readsDirectors) match {
       case JsSuccess(directorsWithEstablishers, _) if directorsWithEstablishers.nonEmpty =>
-        directorsWithEstablishers.flatten.headOption.getOrElse(Nil)
+        directorsWithEstablishers.flatten.flatten
       case JsError(errors) =>
+        println("\nERR:" + errors)
         Nil
       case _ =>
         Nil
