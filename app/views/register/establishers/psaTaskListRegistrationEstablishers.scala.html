@@ -57,18 +57,18 @@
     if(taskSections.srn.isDefined){
         messages("messages__scheme_details__title")
     } else  {
-        messages("messages__schemeTaskList__title")
+        messages("messages__schemeTaskList__sectionEstablishers_title")
     }
 }
 
 @layout( pageTitle = pageTitle ) {
 
-    @components_refactored.heading(taskSections.h1)
+    @components_refactored.heading(taskSections.establisher.header.get)
 
     @taskSections.statsSection.map{ section =>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
             @if(taskSections.allComplete) {
-                @messages("taskList.establishers.completed")
+                @messages("taskList.establishers.complete")
             } else {
                 @messages("taskList.establishers.incomplete")
             }
@@ -96,4 +96,6 @@
     <p class="govuk-body govuk-!-margin-top-7">
         @button_link("site.save_and_continue", returnUrl, "submit")
     </p>
+
+    @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
 }
