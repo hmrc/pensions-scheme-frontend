@@ -43,6 +43,9 @@ GET         /:index/individual/:mode/already-deleted             controllers.reg
 GET         /:index/partnership/already-deleted                  controllers.register.trustees.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Partnership, srn: Option[String] = None)
 GET         /:index/partnership/:mode/already-deleted            controllers.register.trustees.AlreadyDeletedController.onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind = TrusteeKind.Partnership, srn: Option[String])
 
+GET         /directors-also-trustees                             controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad
+POST        /directors-also-trustees                             controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit
+
 ->          /                                                    trusteesCompany.Routes
 ->          /                                                    trusteesIndividual.Routes
 ->          /                                                    trusteesPartnership.Routes

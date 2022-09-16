@@ -1932,6 +1932,8 @@ taskList.saveAnswers = We will save your answers until
 taskList.establishers.incomplete = Establisher details are incomplete
 taskList.establishers.complete = Establisher details are completed
 
+taskList.establishers.complete = Establisher details are complete
+
 messages__directors__prefill__title = Which of these trustees is also a director?
 messages__directors__prefill__heading = Which of these trustees is also a director of {0}?
 messages__directors__prefill__single__error__required = Select if the trustee is also a director. If the trustee is not also a director, select "none of the above"
@@ -1940,4 +1942,11 @@ messages__directors__prefill__multi__error__moreThanTen = You can add up to 10 d
 messages__directors__prefill__multi__error__noneWithValue = Select the trustees that are also directors, or select "none of the above"
 
 messages__prefill__label__none = None of the above
-taskList.establishers.complete = Establisher details are complete
+
+messages__trustees__prefill__title = Which of these trustees is also a director?
+messages__trustees__prefill__heading = Which of these trustees is also a director of {0}?
+messages__trustees__prefill__single__error__required = Select if the trustee is also a director. If the trustee is not also a director, select "none of the above"
+messages__trustees__prefill__multi__error__required = Select all trustees that are also directors. If none of the trustees are also directors, select "none of the above"
+messages__trustees__prefill__multi__error__moreThanTen = You can add up to 10 directors using this service. You have already added {0} so you can only add {1} more
+messages__trustees__prefill__multi__error__noneWithValue = Select the trustees that are also directors, or select "none of the above"
+
