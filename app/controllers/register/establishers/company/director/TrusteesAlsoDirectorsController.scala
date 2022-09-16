@@ -91,13 +91,18 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.right.map { case companyName ~ schemeName =>
           val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-          renderView(Ok,
-            seqTrustee,
-            getFormAsEither(seqTrustee, establisherIndex),
-            establisherIndex,
-            companyName,
-            schemeName
-          )
+          if (seqTrustee.isEmpty) {
+            Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
+              .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
+          } else {
+            renderView(Ok,
+              seqTrustee,
+              getFormAsEither(seqTrustee, establisherIndex),
+              establisherIndex,
+              companyName,
+              schemeName
+            )
+          }
         }
     }
 

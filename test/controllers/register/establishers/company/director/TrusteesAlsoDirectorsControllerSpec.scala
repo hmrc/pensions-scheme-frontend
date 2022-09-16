@@ -32,14 +32,13 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio}
+import models.{CompanyDetails, DataPrefillRadio, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -77,7 +76,6 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val mockDataPrefillService = mock[DataPrefillService]
   private val mockNavigator = mock[EstablishersCompanyNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
-  private val mockConfig = mock[FrontendAppConfig]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
@@ -102,14 +100,12 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
     bind[EstablishersCompanyNavigator].toInstance(mockNavigator),
-    bind[UserAnswersService].toInstance(mockUserAnswersService),
-    bind[FrontendAppConfig].toInstance(mockConfig)
+    bind[UserAnswersService].toInstance(mockUserAnswersService)
   )
 
   override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator, mockConfig)
+    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
-    when(mockConfig.maxDirectors).thenReturn(4)
   }
 
   "onPageLoad when only one trustee" must {
@@ -131,8 +127,21 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
           view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall)(fakeRequest, messages).toString
       }
     }
-  }
 
+    "redirect to director name page when there are no trustees to copy" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(Nil)
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
+        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
+          .onPageLoad(NormalMode, establisherIndex, 0, None).url)
+      }
+    }
+  }
 
   "onSubmit when two trustees" must {
     "behave correctly item other than None is chosen" in {
