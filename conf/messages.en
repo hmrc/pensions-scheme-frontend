@@ -770,6 +770,7 @@ messages__declarationDormant__error__required = You need to tell us if you have 
 messages__haveAnyTrustees__title = Does the scheme have any trustees?
 messages__haveAnyTrustees__heading = Does {0} have any trustees?
 messages__haveAnyTrustees__error__required = Enter yes if the scheme has any trustees
+messages__haveAnyTrustees__hint = You must add at least one trustee if the scheme is a single trust.
 
 messages__adviserDetails__title = Enter the details of your pension adviser
 messages__adviserDetails__heading = Enter the details of your pension adviser
