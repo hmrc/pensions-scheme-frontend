@@ -46,6 +46,18 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
         redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
+      case DirectorAlsoTrusteeId =>
+        from.userAnswers.get(DirectorAlsoTrusteeId) match {
+          case Some(v) if v > -1 =>
+            redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
+          case _ => redirectToAnyMoreChanges(TrusteeNameController.onPageLoad(mode, from.userAnswers.allTrustees.size, srn), mode, srn)
+        }
+      case DirectorsAlsoTrusteesId =>
+        from.userAnswers.get(DirectorsAlsoTrusteesId) match {
+          case Some(v) if v.contains(-1) =>
+            redirectToAnyMoreChanges(TrusteeNameController.onPageLoad(mode, from.userAnswers.allTrustees.size, srn), mode, srn)
+          case _ => redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
+        }
       case _ => None
     }
 
@@ -98,7 +110,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(TrusteeKind.Company) =>
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
+        mode match {
+          case NormalMode => NavigateTo.dontSave(DirectorsAlsoTrusteesController.onPageLoad)
+          case _ => NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
+        }
+
       case Some(TrusteeKind.Partnership) =>
         NavigateTo.dontSave(controllers.register.trustees.partnership.routes
           .PartnershipDetailsController.onPageLoad(mode, index, srn))

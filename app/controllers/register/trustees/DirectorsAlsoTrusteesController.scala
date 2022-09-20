@@ -65,6 +65,10 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(seqEstablishers)
         val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
+
+
+        println( "\nOPTIONS=" + options)
+
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
@@ -87,6 +91,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
           val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
+          println("\n>>>>SSSS= " + seqEstablishers)
           if (seqEstablishers.isEmpty) {
             Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
               .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
@@ -107,9 +112,11 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.right.map { schemeName =>
           if (seqEstablishers.size > 1) {
+            println("\n>>>>" + request.request.body)
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
+                println("\n>>>>>BBBBBBBBBBBBBBBB=" + value)
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {

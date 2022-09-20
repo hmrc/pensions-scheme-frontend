@@ -82,6 +82,24 @@ trait UaJsValueGenerators {
     )
   }
 
+  def uaJsValueWithNinoNoTrustees: Gen[JsObject] = for {
+    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = true)
+  } yield {
+    Json.obj(
+      "establishers" -> Seq(estComDetails),
+      "trustees" -> Seq[JsObject]()
+    )
+  }
+
+  def uaJsValueWithNoNinoBla: Gen[JsObject] = for {
+    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
+  } yield {
+    Json.obj(
+      "establishers" -> Seq(estComDetails),
+      "trustees" -> Seq[JsObject]()
+    )
+  }
+
   def uaJsValueWithNino: Gen[JsObject] = for {
     trusteeDetails <- trusteeIndividualJsValueGen(isNinoAvailable = true, 1)
     estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = true)

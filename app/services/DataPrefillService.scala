@@ -37,11 +37,20 @@ import scala.language.postfixOps
 class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
   def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
+
+
+    println( "\n>>BEFORE:" + ua.json)
+    println("\nSEQ INDEXES=" + seqIndexes)
+
+
     val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
       case Some(arr) =>
         seqIndexes.map { index =>
+          println("\n A:" + index + ": " + arr.value(index))
           arr.value(index).transform(copyDirectorToTrustee) match {
-            case JsSuccess(value, _) => value
+            case JsSuccess(value, _) =>
+            println( "\n OUTPUT:" + value)
+              value
             case _ => Json.obj()
           }
         }
@@ -178,13 +187,10 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     }
   }
 
-  def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
+  private def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     ua.json.validate[Seq[Option[Seq[IndividualDetails]]]](readsDirectors) match {
       case JsSuccess(directorsWithEstablishers, _) if directorsWithEstablishers.nonEmpty =>
-        directorsWithEstablishers.flatten.flatten
-      case JsError(errors) =>
-        println("\nERR:" + errors)
-        Nil
+        directorsWithEstablishers.flatMap( _.toSeq).flatten // TODO: The index in case class instances will be indexed within establisher not within overall list.
       case _ =>
         Nil
     }
