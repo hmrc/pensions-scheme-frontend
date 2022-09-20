@@ -29,8 +29,7 @@ import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import viewmodels.SchemeDetailsTaskList
-import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
+import views.html.{oldPsaTaskList, psaTaskListRegistration}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +43,6 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             featureToggleService: FeatureToggleService,
                                             val oldView: oldPsaTaskList,
                                             val viewRegistration: psaTaskListRegistration,
-                                            val viewVariations: psaTaskListVariations,
                                             hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                             hsTaskListHelperVariations: HsTaskListHelperVariations,
                                             dataCacheConnector: UserAnswersCacheConnector
@@ -65,19 +63,11 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
-      import play.twirl.api.HtmlFormat.Appendable
 
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {
         case NormalMode | CheckMode => dataCacheConnector.lastUpdated(request.externalId)
           .map(parseDateElseException)
         case _ => Future.successful(None)
-      }
-
-      def renderViewVariations(taskSections: SchemeDetailsTaskList, schemeName: String): Future[Appendable] = {
-        featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-          case true => viewVariations(taskSections, schemeName)
-          case _ => oldView(taskSections, schemeName)
-        }
       }
 
       lastUpdatedDate.flatMap { date =>
@@ -92,9 +82,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
             }
 
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
-            renderViewVariations(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName).map {
-              Ok(_)
-            }
+            Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
 
           case (Some(_), _, _) =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
