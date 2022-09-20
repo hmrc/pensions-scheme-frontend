@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.Mode.checkMode
@@ -82,7 +83,13 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValue(CompanyEnterPAYEId(0))(isDormant(NormalMode)),
           rowNoValue(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
           rowNoValueNewEstablisher(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
-          row(AddCompanyDirectorsId(0))(false, taskList(NormalMode), ua = Some(addOneCompanyDirectors))
+          row(AddCompanyDirectorsId(0))(false, taskList(NormalMode), ua = Some(addOneCompanyDirectors)),
+          row(TrusteeAlsoDirectorId(0))(-1, directorName(NormalMode, 0)),
+          row(TrusteeAlsoDirectorId(0))(1, addCompanyDirectors(0, NormalMode),
+            ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector)),
+          row(TrusteesAlsoDirectorsId(0))(Seq(-1), directorName(NormalMode, 0)),
+          row(TrusteesAlsoDirectorsId(0))(Seq(1), addCompanyDirectors(0, NormalMode),
+            ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector))
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
     }
@@ -368,6 +375,10 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def addOneCompanyDirectors =
     UserAnswers(validData(johnDoe))
+
+
+  private def addOneCompanyDirectorsTrusteeAlsoDirector =
+    UserAnswers(validData(johnDoe)).setOrException(TrusteeAlsoDirectorId(0))(1)
 
   private def getCya(mode: Mode, cyaPage: Call) =  cyaPage
 
