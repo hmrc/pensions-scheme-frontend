@@ -20,22 +20,31 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.individual._
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import models.person.PersonName
-import org.scalatest.OptionValues
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersDetailsControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
 
   "Check Your Answers Individual Details Controller " when {
     "when in registration journey" must {
@@ -140,7 +149,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
             _.set(EstablisherNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -255,7 +264,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     )
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersDetailsController =
     new CheckYourAnswersDetailsController(
@@ -270,7 +279,8 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection],

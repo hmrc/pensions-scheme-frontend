@@ -1,0 +1,84 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import play.api.mvc.AnyContent
+@import config.FrontendAppConfig
+@import models.requests.DataRequest
+@import models.register.{Entity, Establisher}
+@import identifiers.register.establishers.company.CompanyDetailsId
+@import identifiers.register.establishers.individual.EstablisherNameId
+@import identifiers.register.establishers.partnership.PartnershipDetailsId
+@import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+@import identifiers.register.trustees.individual.TrusteeNameId
+@import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this()
+
+@(entities: Seq[Entity[_]], mode: Mode, srn: Option[String], entityNameHeader: String)(implicit messages: Messages)
+
+@changeLink(editLink: Option[String] = None,entity: Entity[_]) = {
+    @if(entities.exists(_.editLink(mode, srn).isDefined)){
+        <li class="govuk-summary-list__actions-list-item">
+            <a id="item-@{entity.index}-change" class="govuk-link" href="@editLink" target="_self">
+                @if(entity.isCompleted){
+                    <span>@messages("site.change")</span>
+                } else {
+                    <span>@messages("messages__schemeTaskList__addDetails")</span>
+                }
+                <span class="govuk-visually-hidden">@{entity.name}</span>
+            </a>
+        </li>
+    }
+}
+
+@removeLink(deleteLink: Option[String] = None,entity: Entity[_]) = {
+    @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
+        <li class="govuk-summary-list__actions-list-item">
+            <a id="item-@{entity.index}-delete" class="govuk-link" href="@deleteLink" target="_self">
+                <span>@messages("site.remove")</span>
+                <span class="govuk-visually-hidden">@{entity.name}</span>
+            </a>
+        </li>
+    }
+}
+
+@if(entityNameHeader.length > 0){
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">
+        @messages(entityNameHeader)
+    </h2>
+}
+
+<div class="govuk-form-group">
+    <dl class="govuk-summary-list hmrc-add-to-a-list hmrc-add-to-a-list--short">
+        @for(entity <- entities) {
+            <div class="govuk-summary-list__row">
+                <dt id="item-@entity.index" class="govuk-summary-list__key govuk-!-font-weight-regular hmrc-summary-list__key">
+                    @entity.name
+                </dt>
+                <dd class="govuk-summary-list__actions hmrc-summary-list__actions">
+                    <ul class="govuk-summary-list__actions-list">
+                        @changeLink(entity.editLink(mode, srn),entity)
+                        @removeLink(entity.deleteLink(mode, srn),entity)
+                    </ul>
+                </dd>
+            </div>
+        }
+    </dl>
+</div>

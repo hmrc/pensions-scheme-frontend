@@ -21,18 +21,29 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
-import org.scalatest.OptionValues
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
 
   import CheckYourAnswersPartnershipDetailsControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
 
   "Check Your Answers Partnership Details Controller " when {
     "when in registration journey" must {
@@ -112,8 +123,13 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call = {
+    if (mode == NormalMode) {
+      controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    } else {
+      controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    }
+  }
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -250,7 +266,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     AnswerRow(label, Seq("site.not_entered"), answerIsMessageKey = true, Some(Link("site.add", changeUrl, Some(hiddenLabel))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach,
                  isToggleOn: Boolean = false): CheckYourAnswersPartnershipDetailsController =
@@ -264,7 +280,8 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggleService
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
@@ -272,7 +289,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     view(
       CYAViewModel(
         answerSections = answerSections,
-        href = onwardRoute(mode, srn),
+        href =  onwardRoute(mode, srn),
         schemeName = None,
         returnOverview = false,
         hideEditLinks = false,

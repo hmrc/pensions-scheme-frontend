@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, StatsSection}
+import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListEstablishers, StatsSection}
 
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
@@ -185,7 +185,53 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
     }
   }
 
-  "task list" must {
+
+  "task list for establisher" must {
+    "return the task list with all the establisher sections for partnership when there are deleted establishers" in {
+      val userAnswers = userAnswersWithSchemeName
+        .establisherCompanyEntity(index = 0)
+        .establisherCompanyEntity(index = 1, isDeleted = true)
+        .establisherIndividualEntity(index = 2)
+        .establisherIndividualEntity(index = 3, isDeleted = true)
+        .establisherPartnershipEntity(index = 4, isDeleted = true)
+        .establisherPartnershipEntity(index = 5)
+
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+
+      val result = helper.taskListEstablisher(userAnswers, None, None, 5)
+
+      result mustBe SchemeDetailsTaskListEstablishers(
+        h1 = "scheme",
+        srn = None,
+        establisher = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
+        allComplete = false,
+        statsSection = Some(StatsSection(0,4,None))
+      )
+    }
+
+    "return the task list with all the establisher sections for company when there are no deleted establishers" in {
+      val userAnswers = userAnswersWithSchemeName
+        .establisherCompanyEntity(index = 0)
+        .establisherCompanyEntity(index = 1)
+
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+
+      val result = helper.taskListEstablisher(userAnswers, None, None, 1)
+
+      result mustBe SchemeDetailsTaskListEstablishers(
+        h1 = "scheme",
+        srn = None,
+        establisher = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
+        allComplete = false,
+        statsSection = Some(StatsSection(0,4,None))
+      )
+    }
+  }
+
+
+  "task list with toggle off" must {
     "return the task list with all the sections" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(HaveAnyTrusteesId)(false).asOpt.value
@@ -194,10 +240,10 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getBeforeYouStartSpoke(any(), any(), any(), any(), any())).thenReturn(expectedBeforeYouStartSpoke)
       when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
       when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
-      when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
+      when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
@@ -239,7 +285,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskList(userAnswers, None, None, None)
+      val result = helper.taskListToggleOff(userAnswers, None, None, None)
 
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
@@ -287,6 +333,18 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(DeclarationDutiesId)(value = true).asOpt.value
       HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+    }
+  }
+
+  "totalSectionsEstablishers" must {
+    "return 3 for an individual establisher" in {
+      val userAnswers = userAnswersWithSchemeName.establisherIndividualEntity(0)
+      HsTaskListHelperRegistration.totalSectionsEstablisher(userAnswers, 0) mustBe 3
+    }
+
+    "return 4 for a company establisher" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(0)
+      HsTaskListHelperRegistration.totalSectionsEstablisher(userAnswers, 0) mustBe 4
     }
   }
 
@@ -345,6 +403,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
   }
+
+
+  //  "completedSectionCountEstablishers" must {
+  //    "return 3 sections"
+  //  }
 }
 
 object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {

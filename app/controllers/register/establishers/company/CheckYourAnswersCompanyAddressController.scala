@@ -20,16 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
-import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
-import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
@@ -37,6 +35,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
@@ -50,7 +49,8 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          userAnswersService: UserAnswersService,
                                                          allowChangeHelper: AllowChangeHelper,
                                                          val controllerComponents: MessagesControllerComponents,
-                                                         val view: checkYourAnswers
+                                                         val view: checkYourAnswers,
+                                                         featureToggleService: FeatureToggleService
                                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -70,18 +70,28 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__addressFor", Message("messages__theCompany"))
 
-        val vm = CYAViewModel(
-          answerSections = answerSections,
-          href = PsaSchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
-          srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
-          title = title,
-          h1 = headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
-        )
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+            case _ =>
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+          }
+        }
+        saveURL.flatMap { url =>
+          val vm = CYAViewModel(
+            answerSections = answerSections,
+            href = url,
+            schemeName = existingSchemeName,
+            returnOverview = false,
+            hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
+            srn = srn,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index), mode),
+            title = title,
+            h1 = headingAddressDetails(mode, companyName(CompanyDetailsId(index)), isNew)
+          )
 
-        Future.successful(Ok(view(vm)))
+          Future.successful(Ok(view(vm)))
+        }
     }
 }

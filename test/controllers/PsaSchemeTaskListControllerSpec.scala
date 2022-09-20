@@ -30,7 +30,7 @@ import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
-import views.html.{oldPsaTaskList, psaTaskListRegistration, psaTaskListVariations}
+import views.html.{oldPsaTaskList, psaTaskListRegistration}
 
 import scala.concurrent.Future
 
@@ -51,7 +51,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is None and there is user answers with toggle off" must {
       "return OK and the old view" in {
-        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, None)(fakeRequest)
 
@@ -136,7 +136,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
         val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe false
+        contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionTrustees_no_trustees")) mustBe false
       }
@@ -165,7 +165,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val psaTaskListRegistrationView = injector.instanceOf[psaTaskListRegistration]
-  private val psaTaskListVariationsView = injector.instanceOf[psaTaskListVariations]
   private val mockFeatureToggleService = mock[FeatureToggleService]
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
@@ -184,7 +183,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       mockFeatureToggleService,
       oldView,
       psaTaskListRegistrationView,
-      psaTaskListVariationsView,
       fakeHsTaskListHelperRegistration,
       fakeHsTaskListHelperVariation,
       mockUserAnswersCacheConnector

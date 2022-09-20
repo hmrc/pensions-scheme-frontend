@@ -19,9 +19,14 @@ package utils.hstasklisthelper
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers._
+import identifiers.register.establishers.EstablisherKindId
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.individual.EstablisherNameId
+import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
+import models.register.establishers.EstablisherKind
 import models.{LastUpdated, Mode, NormalMode}
-import utils.UserAnswers
+import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
 import java.sql.Timestamp
@@ -39,6 +44,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
                         lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
@@ -47,6 +53,25 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       aboutSection(answers, NormalMode, srn),
       workingKnowledgeSection(answers),
       addEstablisherHeader(answers, NormalMode, srn),
+      Nil,
+      addTrusteeHeader(answers, NormalMode, srn),
+      trusteesSection(answers, NormalMode, srn),
+      declarationSection(answers),
+      None,
+      Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
+    )
+  }
+
+  def taskListToggleOff(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+                        lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+    val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
+    SchemeDetailsTaskList(
+      answers.get(SchemeNameId).getOrElse(""),
+      None,
+      beforeYouStartSection(answers),
+      aboutSection(answers, NormalMode, srn),
+      workingKnowledgeSection(answers),
+      addEstablisherHeaderToggleOff(answers, NormalMode, srn),
       establishersSection(answers, NormalMode, srn),
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
@@ -54,6 +79,52 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       None,
       Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
+  }
+
+  def taskListEstablisher(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
+    val section = establisherSection(answers, NormalMode, srn, establisherIndex)
+    val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
+    SchemeDetailsTaskListEstablishers(
+      answers.get(SchemeNameId).getOrElse(""),
+      None,
+      section,
+      section.entities.forall(_.isCompleted.contains(true)),
+      Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
+    )
+  }
+
+  protected[utils] def establisherSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String], index: Int)
+  : SchemeDetailsTaskListEntitySection = {
+    val seqEstablishers = userAnswers.allEstablishers(mode)
+
+    val establisher = seqEstablishers(index)
+    if (establisher.isDeleted) throw new RuntimeException("Establisher has been deleted.") else {
+      establisher.id match {
+        case EstablisherCompanyDetailsId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getEstablisherCompanySpokes(userAnswers, mode, srn, establisher.name, Some
+            (establisher.index)),
+            Some(establisher.name))
+
+
+        case EstablisherNameId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getEstablisherIndividualSpokes(userAnswers, mode, srn, establisher.name, Some
+            (establisher.index)),
+            Some(establisher.name))
+
+        case EstablisherPartnershipDetailsId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, mode, srn, establisher.name, Some
+            (establisher.index)),
+            Some(establisher.name))
+        case _ =>
+          throw new RuntimeException("Unknown section id:" + establisher.id)
+      }
+    }
   }
 
 
@@ -69,6 +140,13 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
                                           mode: Mode,
                                           srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers,
+      mode, srn, viewOnly = false), None))
+  }
+
+  private[utils] def addEstablisherHeaderToggleOff(userAnswers: UserAnswers,
+                                                   mode: Mode,
+                                                   srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+    Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers,
       mode, srn, viewOnly = false), None))
   }
 
@@ -123,7 +201,14 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 }
 
-object HsTaskListHelperRegistration {
+object HsTaskListHelperRegistration extends Enumerable.Implicits {
+
+  private[utils] def totalSectionsEstablisher(userAnswers: UserAnswers, index: Int): Int = {
+    userAnswers.get(EstablisherKindId(index)) match {
+      case Some(EstablisherKind.Indivdual) => 3
+      case _ => 4
+    }
+  }
 
   private[utils] def totalSections(userAnswers: UserAnswers): Int = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {

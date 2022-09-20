@@ -20,18 +20,24 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
+
+import scala.concurrent.Future
 
 class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
@@ -46,7 +52,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
@@ -67,7 +73,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val view = injector.instanceOf[checkYourAnswers]
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
-                   title:Message, h1:Message): String =
+                   title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -82,12 +88,26 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
       )
     )(fakeRequest, messages).toString
 
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
+
   "CheckYourAnswersPartnershipContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+
+          val bindings = modules(fullAnswers.dataRetrievalAction)
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+          )
+
+          running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -100,10 +120,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
         }
 
         "Update Mode" in {
-          running(_.overrides(
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
-            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))) {
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)

@@ -20,18 +20,25 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils.UserAnswers
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   private val index = Index(0)
   private val srn = Some("test-srn")
@@ -43,7 +50,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
@@ -83,12 +90,26 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       )
     )(fakeRequest, messages).toString
 
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
+
   "CheckYourAnswersContactDetailsController" when {
 
     "on a GET" must {
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
-          running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+
+          val bindings = modules(fullAnswers.dataRetrievalAction)
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+          )
+
+          running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -101,10 +122,14 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         }
 
         "Update Mode" in {
-          running(_.overrides(
+
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
-            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))) {
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)

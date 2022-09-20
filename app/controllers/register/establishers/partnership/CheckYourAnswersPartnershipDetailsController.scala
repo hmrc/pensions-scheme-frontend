@@ -22,11 +22,13 @@ import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
+
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -46,10 +48,11 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               implicit val countryOptions: CountryOptions,
                                                               allowChangeHelper: AllowChangeHelper,
                                                               val controllerComponents: MessagesControllerComponents,
-                                                              val view: checkYourAnswers
+                                                              val view: checkYourAnswers,
+                                                              featureToggleService: FeatureToggleService
                                                             )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
-  with Retrievals with I18nSupport with Enumerable.Implicits {
+    with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -77,19 +80,29 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__detailsFor", Message("messages__thePartnership"))
 
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+            case _ =>
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+          }
+        }
+        saveURL.flatMap { url =>
           val vm = CYAViewModel(
-          answerSections = partnershipDetails,
-          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
-          srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
-            mode),
-          title = title,
-          h1 = headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
-        )
+            answerSections = partnershipDetails,
+            href = url,
+            schemeName = existingSchemeName,
+            returnOverview = false,
+            hideEditLinks = request.viewOnly || !request.userAnswers.get(IsEstablisherNewId(index)).forall(identity),
+            srn = srn,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsEstablisherNewId(index),
+              mode),
+            title = title,
+            h1 = headingDetails(mode, partnershipName(PartnershipDetailsId(index)), isNew)
+          )
 
-        Future.successful(Ok(view(vm)))
+          Future.successful(Ok(view(vm)))
+        }
     }
 }

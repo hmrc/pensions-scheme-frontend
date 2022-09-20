@@ -19,28 +19,44 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
 import models.person.PersonName
 import navigators.Navigator
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, running, status, _}
+import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
+import scala.concurrent.Future
+
+class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersAddressControllerSpec._
+
+  override def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
 
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
+          val app = applicationBuilder(
+            fullAnswers.dataRetrievalAction,
+            extraModules = Seq(bind[FeatureToggleService].toInstance(mockFeatureToggleService))
+          ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
           val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
@@ -54,14 +70,16 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
 
         "Update Mode" in {
 
-          running(_.overrides(
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
-          )) {
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
@@ -108,7 +126,8 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     establishersIndividualAddressYears(index, addressYearsUnderAYear).
     establishersIndividualPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
@@ -139,7 +158,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-
+  private val mockFeatureToggleService = mock[FeatureToggleService]
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

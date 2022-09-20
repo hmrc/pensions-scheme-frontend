@@ -77,7 +77,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
   }
 
   "EstablisherPartnershipEntity" must {
-    val partnershipEntity = EstablisherPartnershipEntity(
+    def partnershipEntity = EstablisherPartnershipEntity(
       PartnershipDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
@@ -91,7 +91,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have no edit link" in {
-      partnershipEntity.editLink(NormalMode, None) mustBe None
+      partnershipEntity.editLink(NormalMode, None) mustBe Some("/register-pension-scheme/establisher/2/establisher-tasklist")
     }
 
     "have correct delete link" in {
@@ -101,7 +101,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
   }
 
   "EstablisherCompanyEntity" must {
-    val companyEntity = EstablisherCompanyEntity(
+    def companyEntity = EstablisherCompanyEntity(
       EstablisherCompanyDetailsId(index = 1),
       name = "test name",
       isDeleted = false,
@@ -114,8 +114,8 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
       companyEntity.index mustEqual 1
     }
 
-    "have no edit link" in {
-      companyEntity.editLink(NormalMode, None) mustBe None
+    "have correct edit link" in {
+      companyEntity.editLink(NormalMode, None) mustBe Some("/register-pension-scheme/establisher/2/establisher-tasklist")
     }
 
     "have correct delete link" in {
@@ -138,8 +138,9 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
       individualEntity.index mustEqual 1
     }
 
-    "have no edit link" in {
-      individualEntity.editLink(NormalMode, None) mustBe None
+    "have correct edit link" in {
+      val expectedEditLink = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(1).url
+      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
