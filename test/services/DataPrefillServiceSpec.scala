@@ -91,15 +91,15 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
 //      }
 //    }
 
-    "return the directors which are non deleted, completed where no nino, with correct indexes" in {
-      forAll(uaJsValueWithNoNinoBla) {
+    "return the directors which are non deleted from TWO establishers with 3 directors (1 deleted) each" in {
+      forAll(uaJsValueWithNoNinoTwoEstablishersThreeDirectorsEach) {
         ua => {
-          println("\n><>>>" + ua)
           val result = dataPrefillService.getListOfDirectorsToBeCopied(UserAnswers(ua))
-          println( "\nRES=" + result)
           result mustBe Seq(
             IndividualDetails("Test", "User 1", false, None, Some(LocalDate.parse("1999-01-13")), 0, true, Some(0)),
-            IndividualDetails("Test", "User 3", false, None, Some(LocalDate.parse("1999-03-13")), 1, true, Some(0))
+            IndividualDetails("Test", "User 3", false, None, Some(LocalDate.parse("1999-03-13")), 2, true, Some(0)),
+            IndividualDetails("Test", "User 4", false, None, Some(LocalDate.parse("1999-04-13")), 0, true, Some(1)),
+            IndividualDetails("Test", "User 6", false, None, Some(LocalDate.parse("1999-06-13")), 2, true, Some(1))
           )
         }
       }

@@ -70,14 +70,14 @@ trait UaJsValueGenerators {
   } yield {
     Json.obj(nodeName ->
       Json.obj(
-          "addressLine1" -> line1,
-          "addressLine2" -> line2,
-          "addressLine3" -> line3,
-          "addressLine4" -> line4,
-          "postcode" -> {
-            if (country == "GB") "ZZ11ZZ" else postcode
-          },
-          "country" -> country
+        "addressLine1" -> line1,
+        "addressLine2" -> line2,
+        "addressLine3" -> line3,
+        "addressLine4" -> line4,
+        "postcode" -> {
+          if (country == "GB") "ZZ11ZZ" else postcode
+        },
+        "country" -> country
       )
     )
   }
@@ -91,11 +91,11 @@ trait UaJsValueGenerators {
     )
   }
 
-  def uaJsValueWithNoNinoBla: Gen[JsObject] = for {
-    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
+  def uaJsValueWithNoNinoTwoEstablishersThreeDirectorsEach: Gen[JsObject] = for {
+    estComDetails <- estCompanyWithNinoInDirTwoEstablishersJsValueGen(isNinoAvailable = false)
   } yield {
+    estComDetails ++
     Json.obj(
-      "establishers" -> Seq(estComDetails),
       "trustees" -> Seq[JsObject]()
     )
   }
@@ -183,6 +183,47 @@ trait UaJsValueGenerators {
       )
     ) ++ address.as[JsObject] ++ Json.obj("director" -> Seq(directorDetails1.as[JsObject],
       directorDetails2.as[JsObject], directorDetails3.as[JsObject]))
+  }
+
+  def estCompanyWithNinoInDirTwoEstablishersJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
+    address <- addressJsValueGen("address")
+    est1DirectorDetails1 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 1)
+    est1DirectorDetails2 <- directorJsValueGen(isDeleted = true, isNinoAvailable, index = 2)
+    est1DirectorDetails3 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 3)
+    est2DirectorDetails1 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 4)
+    est2DirectorDetails2 <- directorJsValueGen(isDeleted = true, isNinoAvailable, index = 5)
+    est2DirectorDetails3 <- directorJsValueGen(isDeleted = false, isNinoAvailable, index = 6)
+  } yield {
+
+    val est1 = Json.obj(
+      "establisherKind" -> "company",
+      "hasCrn" -> false,
+      "hasPaye" -> false,
+      "hasVat" -> false,
+      "noCrnReason" -> "fsdfdsf",
+      "companyContactDetails" -> Json.obj(
+        "phoneNumber" -> "23234",
+        "emailAddress" -> "sdf@sdf"
+      )
+    ) ++ address.as[JsObject] ++ Json.obj("director" -> Seq(est1DirectorDetails1.as[JsObject],
+      est1DirectorDetails2.as[JsObject], est1DirectorDetails3.as[JsObject]))
+
+    val est2 = Json.obj(
+      "establisherKind" -> "company",
+      "hasCrn" -> false,
+      "hasPaye" -> false,
+      "hasVat" -> false,
+      "noCrnReason" -> "fsdfdsf",
+      "companyContactDetails" -> Json.obj(
+        "phoneNumber" -> "23234",
+        "emailAddress" -> "sdf@sdf"
+      )
+    ) ++ address.as[JsObject] ++ Json.obj("director" -> Seq(est2DirectorDetails1.as[JsObject],
+      est2DirectorDetails2.as[JsObject], est2DirectorDetails3.as[JsObject]))
+
+    Json.obj(
+      "establishers" -> Seq(est1, est2)
+    )
   }
 
   private def singleDirJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
