@@ -28,7 +28,7 @@ object DataPrefillCheckbox {
     val seqCheckBoxItem = values.map{ x =>
       CheckboxItem(
         content = Text(x.fullName),
-        value = x.index.toString
+        value = x.index.toString // TODO: should maybe be sequential no
       )
     }
     seqCheckBoxItem :+ CheckboxItem(

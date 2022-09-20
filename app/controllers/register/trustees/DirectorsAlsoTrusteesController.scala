@@ -120,6 +120,14 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {
+                  /*
+                  TO DO:
+                  1. Change checkboxes method above to generate sequential index no across all establishers not just per establisher. Means will have to change TrusteesAlsoDirectorsController too to work as per 2 and 3 below
+                  2. In here use this sequential int (in value) to pull out from seqEstablishers which ones affected
+                  3. Change copyAllDirectorsToTrustees below to take on Seq[Tuple2[Int]], where first int is trustee no in establisher and second is establisher no
+                   */
+
+                  // TODO: dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, value)
                   dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, value, seqEstablishers.headOption.flatMap(_.mainIndex).getOrElse(0))
                 }).setOrException(DirectorsAlsoTrusteesId)(value)
 

@@ -36,6 +36,7 @@ import scala.language.postfixOps
 
 class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
+  // TODO: def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Tuple2[Int,Int]]): UserAnswers = {
   def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
 
 
