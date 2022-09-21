@@ -34,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
 import views.html.{dataPrefillCheckbox, dataPrefillRadio}
+import DataPrefillService.DirectorIdentifier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,10 +66,6 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(seqEstablishers)
         val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
-
-
-        println( "\nOPTIONS=" + options)
-
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
@@ -91,7 +88,6 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
           val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
-          println("\n>>>>SSSS= " + seqEstablishers)
           if (seqEstablishers.isEmpty) {
             Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
               .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
@@ -105,6 +101,19 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         }
     }
 
+  private def appendSelectedDirectors(value: List[Int],
+                                      seqEstablishers: Seq[IndividualDetails]
+                                     )(implicit request: DataRequest[AnyContent]): UserAnswers = {
+    val seqDirectorIndex = value.flatMap{ i =>
+      val foundItem = seqEstablishers(i)
+      (foundItem.mainIndex, foundItem.index) match {
+        case (Some(establisherIndex), directorIndex) => Seq(DirectorIdentifier(establisherIndex, directorIndex))
+        case _ => Nil
+      }
+    }
+    dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIndex)
+  }
+
   //scalastyle:off method.length
   def onSubmit: Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
@@ -112,23 +121,13 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.right.map { schemeName =>
           if (seqEstablishers.size > 1) {
-            println("\n>>>>" + request.request.body)
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
-                println("\n>>>>>BBBBBBBBBBBBBBBB=" + value)
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {
-                  /*
-                  TO DO:
-                  1. Change checkboxes method above to generate sequential index no across all establishers not just per establisher. Means will have to change TrusteesAlsoDirectorsController too to work as per 2 and 3 below
-                  2. In here use this sequential int (in value) to pull out from seqEstablishers which ones affected
-                  3. Change copyAllDirectorsToTrustees below to take on Seq[Tuple2[Int]], where first int is trustee no in establisher and second is establisher no
-                   */
-
-                  // TODO: dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, value)
-                  dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, value, seqEstablishers.headOption.flatMap(_.mainIndex).getOrElse(0))
+                  appendSelectedDirectors(value, seqEstablishers)
                 }).setOrException(DirectorsAlsoTrusteesId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
@@ -148,7 +147,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 def uaAfterCopy: UserAnswers = (if (value < 0) {
                   request.userAnswers
                 } else {
-                  dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, Seq(value), seqEstablishers.headOption.flatMap(_.mainIndex).getOrElse(0))
+                  appendSelectedDirectors(List(value), seqEstablishers)
+                  //dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, Seq(value), seqEstablishers.headOption.flatMap(_.mainIndex).getOrElse(0))
                 }).setOrException(DirectorAlsoTrusteeId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>

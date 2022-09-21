@@ -28,6 +28,7 @@ import models.register.trustees.TrusteeKind
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
+import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UserAnswers}
 
 import java.time.LocalDate
@@ -36,21 +37,29 @@ import scala.language.postfixOps
 
 class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
-  // TODO: def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Tuple2[Int,Int]]): UserAnswers = {
+  def copySelectedDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[DirectorIdentifier]): UserAnswers = {
+    val jsArrayWithAppendedTrustees = seqIndexes.foldLeft(JsArray()) { case (acc, di) =>
+      (ua.json \ "establishers" \ di.establisherIndex \ "director" \ di.directorIndex).as[JsObject]
+        .transform(copyDirectorToTrustee) match {
+        case JsSuccess(value, _) => acc.append(value)
+        case _ => acc
+      }
+    }
+
+    val trusteeTransformer = (__ \ "trustees").json.update(
+      __.read[JsArray].map {
+        case dd@JsArray(arr) => dd ++ jsArrayWithAppendedTrustees
+      }
+    )
+    transformUa(ua, trusteeTransformer)
+  }
+
   def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
-
-
-    println( "\n>>BEFORE:" + ua.json)
-    println("\nSEQ INDEXES=" + seqIndexes)
-
-
     val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
       case Some(arr) =>
         seqIndexes.map { index =>
-          println("\n A:" + index + ": " + arr.value(index))
           arr.value(index).transform(copyDirectorToTrustee) match {
             case JsSuccess(value, _) =>
-            println( "\n OUTPUT:" + value)
               value
             case _ => Json.obj()
           }
@@ -196,7 +205,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
 
 
-        directorsWithEstablishers.flatMap( _.toSeq).flatten // TODO: The index in case class instances will be indexed within establisher not within overall list.
+        directorsWithEstablishers.flatMap(_.toSeq).flatten // TODO: The index in case class instances will be indexed within establisher not within overall list.
       case _ =>
         Nil
     }
@@ -284,4 +293,8 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
       case JsSuccess(i, _) => i
     })
   }
+}
+
+object DataPrefillService {
+  case class DirectorIdentifier(establisherIndex: Int, directorIndex: Int)
 }

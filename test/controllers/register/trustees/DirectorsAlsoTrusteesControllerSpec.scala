@@ -36,20 +36,22 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
+import identifiers.register.trustees.{DirectorAlsoTrusteeId, DirectorsAlsoTrusteesId}
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio, NormalMode}
-import navigators.{EstablishersCompanyNavigator, Navigator, TrusteesNavigator}
-import org.mockito.ArgumentMatchers
+import navigators.{Navigator, TrusteesNavigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.never
 import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, UserAnswersService}
 import utils.UserAnswers
 import views.html.dataPrefillRadio
@@ -78,18 +80,21 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
   private val titleMessage = Messages("messages__trustees__prefill__heading", companyDetails.companyName)
   private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
 
-  private val seqOneEstablisher = Seq(
+  private val seqOneEstablisherDirector = Seq(
     DataPrefillIndividualDetails(
-      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true, mainIndex = Some(1)
     )
   )
 
-  private val seqTwoEstablishers = Seq(
+  private val seqThreeEstablisherDirectors = Seq(
     DataPrefillIndividualDetails(
-      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true, mainIndex = Some(1)
     ),
     DataPrefillIndividualDetails(
-      firstName = "Jane", lastName = "Anderson", index = 4, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "Jane", lastName = "Anderson", index = 4, isDeleted = false, nino = None, dob = None, isComplete = true, mainIndex = Some(2)
+    ),
+    DataPrefillIndividualDetails(
+      firstName = "Jane", lastName = "Anderson", index = 5, isDeleted = false, nino = None, dob = None, isComplete = true, mainIndex = Some(2)
     )
   )
 
@@ -108,7 +113,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
   "onPageLoad when only one establisher" must {
     "return Ok and the correct view on a GET request" in {
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
-        .thenReturn(seqOneEstablisher)
+        .thenReturn(seqOneEstablisherDirector)
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
@@ -121,7 +126,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneEstablisher), postCall)(fakeRequest, messages).toString
+          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneEstablisherDirector), postCall)(fakeRequest, messages).toString
       }
     }
 
@@ -140,36 +145,46 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
     }
   }
 
-  "onSubmit when two establishers" must {
-    "behave correctly item other than None is chosen" in {
+  "onSubmit" must {
+    "behave correctly when two directors out of three ticked and None not ticked" in {
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
-        .thenReturn(seqTwoEstablishers)
-      val emptyUA = UserAnswers()
+        .thenReturn(seqThreeEstablisherDirectors)
+      val nonEmptyUA = UserAnswers(Json.obj("test" -> "test"))
 
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
-      when(mockDataPrefillService.copyAllDirectorsToTrustees(any(), ArgumentMatchers.eq(Seq(1, 2)), any())).thenReturn(emptyUA)
+      val jsonCaptor: ArgumentCaptor[JsValue] = ArgumentCaptor.forClass(classOf[JsValue])
+
+      when(mockUserAnswersService.upsert(any(), any(), jsonCaptor.capture())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val request = fakeRequest.withFormUrlEncodedBody(
-          "value[0]" -> "1",
+          "value[0]" -> "0",
           "value[1]" -> "2"
         )
         val result = controller.onSubmit(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-        verify(mockDataPrefillService, atLeastOnce).copyAllDirectorsToTrustees(any(), any(), any())
+        val expectedDirectors = Seq(
+          DirectorIdentifier(establisherIndex = 1, directorIndex = 3),
+          DirectorIdentifier(establisherIndex = 2, directorIndex = 5)
+        )
+        verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
+        (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
+        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId) mustBe Some(Seq(0, 2))
       }
     }
 
-    "behave correctly item None is chosen" in {
+    "behave correctly when three directors and item None is chosen" in {
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
-        .thenReturn(seqTwoEstablishers)
-      val emptyUA = UserAnswers()
+        .thenReturn(seqThreeEstablisherDirectors)
+      val nonEmptyUA = UserAnswers(Json.obj("test" -> "test"))
 
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
-      when(mockDataPrefillService.copyAllDirectorsToTrustees(any(), any(), any())).thenReturn(emptyUA)
+      val jsonCaptor: ArgumentCaptor[JsValue] = ArgumentCaptor.forClass(classOf[JsValue])
+
+      when(mockUserAnswersService.upsert(any(), any(), jsonCaptor.capture())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
@@ -178,21 +193,71 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
           "value[0]" -> "-1"
         )
         val result = controller.onSubmit(request)
-
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-        verify(mockDataPrefillService, never).copyAllDirectorsToTrustees(any(), any(), any())
+
+        verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
+        (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
+        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId) mustBe Some(Seq(-1))
+      }
+    }
+
+    "behave correctly when one director out of only one chosen and None not chosen" in {
+      when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
+        .thenReturn(seqOneEstablisherDirector)
+      val nonEmptyUA = UserAnswers(Json.obj("test" -> "test"))
+
+      val jsonCaptor: ArgumentCaptor[JsValue] = ArgumentCaptor.forClass(classOf[JsValue])
+
+      when(mockUserAnswersService.upsert(any(), any(), jsonCaptor.capture())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
+
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
+        val request = fakeRequest.withFormUrlEncodedBody(
+          "value" -> "0"
+        )
+        val result = controller.onSubmit(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        val expectedDirectors = Seq(
+          DirectorIdentifier(establisherIndex = 1, directorIndex = 3)
+        )
+        verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
+        (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
+        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId) mustBe Some(0)
+      }
+    }
+
+    "behave correctly when one director and None chosen" in {
+      when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
+        .thenReturn(seqOneEstablisherDirector)
+      val nonEmptyUA = UserAnswers(Json.obj("test" -> "test"))
+
+      val jsonCaptor: ArgumentCaptor[JsValue] = ArgumentCaptor.forClass(classOf[JsValue])
+
+      when(mockUserAnswersService.upsert(any(), any(), jsonCaptor.capture())(any(), any(), any())).thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
+
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
+        val request = fakeRequest.withFormUrlEncodedBody(
+          "value" -> "-1"
+        )
+        val result = controller.onSubmit(request)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
+        (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
+        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId) mustBe Some(-1)
       }
     }
 
     "return bad request when field not filled in" in {
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
-        .thenReturn(seqTwoEstablishers)
-      val emptyUA = UserAnswers()
-
-      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(JsNull))
-      when(mockDataPrefillService.copyAllDirectorsToTrustees(any(), ArgumentMatchers.eq(Seq(1)), any())).thenReturn(emptyUA)
-
+        .thenReturn(seqThreeEstablisherDirectors)
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]

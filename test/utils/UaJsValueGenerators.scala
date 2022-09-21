@@ -91,12 +91,14 @@ trait UaJsValueGenerators {
     )
   }
 
-  def uaJsValueWithNoNinoTwoEstablishersThreeDirectorsEach: Gen[JsObject] = for {
+  def uaJsValueWithNoNinoTwoTrusteesTwoEstablishersThreeDirectorsEach: Gen[JsObject] = for {
+    trusteeDetails1 <- trusteeIndividualJsValueGen(isNinoAvailable = false, 7)
+    trusteeDetails2 <- trusteeIndividualJsValueGen(isNinoAvailable = false, 8)
     estComDetails <- estCompanyWithNinoInDirTwoEstablishersJsValueGen(isNinoAvailable = false)
   } yield {
     estComDetails ++
     Json.obj(
-      "trustees" -> Seq[JsObject]()
+      "trustees" -> Seq(trusteeDetails1, trusteeDetails2)
     )
   }
 

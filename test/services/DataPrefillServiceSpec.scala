@@ -21,12 +21,47 @@ import identifiers.register.trustees.TrusteesId
 import matchers.JsonMatchers
 import models.prefill.IndividualDetails
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
 
 import java.time.LocalDate
 
 class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.Implicits with UaJsValueGenerators {
   private val dataPrefillService = new DataPrefillService()
+
+    "copySelectedDirectorsToTrustees" must {
+      "copy all the selected directors from two establishers to trustees excluding deleted directors" in {
+        forAll(uaJsValueWithNoNinoTwoTrusteesTwoEstablishersThreeDirectorsEach) {
+          ua => {
+            val result = dataPrefillService.copySelectedDirectorsToTrustees(
+              UserAnswers(ua),
+              Seq(
+                DirectorIdentifier(establisherIndex = 0, directorIndex = 2),
+                DirectorIdentifier(establisherIndex = 1, directorIndex = 0)
+              )
+            )
+
+            val path = result.json \ "trustees"
+
+            (path \ 0 \ "trusteeNino" \ "value").asOpt[String] mustBe None
+            (path \ 0 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
+            (path \ 0 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 7"
+
+            (path \ 1 \ "trusteeNino" \ "value").asOpt[String] mustBe None
+            (path \ 1 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
+            (path \ 1 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 8"
+
+            (path \ 2 \ "trusteeNino" \ "value").asOpt[String] mustBe None
+            (path \ 2 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
+            (path \ 2 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 3"
+
+            (path \ 3 \ "trusteeNino" \ "value").asOpt[String] mustBe None
+            (path \ 3 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
+            (path \ 3 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 4"
+          }
+        }
+      }
+    }
 
 //  "copyAllDirectorsToTrustees" must {
 //    "copy all the selected directors to trustees" in {
@@ -91,19 +126,19 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
 //      }
 //    }
 
-    "return the directors which are non deleted from TWO establishers with 3 directors (1 deleted) each" in {
-      forAll(uaJsValueWithNoNinoTwoEstablishersThreeDirectorsEach) {
-        ua => {
-          val result = dataPrefillService.getListOfDirectorsToBeCopied(UserAnswers(ua))
-          result mustBe Seq(
-            IndividualDetails("Test", "User 1", false, None, Some(LocalDate.parse("1999-01-13")), 0, true, Some(0)),
-            IndividualDetails("Test", "User 3", false, None, Some(LocalDate.parse("1999-03-13")), 2, true, Some(0)),
-            IndividualDetails("Test", "User 4", false, None, Some(LocalDate.parse("1999-04-13")), 0, true, Some(1)),
-            IndividualDetails("Test", "User 6", false, None, Some(LocalDate.parse("1999-06-13")), 2, true, Some(1))
-          )
-        }
-      }
-    }
+//    "return the directors which are non deleted from TWO establishers with 3 directors (1 deleted) each" in {
+//      forAll(uaJsValueWithNoNinoTwoEstablishersThreeDirectorsEach) {
+//        ua => {
+//          val result = dataPrefillService.getListOfDirectorsToBeCopied(UserAnswers(ua))
+//          result mustBe Seq(
+//            IndividualDetails("Test", "User 1", false, None, Some(LocalDate.parse("1999-01-13")), 0, true, Some(0)),
+//            IndividualDetails("Test", "User 3", false, None, Some(LocalDate.parse("1999-03-13")), 2, true, Some(0)),
+//            IndividualDetails("Test", "User 4", false, None, Some(LocalDate.parse("1999-04-13")), 0, true, Some(1)),
+//            IndividualDetails("Test", "User 6", false, None, Some(LocalDate.parse("1999-06-13")), 2, true, Some(1))
+//          )
+//        }
+//      }
+//    }
 //
 //    "return the directors which are non deleted, completed, no nino and their name and dob is not matching with any of the existing trustees" in {
 //      forAll(uaJsValueWithNoNino) {
