@@ -179,12 +179,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
   private def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     ua.json.validate[Seq[Option[Seq[IndividualDetails]]]](readsDirectors) match {
       case JsSuccess(directorsWithEstablishers, _) if directorsWithEstablishers.nonEmpty =>
-        //val ff = directorsWithEstablishers.flatten//.headOption.getOrElse(Nil)
-        // TODO: Fix - this will only list the directors on first company establisher
-
-
-
-        directorsWithEstablishers.flatMap(_.toSeq).flatten // TODO: The index in case class instances will be indexed within establisher not within overall list.
+        directorsWithEstablishers.flatMap(_.toSeq).flatten
       case _ =>
         Nil
     }
