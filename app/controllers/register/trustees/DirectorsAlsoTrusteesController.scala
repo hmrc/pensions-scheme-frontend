@@ -146,9 +146,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 def uaAfterCopy: UserAnswers = (if (value < 0) {
                   request.userAnswers
                 } else {
-                  appendSelectedDirectors(List(value), seqEstablishers)
+                  appendSelectedDirectors(List(0), seqEstablishers)
                 }).setOrException(DirectorAlsoTrusteeId)(value)
-
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                   Redirect(navigator.nextPage(DirectorAlsoTrusteeId, NormalMode, uaAfterCopy, None))
                 }
