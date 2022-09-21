@@ -29,12 +29,12 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
 import views.html.{dataPrefillCheckbox, dataPrefillRadio}
-import DataPrefillService.DirectorIdentifier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -104,7 +104,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   private def appendSelectedDirectors(value: List[Int],
                                       seqEstablishers: Seq[IndividualDetails]
                                      )(implicit request: DataRequest[AnyContent]): UserAnswers = {
-    val seqDirectorIndex = value.flatMap{ i =>
+    val seqDirectorIndex = value.flatMap { i =>
       val foundItem = seqEstablishers(i)
       (foundItem.mainIndex, foundItem.index) match {
         case (Some(establisherIndex), directorIndex) => Seq(DirectorIdentifier(establisherIndex, directorIndex))
@@ -114,7 +114,6 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIndex)
   }
 
-  //scalastyle:off method.length
   def onSubmit: Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
@@ -148,7 +147,6 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   request.userAnswers
                 } else {
                   appendSelectedDirectors(List(value), seqEstablishers)
-                  //dataPrefillService.copyAllDirectorsToTrustees(request.userAnswers, Seq(value), seqEstablishers.headOption.flatMap(_.mainIndex).getOrElse(0))
                 }).setOrException(DirectorAlsoTrusteeId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>

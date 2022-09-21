@@ -48,28 +48,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
     val trusteeTransformer = (__ \ "trustees").json.update(
       __.read[JsArray].map {
-        case dd@JsArray(arr) => dd ++ jsArrayWithAppendedTrustees
-      }
-    )
-    transformUa(ua, trusteeTransformer)
-  }
-
-  def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
-    val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
-      case Some(arr) =>
-        seqIndexes.map { index =>
-          arr.value(index).transform(copyDirectorToTrustee) match {
-            case JsSuccess(value, _) =>
-              value
-            case _ => Json.obj()
-          }
-        }
-      case _ => Nil
-    }
-
-    val trusteeTransformer = (__ \ "trustees").json.update(
-      __.read[JsArray].map {
-        case JsArray(arr) => JsArray(arr ++ seqDirectors)
+        case existingTrustees@JsArray(_) => existingTrustees ++ jsArrayWithAppendedTrustees
       }
     )
     transformUa(ua, trusteeTransformer)
