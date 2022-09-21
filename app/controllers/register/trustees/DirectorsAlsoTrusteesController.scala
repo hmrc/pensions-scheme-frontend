@@ -104,14 +104,14 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   private def appendSelectedDirectors(value: List[Int],
                                       seqEstablishers: Seq[IndividualDetails]
                                      )(implicit request: DataRequest[AnyContent]): UserAnswers = {
-    val seqDirectorIndex = value.flatMap { i =>
+    val seqDirectorIdentifier: Seq[DirectorIdentifier] = value.flatMap { i =>
       val foundItem = seqEstablishers(i)
       (foundItem.mainIndex, foundItem.index) match {
         case (Some(establisherIndex), directorIndex) => Seq(DirectorIdentifier(establisherIndex, directorIndex))
         case _ => Nil
       }
     }
-    dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIndex)
+    dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIdentifier)
   }
 
   def onSubmit: Action[AnyContent] =
