@@ -57,27 +57,27 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private def renderView(status: Status,
-                         seqEstablishers: Seq[IndividualDetails],
+                         candidateDirectors: Seq[IndividualDetails],
                          eitherForm: Either[Form[List[Int]], Form[Int]],
                          schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
-        val options = DataPrefillCheckbox.checkboxes(seqEstablishers)
+        val options = DataPrefillCheckbox.checkboxes(candidateDirectors)
         val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
-        val options = DataPrefillRadio.radios(seqEstablishers)
+        val options = DataPrefillRadio.radios(candidateDirectors)
         val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
         Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
     }
   }
 
-  private def getFormAsEither(seqEstablishers: Seq[IndividualDetails])(implicit request: DataRequest[AnyContent]): Either[Form[List[Int]], Form[Int]] =
-    if (seqEstablishers.size > 1) {
+  private def getFormAsEither(candidateDirectors: Seq[IndividualDetails])(implicit request: DataRequest[AnyContent]): Either[Form[List[Int]], Form[Int]] =
+    if (candidateDirectors.size > 1) {
       Left(formCheckBox(request.userAnswers, implicitly))
     } else {
       Right(formRadio)
@@ -87,25 +87,25 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
-          val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
-          if (seqEstablishers.isEmpty) {
+          val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
+          if (candidateDirectors.isEmpty) {
             Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
               .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
           } else {
             renderView(Ok,
-              seqEstablishers,
-              getFormAsEither(seqEstablishers),
+              candidateDirectors,
+              getFormAsEither(candidateDirectors),
               schemeName
             )
           }
         }
     }
 
-  private def appendSelectedDirectors(value: List[Int],
-                                      seqEstablishers: Seq[IndividualDetails]
+  private def appendSelectedDirectors(selectedDirectors: List[Int],
+                                      candidateDirectors: Seq[IndividualDetails]
                                      )(implicit request: DataRequest[AnyContent]): UserAnswers = {
-    val seqDirectorIdentifier: Seq[DirectorIdentifier] = value.flatMap { i =>
-      val foundItem = seqEstablishers(i)
+    val seqDirectorIdentifier: Seq[DirectorIdentifier] = selectedDirectors.flatMap { i =>
+      val foundItem = candidateDirectors(i)
       (foundItem.mainIndex, foundItem.index) match {
         case (Some(establisherIndex), directorIndex) => Seq(DirectorIdentifier(establisherIndex, directorIndex))
         case _ => Nil
@@ -117,16 +117,16 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   def onSubmit: Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
-        val seqEstablishers: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
+        val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.right.map { schemeName =>
-          if (seqEstablishers.size > 1) {
+          if (candidateDirectors.size > 1) {
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
                 def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {
-                  appendSelectedDirectors(value, seqEstablishers)
+                  appendSelectedDirectors(value, candidateDirectors)
                 }).setOrException(DirectorsAlsoTrusteesId)(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
@@ -134,7 +134,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 }
               case _ =>
                 renderView(BadRequest,
-                  seqEstablishers,
+                  candidateDirectors,
                   Left(boundForm),
                   schemeName
                 )
@@ -146,14 +146,14 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 def uaAfterCopy: UserAnswers = (if (value < 0) {
                   request.userAnswers
                 } else {
-                  appendSelectedDirectors(List(0), seqEstablishers)
+                  appendSelectedDirectors(List(0), candidateDirectors)
                 }).setOrException(DirectorAlsoTrusteeId)(value)
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
                   Redirect(navigator.nextPage(DirectorAlsoTrusteeId, NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
-                  seqEstablishers,
+                  candidateDirectors,
                   Right(boundForm),
                   schemeName
                 )
