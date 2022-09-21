@@ -30,7 +30,6 @@ object DataPrefillCheckbox {
       CheckboxItem(
         content = Text(x.fullName),
         value = i.toString
-       // value = x.index.toString // TODO: should maybe be sequential no
       )
     }
     seqCheckBoxItem :+ CheckboxItem(
