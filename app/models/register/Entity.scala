@@ -207,7 +207,12 @@ sealed trait Trustee[T] extends Entity[T]
 case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDeleted: Boolean,
                                 isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                 schemeType: Option[String]) extends Trustee[TrusteeCompanyDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = mode match {
+    case NormalMode | CheckMode =>
+      Some(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+    case _ => None
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
 
@@ -233,7 +238,12 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
 case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: Boolean,
                                    isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                    schemeType: Option[String]) extends Trustee[TrusteeNameId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = mode match {
+    case NormalMode | CheckMode =>
+      Some(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+    case _ => None
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] =
     Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.trusteeIndex,
@@ -245,7 +255,14 @@ case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: B
 case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: String, isDeleted: Boolean,
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                     schemeType: Option[String]) extends Trustee[TrusteePartnershipDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+      case _ => None
+    }
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
 
