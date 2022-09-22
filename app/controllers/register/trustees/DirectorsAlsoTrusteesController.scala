@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DataPrefillService.DirectorIdentifier
-import services.{DataPrefillService, UserAnswersService}
+import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
@@ -52,7 +52,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val checkBoxView: dataPrefillCheckbox,
                                                 val radioView: dataPrefillRadio,
-                                                config: FrontendAppConfig
+                                                config: FrontendAppConfig,
+                                                featureToggleService: FeatureToggleService
                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits {
 
@@ -87,17 +88,26 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
-          val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
-          if (candidateDirectors.isEmpty) {
-            Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-              .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
-          } else {
-            renderView(Ok,
-              candidateDirectors,
-              getFormAsEither(candidateDirectors),
-              schemeName
-            )
-          }
+
+          ( featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
+            case true =>
+              val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
+              if (candidateDirectors.isEmpty) {
+                Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
+                  .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
+              } else {
+                renderView(Ok,
+                  candidateDirectors,
+                  getFormAsEither(candidateDirectors),
+                  schemeName
+                )
+              }
+            case _ =>
+              Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
+                .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
+          } ).flatten
+
+
         }
     }
 
