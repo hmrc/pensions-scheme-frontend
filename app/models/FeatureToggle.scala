@@ -35,18 +35,13 @@ sealed trait FeatureToggleName {
 
 object FeatureToggleName {
 
-  case object TCMP extends FeatureToggleName {
-    val asString = "collective-money-purchase"
-  }
-
   case object SchemeRegistration extends FeatureToggleName{
     val asString = "scheme-registration"
   }
 
-  val toggles = Seq(TCMP, SchemeRegistration)
+  val toggles = Seq(SchemeRegistration)
 
   implicit val reads: Reads[FeatureToggleName] = Reads {
-    case JsString(TCMP.asString) => JsSuccess(TCMP)
     case JsString(SchemeRegistration.asString) => JsSuccess(SchemeRegistration)
     case _ => JsError("Unrecognised feature toggle name")
   }
