@@ -88,8 +88,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
-
-          ( featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
+          featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
             case true =>
               val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
               if (candidateDirectors.isEmpty) {
@@ -105,9 +104,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
             case _ =>
               Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
                 .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
-          } ).flatten
-
-
+          }.flatten
         }
     }
 
