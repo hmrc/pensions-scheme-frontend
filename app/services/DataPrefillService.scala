@@ -28,32 +28,50 @@ import models.register.trustees.TrusteeKind
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
+import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UserAnswers}
 
 import java.time.LocalDate
 import javax.inject.Inject
+import scala.collection.Set
 import scala.language.postfixOps
 
 class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
-  def copyAllDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
-    val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
-      case Some(arr) =>
-        seqIndexes.map { index =>
-          arr.value(index).transform(copyDirectorToTrustee) match {
-            case JsSuccess(value, _) => value
-            case _ => Json.obj()
-          }
-        }
-      case _ => Nil
+  def copySelectedDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[DirectorIdentifier]): UserAnswers = {
+    val jsArrayWithAppendedTrustees = seqIndexes.foldLeft(JsArray()) { case (acc, di) =>
+      (ua.json \ "establishers" \ di.establisherIndex \ "director" \ di.directorIndex).as[JsObject]
+        .transform(copyDirectorToTrustee) match {
+        case JsSuccess(value, _) => acc.append(value)
+        case _ => acc
+      }
     }
 
     val trusteeTransformer = (__ \ "trustees").json.update(
       __.read[JsArray].map {
-        case JsArray(arr) => JsArray(arr ++ seqDirectors)
+        case existingTrustees@JsArray(_) =>
+          cleanTrustees(existingTrustees) ++ jsArrayWithAppendedTrustees
       }
     )
     transformUa(ua, trusteeTransformer)
+  }
+
+  def cleanTrustees(existingTrustees: JsArray): JsArray = {
+    val removeTrusteesWithOnlyKindNodes = Set("isTrusteeNew", "trusteeKind")
+    val transformedTrusteesAsSeq = existingTrustees.value.flatMap{ trustee =>
+      val trusteeAsJsObject = trustee.as[JsObject]
+      if (trusteeAsJsObject.keys.subsetOf(removeTrusteesWithOnlyKindNodes)) {
+        Nil
+      } else {
+        Seq(trustee)
+      }
+    }
+
+    if (transformedTrusteesAsSeq.size == existingTrustees.value.size) {
+      existingTrustees
+    } else {
+      JsArray(transformedTrusteesAsSeq)
+    }
   }
 
   def copyAllTrusteesToDirectors(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
@@ -178,12 +196,10 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     }
   }
 
-  def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
+  private def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     ua.json.validate[Seq[Option[Seq[IndividualDetails]]]](readsDirectors) match {
       case JsSuccess(directorsWithEstablishers, _) if directorsWithEstablishers.nonEmpty =>
-        directorsWithEstablishers.flatten.headOption.getOrElse(Nil)
-      case JsError(errors) =>
-        Nil
+        directorsWithEstablishers.flatMap(_.toSeq).flatten
       case _ =>
         Nil
     }
@@ -271,4 +287,8 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
       case JsSuccess(i, _) => i
     })
   }
+}
+
+object DataPrefillService {
+  case class DirectorIdentifier(establisherIndex: Int, directorIndex: Int)
 }

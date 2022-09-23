@@ -98,7 +98,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(TrusteeKind.Company) =>
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
+        mode match {
+          case NormalMode => NavigateTo.dontSave(DirectorsAlsoTrusteesController.onPageLoad(index))
+          case _ => NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
+        }
+
       case Some(TrusteeKind.Partnership) =>
         NavigateTo.dontSave(controllers.register.trustees.partnership.routes
           .PartnershipDetailsController.onPageLoad(mode, index, srn))

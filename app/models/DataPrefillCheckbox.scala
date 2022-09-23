@@ -25,13 +25,14 @@ object DataPrefillCheckbox {
 
   def checkboxes(values: Seq[DataPrefillIndividualDetails])(implicit messages: Messages): Seq[CheckboxItem] = {
     val noneValue = "-1"
-    val seqCheckboxItem = values.map{ x =>
+
+    val seqCheckBoxItem = values.zipWithIndex.map{ case (x, i) =>
       CheckboxItem(
         content = Text(x.fullName),
-        value = x.index.toString
+        value = i.toString
       )
     }
-    seqCheckboxItem :+ CheckboxItem(
+    seqCheckBoxItem :+ CheckboxItem(
       content = Text(messages("messages__prefill__label__none")),
       value = noneValue
     )

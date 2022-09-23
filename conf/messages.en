@@ -1941,3 +1941,13 @@ messages__directors__prefill__multi__error__noneWithValue = Select the trustees 
 
 messages__prefill__label__none = None of the above
 taskList.establishers.complete = Establisher details are complete
+
+messages__prefill__label__none = None of the above
+
+messages__trustees__prefill__title = Which of these establishers is also a trustee?
+messages__trustees__prefill__heading = Which of these establishers is also a trustee?
+messages__trustees__prefill__single__error__required = Select if the establisher is also a trustee. If the establisher is not also a trustee, select "none of the above"
+messages__trustees__prefill__multi__error__required = Select all establishers that are also trustees. If none of the establishers are also trustees, select "none of the above"
+messages__trustees__prefill__multi__error__moreThanTen = You can add up to 10 trustees using this service. You have already added {0} so you can only add {1} more
+messages__trustees__prefill__multi__error__noneWithValue = Select the establishers that are also trustees, or select "none of the above"
+
