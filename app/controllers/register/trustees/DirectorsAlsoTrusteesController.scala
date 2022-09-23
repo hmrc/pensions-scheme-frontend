@@ -19,20 +19,19 @@ package controllers.register.trustees
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.trustees.individual.routes.TrusteeNameController
+import controllers.register.trustees.routes.AddTrusteeController
 import forms.dataPrefill.{DataPrefillCheckboxFormProvider, DataPrefillRadioFormProvider}
 import identifiers.SchemeNameId
-import identifiers.register.trustees.{DirectorAlsoTrusteeId, DirectorsAlsoTrusteesId}
 import models._
 import models.prefill.IndividualDetails
 import models.requests.DataRequest
-import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
 import views.html.{dataPrefillCheckbox, dataPrefillRadio}
 
@@ -41,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: MessagesApi,
                                                 userAnswersService: UserAnswersService,
-                                                @Trustees val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 allowAccess: AllowAccessActionProvider,
@@ -132,14 +130,17 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
-                def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
+                def uaAfterCopy: UserAnswers = if (value.headOption.getOrElse(-1) < 0) {
                   request.userAnswers
                 } else {
                   appendSelectedDirectors(value, candidateDirectors)
-                }).setOrException(DirectorsAlsoTrusteesId(index))(value)
-
+                }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(DirectorsAlsoTrusteesId(index), NormalMode, uaAfterCopy, None))
+                  if (value.headOption.getOrElse(-1) < 0) {
+                    Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
+                  } else {
+                    Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
+                  }
                 }
               case _ =>
                 renderView(BadRequest,
@@ -153,13 +154,17 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
             val boundForm: Form[Int] = formRadio.bindFromRequest()
             boundForm.value match {
               case Some(value) if boundForm.errors.isEmpty =>
-                def uaAfterCopy: UserAnswers = (if (value < 0) {
+                val uaAfterCopy: UserAnswers = if (value < 0) {
                   request.userAnswers
                 } else {
                   appendSelectedDirectors(List(0), candidateDirectors)
-                }).setOrException(DirectorAlsoTrusteeId(index))(value)
+                }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(DirectorAlsoTrusteeId(index), NormalMode, uaAfterCopy, None))
+                  if (value < 0) {
+                    Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
+                  } else {
+                    Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
+                  }
                 }
               case _ =>
                 renderView(BadRequest,

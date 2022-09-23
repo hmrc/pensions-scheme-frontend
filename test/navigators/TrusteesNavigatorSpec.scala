@@ -58,8 +58,6 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, None), ua = Some(oneDeletedTrustee)),
           row(HaveAnyTrusteesId)(true, addTrustee(NormalMode, None), ua = Some(oneTrustee)),
           row(HaveAnyTrusteesId)(false, taskList(NormalMode, None)),
-          row(DirectorsAlsoTrusteesId(0))(Seq(-1), trusteeName(NormalMode, None)),
-          row(DirectorsAlsoTrusteesId(0))(Seq(0), addTrustee(NormalMode, None)),
           rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, None))
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)

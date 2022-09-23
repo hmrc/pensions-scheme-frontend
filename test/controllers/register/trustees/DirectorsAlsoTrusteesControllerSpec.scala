@@ -21,11 +21,9 @@ import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.trustees.{DirectorAlsoTrusteeId, DirectorsAlsoTrusteesId}
 import models.FeatureToggleName.SchemeRegistration
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio, FeatureToggle, NormalMode}
-import navigators.{Navigator, TrusteesNavigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.never
 import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify}
@@ -35,7 +33,6 @@ import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsNull, JsValue, Json}
-import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
@@ -45,7 +42,6 @@ import views.html.dataPrefillRadio
 import scala.concurrent.Future
 
 class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
-  private val onwardRoute: Call = Call("GET", "/dummy")
   private val companyDetails = CompanyDetails(companyName = "Wibble Inc")
   private val schemeName = "aa"
 
@@ -59,7 +55,6 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
   private val mockDataPrefillService = mock[DataPrefillService]
-  private val mockNavigator = mock[TrusteesNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
@@ -87,8 +82,6 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
   private val extraModules: Seq[GuiceableModule] = Seq(
     bind[DataPrefillService].toInstance(mockDataPrefillService),
-    bind[Navigator].toInstance(mockNavigator),
-    bind[TrusteesNavigator].toInstance(mockNavigator),
     bind[UserAnswersService].toInstance(mockUserAnswersService),
     bind[FeatureToggleService].toInstance(mockFeatureToggleService)
   )
@@ -96,8 +89,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
   private val index = 0
 
   override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
-    when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
+    reset(mockDataPrefillService, mockUserAnswersService)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
@@ -173,14 +165,13 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)
         val expectedDirectors = Seq(
           DirectorIdentifier(establisherIndex = 1, directorIndex = 3),
           DirectorIdentifier(establisherIndex = 2, directorIndex = 5)
         )
         verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
-        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId(0)) mustBe Some(Seq(0, 2))
       }
     }
 
@@ -202,11 +193,10 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
 
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
-        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId(0)) mustBe Some(Seq(-1))
       }
     }
 
@@ -228,13 +218,12 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)
         val expectedDirectors = Seq(
           DirectorIdentifier(establisherIndex = 1, directorIndex = 3)
         )
         verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
-        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId(0)) mustBe Some(0)
       }
     }
 
@@ -256,10 +245,9 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
-        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId(0)) mustBe Some(-1)
       }
     }
 

@@ -57,7 +57,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
   }
 
   def cleanTrustees(existingTrustees: JsArray): JsArray = {
-    val removeTrusteesWithOnlyKindNodes = Set("isTrusteeNew", "trusteeKind", "directorAlsoTrustee", "directorsAlsoTrustees")
+    val removeTrusteesWithOnlyKindNodes = Set("isTrusteeNew", "trusteeKind")
     val transformedTrusteesAsSeq = existingTrustees.value.flatMap{ trustee =>
       val trusteeAsJsObject = trustee.as[JsObject]
       if (trusteeAsJsObject.keys.subsetOf(removeTrusteesWithOnlyKindNodes)) {

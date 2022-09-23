@@ -23,7 +23,7 @@ import controllers.register.trustees.company.routes._
 import controllers.register.trustees.individual.routes._
 import controllers.register.trustees.routes._
 import controllers.routes._
-import identifiers.register.trustees.{DirectorsAlsoTrusteesId, _}
+import identifiers.register.trustees._
 import models._
 import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
@@ -46,18 +46,6 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
         redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
-      case DirectorAlsoTrusteeId(index) =>
-        from.userAnswers.get(DirectorAlsoTrusteeId(index)) match {
-          case Some(v) if v > -1 =>
-            redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
-          case _ => redirectToAnyMoreChanges(TrusteeNameController.onPageLoad(mode, from.userAnswers.allTrustees.size, srn), mode, srn)
-        }
-      case DirectorsAlsoTrusteesId(index) =>
-        from.userAnswers.get(DirectorsAlsoTrusteesId(index)) match {
-          case Some(v) if v.contains(-1) =>
-            redirectToAnyMoreChanges(TrusteeNameController.onPageLoad(mode, from.userAnswers.allTrustees.size, srn), mode, srn)
-          case _ => redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
-        }
       case _ => None
     }
 
