@@ -17,9 +17,12 @@
 package services
 
 import base.SpecBase
+import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import matchers.JsonMatchers
 import models.prefill.IndividualDetails
+import models.register.trustees.TrusteeKind
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
+import play.api.libs.json.{JsArray, Json}
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
 
@@ -29,11 +32,17 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
   private val dataPrefillService = new DataPrefillService()
 
   "copySelectedDirectorsToTrustees" must {
-    "append all the selected directors from two establishers to trustees excluding deleted directors" in {
+    "append all the selected directors from two establishers to trustees excluding deleted directors and remove " +
+      "(clean) trustees which consist only of kind nodes (i.e. user been to trustee kind page but gone no further)" in {
       forAll(uaJsValueWithNoNinoTwoTrusteesTwoEstablishersThreeDirectorsEach) {
-        ua => {
+        ua =>
+          val userAnswers =
+            UserAnswers(ua)
+              .setOrException(TrusteeKindId(2))(TrusteeKind.Individual)
+              .setOrException(IsTrusteeNewId(2))(true)
+
           val result = dataPrefillService.copySelectedDirectorsToTrustees(
-            UserAnswers(ua),
+            userAnswers,
             Seq(
               DirectorIdentifier(establisherIndex = 0, directorIndex = 2),
               DirectorIdentifier(establisherIndex = 1, directorIndex = 0)
@@ -57,8 +66,55 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
           (path \ 3 \ "trusteeNino" \ "value").asOpt[String] mustBe None
           (path \ 3 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 3 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 4"
-        }
       }
+    }
+  }
+
+  "cleanTrustees" must {
+    "remove any trustee nodes which contain only the trustee kind/ director also trustee elements" in {
+      val trusteesJsArray =
+        Json.parse(
+          """
+            |        [
+            |            {
+            |                "isTrusteeNew" : true,
+            |                "trusteeKind" : "individual",
+            |                "trusteeDetails" : {
+            |                    "firstName" : "asas",
+            |                    "lastName" : "asa",
+            |                    "isDeleted" : true
+            |                }
+            |            },
+            |            {
+            |                "isTrusteeNew" : true,
+            |                "trusteeKind" : "individual"
+            |            },
+            |            {
+            |                "isTrusteeNew" : true,
+            |                "trusteeKind" : "individual",
+            |                "directorAlsoTrustee" : 1,
+            |                "directorsAlsoTrustees" : 1
+            |            }
+            |        ]
+            |""".stripMargin).as[JsArray]
+
+      val expectedResultJsArray =
+        Json.parse(
+          """
+            |        [
+            |            {
+            |                "isTrusteeNew" : true,
+            |                "trusteeKind" : "individual",
+            |                "trusteeDetails" : {
+            |                    "firstName" : "asas",
+            |                    "lastName" : "asa",
+            |                    "isDeleted" : true
+            |                }
+            |            }
+            |        ]
+            |""".stripMargin).as[JsArray]
+
+      dataPrefillService.cleanTrustees(trusteesJsArray) mustBe expectedResultJsArray
     }
   }
 

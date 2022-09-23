@@ -33,6 +33,7 @@ import utils.{Enumerable, UserAnswers}
 
 import java.time.LocalDate
 import javax.inject.Inject
+import scala.collection.Set
 import scala.language.postfixOps
 
 class DataPrefillService @Inject()() extends Enumerable.Implicits {
@@ -48,10 +49,29 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
 
     val trusteeTransformer = (__ \ "trustees").json.update(
       __.read[JsArray].map {
-        case existingTrustees@JsArray(_) => existingTrustees ++ jsArrayWithAppendedTrustees
+        case existingTrustees@JsArray(_) =>
+          cleanTrustees(existingTrustees) ++ jsArrayWithAppendedTrustees
       }
     )
     transformUa(ua, trusteeTransformer)
+  }
+
+  def cleanTrustees(existingTrustees: JsArray): JsArray = {
+    val removeTrusteesWithOnlyKindNodes = Set("isTrusteeNew", "trusteeKind", "directorAlsoTrustee", "directorsAlsoTrustees")
+    val transformedTrusteesAsSeq = existingTrustees.value.flatMap{ trustee =>
+      val trusteeAsJsObject = trustee.as[JsObject]
+      if (trusteeAsJsObject.keys.subsetOf(removeTrusteesWithOnlyKindNodes)) {
+        Nil
+      } else {
+        Seq(trustee)
+      }
+    }
+
+    if (transformedTrusteesAsSeq.size == existingTrustees.value.size) {
+      existingTrustees
+    } else {
+      JsArray(transformedTrusteesAsSeq)
+    }
   }
 
   def copyAllTrusteesToDirectors(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
