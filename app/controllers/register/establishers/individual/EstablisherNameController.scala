@@ -23,14 +23,15 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
+import utils.annotations.EstablishersIndividualDetails
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -41,14 +42,16 @@ class EstablisherNameController @Inject()(
                                            val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
-                                           val navigator: Navigator,
+                                           @EstablishersIndividualDetails val navigator: Navigator,
+                                           @EstablishersIndividualDetails oldNavigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,
                                            requireData: DataRequiredAction,
                                            formProvider: PersonNameFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
-                                           val view: personName
+                                           val view: personName,
+                                           featureToggleService: FeatureToggleService
                                          )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -69,9 +72,14 @@ class EstablisherNameController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
           value => {
-            userAnswersService.save(mode, srn, EstablisherNameId(index), value).map {
+            userAnswersService.save(mode, srn, EstablisherNameId(index), value).flatMap {
               cacheMap =>
-                Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+                featureToggleService.get(FeatureToggleName.SchemeRegistration).map{ featureToggle =>
+                  (featureToggle.isEnabled, mode) match {
+                  case (true, NormalMode) => Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+                  case _ => Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+                  }
+                }
             }
           }
         )

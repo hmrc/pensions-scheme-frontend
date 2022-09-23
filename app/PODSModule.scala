@@ -19,7 +19,7 @@ import com.google.inject.multibindings.Multibinder
 import connectors.{RacdacSubscriptionCacheConnector, SubscriptionCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import navigators._
-import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator}
+import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator, OldEstablishersIndividualDetailsNavigator}
 import navigators.establishers.partnership.partner.PartnerNavigator
 import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
 import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
@@ -119,6 +119,14 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[OldEstablishersCompany])
       .to(classOf[OldEstablishersCompanyNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[EstablishersIndividualDetails])
+      .to(classOf[EstablishersIndividualDetailsNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[OldEstablishersIndividualDetails])
+      .to(classOf[OldEstablishersIndividualDetailsNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Establishers])
