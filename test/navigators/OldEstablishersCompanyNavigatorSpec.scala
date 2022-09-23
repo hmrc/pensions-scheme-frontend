@@ -19,10 +19,10 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
-import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
@@ -42,9 +42,9 @@ import scala.concurrent.Future
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
 
-class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with BeforeAndAfterEach{
+class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with BeforeAndAfterEach{
 
-  import EstablishersCompanyNavigatorSpec._
+  import OldEstablishersCompanyNavigatorSpec._
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
   val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
@@ -53,7 +53,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
   override def beforeEach(): Unit ={
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "EstablishersCompanyNavigator" when {
@@ -241,7 +241,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
 
 //noinspection MutatorLikeMethodIsParameterless
 //scalastyle:off number.of.methods
-object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
+object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def rowNoValueNewEstablisher(id: TypedIdentifier.PathDependent)(call: Call): (id.type, UserAnswers, Call) = Tuple3(id, newEstablisher, call)
 
   private def rowNewEstablisher(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call)(
@@ -397,5 +397,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def getCya(mode: Mode, cyaPage: Call) =  cyaPage
 
   private def previousAddressRoutes(mode: Mode) =
-      cyaCompanyAddressDetails(mode)
+    cyaCompanyAddressDetails(mode)
 }
+
+
+
