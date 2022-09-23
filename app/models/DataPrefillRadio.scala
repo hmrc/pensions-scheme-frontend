@@ -18,12 +18,9 @@ package models
 
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import utils.InputOption
 
 object DataPrefillRadio {
-  final case class Item(id: String, text: Text, value: String, checked: Boolean)
-  final case class Radio(label: Text, value: String)
   def radios(values: Seq[DataPrefillIndividualDetails])(implicit messages: Messages): Seq[InputOption] = {
     val noneValue = "-1"
     val items = values.map(indvDetails => InputOption(indvDetails.index.toString, indvDetails.fullName)) :+
