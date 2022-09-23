@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
-import utils.annotations.EstablishersIndividualDetails
+import utils.annotations.{EstablishersIndividualDetails, OldEstablishersIndividualDetails}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -43,7 +43,7 @@ class EstablisherNameController @Inject()(
                                            override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            @EstablishersIndividualDetails val navigator: Navigator,
-                                           @EstablishersIndividualDetails oldNavigator: Navigator,
+                                           @OldEstablishersIndividualDetails oldNavigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,

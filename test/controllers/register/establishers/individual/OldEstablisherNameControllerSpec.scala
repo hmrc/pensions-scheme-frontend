@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
@@ -39,9 +55,9 @@ import views.html.personName
 
 import scala.concurrent.Future
 
-class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class OldEstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
 
-import EstablisherNameControllerSpec._
+  import OldEstablisherNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
     routes.EstablisherNameController.onSubmit(NormalMode, index, None),
@@ -61,10 +77,10 @@ import EstablisherNameControllerSpec._
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggle)
     when(mockFeatureToggle.get(any())(any(),any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
-  "EstablisherNameController" must {
+  "OldEstablisherNameController" must {
     "return OK and the correct view for a GET" in {
       val app = applicationBuilder(getEmptyData).build()
 
@@ -113,10 +129,10 @@ import EstablisherNameControllerSpec._
       val controller = app.injector.instanceOf[EstablisherNameController]
 
       val result = controller.onSubmit(NormalMode, index, None)(postRequest)
-
       status(result) mustBe SEE_OTHER
+      println(redirectLocation(result))
+      println(onwardRoute.url)
       redirectLocation(result) mustBe Some(onwardRoute.url)
-
       app.stop()
     }
 
@@ -148,14 +164,16 @@ import EstablisherNameControllerSpec._
   }
 }
 
-
-object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
+object OldEstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__establisher")
   private val mockFeatureToggle = mock[FeatureToggleService]
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  private def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 }
+
+
+
 
 
