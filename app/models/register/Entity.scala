@@ -241,7 +241,7 @@ case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: B
 
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = mode match {
     case NormalMode | CheckMode =>
-      Some(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+      Some(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.trusteeIndex).url)
     case _ => None
   }
 
