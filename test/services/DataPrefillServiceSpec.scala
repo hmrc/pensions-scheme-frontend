@@ -91,7 +91,7 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
             |            },
             |            {
             |                "isTrusteeNew" : true,
-            |                "trusteeKind" : "individual",
+            |                "trusteeKind" : "individual"
             |            }
             |        ]
             |""".stripMargin).as[JsArray]

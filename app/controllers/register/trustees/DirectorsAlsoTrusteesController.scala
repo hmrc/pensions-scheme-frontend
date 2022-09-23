@@ -136,11 +136,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(value, candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  if (value.headOption.getOrElse(-1) < 0) {
-                    Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
-                  } else {
-                    Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
-                  }
+                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -160,11 +156,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(List(0), candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  if (value < 0) {
-                    Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
-                  } else {
-                    Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
-                  }
+                  nav(value < 0, uaAfterCopy)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -177,6 +169,14 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
           }
         }
     }
+
+  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers): Result = {
+    if (noneSelected) {
+      Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
+    } else {
+      Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
+    }
+  }
 
   private def formCheckBox(implicit ua: UserAnswers, messages: Messages): Form[List[Int]] = {
     val existingDirCount = ua.allTrusteesAfterDelete.size
