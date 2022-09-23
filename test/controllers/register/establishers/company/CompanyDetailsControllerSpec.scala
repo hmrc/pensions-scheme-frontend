@@ -45,8 +45,8 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   private val form = formProvider()
   private val firstIndex = Index(0)
   private val postCall = routes.CompanyDetailsController.onSubmit _
-  private val navigator = new FakeNavigator(desiredRoute = onwardRoute)
-  private val oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
+  private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
+  private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[companyDetails]
   private val mockFeatureToggleService = mock[FeatureToggleService]
