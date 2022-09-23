@@ -62,6 +62,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
+          row(CompanyDetailsId(0))(someCompanyDetails, establisherTasklist),
           row(HasCompanyCRNId(0))(true, companyRegistrationNumberNew(NormalMode)),
           row(HasCompanyCRNId(0))(false, noCompanyRegistrationNumber(NormalMode)),
           row(HasCompanyVATId(0))(true, companyVatNew(NormalMode)),
@@ -285,6 +286,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, None, 0)
+
+  private def establisherTasklist: Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(0)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyNoCRNReasonController.onPageLoad(mode, None, 0)

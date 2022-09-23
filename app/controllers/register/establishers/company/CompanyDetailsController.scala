@@ -69,12 +69,7 @@ class CompanyDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn,
             index), srn))),
         value =>
-          userAnswersService.save(
-            mode,
-            srn,
-            CompanyDetailsId(index),
-            value
-          ).flatMap {
+          userAnswersService.save(mode, srn, CompanyDetailsId(index), value).flatMap {
             json =>
               featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
                 (isEnabled, mode) match {

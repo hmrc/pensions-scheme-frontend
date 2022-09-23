@@ -30,17 +30,17 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
-class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
+class OldEstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
   AbstractNavigator {
 
-  import EstablishersIndividualDetailsNavigator._
+  import OldEstablishersIndividualDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
   : PartialFunction[Identifier, Call] = {
-    case EstablisherNameId(index) => PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    case EstablisherNameId(_) => AddEstablisherController.onPageLoad(mode, srn)
     case EstablisherDOBId(index) if mode == NormalMode => EstablisherHasNINOController.onPageLoad(mode, index, srn)
     case EstablisherDOBId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case id@EstablisherHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode,
@@ -96,8 +96,7 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
     case EstablisherUTRId(_) => anyMoreChangesPage(srn)
   }
 }
-
-object EstablishersIndividualDetailsNavigator {
+object OldEstablishersIndividualDetailsNavigator {
   private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherEnterNINOController
     .onPageLoad(mode, index, srn)
 
@@ -110,3 +109,5 @@ object EstablishersIndividualDetailsNavigator {
   private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call = EstablisherNoUTRReasonController
     .onPageLoad(mode, index, srn)
 }
+
+

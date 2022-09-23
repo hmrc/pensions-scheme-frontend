@@ -21,7 +21,6 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
-import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -35,6 +34,7 @@ import utils.UserAnswers
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EstablisherNameController @Inject()(
