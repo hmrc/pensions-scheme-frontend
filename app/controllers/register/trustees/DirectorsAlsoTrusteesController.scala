@@ -136,7 +136,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(value, candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy)
+                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy, index)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -156,7 +156,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(List(0), candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  nav(value < 0, uaAfterCopy)
+                  nav(value < 0, uaAfterCopy, index)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -170,9 +170,9 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         }
     }
 
-  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers): Result = {
+  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers, index:Index): Result = {
     if (noneSelected) {
-      Redirect(TrusteeNameController.onPageLoad(NormalMode, uaAfterCopy.allTrustees.size, None))
+      Redirect(TrusteeNameController.onPageLoad(NormalMode, index, None))
     } else {
       Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
     }
