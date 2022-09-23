@@ -60,19 +60,20 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   private def renderView(status: Status,
                          candidateDirectors: Seq[IndividualDetails],
                          eitherForm: Either[Form[List[Int]], Form[Int]],
-                         schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+                         schemeName: String,
+                         index: Int)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillRadio.radios(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
         Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
     }
   }
@@ -84,7 +85,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       Right(formRadio)
     }
 
-  def onPageLoad: Action[AnyContent] =
+  def onPageLoad(index: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.right.map { schemeName =>
@@ -93,17 +94,18 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
               val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
               if (candidateDirectors.isEmpty) {
                 Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                  .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
+                  .onPageLoad(NormalMode, index, None)))
               } else {
                 renderView(Ok,
                   candidateDirectors,
                   getFormAsEither(candidateDirectors),
-                  schemeName
+                  schemeName,
+                  index
                 )
               }
             case _ =>
               Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                .onPageLoad(NormalMode, request.userAnswers.trusteesCount, None)))
+                .onPageLoad(NormalMode, index, None)))
           }.flatten
         }
     }
@@ -121,7 +123,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIdentifier)
   }
 
-  def onSubmit: Action[AnyContent] =
+  def onSubmit(index: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
@@ -134,16 +136,17 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   request.userAnswers
                 } else {
                   appendSelectedDirectors(value, candidateDirectors)
-                }).setOrException(DirectorsAlsoTrusteesId)(value)
+                }).setOrException(DirectorsAlsoTrusteesId(index))(value)
 
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(DirectorsAlsoTrusteesId, NormalMode, uaAfterCopy, None))
+                  Redirect(navigator.nextPage(DirectorsAlsoTrusteesId(index), NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
                   candidateDirectors,
                   Left(boundForm),
-                  schemeName
+                  schemeName,
+                  index
                 )
             }
           } else {
@@ -154,15 +157,16 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   request.userAnswers
                 } else {
                   appendSelectedDirectors(List(0), candidateDirectors)
-                }).setOrException(DirectorAlsoTrusteeId)(value)
+                }).setOrException(DirectorAlsoTrusteeId(index))(value)
                 userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(DirectorAlsoTrusteeId, NormalMode, uaAfterCopy, None))
+                  Redirect(navigator.nextPage(DirectorAlsoTrusteeId(index), NormalMode, uaAfterCopy, None))
                 }
               case _ =>
                 renderView(BadRequest,
                   candidateDirectors,
                   Right(boundForm),
-                  schemeName
+                  schemeName,
+                  index
                 )
             }
           }

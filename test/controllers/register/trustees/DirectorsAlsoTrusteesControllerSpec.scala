@@ -65,7 +65,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
   private val pageHeading = Messages("messages__trustees__prefill__title")
   private val titleMessage = Messages("messages__trustees__prefill__heading", companyDetails.companyName)
-  private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit
+  private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(0)
 
   private val seqOneEstablisherDirector = Seq(
     DataPrefillIndividualDetails(
@@ -93,6 +93,8 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
     bind[FeatureToggleService].toInstance(mockFeatureToggleService)
   )
 
+  private val index = 0
+
   override def beforeEach: Unit = {
     reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
@@ -108,7 +110,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(fakeRequest)
+        val result = controller.onPageLoad(index)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -128,7 +130,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onPageLoad(fakeRequest)
+        val result = controller.onPageLoad(index)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
@@ -142,7 +144,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onPageLoad(fakeRequest)
+        val result = controller.onPageLoad(index)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
@@ -169,7 +171,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
           "value[0]" -> "0",
           "value[1]" -> "2"
         )
-        val result = controller.onSubmit(request)
+        val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
         val expectedDirectors = Seq(
@@ -178,7 +180,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
-        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId) mustBe Some(Seq(0, 2))
+        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId(0)) mustBe Some(Seq(0, 2))
       }
     }
 
@@ -198,13 +200,13 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
         )
-        val result = controller.onSubmit(request)
+        val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
 
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
-        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId) mustBe Some(Seq(-1))
+        UserAnswers(jsonCaptor.getValue).get(DirectorsAlsoTrusteesId(0)) mustBe Some(Seq(-1))
       }
     }
 
@@ -224,7 +226,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "0"
         )
-        val result = controller.onSubmit(request)
+        val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
         val expectedDirectors = Seq(
@@ -232,7 +234,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         verify(mockDataPrefillService, atLeastOnce).copySelectedDirectorsToTrustees(any(), ArgumentMatchers.eq(expectedDirectors))
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe Some("test")
-        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId) mustBe Some(0)
+        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId(0)) mustBe Some(0)
       }
     }
 
@@ -252,12 +254,12 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "-1"
         )
-        val result = controller.onSubmit(request)
+        val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
-        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId) mustBe Some(-1)
+        UserAnswers(jsonCaptor.getValue).get(DirectorAlsoTrusteeId(0)) mustBe Some(-1)
       }
     }
 
@@ -267,7 +269,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onSubmit(fakeRequest)
+        val result = controller.onSubmit(index)(fakeRequest)
         status(result) mustBe BAD_REQUEST
       }
     }
