@@ -43,7 +43,7 @@ class EstablisherNameController @Inject()(
                                            override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            @EstablishersIndividualDetails val navigator: Navigator,
-                                           @OldEstablishersIndividualDetails oldNavigator: Navigator,
+                                           @OldEstablishersIndividualDetails val oldNavigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            allowAccess: AllowAccessActionProvider,

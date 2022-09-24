@@ -21,7 +21,7 @@ import controllers.actions._
 import navigators._
 import navigators.establishers.individual.{EstablishersIndividualAddressNavigator, EstablishersIndividualContactDetailsNavigator, EstablishersIndividualDetailsNavigator, OldEstablishersIndividualDetailsNavigator}
 import navigators.establishers.partnership.partner.PartnerNavigator
-import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator}
+import navigators.establishers.partnership.{EstablisherPartnershipAddressNavigator, EstablisherPartnershipContactDetailsNavigator, EstablisherPartnershipDetailsNavigator, OldEstablisherPartnershipDetailsNavigator}
 import navigators.trustees.individuals.{TrusteesIndividualAddressNavigator, TrusteesIndividualContactDetailsNavigator, TrusteesIndividualDetailsNavigator}
 import navigators.trustees.partnership.{TrusteesPartnershipAddressNavigator, TrusteesPartnershipContactDetailsNavigator, TrusteesPartnershipDetailsNavigator}
 import services.{UserAnswersService, UserAnswersServiceEstablishersAndTrusteesImpl, UserAnswersServiceImpl, UserAnswersServiceInsuranceImpl}
@@ -127,6 +127,14 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[OldEstablishersIndividualDetails])
       .to(classOf[OldEstablishersIndividualDetailsNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[EstablishersPartnership])
+      .to(classOf[EstablisherPartnershipDetailsNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[OldEstablishersPartnership])
+      .to(classOf[OldEstablisherPartnershipDetailsNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Establishers])
