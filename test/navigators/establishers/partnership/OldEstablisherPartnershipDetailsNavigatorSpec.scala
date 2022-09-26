@@ -27,8 +27,8 @@ import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{mock, reset, when}
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.prop._
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import services.FeatureToggleService
 import utils.UserAnswers
@@ -49,7 +49,8 @@ class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Naviga
   }
 
   val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector.instanceOf[Navigator]
+    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector
+      .instanceOf[OldEstablisherPartnershipDetailsNavigator]
 
   "OldEstablishersPartnershipDetailsNavigator" when {
     "in NormalMode" must {

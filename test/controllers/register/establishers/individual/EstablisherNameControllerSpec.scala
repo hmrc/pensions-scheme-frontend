@@ -24,7 +24,6 @@ import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
-import navigators.establishers.individual.EstablishersIndividualDetailsNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
@@ -35,6 +34,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FeatureToggleService, UserAnswersService}
 import utils.FakeNavigator
+import utils.annotations.EstablishersIndividualDetails
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -108,8 +108,7 @@ import EstablisherNameControllerSpec._
       val app = applicationBuilder(getEmptyData)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-          bind(classOf[EstablishersIndividualDetailsNavigator]).toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersIndividualDetails]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]

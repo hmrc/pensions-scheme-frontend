@@ -76,7 +76,8 @@ class EstablisherNameController @Inject()(
               cacheMap =>
                 featureToggleService.get(FeatureToggleName.SchemeRegistration).map{ featureToggle =>
                   (featureToggle.isEnabled, mode) match {
-                  case (true, NormalMode) => Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
+                  case (true, NormalMode) =>
+                    Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
                   case _ => Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
                   }
                 }

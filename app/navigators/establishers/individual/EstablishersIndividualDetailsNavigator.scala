@@ -40,7 +40,8 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
   : PartialFunction[Identifier, Call] = {
-    case EstablisherNameId(index) => PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    case EstablisherNameId(index) =>
+      PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
     case EstablisherDOBId(index) if mode == NormalMode => EstablisherHasNINOController.onPageLoad(mode, index, srn)
     case EstablisherDOBId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case id@EstablisherHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode,
