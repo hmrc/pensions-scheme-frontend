@@ -636,6 +636,7 @@ messages__addTrustee__header = Trustee name
 messages__addTrustees_at_maximum = You have added the maximum number of trustees.
 messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 messages__addTrustees_error_required = Select yes if you want to add another trustee
+messages__trustees__add_hint = You must add at least one trustee.
 
 messages__schemeReview__title = Review
 messages__schemeReview__heading = Review

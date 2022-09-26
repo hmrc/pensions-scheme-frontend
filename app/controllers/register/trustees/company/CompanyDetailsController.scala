@@ -21,13 +21,17 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
+import models.FeatureToggleName.SchemeRegistration
+import models.requests.DataRequest
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.company.companyDetails
@@ -45,7 +49,8 @@ class CompanyDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
-                                          val view: companyDetails
+                                          val view: companyDetails,
+                                          featureToggleService: FeatureToggleService
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -71,12 +76,24 @@ class CompanyDetailsController @Inject()(
         value =>
           request.userAnswers.upsert(CompanyDetailsId(index))(value) {
             answers =>
-              userAnswersService.upsert(mode, srn, answers.json).map {
-                json =>
-                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
+              userAnswersService.upsert(mode, srn, answers.json).flatMap {
+                json => {
+                  tempToggleAmend(request.userAnswers.set(CompanyDetailsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
+                    Redirect(navigator.nextPage(CompanyDetailsId(index), mode, updatedUA, srn))
+                  }
+                }
               }
           }
       )
+  }
+
+  //TODO: Remove whole method once toggle is removed
+  private def tempToggleAmend(ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
+    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { toggleValue =>
+      val uaAsJsObject = ua.json.as[JsObject]
+      val updatedJson = uaAsJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue)
+      UserAnswers(updatedJson)
+    }
   }
 
 }

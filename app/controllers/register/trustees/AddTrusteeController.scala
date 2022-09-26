@@ -22,16 +22,19 @@ import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
-import models.Mode
+import models.{FeatureToggleName, Mode, NormalMode}
+import models.register.Trustee
+import models.requests.DataRequest
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{NoSuspendedCheck, Trustees}
-import views.html.register.trustees.addTrustee
+import views.html.register.trustees.{addTrustee, addTrusteeOld}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,8 +47,10 @@ class AddTrusteeController @Inject()(
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider,
+                                      featureToggleService: FeatureToggleService,
                                       val controllerComponents: MessagesControllerComponents,
-                                      val view: addTrustee
+                                      val view: addTrustee,
+                                      val addTrusteeOldView: addTrusteeOld
                                     )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport
@@ -55,15 +60,33 @@ class AddTrusteeController @Inject()(
 
   private val form = formProvider()
 
+  private def renderPage(
+                          trustees: Seq[Trustee[_]],
+                          mode: Mode,
+                          srn: Option[String],
+                          form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+
+    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+      (isEnabled, mode) match {
+        case (true, NormalMode) =>
+          val completeTrustees = trustees.filter(_.isCompleted)
+          val incompleteTrustees = trustees.filterNot(_.isCompleted)
+          status(view(form, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn))
+        case _ => status(addTrusteeOldView(form, mode, trustees, existingSchemeName, srn))
+      }
+    }
+  }
+
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val trustees = request.userAnswers.allTrusteesAfterDelete
-        Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
+        renderPage(trustees, mode, srn, form, Ok)
+        //Future.successful(Ok(view(form, mode, trustees, existingSchemeName, srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+    andThen requireData).async {
       implicit request =>
 
         val trustees = request.userAnswers.allTrusteesAfterDelete
@@ -74,7 +97,7 @@ class AddTrusteeController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               Future.successful(BadRequest(
-                view(formWithErrors, mode, trustees, existingSchemeName, srn)))
+                view(formWithErrors, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn)))
             },
             value =>
               request.userAnswers.set(AddTrusteeId)(value).fold(
