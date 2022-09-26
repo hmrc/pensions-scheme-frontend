@@ -29,7 +29,7 @@ import models.{FeatureToggleName, Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -76,8 +76,10 @@ class PartnershipDetailsController @Inject()(
         value =>
           request.userAnswers.upsert(PartnershipDetailsId(index))(value) {
             answers =>
-              userAnswersService.upsert(mode, srn, answers.json).map { cacheMap =>
-                Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, new UserAnswers(cacheMap), srn))
+              userAnswersService.upsert(mode, srn, answers.json).flatMap { cacheMap =>
+                tempToggleAmend(request.userAnswers.set(PartnershipDetailsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
+                  Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, updatedUA, srn))
+                }
               }
           }
       )
