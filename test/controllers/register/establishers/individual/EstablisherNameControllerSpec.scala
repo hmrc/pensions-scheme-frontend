@@ -107,6 +107,7 @@ import EstablisherNameControllerSpec._
 
       val app = applicationBuilder(getEmptyData)
         .overrides(
+          bind[FeatureToggleService].toInstance(mockFeatureToggle),
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersIndividualDetails]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
