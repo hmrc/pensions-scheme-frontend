@@ -24,6 +24,7 @@ import controllers.routes.AnyMoreChangesController
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import play.api.mvc.Call
@@ -40,7 +41,12 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   private def normalAndUpdateModeRoutes(mode: Mode,
                                         ua: UserAnswers,
                                         srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case CompanyDetailsId(index) => addTrusteePage(mode, srn)
+    case CompanyDetailsId(index) =>
+      // TODO: Remove Json code below when SchemeRegistration toggle is removed
+      (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
+        case Some(true) => trusteeTaskList(index)
+        case _ => addTrusteePage(mode, srn)
+      }
     case id@HasCompanyCRNId(index) =>
       booleanNav(id, ua, companyNoPage(mode, index, srn), noCompanyNoPage(mode, index, srn))
     case CompanyNoCRNReasonId(index) => hasCompanyUtrPage(mode, index, srn)
@@ -191,6 +197,9 @@ object TrusteesCompanyNavigator {
 
   private def addTrusteePage(mode: Mode, srn: Option[String]): Call =
     AddTrusteeController.onPageLoad(mode, srn)
+
+  private def trusteeTaskList(index: Int): Call =
+    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
   private def selectAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
     CompanyAddressListController.onPageLoad(mode, index, srn)

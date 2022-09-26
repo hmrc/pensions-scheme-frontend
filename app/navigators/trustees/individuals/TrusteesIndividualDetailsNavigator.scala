@@ -23,6 +23,7 @@ import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import navigators.AbstractNavigator
@@ -44,8 +45,12 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(_) =>
-      AddTrusteeController.onPageLoad(mode, srn)
+    case TrusteeNameId(index) =>
+      // TODO: Remove Json code below when SchemeRegistration toggle is removed
+      (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
+        case Some(true) => trusteeTaskList(index)
+        case _ => AddTrusteeController.onPageLoad(mode, srn)
+      }
     case TrusteeDOBId(index) if mode == NormalMode =>
       hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) =>
@@ -109,6 +114,9 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
 object TrusteesIndividualDetailsNavigator {
   private def hasNinoPage(mode: Mode, index: Int, srn: Option[String]): Call =
     TrusteeHasNINOController.onPageLoad(mode, index, srn)
+
+  private def trusteeTaskList(index: Int): Call =
+    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
   private def ninoPage(mode: Mode, index: Int, srn: Option[String]): Call =
     TrusteeEnterNINOController.onPageLoad(mode, index, srn)
