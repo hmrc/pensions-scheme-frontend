@@ -24,6 +24,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
+import navigators.establishers.individual.EstablishersIndividualDetailsNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
@@ -107,7 +108,8 @@ import EstablisherNameControllerSpec._
       val app = applicationBuilder(getEmptyData)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+          bind(classOf[EstablishersIndividualDetailsNavigator]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
@@ -155,7 +157,7 @@ object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSuga
   private val mockFeatureToggle = mock[FeatureToggleService]
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
-  private def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  private def onwardRoute: Call = Call("GET", "/index")
 }
 
 
