@@ -50,14 +50,15 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FeatureToggleService, UserAnswersService}
 import utils.FakeNavigator
+import utils.annotations.OldEstablishersIndividualDetails
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.Future
 
-class OldEstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
+class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach{
 
-  import OldEstablisherNameControllerSpec._
+  import EstablisherNameControllerToggleOffSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
     routes.EstablisherNameController.onSubmit(NormalMode, index, None),
@@ -122,16 +123,15 @@ class OldEstablisherNameControllerSpec extends ControllerSpecBase with BeforeAnd
 
       val app = applicationBuilder(getEmptyData)
         .overrides(
+          bind[FeatureToggleService].toInstance(mockFeatureToggle),
           bind[UserAnswersService].toInstance(mockUserAnswersService),
-          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
+          bind(classOf[Navigator]).qualifiedWith(classOf[OldEstablishersIndividualDetails]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
       val result = controller.onSubmit(NormalMode, index, None)(postRequest)
       status(result) mustBe SEE_OTHER
-      println(redirectLocation(result))
-      println(onwardRoute.url)
       redirectLocation(result) mustBe Some(onwardRoute.url)
       app.stop()
     }
@@ -164,7 +164,7 @@ class OldEstablisherNameControllerSpec extends ControllerSpecBase with BeforeAnd
   }
 }
 
-object OldEstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
+object EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with MockitoSugar {
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__establisher")
   private val mockFeatureToggle = mock[FeatureToggleService]
