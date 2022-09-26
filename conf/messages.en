@@ -322,7 +322,7 @@ messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
 messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
-messages__establishers__add_hint = You must tell us about all your scheme establishers.
+messages__establishers__add_hint = You must add at least one establisher.
 messages__establishers__add_limit = You have added the maximum number of establishers
 messages__establishers__add_header = Establisher name
 
