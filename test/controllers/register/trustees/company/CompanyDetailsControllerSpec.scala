@@ -17,12 +17,16 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
+import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.{CompanyDetails, Index, NormalMode}
-import org.mockito.MockitoSugar.mock
+import models.FeatureToggleName.SchemeRegistration
+import models.{CompanyDetails, FeatureToggle, Index, NormalMode}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset}
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -31,9 +35,18 @@ import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.FakeNavigator
 import views.html.register.trustees.company.companyDetails
 
-class CompanyDetailsControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
 
   appRunning()
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new CompanyDetailsFormProvider()

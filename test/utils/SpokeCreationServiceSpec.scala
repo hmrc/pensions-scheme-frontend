@@ -458,18 +458,18 @@ class SpokeCreationServiceSpec
         result mustBe expectedSpoke
       }
 
-//      "display all the spokes with appropriate links, in progress status when trustee company is in progress" in {
-//        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
-//          trusteesCompanyDetails(index = 0, CompanyDetails("test company")).
-//          trusteesCompanyHasUTR(0, hasUtr = true).
-//          trusteesCompanyEnterUTR(0, ReferenceValue("test-utr")).
-//          trusteesCompanyAddress(index = 0, address).
-//          trusteeCompanyEmail(index = 0, email = "s@s.com")
-//        val expectedSpoke = trusteeCompanyInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
-//
-//        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
-//        result mustBe expectedSpoke
-//      }
+      "display all the spokes with appropriate links, in progress status when trustee company is incomplete" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteesCompanyDetails(index = 0, CompanyDetails("test company")).
+          trusteesCompanyHasUTR(0, hasUtr = true).
+          trusteesCompanyEnterUTR(0, ReferenceValue("test-utr")).
+          trusteesCompanyAddress(index = 0, address).
+          trusteeCompanyEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteeCompanyInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
+
+        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
 
       "display all the spokes with appropriate links, complete status when trustee company is completed" in {
         val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
@@ -530,16 +530,16 @@ class SpokeCreationServiceSpec
         result mustBe expectedSpoke
       }
 
-//      "display all the spokes with appropriate links, in progress status when trustee partnership is in progress" in {
-//        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
-//          trusteePartnershipDetails(index = 0, PartnershipDetails("test partnership")).
-//          trusteesPartnershipHasVAT(0, hasVat = false).trusteePartnershipAddress(index = 0, address).
-//          trusteePartnershipEmail(index = 0, email = "s@s.com")
-//        val expectedSpoke = trusteePartnershipInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
-//
-//        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
-//        result mustBe expectedSpoke
-//      }
+      "display all the spokes with appropriate links, incomplete status when trustee partnership is incomplete" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteePartnershipDetails(index = 0, PartnershipDetails("test partnership")).
+          trusteesPartnershipHasVAT(0, hasVat = false).trusteePartnershipAddress(index = 0, address).
+          trusteePartnershipEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteePartnershipInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
+
+        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
 
       "display all the spokes with appropriate links, complete status when trustee partnership is completed" in {
         val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
@@ -599,17 +599,17 @@ class SpokeCreationServiceSpec
         result mustBe expectedSpoke
       }
 
-//      "display all the spokes with appropriate links when trustee individual is in progress" in {
-//        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
-//          trusteeName(index = 0, PersonName("s", "l")).
-//          trusteeIndividualNino(0, ReferenceValue("AB100100A")).
-//          trusteesAddress(index = 0, address).
-//          trusteeEmail(index = 0, email = "s@s.com")
-//        val expectedSpoke = trusteeIndividualInProgressSpoke(NormalMode, srn = None, linkText = "change", status = Some(false))
-//
-//        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
-//        result mustBe expectedSpoke
-//      }
+      "display all the spokes with appropriate links when trustee individual is in progress" in {
+        val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true).
+          trusteeName(index = 0, PersonName("s", "l")).
+          trusteeIndividualNino(0, ReferenceValue("AB100100A")).
+          trusteesAddress(index = 0, address).
+          trusteeEmail(index = 0, email = "s@s.com")
+        val expectedSpoke = trusteeIndividualInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
+
+        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        result mustBe expectedSpoke
+      }
 
       "display all the spokes with appropriate links when trustee individual is completed" in {
         val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
@@ -776,13 +776,14 @@ class SpokeCreationServiceSpec
       result mustBe expectedSpoke
     }
 
-    "return all the spokes with appropriate links when have any trustees flag has no value AND there are trustees AND NOT view only and there is no srn" in {
+    "return all the spokes with appropriate links when have any trustees flag has no value AND" +
+      " there are trustees AND NOT view only and there is no srn AND spoke is incomplete" in {
       val userAnswers = userAnswersWithSchemeName
         .trusteeKind(0, TrusteeKind.Individual)
         .trusteeName(0, personName)
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
           None
         ))
@@ -792,14 +793,14 @@ class SpokeCreationServiceSpec
     }
 
     "return all the spokes with appropriate links when have any trustees flag has value of true AND" +
-      " there are trustees AND NOT view only and there is no srn" in {
+      " there are trustees AND NOT view only and there is no srn AND spoke is incomplete" in {
       val userAnswers = userAnswersWithSchemeName
         .trusteeKind(0, TrusteeKind.Individual)
         .trusteeName(0, personName)
         .haveAnyTrustees(true)
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
           None
         ))
@@ -812,7 +813,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionTrustees_add_link"),
+            Message("messages__schemeTaskList__sectionTrustees_add_link", schemeName),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
           None
         ))
@@ -827,7 +828,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionTrustees_add_link"),
+            Message("messages__schemeTaskList__sectionTrustees_add_link", schemeName),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
           None
         ))
@@ -838,6 +839,104 @@ class SpokeCreationServiceSpec
 
     "return no spokes when no trustees and view only" in {
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      result mustBe Nil
+    }
+
+  }
+
+  "getAddTrusteeHeaderSpokesToggleOff" must {
+    "return all the spokes with appropriate links when have any trustees flag has no value AND there are trustees AND NOT view only and there is an srn" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeKind(0, TrusteeKind.Individual)
+        .trusteeName(0, personName)
+      val expectedSpoke =
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
+        )
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, UpdateMode, srn, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when have any trustees flag has value of true AND" +
+      " there are trustees AND NOT view only and there is an srn" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeKind(0, TrusteeKind.Individual)
+        .trusteeName(0, personName)
+        .haveAnyTrustees(true)
+      val expectedSpoke =
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
+        )
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, UpdateMode, srn, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when have any trustees flag has no value AND there are trustees AND NOT view only and there is no srn" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeKind(0, TrusteeKind.Individual)
+        .trusteeName(0, personName)
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+          None
+        ))
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when have any trustees flag has value of true AND" +
+      " there are trustees AND NOT view only and there is no srn" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeKind(0, TrusteeKind.Individual)
+        .trusteeName(0, personName)
+        .haveAnyTrustees(true)
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+          None
+        ))
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when have any trustees flag has no value AND there are NO trustees AND NOT view only" in {
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionTrustees_add_link_toggleOff"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
+          None
+        ))
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return all the spokes with appropriate links when have any trustees flag has value of true AND there are NO trustees AND NOT view only" in {
+      val userAnswers = userAnswersWithSchemeName
+        .haveAnyTrustees(true)
+      val expectedSpoke =
+        Seq(EntitySpoke(
+          TaskListLink(
+            Message("messages__schemeTaskList__sectionTrustees_add_link_toggleOff"),
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
+          None
+        ))
+
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, UpdateMode, srn, viewOnly = false)
+      result mustBe expectedSpoke
+    }
+
+    "return no spokes when no trustees and view only" in {
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
       result mustBe Nil
     }
 
