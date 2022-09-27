@@ -28,6 +28,7 @@ import models.person.PersonName
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -35,7 +36,7 @@ import play.api.test.Helpers.{contentAsString, _}
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.addTrusteeOld
 
-class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper {
+class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach {
   appRunning()
 
   private lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
@@ -56,7 +57,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
-
+  //TODO: This needs to be changed to addTrustee
   private val view = injector.instanceOf[addTrusteeOld]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
