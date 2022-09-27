@@ -104,7 +104,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       None,
       section,
       section.entities.forall(_.isCompleted.contains(true)),
-      Some(StatsSection(totalCompletedSections, 4, None))
+      Some(StatsSection(totalCompletedSections, 3, None))
     )
   }
 
