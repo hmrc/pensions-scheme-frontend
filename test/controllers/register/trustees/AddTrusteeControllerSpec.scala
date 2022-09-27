@@ -33,7 +33,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import utils.{FakeNavigator, UserAnswers}
-import views.html.register.trustees.addTrustee
+import views.html.register.trustees.addTrusteeOld
 
 class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper {
   appRunning()
@@ -57,7 +57,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
 
-  private val view = injector.instanceOf[addTrustee]
+  private val view = injector.instanceOf[addTrusteeOld]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
     new AddTrusteeController(

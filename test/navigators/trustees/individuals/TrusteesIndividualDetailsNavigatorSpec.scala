@@ -22,10 +22,12 @@ import generators.Generators
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
+import models.FeatureToggleName.SchemeRegistration
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
@@ -41,6 +43,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     Table(
       ("Id", "UserAnswers", "Next Page"),
       row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)),
+      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index),Some(uaFeatureToggleOn)),
       row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(NormalMode, index, None)),
       row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(NormalMode, index, None)),
       row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(NormalMode, index, None)),
@@ -122,6 +125,12 @@ object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers wit
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val exisitingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
   private val srn = Some("srn")
+  private val uaFeatureToggleOn = {
+    val x = Json.obj(
+      SchemeRegistration.asString -> true
+    )
+    UserAnswers(x)
+  }
 
   private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
     CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)

@@ -21,29 +21,33 @@ import controllers.register.trustees.individual.routes.TrusteeNameController
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
+import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.Future
 
-class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSuite {
+class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   import TrusteeNameControllerSpec._
 
   private val view = injector.instanceOf[personName]
+  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   def viewAsString(form: Form[_] = form): String = view(
     form,
@@ -53,9 +57,19 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "Test"), ("lastName", "Name"))
 
+  private val extraModules: Seq[GuiceableModule] = Seq(
+    bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+  )
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(),any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
+
   "TrusteeNameController" must {
     "return OK and the correct view for a GET" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, extraModules).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -69,7 +83,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val app = applicationBuilder(getMandatoryTrustee).build()
+      val app = applicationBuilder(getMandatoryTrustee, extraModules).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -93,7 +107,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       when(mockUserAnswersService.save(any(), any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val app = applicationBuilder(getEmptyData)
+      val app = applicationBuilder(getEmptyData, extraModules)
         .overrides(
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute))
@@ -110,7 +124,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, extraModules).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
@@ -124,7 +138,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
     }
 
     "return a Bad Request and errors when no data is submitted" in {
-      val app = applicationBuilder(getEmptyData).build()
+      val app = applicationBuilder(getEmptyData, extraModules).build()
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
