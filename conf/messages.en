@@ -1319,8 +1319,10 @@ messages__schemeTaskList__sectionPartnership_change_contact = Change {0}’s par
 
 messages__schemeTaskList__sectionTrustees_header = Trustees
 messages__schemeTaskList__sectionTrustees_add_link = Add {0}’s trustees
+messages__schemeTaskList__sectionTrustees_add_link_toggleOff = Add trustees
 messages__schemeTaskList__sectionTrustees_add_additional_text = There must be a minimum of 1 trustee. If you want to remove this trustee, you must first add a new one.
 messages__schemeTaskList__sectionTrustees_change_link = Change {0}’s trustees
+messages__schemeTaskList__sectionTrustees_change_link_toggleOff = Change trustees
 messages__schemeTaskList__sectionTrustees_continue_link = Continue adding {0}’s trustees
 messages__schemeTaskList__sectionTrustees_view_link = View trustees
 messages__schemeTaskList__sectionTrustees_no_trustees = No trustees

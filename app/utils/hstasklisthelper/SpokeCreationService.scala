@@ -225,24 +225,24 @@ class SpokeCreationService extends Enumerable.Implicits {
   def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
 
     val schemeName = answers.get(SchemeNameId).getOrElse("")
-    val trustees = answers.allEstablishersAfterDelete(mode)
+    val trustees = answers.allTrusteesAfterDelete
     //val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
 
-    (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
+    (answers.get(HaveAnyTrusteesId), trustees.isEmpty, viewOnly) match {
       case (None | Some(true), false, false) if srn.isDefined =>
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
         )
-      case (None | Some(true), false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-          None
-        ))
       case (None | Some(true), false, false) if !trustees.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
+          None
+        ))
+      case (None | Some(true), false, false) =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
           None
         ))
@@ -269,14 +269,14 @@ class SpokeCreationService extends Enumerable.Implicits {
         )
       case (None | Some(true), false, false) =>
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
           None
         ))
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionTrustees_add_link"),
+            Message("messages__schemeTaskList__sectionTrustees_add_link_toggleOff"),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size,
               srn).url),
           None
