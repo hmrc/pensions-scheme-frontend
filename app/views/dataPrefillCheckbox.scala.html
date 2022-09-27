@@ -1,0 +1,68 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import controllers.routes._
+@import utils.ViewHelper.titleWithErrors
+@import play.api.mvc.Call
+@import utils.InputOption
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+
+@this(
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_radio: components_refactored.input_radio,
+    submit_button: components_refactored.submit_button,
+    govukCheckboxes : GovukCheckboxes
+)
+
+@(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call)(implicit request: Request[_], messages: Messages)
+
+@layout( pageTitle = titleWithErrors(form, titleMessage)) {
+    @formHelper(action = postCall, 'autoComplete -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+        }
+
+        @schemeName.map{sn=>
+
+            @govukCheckboxes(
+              Checkboxes(
+                fieldset = Some(Fieldset(
+                  legend = Some(Legend(
+                    content = Text(pageHeading),
+                    classes = "govuk-label--xl",
+                    isPageHeading = true
+                  ))
+                )),
+                idPrefix = Some("value"),
+                items = options
+              ).withFormField(form("value"))
+            )
+        }
+
+        @submit_button("site.save_and_continue", true)
+
+        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+
+    }
+}

@@ -21,18 +21,18 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import javax.inject.Inject
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.EstablishersCompany
+import utils.annotations.{EstablishersCompany, OldEstablishersCompany}
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.company.companyDetails
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyDetailsController @Inject()(
@@ -40,13 +40,15 @@ class CompanyDetailsController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
                                           @EstablishersCompany navigator: Navigator,
+                                          @OldEstablishersCompany oldNavigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           allowAccess: AllowAccessActionProvider,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
-                                          val view: companyDetails
+                                          val view: companyDetails,
+                                          featureToggleService: FeatureToggleService
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -67,14 +69,14 @@ class CompanyDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn,
             index), srn))),
         value =>
-          userAnswersService.save(
-            mode,
-            srn,
-            CompanyDetailsId(index),
-            value
-          ).map {
+          userAnswersService.save(mode, srn, CompanyDetailsId(index), value).flatMap {
             json =>
-              Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
+              featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+                (isEnabled, mode) match {
+                  case (true, NormalMode) => Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
+                  case _ => Redirect(oldNavigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
+                }
+              }
           }
       )
   }

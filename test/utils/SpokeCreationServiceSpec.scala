@@ -669,7 +669,7 @@ class SpokeCreationServiceSpec
     "return all the spokes with appropriate links when no establishers and NOT view only" in {
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link_toggleOff"),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(UpdateMode, 0, srn).url), None)
         )
 
@@ -700,7 +700,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            Message("messages__schemeTaskList__sectionEstablishers_change_link_toggleOff"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
           None
         ))
@@ -719,7 +719,7 @@ class SpokeCreationServiceSpec
     "return all the spokes with appropriate links when no establishers and NOT view only" in {
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link", schemeName),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(UpdateMode, 0, srn).url), Some(false))
         )
 
@@ -735,7 +735,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_continue_link"),
+            Message("messages__schemeTaskList__sectionEstablishers_continue_link", schemeName),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
           Some(false)
         ))
