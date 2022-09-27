@@ -76,8 +76,8 @@ class PartnershipDetailsController @Inject()(
         value =>
           request.userAnswers.upsert(PartnershipDetailsId(index))(value) {
             answers =>
-              userAnswersService.upsert(mode, srn, answers.json).flatMap { cacheMap =>
-                tempToggleAmend(request.userAnswers.set(PartnershipDetailsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
+              userAnswersService.upsert(mode, srn, answers.json).flatMap { _ =>
+                tempToggleAmend(request.userAnswers.setOrException(PartnershipDetailsId(index))(value)).map { updatedUA =>
                   Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, updatedUA, srn))
                 }
               }

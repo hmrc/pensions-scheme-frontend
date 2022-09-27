@@ -80,7 +80,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
         value =>
-          userAnswersService.save(mode, srn, TrusteeNameId(index), value).flatMap { cacheMap =>
+          userAnswersService.save(mode, srn, TrusteeNameId(index), value).flatMap { _ =>
             tempToggleAmend(request.userAnswers.set(TrusteeNameId(index))(value).asOpt.getOrElse(request.userAnswers)).map{ updatedUA =>
             Redirect(navigator.nextPage(TrusteeNameId(index), mode, updatedUA, srn))
             }

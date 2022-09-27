@@ -77,7 +77,7 @@ class CompanyDetailsController @Inject()(
           request.userAnswers.upsert(CompanyDetailsId(index))(value) {
             answers =>
               userAnswersService.upsert(mode, srn, answers.json).flatMap {
-                json => {
+                _ => {
                   tempToggleAmend(request.userAnswers.set(CompanyDetailsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
                     Redirect(navigator.nextPage(CompanyDetailsId(index), mode, updatedUA, srn))
                   }
