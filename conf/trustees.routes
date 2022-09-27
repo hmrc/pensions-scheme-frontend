@@ -45,6 +45,9 @@ GET         /:index/partnership/:mode/already-deleted            controllers.reg
 
 GET         /:index/trustee-tasklist                            controllers.register.trustees.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(mode: Mode = NormalMode, index:Index, srn: Option[String] = None)
 
+GET         /:index/directors-also-trustees                      controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad(index: Index)
+POST        /:index/directors-also-trustees                      controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit(index: Index)
+
 ->          /                                                    trusteesCompany.Routes
 ->          /                                                    trusteesIndividual.Routes
 ->          /                                                    trusteesPartnership.Routes

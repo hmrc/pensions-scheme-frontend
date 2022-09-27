@@ -33,17 +33,19 @@
 package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
+import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
+import models.FeatureToggleName.SchemeRegistration
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, NormalMode}
+import models.{CompanyDetails, DataPrefillRadio, FeatureToggle, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.never
-import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify, when}
+import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
 import play.api.inject.bind
@@ -51,7 +53,7 @@ import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{DataPrefillService, UserAnswersService}
+import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
 import utils.UserAnswers
 import views.html.dataPrefillRadio
 
@@ -76,6 +78,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val mockDataPrefillService = mock[DataPrefillService]
   private val mockNavigator = mock[EstablishersCompanyNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
+  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
@@ -100,12 +103,15 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
     bind[EstablishersCompanyNavigator].toInstance(mockNavigator),
-    bind[UserAnswersService].toInstance(mockUserAnswersService)
+    bind[UserAnswersService].toInstance(mockUserAnswersService),
+    bind[FeatureToggleService].toInstance(mockFeatureToggleService)
   )
 
   override def beforeEach: Unit = {
     reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "onPageLoad when only one trustee" must {
@@ -125,6 +131,22 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
 
         contentAsString(result) mustBe
           view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall)(fakeRequest, messages).toString
+      }
+    }
+
+    "return Ok and the correct redirect to director name page when toggle is off" in {
+      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
+        .thenReturn(seqOneTrustee)
+      when(mockFeatureToggleService.get(any())(any(), any()))
+        .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules: _*)) { app =>
+        val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
+        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
+          .onPageLoad(NormalMode, establisherIndex, 0, None).url)
       }
     }
 

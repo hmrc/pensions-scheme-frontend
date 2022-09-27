@@ -52,7 +52,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(AddTrusteeId)(false, taskList(NormalMode, None), ua = Some(establishersOrTrusteesChanged)),
           rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, None)),
           row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, None)),
-          row(TrusteeKindId(0))(TrusteeKind.Individual, trusteeName(NormalMode, None)),
+          row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees),
           row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, None)),
           row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, None), ua = Some(trustees(0))),
           row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, None), ua = Some(oneDeletedTrustee)),
@@ -89,6 +89,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val emptyAnswers = UserAnswers()
   private val srnValue     = "123"
   private val srn          = Some(srnValue)
+  private val index = 0
 
   private def establishersOrTrusteesChanged = emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
 
@@ -124,6 +125,9 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trusteeName(mode: Mode, srn: Option[String]) =
     controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, srn)
+
+  private def directorsAlsoTrustees =
+    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
 
   private def trusteeKind(index: Int, mode: Mode, srn: Option[String]) =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)
