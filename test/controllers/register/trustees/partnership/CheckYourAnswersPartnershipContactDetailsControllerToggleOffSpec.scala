@@ -19,7 +19,6 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
@@ -40,13 +39,13 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
+class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   private val index = Index(0)
@@ -59,10 +58,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(index: Int): Call =
-    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
-
-  private def updateModeUrl(mode: Mode, srn: Option[String]): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
@@ -83,7 +79,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
                    hideButton: Boolean = false, title:Message, h1:Message): String =
     view(
       CYAViewModel(
@@ -127,7 +123,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, updateModeUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
                 h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }
