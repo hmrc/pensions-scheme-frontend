@@ -20,12 +20,11 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.PsaSchemeTaskListController
-import controllers.register.trustees.routes._
 import identifiers.register.trustees.company.CompanyConfirmPreviousAddressId
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
-import models.address.Address
 import models._
+import models.address.Address
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
@@ -37,14 +36,14 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
+class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
 
-  import CheckYourAnswersCompanyAddressControllerSpec._
+  import CheckYourAnswersCompanyAddressControllerToggleOffSpec._
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggle)
     when(mockFeatureToggle.get(any())(any(),any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "Check Your Answers Company Address Controller " when {
@@ -97,7 +96,8 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
   }
 }
 
-object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
+
+object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -130,7 +130,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
     trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -206,6 +206,8 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     ))(fakeRequest, messages).toString
 
 }
+
+
 
 
 
