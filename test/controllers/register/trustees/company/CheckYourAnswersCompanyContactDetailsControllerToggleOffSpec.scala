@@ -19,7 +19,6 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
@@ -38,7 +37,7 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
+class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
   private val index = Index(0)
@@ -47,11 +46,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrlUpdateMode(mode: Mode, srn: Option[String]): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
-
-  private def submitUrl(index: Int): Call =
-    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
@@ -90,7 +86,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index), title:Message, h1:Message): String =
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
+
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -107,13 +109,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value
-
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "CheckYourAnswersCompanyContactDetailsController" when {
 
@@ -134,7 +129,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrlUpdateMode(UpdateMode, srn), srn = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
             title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
             h1 = Message("messages__contactDetailsFor", "test company"))
         }
