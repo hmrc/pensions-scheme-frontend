@@ -19,7 +19,6 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
@@ -39,14 +38,14 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
+class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
 
-  import CheckYourAnswersIndividualAddressControllerSpec._
+  import CheckYourAnswersIndividualAddressControllerToggleOffSpec._
 
   override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "Check Your Answers Individual Address Controller " when {
@@ -83,7 +82,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn,
-                submitUrlUpdateMode(UpdateMode, srn), hideButton = true,
+                submitUrl(UpdateMode, srn), hideButton = true,
                 title = Message("messages__addressFor", Message("messages__thePerson")),
                 h1 = Message("messages__addressFor", trusteeName))
               app.stop()
@@ -92,10 +91,9 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
       }
     }
   }
-
 }
 
-object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
+object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -124,9 +122,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
-
-  def submitUrlUpdateMode(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
@@ -159,7 +155,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   private val view = injector.instanceOf[checkYourAnswers]
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,
-                   postUrl: Call = submitUrl(index), hideButton: Boolean = false,
+                   postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
@@ -175,3 +171,6 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     )(fakeRequest, messages).toString
 
 }
+
+
+
