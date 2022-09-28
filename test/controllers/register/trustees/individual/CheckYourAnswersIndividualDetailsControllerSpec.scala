@@ -26,7 +26,7 @@ import models.{NormalMode, _}
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -100,6 +100,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private val nino = "nino"
   private val utr = "utr"
   private val reason = "reason"
+  private val mockFeatureToggle = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers()
   private def trusteeDob(mode: Mode, srn: Option[String]) =
@@ -239,7 +240,8 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggle
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

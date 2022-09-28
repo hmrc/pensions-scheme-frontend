@@ -26,6 +26,7 @@ import models.address.Address
 import models.{NormalMode, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -97,6 +98,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
   private val emptyAnswers = UserAnswers()
+  private val mockFeatureToggle = mock[FeatureToggleService]
 
   private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, index, srn).url
 
@@ -176,7 +178,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      fakeCountryOptions, allowChangeHelper, controllerComponents, view)
+      fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(

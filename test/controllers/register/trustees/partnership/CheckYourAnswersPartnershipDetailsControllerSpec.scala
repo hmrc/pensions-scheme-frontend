@@ -26,7 +26,7 @@ import models.{Index, NormalMode, _}
 import org.scalatest.OptionValues
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -126,6 +126,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   private val vat = "vat"
   private val paye = "paye"
   private val reason = "reason"
+  private val mockFeatureToggle = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
@@ -266,7 +267,8 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggle
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

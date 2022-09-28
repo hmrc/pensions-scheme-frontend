@@ -27,7 +27,7 @@ import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -39,6 +39,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val index = Index(0)
   private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
+  private val mockFeatureToggle = mock[FeatureToggleService]
 
   private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
@@ -76,7 +77,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       allowChangeHelper,
       FakeUserAnswersService,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggle
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), title:Message, h1:Message): String =

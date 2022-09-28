@@ -64,6 +64,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
+  //scalastyle:off cyclomatic.complexity
   def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
@@ -226,7 +227,7 @@ class SpokeCreationService extends Enumerable.Implicits {
 
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     val trustees = answers.allTrusteesAfterDelete
-    //val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
+    val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
 
     (answers.get(HaveAnyTrusteesId), trustees.isEmpty, viewOnly) match {
       case (None | Some(true), false, false) if srn.isDefined =>
@@ -237,22 +238,19 @@ class SpokeCreationService extends Enumerable.Implicits {
       case (None | Some(true), false, false) if !trustees.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-          None
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete
         ))
       case (None | Some(true), false, false) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-          None
-        ))
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete)
+        )
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link", schemeName),
             controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, answers.allTrustees.size,
-              srn).url),
-          None
+              srn).url), Some(false)
         ))
       case _ =>
         Nil

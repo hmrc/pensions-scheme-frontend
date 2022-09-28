@@ -25,6 +25,7 @@ import models._
 import models.address.Address
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -90,6 +91,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private val previousAddress        = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
+  private val mockFeatureToggle = mock[FeatureToggleService]
   private def partnershipAddressRoute(mode: Mode, srn: Option[String]) =
     routes.PartnershipAddressController.onPageLoad(mode, Index(index), srn).url
   private def partnershipAddressYearsRoute(mode: Mode, srn: Option[String]) =
@@ -187,7 +189,8 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       allowChangeHelper,
       controllerComponents,
-      view
+      view,
+      mockFeatureToggle
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,
