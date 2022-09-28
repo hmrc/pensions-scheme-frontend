@@ -18,7 +18,7 @@ package navigators.establishers.partnership
 
 import base.SpecBase
 import controllers.register.establishers.partnership.routes._
-import controllers.register.establishers.routes._
+import controllers.register.establishers.routes.AddEstablisherController
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
@@ -27,35 +27,37 @@ import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{mock, reset, when}
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.prop._
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import services.FeatureToggleService
 import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach {
+class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach {
 
-  import EstablisherPartnershipDetailsNavigatorSpec._
-
-  val navigator: Navigator =
-    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector.instanceOf[Navigator]
+  import OldEstablisherPartnershipDetailsNavigatorSpec._
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
+
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
-  "EstablishersPartnershipDetailsNavigator" when {
+  val navigator: Navigator =
+    applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector
+      .instanceOf[OldEstablisherPartnershipDetailsNavigator]
+
+  "OldEstablishersPartnershipDetailsNavigator" when {
     "in NormalMode" must {
       def navigationForEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(PartnershipDetailsId(index))(partnershipDetails, establisherTasklist(index)),
+          row(PartnershipDetailsId(index))(partnershipDetails, addEstablisherPage(NormalMode, None)),
           row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
           row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
@@ -135,14 +137,11 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
 
 }
 
-object EstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
+object OldEstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private lazy val index = 0
   private val srn = Some("srn")
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
-
-  private def establisherTasklist(index: Int): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def addEstablisherPage(mode: Mode, srn: Option[String]): Call =
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), srn)
@@ -153,4 +152,6 @@ object EstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 }
+
+
 

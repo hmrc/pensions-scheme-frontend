@@ -21,28 +21,42 @@ import controllers.register.establishers.individual.routes._
 import controllers.register.establishers.routes._
 import generators.Generators
 import identifiers.Identifier
-import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
+import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
+import identifiers.register.establishers.IsEstablisherNewId
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
 import play.api.mvc.Call
+import services.FeatureToggleService
 import utils.UserAnswers
-
 import java.time.LocalDate
 
-class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
-  import EstablishersIndividualDetailsNavigatorSpec._
+import scala.concurrent.Future
 
-  val navigator: Navigator = injector.instanceOf[EstablishersIndividualDetailsNavigator]
+class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with BeforeAndAfterEach{
+  import OldEstablishersIndividualDetailsNavigatorSpec._
+
+  val navigator: Navigator = injector.instanceOf[OldEstablishersIndividualDetailsNavigator]
+  val mockFeatureToggle = mock[FeatureToggleService]
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggle)
+    when(mockFeatureToggle.get(any())(any(),any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
+
 
   "NormalMode" must {
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(EstablisherNameId(index))(somePersonNameValue, PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)),
+        row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(NormalMode, None)),
         row(EstablisherDOBId(index))(someDate, EstablisherHasNINOController.onPageLoad(NormalMode, index, None)),
         row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(NormalMode, index, None)),
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(NormalMode, index, None)),
@@ -115,10 +129,12 @@ class EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers 
   }
 }
 
-object EstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+object OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
   private val srn = Some("srn")
   private val someDate =  LocalDate.now()
 }
+
+

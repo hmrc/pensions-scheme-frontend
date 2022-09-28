@@ -18,7 +18,7 @@ package navigators.establishers.partnership
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.establishers.partnership.routes._
+import controllers.register.establishers.partnership.routes.{CheckYourAnswersPartnershipDetailsController, PartnershipEnterPAYEController, PartnershipEnterUTRController, PartnershipEnterVATController, PartnershipHasPAYEController, PartnershipHasVATController, PartnershipNoUTRReasonController}
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
@@ -29,17 +29,17 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
-class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
+class OldEstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends
   AbstractNavigator {
 
-  import EstablisherPartnershipDetailsNavigator._
+  import OldEstablisherPartnershipDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
   : PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(index) => psaRegistrationEstablisherTaskList(index)
+    case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
       srn))
     case PartnershipEnterUTRId(index) if mode == NormalMode => hasVat(mode, index, srn)
@@ -94,12 +94,9 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
   }
 }
 
-object EstablisherPartnershipDetailsNavigator {
+object OldEstablisherPartnershipDetailsNavigator {
   private def isNewEstablisher(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsEstablisherNewId(index)).getOrElse(false)
-
-  private def psaRegistrationEstablisherTaskList(index: Int): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def addEstablisherPage(mode: Mode, srn: Option[String]): Call =
     controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
@@ -125,4 +122,6 @@ object EstablisherPartnershipDetailsNavigator {
   private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
     PartnershipEnterPAYEController.onPageLoad(mode, index, srn)
 }
+
+
 

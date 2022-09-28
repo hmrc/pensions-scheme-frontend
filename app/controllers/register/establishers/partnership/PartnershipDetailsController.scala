@@ -21,31 +21,34 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import javax.inject.Inject
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.{EstablishersPartnership, OldEstablishersPartnership}
 import utils.{Enumerable, UserAnswers}
 import views.html.register.establishers.partnership.partnershipDetails
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
                                               userAnswersService: UserAnswersService,
-                                              navigator: Navigator,
+                                              @EstablishersPartnership navigator: Navigator,
+                                              @OldEstablishersPartnership oldNavigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               allowAccess: AllowAccessActionProvider,
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              val view: partnershipDetails
+                                              val view: partnershipDetails,
+                                              featureToggleService: FeatureToggleService
                                             )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -71,9 +74,14 @@ class PartnershipDetailsController @Inject()(
         },
         value =>
           userAnswersService.save(mode, srn, PartnershipDetailsId(index), value
-          ).map {
+          ).flatMap {
             json =>
-              Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
+              featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+                (isEnabled, mode) match {
+                  case (true, NormalMode) => Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
+                  case _ => Redirect(oldNavigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
+                }
+              }
           }
       )
   }

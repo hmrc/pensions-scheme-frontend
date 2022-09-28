@@ -31,8 +31,8 @@ import models._
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
-class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                             appConfig: FrontendAppConfig) extends AbstractNavigator {
+class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                                appConfig: FrontendAppConfig) extends AbstractNavigator {
 
   private def exitMiniJourney(index: Int,
                               mode: Mode,
@@ -65,7 +65,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(
-          controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
         )
       case HasCompanyCRNId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)

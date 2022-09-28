@@ -17,7 +17,7 @@
 package utils.hstasklisthelper
 
 
-import identifiers.HaveAnyTrusteesId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
 import models.Index.indexToInt
@@ -168,7 +168,7 @@ class SpokeCreationService extends Enumerable.Implicits {
         Nil
       case (true, false) =>
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link_toggleOff"),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), None)
         )
@@ -180,7 +180,7 @@ class SpokeCreationService extends Enumerable.Implicits {
       case (false, false) =>
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            Message("messages__schemeTaskList__sectionEstablishers_change_link_toggleOff"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
           None
         ))
@@ -190,6 +190,7 @@ class SpokeCreationService extends Enumerable.Implicits {
   def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
   : Seq[EntitySpoke] = {
 
+    val schemeName = answers.get(SchemeNameId).getOrElse("")
     val establishers = answers.allEstablishersAfterDelete(mode)
     val isAllEstablishersComplete = if (establishers.isEmpty) None else Some(establishers.forall(_.isCompleted))
 
@@ -198,7 +199,7 @@ class SpokeCreationService extends Enumerable.Implicits {
         Nil
       case (true, false) =>
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_add_link", schemeName),
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), Some(false))
         )
@@ -209,13 +210,13 @@ class SpokeCreationService extends Enumerable.Implicits {
         )
       case (false, false) if !establishers.forall(_.isCompleted) =>
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link"),
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link", schemeName),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
         )
       case (false, false) =>
         Seq(EntitySpoke(
           TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link"),
+            Message("messages__schemeTaskList__sectionEstablishers_change_link",schemeName),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
         )
     }

@@ -36,23 +36,21 @@ import views.html.register.establishers.company.companyDetails
 
 import scala.concurrent.Future
 
-class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class CompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex)
-  def onwardRouteToggleOff: Call = controllers.routes.IndexController.onPageLoad
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new CompanyDetailsFormProvider()
   private val form = formProvider()
   private val firstIndex = Index(0)
   private val postCall = routes.CompanyDetailsController.onSubmit _
   private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
-  private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[companyDetails]
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
-    new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,
+    new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, navigator,
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
@@ -70,7 +68,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "CompanyDetails Controller" must {
