@@ -43,8 +43,11 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
                                         srn: Option[String]): PartialFunction[Identifier, Call] = {
     case CompanyDetailsId(index) =>
       // TODO: Remove Json code below when SchemeRegistration toggle is removed
-      (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-        case Some(true) => trusteeTaskList(index)
+      mode match {
+        case NormalMode => (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
+          case Some(true) => trusteeTaskList(index)
+          case _ => addTrusteePage(mode, srn)
+      }
         case _ => addTrusteePage(mode, srn)
       }
     case id@HasCompanyCRNId(index) =>
