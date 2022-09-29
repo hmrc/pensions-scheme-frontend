@@ -19,11 +19,11 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeEnterNINOId, TrusteeHasNINOId, TrusteeHasUTRId, TrusteeNameId, TrusteeNoNINOReasonId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import models._
 import models.person.PersonName
-import models.{NormalMode, _}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
@@ -36,8 +36,14 @@ import views.html.checkYourAnswers
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
-  import CheckYourAnswersIndividualDetailsControllerSpec._
+class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
+  import CheckYourAnswersIndividualDetailsControllerToggleOffSpec._
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
+  }
 
   "Check Your Answers Individual Details Controller " when {
     "when in registration journey" must {
@@ -86,15 +92,9 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
       }
      }
   }
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 }
 
-object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
+object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
@@ -133,7 +133,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
         _.set(TrusteeEnterNINOId(0))(ReferenceValue(nino)).flatMap(
           _.set(TrusteeHasUTRId(0))(true).flatMap(
             _.set(TrusteeUTRId(0))(ReferenceValue(utr))
-              ))))).asOpt.value
+          ))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers
     .set(TrusteeNameId(0))(trusteeName).flatMap(
@@ -144,7 +144,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
             _.set(TrusteeNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -185,7 +185,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
         stringChangeLink(messages("messages__enterUTR", name), utr(mode, srn), utr,
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
-      )
+    )
     )
 
 
@@ -245,7 +245,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       allowChangeHelper,
-  new DataRequiredActionImpl,
+      new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
       view,
@@ -270,6 +270,9 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     )(fakeRequest, messages).toString
 
 }
+
+
+
 
 
 
