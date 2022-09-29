@@ -31,7 +31,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components_refactored.input_yes_no,
-    add_entity_list: components_refactored.add_entity_list,
+    add_entity_list: components_refactored.add_entity_list_v2,
     submit_button: components_refactored.submit_button
 )
 
@@ -75,7 +75,7 @@
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__addTrustee__text"),
-                legendClass = Some("heading-medium"),
+                legendClass = Some("govuk-heading-m"),
                 hint = None
             )
 

@@ -42,7 +42,7 @@ import views.html.register.trustees.{addTrustee, addTrusteeOld}
 
 import scala.concurrent.Future
 
-class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach {
+class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach {
   appRunning()
 
   private lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(
@@ -61,7 +61,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   def editTrusteeCompanyRoute(id: Int): String =
@@ -93,11 +93,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String = {
-    val completeTrustees = trustees.filter(_.isCompleted)
-    val inCompleteTrustees = trustees.filterNot(_.isCompleted)
-    view(form, NormalMode, completeTrustees, inCompleteTrustees, None, None)(fakeRequest, messages).toString
-  }
+  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
+    oldView(form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(
