@@ -35,13 +35,13 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
-  import CheckYourAnswersPartnershipAddressControllerSpec._
+class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
+  import CheckYourAnswersPartnershipAddressControllerToggleOffSpec._
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(),any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
 
@@ -88,7 +88,8 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
   }
 }
 
-object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
+
+object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -125,7 +126,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =
-    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   private def postUrlUpdateMode: Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
@@ -174,12 +175,12 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private def partnershipAddressNormal: Seq[AnswerSection] =
     Seq(
       AnswerSection(None,
-                    Seq(
-                      addressAnswerRow(NormalMode, None),
-                      addressYearsAnswerRow(NormalMode, None),
-                      tradingTimeAnswerRow(NormalMode, None),
-                      previousAddressAnswerRow(NormalMode, None)
-                    )))
+        Seq(
+          addressAnswerRow(NormalMode, None),
+          addressYearsAnswerRow(NormalMode, None),
+          tradingTimeAnswerRow(NormalMode, None),
+          previousAddressAnswerRow(NormalMode, None)
+        )))
 
   private def partnershipAddressUpdate: Seq[AnswerSection] =
     Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAnswerRow(UpdateMode, srn))))
@@ -221,3 +222,4 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     )(fakeRequest, messages).toString
 
 }
+
