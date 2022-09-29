@@ -70,7 +70,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
 
-  //TODO: This needs to be changed to addTrustee
   private val view = injector.instanceOf[addTrustee]
   private val oldView = injector.instanceOf[addTrusteeOld]
 
