@@ -1585,6 +1585,7 @@ messages__atLeast_two_partners = You will need to tell us details for at least t
 messages__whatYouWillNeedTrusteeCompany__title = Company details
 messages__whatYouWillNeedTrusteeCompany__h1 = Company details for {0}
 messages__whatYouWillNeedTrusteeCompany__p1 = You will need to tell us {0}’s:
+messages__whatYouWillNeedTrusteeCompany__p2 = If {0} has them, you will also need to tell us their:
 messages__whatYouWillNeedTrusteeCompany__item1 = company number, or reason why it does not have one
 messages__whatYouWillNeedTrusteeCompany__item2 = Unique Taxpayer Reference (UTR), or reason why it does not have one
 messages__whatYouWillNeedTrusteeCompany__item3 = VAT registration number, if it has one

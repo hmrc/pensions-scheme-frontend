@@ -33,9 +33,12 @@
 
     @components_refactored.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p1", companyName))
 
-    <ul class="govuk-list govuk-list--bullet">
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item1")</li>
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item2")</li>
+    </ul>
+    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p2", companyName))
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item3")</li>
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item4")</li>
     </ul>
