@@ -784,8 +784,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
-          None
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), Some(false)
         ))
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
@@ -801,8 +800,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
-          None
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), Some(false)
         ))
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
@@ -814,8 +812,7 @@ class SpokeCreationServiceSpec
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link", schemeName),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
-          None
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url), Some(false)
         ))
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, UpdateMode, srn, viewOnly = false)
@@ -829,8 +826,7 @@ class SpokeCreationServiceSpec
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionTrustees_add_link", schemeName),
-            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url),
-          None
+            controllers.register.trustees.routes.TrusteeKindController.onPageLoad(UpdateMode, 0, srn).url), Some(false)
         ))
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
