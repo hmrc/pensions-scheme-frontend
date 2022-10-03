@@ -54,18 +54,22 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
           (path \ 0 \ "trusteeNino" \ "value").asOpt[String] mustBe None
           (path \ 0 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 0 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 7"
+          (path \ 0 \ "trusteeContactDetails" \ "emailAddress").as[String] mustBe "aaa@gmail.com"
 
           (path \ 1 \ "trusteeNino" \ "value").asOpt[String] mustBe None
           (path \ 1 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 1 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 8"
+          (path \ 1 \ "trusteeContactDetails" \ "emailAddress").as[String] mustBe "aaa@gmail.com"
 
           (path \ 2 \ "trusteeNino" \ "value").asOpt[String] mustBe None
           (path \ 2 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 2 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 3"
+          (path \ 2 \ "trusteeContactDetails" \ "emailAddress").as[String] mustBe "aaa@gmail.com"
 
           (path \ 3 \ "trusteeNino" \ "value").asOpt[String] mustBe None
           (path \ 3 \ "trusteeDetails" \ "firstName").as[String] mustBe "Test"
           (path \ 3 \ "trusteeDetails" \ "lastName").as[String] mustBe "User 4"
+          (path \ 3 \ "trusteeContactDetails" \ "emailAddress").as[String] mustBe "aaa@gmail.com"
       }
     }
   }
