@@ -28,6 +28,7 @@ import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FeatureToggleService
@@ -108,14 +109,16 @@ class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends Co
         }
 
         "Update Mode" in {
-          running(_.overrides(
+          val ftBinding: Seq[GuiceableModule] = Seq(
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
-          )) {
+          )
+          running(_.overrides(ftBinding: _*)) {
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
