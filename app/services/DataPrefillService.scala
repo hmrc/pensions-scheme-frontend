@@ -112,8 +112,8 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     (__ \ 'trusteeDetails \ 'firstName).json.copyFrom((__ \ 'directorDetails \ 'firstName).json.pick) and
       (__ \ 'trusteeDetails \ 'lastName).json.copyFrom((__ \ 'directorDetails \ 'lastName).json.pick) and
       (__ \ 'trusteeKind).json.put(JsString("individual")) and
-      (__ \ 'trusteeContactDetails \ 'phone).json.copyFrom((__ \ 'directorContactDetails \ 'phoneNumber).json.pick) and
-      (__ \ 'trusteeContactDetails \ 'email).json.copyFrom((__ \ 'directorContactDetails \ 'emailAddress).json.pick) and
+      (__ \ 'trusteeContactDetails \ 'phoneNumber).json.copyFrom((__ \ 'directorContactDetails \ 'phoneNumber).json.pick) and
+      (__ \ 'trusteeContactDetails \ 'emailAddress).json.copyFrom((__ \ 'directorContactDetails \ 'emailAddress).json.pick) and
       (__ \ 'trusteeAddressId).json.copyFrom((__ \ 'directorAddressId).json.pick) and
       (__ \ 'trusteeAddressYears).json.copyFrom((__ \ 'companyDirectorAddressYears).json.pick) and
       ((__ \ 'trusteePreviousAddress).json.copyFrom((__ \ 'previousAddress).json.pick) orElse __.json.put(Json.obj())) and
