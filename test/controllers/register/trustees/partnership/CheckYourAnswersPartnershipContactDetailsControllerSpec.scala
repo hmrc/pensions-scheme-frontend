@@ -19,7 +19,6 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.trustees.individual.CheckYourAnswersIndividualAddressControllerSpec.mockFeatureToggleService
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import models.FeatureToggleName.SchemeRegistration
