@@ -50,7 +50,7 @@ class AddTrusteeController @Inject()(
                                       featureToggleService: FeatureToggleService,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: addTrustee,
-                                      val addTrusteeOldView: addTrusteeOld,
+                                      val addTrusteeOldView: addTrusteeOld
                                     )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
