@@ -17,29 +17,45 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
+import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.{CompanyDetails, Index, NormalMode}
+import models.FeatureToggleName.SchemeRegistration
+import models.{CompanyDetails, FeatureToggle, Index, NormalMode}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset}
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.FakeNavigator
 import views.html.register.trustees.company.companyDetails
 
-class CompanyDetailsControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
 
   appRunning()
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  val formProvider = new CompanyDetailsFormProvider()
-  val form = formProvider()
-  val firstIndex = Index(0)
+  private val formProvider = new CompanyDetailsFormProvider()
+  private val form = formProvider()
+  private val firstIndex = Index(0)
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+
 
   private val view = injector.instanceOf[companyDetails]
 
@@ -47,7 +63,9 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
-      view)
+      view,
+      mockFeatureToggleService
+    )
 
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, None)
 

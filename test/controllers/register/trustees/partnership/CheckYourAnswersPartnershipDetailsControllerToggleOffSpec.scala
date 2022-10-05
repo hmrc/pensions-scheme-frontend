@@ -17,32 +17,32 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.{DataRetrievalAction, FakeAuthAction, _}
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId, PartnershipEnterUTRId, PartnershipEnterVATId, PartnershipHasPAYEId, PartnershipHasUTRId, PartnershipHasVATId, PartnershipNoUTRReasonId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
-import models.{Index, NormalMode, _}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, FeatureToggleService}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
+import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
+class CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
-  import CheckYourAnswersPartnershipDetailsControllerSpec._
+  import CheckYourAnswersPartnershipDetailsControllerToggleOffSpec._
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "Check Your Answers Partnership Details Controller " when {
@@ -68,7 +68,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       }
     }
 
-    "when in variations journey with existing trustee" must {
+    "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes(false))
         val result = controller(fullAnswersYes(false).dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
@@ -92,7 +92,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       }
     }
 
-    "when in variations journey with new trustee" must {
+    "when in variations journey with new establisher" must {
 
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val answers = fullAnswersYes().set(IsTrusteeNewId(0))(true).asOpt.value
@@ -117,16 +117,12 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       }
     }
   }
-
 }
 
-object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
+object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(index: Int): Call =
-    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
-
-  def onwardRouteUpdateMode(mode: Mode, srn: Option[String]): Call =
+  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
@@ -166,19 +162,19 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
     .set(PartnershipHasUTRId(0))(true).flatMap(
-        _.set(PartnershipEnterUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
-          _.set(PartnershipHasVATId(0))(true).flatMap(
-            _.set(PartnershipEnterVATId(0))(ReferenceValue(vat, isEditable)).flatMap(
-              _.set(PartnershipHasPAYEId(0))(true).flatMap(
-                _.set(PartnershipEnterPAYEId(0))(ReferenceValue(paye, isEditable))
-              ))))).asOpt.value
+    _.set(PartnershipEnterUTRId(0))(ReferenceValue(utr, isEditable)).flatMap(
+      _.set(PartnershipHasVATId(0))(true).flatMap(
+        _.set(PartnershipEnterVATId(0))(ReferenceValue(vat, isEditable)).flatMap(
+          _.set(PartnershipHasPAYEId(0))(true).flatMap(
+            _.set(PartnershipEnterPAYEId(0))(ReferenceValue(paye, isEditable))
+          ))))).asOpt.value
 
   private val fullAnswersNo = emptyAnswers
     .set(PartnershipHasUTRId(0))(false).flatMap(
     _.set(PartnershipNoUTRReasonId(0))(reason).flatMap(
       _.set(PartnershipHasVATId(0))(false).flatMap(
-            _.set(PartnershipHasPAYEId(0))(false)
-          ))).asOpt.value
+        _.set(PartnershipHasPAYEId(0))(false)
+      ))).asOpt.value
 
 
   private def partnershipDetailsAddLinksValues: Seq[AnswerSection] =
@@ -276,7 +272,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute(index)),
+      new FakeNavigator(onwardRoute()),
       FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
@@ -285,26 +281,20 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, title:Message, h1:Message): String = {
-
-    val route = mode match {
-      case NormalMode => onwardRoute(index)
-      case UpdateMode => onwardRouteUpdateMode(mode, srn)
-      case _ => onwardRoute(index)
-    }
-
-      view(
-        CYAViewModel(
-          answerSections = answerSections,
-          href = route,
-          schemeName = None,
-          returnOverview = false,
-          hideEditLinks = false,
-          srn = srn,
-          hideSaveAndContinueButton = false,
-          title = title,
-          h1 = h1
-        )
-      )(fakeRequest, messages).toString
-  }
+                   srn: Option[String] = None, title:Message, h1:Message): String =
+    view(
+      CYAViewModel(
+        answerSections = answerSections,
+        href = onwardRoute(mode,srn),
+        schemeName = None,
+        returnOverview = false,
+        hideEditLinks = false,
+        srn = srn,
+        hideSaveAndContinueButton = false,
+        title = title,
+        h1 = h1
+      )
+    )(fakeRequest, messages).toString
 }
+
+

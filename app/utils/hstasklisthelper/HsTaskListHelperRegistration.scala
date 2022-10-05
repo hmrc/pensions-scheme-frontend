@@ -23,6 +23,9 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.individual.TrusteeNameId
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.register.establishers.EstablisherKind
 import models.{LastUpdated, Mode, NormalMode}
@@ -73,7 +76,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       workingKnowledgeSection(answers),
       addEstablisherHeaderToggleOff(answers, NormalMode, srn),
       establishersSection(answers, NormalMode, srn),
-      addTrusteeHeader(answers, NormalMode, srn),
+      addTrusteeHeaderToggleOff(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
       declarationSection(answers),
       None,
@@ -90,6 +93,18 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       section,
       section.entities.forall(_.isCompleted.contains(true)),
       Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
+    )
+  }
+
+  def taskListTrustee(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], trusteeIndex: Int): SchemeDetailsTaskListTrustees = {
+    val section = trusteeSection(answers, NormalMode, srn, trusteeIndex)
+    val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
+    SchemeDetailsTaskListTrustees(
+      answers.get(SchemeNameId).getOrElse(""),
+      None,
+      section,
+      section.entities.forall(_.isCompleted.contains(true)),
+      Some(StatsSection(totalCompletedSections, 3, None))
     )
   }
 
@@ -127,6 +142,38 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
+  protected[utils] def trusteeSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String], index: Int)
+  : SchemeDetailsTaskListEntitySection = {
+    val seqTrustees = userAnswers.allTrustees
+
+    val trustee = seqTrustees(index)
+    if (trustee.isDeleted) throw new RuntimeException("Trustee has been deleted.") else {
+      trustee.id match {
+        case TrusteeCompanyDetailsId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getTrusteeCompanySpokes(userAnswers, mode, srn, trustee.name, Some
+            (trustee.index)),
+            Some(trustee.name))
+
+        case TrusteeNameId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, trustee.name, Some
+            (trustee.index)),
+            Some(trustee.name))
+
+        case TrusteePartnershipDetailsId(_) =>
+          SchemeDetailsTaskListEntitySection(
+            None,
+            spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, trustee.name, Some
+            (trustee.index)),
+            Some(trustee.name))
+        case _ =>
+          throw new RuntimeException("Unknown section id:" + trustee.id)
+      }
+    }
+  }
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
@@ -150,9 +197,17 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       mode, srn, viewOnly = false), None))
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
-  : Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
+      case Nil => None
+      case trusteeHeaderSpokes => Some(
+        SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))
+    }
+  }
+
+  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  : Option[SchemeDetailsTaskListEntitySection] = {
+    spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes => Some(
         SchemeDetailsTaskListEntitySection(None, trusteeHeaderSpokes, None))

@@ -17,9 +17,9 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.company._
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterCRNId, CompanyEnterPAYEId, CompanyEnterUTRId, CompanyEnterVATId, CompanyNoCRNReasonId, CompanyNoUTRReasonId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
@@ -28,20 +28,20 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, FeatureToggleService}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
+import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
+class CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
-  import CheckYourAnswersCompanyDetailsControllerSpec._
+  import CheckYourAnswersCompanyDetailsControllerToggleOffSpec._
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "Check Your Answers Company Details Controller " when {
@@ -111,10 +111,9 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
       )
     }
   }
-
 }
 
-object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
+object CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
 
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
@@ -183,7 +182,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -324,5 +323,6 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
         h1 = h1
       )
     )(fakeRequest, messages).toString
-
 }
+
+

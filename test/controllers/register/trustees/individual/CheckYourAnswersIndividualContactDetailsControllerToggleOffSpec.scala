@@ -40,17 +40,15 @@ import views.html.checkYourAnswers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
+class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
   private val index = Index(0)
   private val srn = Some("test-srn")
   private val trusteeName = "test name"
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(mode: Mode): Call = mode match {
-      case NormalMode => controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
-      case _ => controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
-    }
+  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
@@ -70,7 +68,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call, hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
@@ -87,7 +85,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
   "CheckYourAnswersIndividualContactDetailsController" when {
@@ -106,7 +104,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
 
           contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"), postUrl = submitUrl(NormalMode))
+            h1 = Message("checkYourAnswers.hs.heading"))
           app.stop()
         }
 
@@ -127,7 +125,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
               val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePerson")),
                 h1 = Message("messages__contactDetailsFor", trusteeName))
               app.stop()

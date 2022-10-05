@@ -22,11 +22,13 @@ import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId, TrusteePhoneId}
+
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -47,7 +49,8 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
                                                                    allowChangeHelper: AllowChangeHelper,
                                                                    val
                                                                    controllerComponents: MessagesControllerComponents,
-                                                                   val view: checkYourAnswers
+                                                                   val view: checkYourAnswers,
+                                                                   featureToggleService: FeatureToggleService
                                                                   )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -66,18 +69,30 @@ class CheckYourAnswersIndividualContactDetailsController @Inject()(val appConfig
 
         val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__contactDetailsFor",
           Message("messages__thePerson"))
-        val vm = CYAViewModel(
-          answerSections = Seq(contactDetails),
-          href = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn),
-          schemeName = existingSchemeName,
-          returnOverview = false,
-          hideEditLinks = request.viewOnly || notNewTrustee,
-          srn = srn,
-          hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
-          title = title,
-          h1 = headingContactDetails(mode, personName(TrusteeNameId(index)), isNew)
-        )
 
-        Future.successful(Ok(view(vm)))
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+            case _ =>
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+          }
+        }
+
+        saveURL.flatMap { url =>
+          val vm = CYAViewModel(
+            answerSections = Seq(contactDetails),
+            href = url,
+            schemeName = existingSchemeName,
+            returnOverview = false,
+            hideEditLinks = request.viewOnly || notNewTrustee,
+            srn = srn,
+            hideSaveAndContinueButton = allowChangeHelper.hideSaveAndContinueButton(request, IsTrusteeNewId(index), mode),
+            title = title,
+            h1 = headingContactDetails(mode, personName(TrusteeNameId(index)), isNew)
+          )
+
+          Future.successful(Ok(view(vm)))
+        }
     }
 }

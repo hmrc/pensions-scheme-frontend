@@ -17,28 +17,36 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
+import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.FeatureToggleName.SchemeRegistration
+import models.{FeatureToggle, Index, NormalMode, PartnershipDetails}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{mock, reset}
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import services.{FakeUserAnswersService, FeatureToggleService}
 import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
 
-class PartnershipDetailsControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
   appRunning()
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  val formProvider = new PartnershipDetailsFormProvider()
-  val form: Form[PartnershipDetails] = formProvider()
-  val firstIndex: Index = Index(0)
+  private val formProvider = new PartnershipDetailsFormProvider()
+  private val form: Form[PartnershipDetails] = formProvider()
+  private val firstIndex: Index = Index(0)
   val invalidIndex: Index = Index(3)
   val schemeName = "Test Scheme Name"
+  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val view = injector.instanceOf[partnershipDetails]
 
@@ -46,7 +54,9 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
-      view)
+      view,
+      mockFeatureToggleService
+    )
 
   val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
   def viewAsString(form: Form[_] = form): String = view(
@@ -67,6 +77,12 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
     )
 
   )
+
+  override protected def beforeEach(): Unit = {
+    reset(mockFeatureToggleService)
+    when(mockFeatureToggleService.get(any())(any(), any()))
+      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+  }
 
   "TrusteeDetails Controller" must {
 

@@ -21,13 +21,17 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.partnership.PartnershipDetailsId
+import models.FeatureToggleName.SchemeRegistration
+import models.requests.DataRequest
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{FeatureToggleName, Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
+import services.{FeatureToggleService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.partnership.partnershipDetails
@@ -45,7 +49,8 @@ class PartnershipDetailsController @Inject()(
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              val view: partnershipDetails
+                                              val view: partnershipDetails,
+                                              featureToggleService: FeatureToggleService
                                             )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
@@ -71,10 +76,21 @@ class PartnershipDetailsController @Inject()(
         value =>
           request.userAnswers.upsert(PartnershipDetailsId(index))(value) {
             answers =>
-              userAnswersService.upsert(mode, srn, answers.json).map { cacheMap =>
-                Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, new UserAnswers(cacheMap), srn))
+              userAnswersService.upsert(mode, srn, answers.json).flatMap { _ =>
+                tempToggleAmend(request.userAnswers.setOrException(PartnershipDetailsId(index))(value)).map { updatedUA =>
+                  Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, updatedUA, srn))
+                }
               }
           }
       )
+  }
+
+  //TODO: Remove whole method once toggle is removed
+  private def tempToggleAmend(ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
+    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { toggleValue =>
+      val uaAsJsObject = ua.json.as[JsObject]
+      val updatedJson = uaAsJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue)
+      UserAnswers(updatedJson)
+    }
   }
 }

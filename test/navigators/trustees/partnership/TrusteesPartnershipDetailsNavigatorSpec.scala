@@ -24,6 +24,7 @@ import generators.Generators
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
+import models.FeatureToggleName.SchemeRegistration
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.OptionValues
@@ -46,6 +47,7 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
         Table(
           ("Id", "UserAnswers", "Next Page"),
           row(PartnershipDetailsId(index))(partnershipDetails, addTrusteesPage(NormalMode, None)),
+          row(PartnershipDetailsId(index))(partnershipDetails, TrusteesTaskListPage(index), Some(uaFeatureToggleOn)),
           row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
           row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
@@ -131,9 +133,18 @@ object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
+  private val uaFeatureToggleOn = {
+    val uaWithToggle = Json.obj(
+      SchemeRegistration.asString -> true
+    )
+    UserAnswers(uaWithToggle)
+  }
 
   private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
     AddTrusteeController.onPageLoad(Mode.journeyMode(mode), srn)
+
+  private def TrusteesTaskListPage(index: Int): Call =
+    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
   private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)

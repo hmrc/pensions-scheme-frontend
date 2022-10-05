@@ -29,6 +29,8 @@ import identifiers.register.trustees.partnership.{PartnershipDetailsId => Truste
 import models._
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
+import controllers.register.establishers.routes._
+import controllers.register.trustees.routes._
 
 sealed trait Entity[ID] {
   def id: ID
@@ -114,7 +116,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
       case _ => None
     }
   }
@@ -122,10 +124,10 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Company, srn).url)
       case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Company, srn).url)
       case _ => None
     }
@@ -140,7 +142,7 @@ case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDe
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
       case _ => None
     }
   }
@@ -148,10 +150,10 @@ case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDe
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Indivdual, srn).url)
       case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Indivdual, srn).url)
       case _ => None
     }
@@ -167,7 +169,7 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
   override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
       case _ => None
     }
   }
@@ -175,10 +177,10 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Partnership, srn).url)
       case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteEstablisherController.onPageLoad(mode, id.index,
           EstablisherKind.Partnership, srn).url)
       case _ => None
     }
@@ -207,7 +209,12 @@ sealed trait Trustee[T] extends Entity[T]
 case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDeleted: Boolean,
                                 isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                 schemeType: Option[String]) extends Trustee[TrusteeCompanyDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = mode match {
+    case NormalMode | CheckMode =>
+      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+    case _ => None
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
 
@@ -215,13 +222,13 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
 
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Company, srn).url)
       case UpdateMode | CheckUpdateMode if !isSingleOrMaster =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Company, srn).url)
       case UpdateMode | CheckUpdateMode if isSingleOrMaster && noOfRecords > 1 =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Company, srn).url)
       case _ => None
     }
@@ -233,10 +240,15 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
 case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: Boolean,
                                    isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                    schemeType: Option[String]) extends Trustee[TrusteeNameId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = mode match {
+    case NormalMode | CheckMode =>
+      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.trusteeIndex).url)
+    case _ => None
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] =
-    Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.trusteeIndex,
+    Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.trusteeIndex,
       TrusteeKind.Individual, srn).url)
 
   override def index: Int = id.trusteeIndex
@@ -245,7 +257,14 @@ case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: B
 case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: String, isDeleted: Boolean,
                                     isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int,
                                     schemeType: Option[String]) extends Trustee[TrusteePartnershipDetailsId] {
-  override def editLink(mode: Mode, srn: Option[String]): Option[String] = None
+
+  override def editLink(mode: Mode, srn: Option[String]): Option[String] = {
+    mode match {
+      case NormalMode | CheckMode =>
+        Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+      case _ => None
+    }
+  }
 
   override def deleteLink(mode: Mode, srn: Option[String]): Option[String] = {
 
@@ -253,13 +272,13 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: Strin
 
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Partnership, srn).url)
       case UpdateMode | CheckUpdateMode if !isSingleOrMaster =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Partnership, srn).url)
       case UpdateMode | CheckUpdateMode if isSingleOrMaster && noOfRecords > 1 =>
-        Some(controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
+        Some(ConfirmDeleteTrusteeController.onPageLoad(mode, id.index,
           TrusteeKind.Partnership, srn).url)
       case _ => None
     }
