@@ -59,6 +59,14 @@
     }
 }
 
+@cssAdjust = @{
+    if(legendAsHeading == true){
+        legendClass.fold("govuk-fieldset__legend--xl govuk-!-margin-bottom-5")(classes => classes)
+    } else {
+        legendClass.fold("govuk-fieldset__legend--m")(classes => classes)
+    }
+}
+
 @govukRadios(Radios(
     name = field.name,
     classes = if(inline) "govuk-radios--inline" else "",
@@ -71,7 +79,7 @@
         legend = Some(Legend(
             content = Text(legend),
             isPageHeading = legendAsHeading,
-            classes = legendClass.getOrElse("govuk-fieldset__legend--l")
+            classes = cssAdjust
         )),
     )),
     items = inputs.map(input =>

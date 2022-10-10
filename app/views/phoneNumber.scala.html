@@ -44,8 +44,6 @@
         @input_text(
             field = form("phone"),
             label = messages(viewModel.heading),
-            labelClass = Some("govuk-label--xl"),
-            inputClass = Some("govuk-!-width-one-half"),
             typeValue = "tel",
             hint = Some(viewModel.hint.map(p => messages(p)).getOrElse(""))
         )

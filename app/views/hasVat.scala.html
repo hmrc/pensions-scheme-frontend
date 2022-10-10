@@ -45,9 +45,7 @@
         @input_yes_no(
             field = form("value"),
             label = viewmodel.heading,
-            labelClass = Some("govuk-label--xl"),
-            hint = viewmodel.hint.map{ hint => messages(hint) },
-            headingIsLegend = true
+            hint = viewmodel.hint.map{ hint => messages(hint) }
         )
 
         @submit_button("site.save_and_continue")
