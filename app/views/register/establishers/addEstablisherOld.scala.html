@@ -25,9 +25,9 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    add_entity_list: components_refactored.add_entity_list,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    add_entity_list: components.add_entity_list,
+    submit_button: components.submit_button
 )
 @(
     form: Form[_],
@@ -43,11 +43,11 @@
 
         @if(establishers.isEmpty) {
 
-            @components_refactored.heading(
+            @components.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
 
-            @components_refactored.paragraph_text(messages("messages__establishers__add_hint"))
+            @components.paragraph_text(messages("messages__establishers__add_hint"))
 
             @submit_button("site.continue", true)
 
@@ -57,7 +57,7 @@
                 @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
             }
 
-            @components_refactored.heading(
+            @components.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
 
@@ -73,7 +73,7 @@
 
         }
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

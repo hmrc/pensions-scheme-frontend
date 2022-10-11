@@ -27,10 +27,10 @@
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
-    entity_list: components_refactored.entity_list,
-    input_yes_no: components_refactored.input_yes_no,
+    entity_list: components.entity_list,
+    input_yes_no: components.input_yes_no,
     govukErrorSummary: GovukErrorSummary,
-    submit_button: components_refactored.submit_button
+    submit_button: components.submit_button
 )
 
 @(
@@ -51,12 +51,12 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
+        @components.heading(
             headingKey=messages("messages__addCompanyDirectors__heading"), true
         )
 
         @if(directors.isEmpty) {
-            @components_refactored.paragraph_text(messages("messages__addCompanyDirectors_lede"))
+            @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
             @submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
@@ -70,15 +70,15 @@
                         hint = Some(messages("messages__addCompanyDirectors_lede"))
                     )
                 } else {
-                    @components_refactored.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
-                    @components_refactored.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+                    @components.paragraph_text(messages("messages__addCompanyDirectors_at_maximum"))
+                    @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
                 }
 
                 @submit_button("site.save_and_continue")
             }
         }
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

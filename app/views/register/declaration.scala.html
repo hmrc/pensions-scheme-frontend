@@ -19,7 +19,7 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(
@@ -33,9 +33,9 @@
 
 @layout(pageTitle = messages("messages__declaration__title")) {
 
-    @components_refactored.heading(messages("messages__declaration__heading"))
+    @components.heading(messages("messages__declaration__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
+    @components.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
 
     <ol class="govuk-list govuk-list--number">
         @if(isCompany){
@@ -66,6 +66,6 @@
 
     @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
 }

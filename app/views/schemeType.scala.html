@@ -28,8 +28,8 @@
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
-    input_radio: components_refactored.input_radio,
-    submit_button: components_refactored.submit_button
+    input_radio: components.input_radio,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -54,7 +54,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
+        @components.return_link_before_you_start(mode, schemeName, appConfig)
 
     }
 }

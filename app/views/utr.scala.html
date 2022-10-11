@@ -24,8 +24,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_text: components_refactored.input_text,
-    submit_button: components_refactored.submit_button
+    input_text: components.input_text,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], viewmodel: UTRViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -38,11 +38,11 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewmodel.heading), true)
+        @components.heading(messages(viewmodel.heading), true)
 
-        @components_refactored.paragraph_text(messages("messages__companyUtr__guidance1"))
+        @components.paragraph_text(messages("messages__companyUtr__guidance1"))
 
-        @components_refactored.paragraph_text(messages("messages__companyUtr__guidance2"))
+        @components.paragraph_text(messages("messages__companyUtr__guidance2"))
 
         @input_text(
             field = form("utr"),
@@ -53,7 +53,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
 
     }
 }

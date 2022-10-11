@@ -25,8 +25,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(
@@ -44,10 +44,10 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewModel.heading))
+        @components.heading(messages(viewModel.heading))
 
         @viewModel.hint.map{ hintText =>
-            @components_refactored.paragraph_text(messages(hintText))
+            @components.paragraph_text(messages(hintText))
         }
 
         <p class="govuk-body">
@@ -64,7 +64,7 @@
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
 
     }
 }

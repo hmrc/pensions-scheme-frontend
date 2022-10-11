@@ -25,8 +25,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_],
@@ -45,11 +45,11 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__any_more_changes__title"))
+        @components.heading(messages("messages__any_more_changes__title"))
 
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p1"))
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p2"))
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p3_date", dateToComplete))
+        @components.paragraph_text(messages("messages__any_more_changes__p1"))
+        @components.paragraph_text(messages("messages__any_more_changes__p2"))
+        @components.paragraph_text(messages("messages__any_more_changes__p3_date", dateToComplete))
 
         @input_yes_no(
             field = form("value"),
@@ -59,7 +59,7 @@
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

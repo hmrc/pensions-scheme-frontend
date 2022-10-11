@@ -22,8 +22,8 @@
 @{
     mode match {
         case CheckMode =>
-        components_refactored.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
+        components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
         case _ =>
-        components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

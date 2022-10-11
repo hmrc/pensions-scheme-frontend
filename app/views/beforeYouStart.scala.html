@@ -22,18 +22,18 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     appConfig: FrontendAppConfig,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(psaName: String)( implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__before_you_start__title")) {
 
-    @components_refactored.heading(messages("messages__before_you_start__title"))
+    @components.heading(messages("messages__before_you_start__title"))
 
-    @components_refactored.paragraph_text(messages("messages__before_you_start__p1"))
+    @components.paragraph_text(messages("messages__before_you_start__p1"))
 
-    @components_refactored.paragraph_text(messages("messages__before_you_start__p2"))
+    @components.paragraph_text(messages("messages__before_you_start__p2"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__before_you_start__item_1")</li>
@@ -44,6 +44,6 @@
 
     @button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
 
-    @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 
 }

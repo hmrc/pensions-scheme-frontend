@@ -27,8 +27,8 @@
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+        input_text: components.input_text,
+        submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
@@ -50,6 +50,6 @@
 
         @submit_button()
 
-        @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

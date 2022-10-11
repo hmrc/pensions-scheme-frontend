@@ -24,7 +24,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    submit_button: components_refactored.submit_button
+    submit_button: components.submit_button
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -33,9 +33,9 @@
 
     @formHelper(action = WhatYouWillNeedBenefitsInsuranceController.onSubmit, 'autoComplete -> "off") {
 
-        @components_refactored.heading(headingKey = messages("messages__what_you_will_need_benefits__h1"))
+        @components.heading(headingKey = messages("messages__what_you_will_need_benefits__h1"))
 
-        @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits__p1"))
+        @components.paragraph_text(messages("messages__what_you_will_need_benefits__p1"))
 
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_benefits__item_1")</li>
@@ -44,7 +44,7 @@
             <li>@messages("messages__what_you_will_need_benefits__item_4")</li>
         </ul>
 
-        @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits_contract__p1"))
+        @components.paragraph_text(messages("messages__what_you_will_need_benefits_contract__p1"))
 
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_benefits_contract__item_1")</li>
@@ -54,7 +54,7 @@
 
         @submit_button("site.continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
     }
 }

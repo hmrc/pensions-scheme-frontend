@@ -27,8 +27,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukSelect : GovukSelect,
-    address: components_refactored.address,
-    submit_button: components_refactored.submit_button
+    address: components.address,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -41,7 +41,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
+        @components.heading(
             messages(viewmodel.heading)
         )
 
@@ -49,7 +49,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
 
     }
 }

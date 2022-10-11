@@ -24,8 +24,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_textarea: components_refactored.input_textarea,
-    submit_button: components_refactored.submit_button
+    input_textarea: components.input_textarea,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], viewmodel: ReasonViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -45,7 +45,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
 
     }
 }

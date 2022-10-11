@@ -24,7 +24,7 @@
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    incompleteAlert: components_refactored.incomplete_alert
+    incompleteAlert: components.incomplete_alert
 )
 
 @(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -61,7 +61,7 @@
         }
     }
 
-    @components_refactored.heading(taskSections.h1)
+    @components.heading(taskSections.h1)
 
     @taskSections.statsSection.map { section =>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">

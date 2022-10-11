@@ -28,9 +28,9 @@
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    add_entity_list: components_refactored.add_entity_list,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    add_entity_list: components.add_entity_list,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -43,13 +43,13 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(
+        @components.heading(
             headingKey=messages("messages__addTrustee__heading")
         )
 
         @if(trustees.isEmpty) {
 
-            @components_refactored.paragraph_text(messages("messages__addTrustee__lede"))
+            @components.paragraph_text(messages("messages__addTrustee__lede"))
 
             @submit_button("site.continue", true)
 
@@ -67,9 +67,9 @@
 
             } else {
 
-                @components_refactored.paragraph_text(messages("messages__addTrustees_at_maximum"))
+                @components.paragraph_text(messages("messages__addTrustees_at_maximum"))
 
-                @components_refactored.paragraph_text(messages("messages__addTrustees_tell_us_if_you_have_more"))
+                @components.paragraph_text(messages("messages__addTrustees_tell_us_if_you_have_more"))
 
             }
 
@@ -77,7 +77,7 @@
 
         }
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

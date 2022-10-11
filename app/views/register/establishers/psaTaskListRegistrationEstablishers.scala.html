@@ -22,11 +22,11 @@
 
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link,
+    button_link: components.button_link,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    incompleteAlert: components_refactored.incomplete_alert
+    incompleteAlert: components.incomplete_alert
 )
 
 @(taskSections: SchemeDetailsTaskListEstablishers, schemeName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
@@ -58,7 +58,7 @@
 @layout( pageTitle = pageTitle ) {
 
     @taskSections.establisher.header.map{ hdr =>
-        @components_refactored.heading(hdr)
+        @components.heading(hdr)
     }
 
     @taskSections.statsSection.map{ section =>
@@ -93,6 +93,6 @@
         @button_link("site.save_and_continue", returnUrl, "submit")
     </p>
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+    @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
 
 }

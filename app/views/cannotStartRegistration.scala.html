@@ -20,18 +20,18 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__cannotStartRegistration__title")) {
 
-    @components_refactored.heading(messages("messages__cannotStartRegistration__heading"))
+    @components.heading(messages("messages__cannotStartRegistration__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__cannotStartRegistration__p1"))
+    @components.paragraph_text(messages("messages__cannotStartRegistration__p1"))
 
-    @components_refactored.paragraph_text(messages("messages__cannotStartRegistration__p2"))
+    @components.paragraph_text(messages("messages__cannotStartRegistration__p2"))
 
     <p class="govuk-body"><a id="return-to-overview" class="govuk-link" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__cannotStartRegistration__returnToOverview__link")</a></p>
 

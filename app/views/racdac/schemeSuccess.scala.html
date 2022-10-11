@@ -27,7 +27,7 @@
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
     govukPanel: GovukPanel,
-    submit_button: components_refactored.submit_button
+    submit_button: components.submit_button
 )
 
 @(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -51,7 +51,7 @@
 
         <h2 class="govuk-heading-l">@messages("messages__complete_racdac__what_happens_next")</h2>
 
-        @components_refactored.paragraph_text_to_html(Message("messages__complete_racdac__statement1", yourSchemesLink))
+        @components.paragraph_text_to_html(Message("messages__complete_racdac__statement1", yourSchemesLink))
 
         <h2 class="govuk-heading-l">@messages("messages__complete_racdac__save_or_print")</h2>
 

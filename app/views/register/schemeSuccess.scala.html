@@ -29,7 +29,7 @@
     appConfig: FrontendAppConfig,
     govukPanel: GovukPanel,
     govukInsetText: GovukInsetText,
-    submit_button: components_refactored.submit_button
+    submit_button: components.submit_button
 )
 
 @(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
@@ -51,7 +51,7 @@
 
 @insetContent = {
     <p class="govuk-body"><strong>@messages("messages__complete__copy_1")</strong></p>
-    @components_refactored.paragraph_text_to_html(Message("messages__complete__copy_2", yourSchemesLink))
+    @components.paragraph_text_to_html(Message("messages__complete__copy_2", yourSchemesLink))
 }
 
 @layout(pageTitle = messages("messages__complete__title"), showBackLink = false) {
@@ -75,13 +75,13 @@
 
     <h2 class="govuk-heading-m">@messages("messages__complete__what_happens_next")</h2>
 
-    @components_refactored.paragraph_text(messages("messages__complete__copy_3"))
-    @components_refactored.paragraph_text(messages("messages__complete__copy_4"))
-    @components_refactored.paragraph_text(messages("messages__complete__copy_5"))
+    @components.paragraph_text(messages("messages__complete__copy_3"))
+    @components.paragraph_text(messages("messages__complete__copy_4"))
+    @components.paragraph_text(messages("messages__complete__copy_5"))
 
     @if(showMasterTrustContent) {
         <h2 class="govuk-heading-m">@messages("messages__complete__master_trust_heading")</h2>
-        @components_refactored.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
+        @components.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
     }
 
     <p class="govuk-body">

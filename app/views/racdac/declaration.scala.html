@@ -19,16 +19,16 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(psaName: String, href: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration_racdac__title")) {
 
-    @components_refactored.heading(messages("messages__declaration_racdac__heading"))
+    @components.heading(messages("messages__declaration_racdac__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__declaration_racdac__declare"))
+    @components.paragraph_text(messages("messages__declaration_racdac__declare"))
 
     <ol class="govuk-list govuk-list--number">
         <li>@messages("messages__declaration_racdac__statement1")</li>
@@ -38,6 +38,6 @@
 
     @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 
 }

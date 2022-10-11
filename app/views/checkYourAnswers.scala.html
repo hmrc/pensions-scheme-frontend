@@ -21,15 +21,15 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    answer_section: components_refactored.answer_section,
-    button_link: components_refactored.button_link
+    answer_section: components.answer_section,
+    button_link: components.button_link
 )
 
 @(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = vm.title.resolve.capitalize ) {
 
-    @components_refactored.heading(vm.h1.resolve)
+    @components.heading(vm.h1.resolve)
 
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
@@ -44,9 +44,9 @@
     }
 
     @if(vm.returnOverview){
-        @components_refactored.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
     } else {
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
     }
 
 }

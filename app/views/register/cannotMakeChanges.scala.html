@@ -20,14 +20,14 @@
 
 @layout(pageTitle = messages("messages__cannot_Make_Changes__title")) {
 
-    @components_refactored.heading(messages("messages__cannot_Make_Changes__heading"))
+    @components.heading(messages("messages__cannot_Make_Changes__heading"))
 
     @schemeName.map{sn =>
-        @components_refactored.paragraph_text(messages("messages__cannot_Make_Changes__p1", sn))
+        @components.paragraph_text(messages("messages__cannot_Make_Changes__p1", sn))
     }
 
-    @components_refactored.paragraph_text(messages("messages__cannot_Make_Changes__p2"))
+    @components.paragraph_text(messages("messages__cannot_Make_Changes__p2"))
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName , None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName , None, srn)
 
 }

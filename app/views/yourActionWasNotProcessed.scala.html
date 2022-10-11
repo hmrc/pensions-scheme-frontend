@@ -25,16 +25,16 @@
 
 @layout(pageTitle = messages("messages__yourActionWasNotProcessed__title")) {
 
-    @components_refactored.heading(messages("messages__yourActionWasNotProcessed__heading"))
+    @components.heading(messages("messages__yourActionWasNotProcessed__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p1"))
+    @components.paragraph_text(messages("messages__yourActionWasNotProcessed__p1"))
 
-    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p2"))
+    @components.paragraph_text(messages("messages__yourActionWasNotProcessed__p2"))
 
-    @components_refactored.paragraph_text(messages("messages__yourActionWasNotProcessed__p3"))
+    @components.paragraph_text(messages("messages__yourActionWasNotProcessed__p3"))
 
     @schemeName.map{ name =>
-        @components_refactored.return_link(messages("site.return_to", name), None, Some(returnUrl))
+        @components.return_link(messages("site.return_to", name), None, Some(returnUrl))
     }
 
 }

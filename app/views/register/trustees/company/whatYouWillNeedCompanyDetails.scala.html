@@ -16,22 +16,22 @@
 
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__detailsFor", messages("messages__theCompany")).capitalize) {
 
-    @components_refactored.heading(messages("messages__detailsFor", companyName))
+    @components.heading(messages("messages__detailsFor", companyName))
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p1", companyName))
+    @components.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p1", companyName))
 
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item1")</li>
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item2")</li>
     </ul>
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p2", companyName))
+    @components.paragraph_text(messages("messages__whatYouWillNeedTrusteeCompany__p2", companyName))
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item3")</li>
         <li>@messages("messages__whatYouWillNeedTrusteeCompany__item4")</li>
@@ -39,6 +39,6 @@
 
     @button_link("site.continue", href.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

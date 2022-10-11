@@ -29,13 +29,13 @@
 
 @layout(pageTitle = messages("messages__youNeedToRegister__title")) {
 
-    @components_refactored.heading(messages("messages__youNeedToRegister__heading"))
+    @components.heading(messages("messages__youNeedToRegister__heading"))
 
     <p class="govuk-body-l">@messages("messages__youNeedToRegister__lede")</p>
 
-    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p1", psaGovUkLink))
+    @components.paragraph_text_to_html(Message("messages__youNeedToRegister__p1", psaGovUkLink))
 
-    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p2", pspGovUkLink))
+    @components.paragraph_text_to_html(Message("messages__youNeedToRegister__p2", pspGovUkLink))
 
     <p class="govuk-body">
         <a id="redirect-to-psa" class="govuk-button" href="@appConfig.registerSchemeAdministratorUrl" role="button">@messages("messages__youNeedToRegister__button")</a>

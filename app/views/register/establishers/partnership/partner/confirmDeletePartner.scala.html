@@ -24,8 +24,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], partnerName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -46,7 +46,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
     }
 }
