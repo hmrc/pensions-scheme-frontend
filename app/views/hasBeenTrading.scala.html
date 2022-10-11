@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import models.Mode
 @import viewmodels.CommonFormWithHintViewModel
 @import utils.ViewHelper.titleWithErrors
 
@@ -33,8 +30,7 @@
 
 @(form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
@@ -52,5 +48,6 @@
         @submit_button("site.save_and_continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

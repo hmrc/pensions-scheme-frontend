@@ -14,24 +14,19 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import controllers.register.trustees.partnership.routes._
 @import models.{Mode, Index}
-@import models.PartnershipDetails
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components_refactored.input_text,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)

@@ -18,12 +18,10 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
 @import models.Mode
 @import models.register.Partner
 @import utils.ViewHelper.titleWithErrors
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     layout: templates.Layout,
@@ -46,9 +44,7 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))
-){
+@layout(pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))){
 
     @formHelper(action = postUrl, 'autoComplete -> "off") {
 

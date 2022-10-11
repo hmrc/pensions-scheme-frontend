@@ -15,7 +15,6 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.register.establishers.company.routes
 @import models.Mode
 @import models.register.DirectorEntity
 @import play.api.mvc.Call
@@ -23,8 +22,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 
 @this(
     layout: templates.Layout,
@@ -46,9 +43,7 @@
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))
-){
+@layout(pageTitle = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))){
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
@@ -86,5 +81,4 @@
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
-
 }

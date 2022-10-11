@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
@@ -23,17 +22,17 @@
 )
 
 @(
-        field: Field,
-        label: String,
-        secondaryLabel: Option[String] = None,
-        fieldsetClass: Option[String] = Some("inline"),
-        paragraphText: Option[String] = None,
-        hint: Option[String] = None,
-        yesAssoc: Option[String] = None,
-        noAssoc: Option[String] = None,
-        labelClass: Option[String] = None,
-        legendClass: Option[String] = None,
-        headingIsLegend: Boolean = false
+    field: Field,
+    label: String,
+    secondaryLabel: Option[String] = None,
+    fieldsetClass: Option[String] = Some("inline"),
+    paragraphText: Option[String] = None,
+    hint: Option[String] = None,
+    yesAssoc: Option[String] = None,
+    noAssoc: Option[String] = None,
+    labelClass: Option[String] = None,
+    legendClass: Option[String] = None,
+    headingIsLegend: Boolean = false
 )(implicit messages: Messages)
 
 @cssAdjust = @{
@@ -65,6 +64,4 @@
             value = Some(messages("site.false"))
         )
     )
-    ).withFormField(field)
-)
-
+).withFormField(field))

@@ -14,26 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import viewmodels.PayeViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components_refactored.input_text,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 

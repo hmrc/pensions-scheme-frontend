@@ -14,17 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 @this(layout: templates.Layout)
 
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__unauthorised__title")) {
 
- @components_refactored.heading(messages("messages__unauthorised__title"))
+    @components_refactored.heading(messages("messages__unauthorised__title"))
 
 }

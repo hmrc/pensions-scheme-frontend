@@ -18,12 +18,11 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.trustees.routes._
 @import models.Mode
 @import models.register.Trustee
-@import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
+
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
@@ -33,33 +32,52 @@
     add_entity_list: components_refactored.add_entity_list,
     submit_button: components_refactored.submit_button
 )
+
 @(form: Form[_], mode: Mode, trustees: Seq[Trustee[_]], schemeName: Option[String], srn: Option[String])(implicit request: Request[_], messages: Messages)
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__addTrustee__title"))) {
+
+@layout(pageTitle = titleWithErrors(form, messages("messages__addTrustee__title"))) {
+
     @formHelper(action = AddTrusteeController.onSubmit(mode, srn), 'autoComplete -> "off") {
+
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
+
         @components_refactored.heading(
             headingKey=messages("messages__addTrustee__heading")
         )
+
         @if(trustees.isEmpty) {
+
             @components_refactored.paragraph_text(messages("messages__addTrustee__lede"))
+
             @submit_button("site.continue", true)
+
         } else {
+
             @add_entity_list(trustees, mode, srn, messages("messages__addTrustee__heading"))
+
             @if(trustees.size < appConfig.maxTrustees) {
+
                 @input_yes_no(
                     field = form("value"),
                     label = messages("messages__addTrustee__text"),
                     hint = None
                 )
+
             } else {
+
                 @components_refactored.paragraph_text(messages("messages__addTrustees_at_maximum"))
+
                 @components_refactored.paragraph_text(messages("messages__addTrustees_tell_us_if_you_have_more"))
+
             }
+
             @submit_button("site.save_and_continue", true)
+
         }
+
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

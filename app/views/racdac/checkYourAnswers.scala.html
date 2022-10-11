@@ -15,14 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.register.establishers.individual.routes._
-@import models.Index
-@import play.api.mvc.Call
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
-@import models.{NormalMode, Mode}
+@import viewmodels.{AnswerSection}
 @import viewmodels.CYAViewModel
 
 @this(
@@ -34,7 +27,7 @@
 
 @(vm:CYAViewModel, returnToName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
-@layout( pageTitle = vm.title.resolve.capitalize) {
+@layout(pageTitle = vm.title.resolve.capitalize) {
 
     @components_refactored.heading(vm.h1.resolve)
 

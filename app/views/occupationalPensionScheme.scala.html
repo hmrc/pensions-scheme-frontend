@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -33,9 +31,7 @@
 
 @(form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__occupational_pension_scheme__title"))
-){
+@layout(pageTitle = titleWithErrors(form, messages("messages__occupational_pension_scheme__title"))){
 
     @formHelper(action = OccupationalPensionSchemeController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -44,7 +40,6 @@
         }
 
         @schemeName.map{sn=>
-
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__occupational_pension_scheme__h1", sn),
@@ -55,5 +50,6 @@
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+
     }
 }

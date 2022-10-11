@@ -16,18 +16,14 @@
 
 @import config.FrontendAppConfig
 @import models.Mode
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 
 @(mode: Mode, schemeName:String, appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @{
- mode match {
-  case CheckMode =>
-   components_refactored.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
-  case _ =>
-   components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
- }
+    mode match {
+        case CheckMode =>
+        components_refactored.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
+        case _ =>
+        components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    }
 }

@@ -15,12 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
-@import models.Mode
 @import viewmodels.Message
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -49,4 +44,5 @@
     <p class="govuk-body">
         <a id="gov-uk-link" class="govuk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
     </p>
+
 }

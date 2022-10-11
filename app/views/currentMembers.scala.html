@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.{Mode}
 @import models.Members
@@ -34,8 +32,7 @@
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__current_members__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__current_members__title"))) {
 
     @formHelper(action = CurrentMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -53,5 +50,6 @@
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+
     }
 }

@@ -14,16 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import controllers.register.establishers.company.routes._
-@import models.{Mode, Index}
 @import viewmodels.address.PostcodeLookupViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 
 @this(
         layout: templates.Layout,
@@ -41,8 +36,7 @@
 
 @closeLink = {</a>}
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
@@ -61,5 +55,6 @@
         @submit_button("site.find_address")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

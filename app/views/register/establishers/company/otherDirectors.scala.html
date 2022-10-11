@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.register.establishers.company.routes._
 @import models.Mode
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
@@ -34,8 +31,7 @@
 
 @(form: Form[_],mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__otherDirectors__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__otherDirectors__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
@@ -53,5 +49,6 @@
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

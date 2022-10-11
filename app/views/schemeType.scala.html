@@ -22,7 +22,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -35,9 +34,7 @@
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__scheme_type__title"))
-) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__scheme_type__title"))) {
 
     @formHelper(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -58,5 +55,6 @@
         @submit_button()
 
         @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
+
     }
 }

@@ -18,13 +18,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
-@import controllers.routes._
-@import models.Mode
 @import viewmodels.Message
 @import play.api.mvc.Call
-@import views.html._
 @import utils.ViewHelper.titleWithErrors
 
 @this(
@@ -61,5 +57,6 @@
         @submit_button("site.save_and_continue")
 
         @components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+
     }
 }

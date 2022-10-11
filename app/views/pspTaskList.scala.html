@@ -15,19 +15,12 @@
  *@
 
 @import config.FrontendAppConfig
-@import play.api.mvc.Call
 @import views.html._
 @import viewmodels.PspTaskList
-@import models.NormalMode
-@import controllers.register.establishers.routes._
-@import controllers.register.trustees.routes._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig
 )
 
 @(taskSections: PspTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -48,95 +41,93 @@
     }
 }
 
-@layout(
-    pageTitle = messages("messages__scheme_details__title")
-    ) {
+@layout(pageTitle = messages("messages__scheme_details__title")) {
 
-        @components_refactored.heading(taskSections.h1)
+    @components_refactored.heading(taskSections.h1)
 
-        <section aria-labelledby="section-before-you-start-header">
-            <h2 id="section-before-you-start-header" class="govuk-heading-l govuk-!-margin-bottom-5">
-                @messages("messages__scheme_details__title")
-            </h2>
+    <section aria-labelledby="section-before-you-start-header">
+        <h2 id="section-before-you-start-header" class="govuk-heading-l govuk-!-margin-bottom-5">
+            @messages("messages__scheme_details__title")
+        </h2>
 
-            @taskSections.beforeYouStart.header.map{ item=>
-                <h3 id="section-information-h3" class="govuk-heading-m">
-                    @messages(item)
-                </h3>
-            }
-
-            @taskSections.beforeYouStart.entities.map{ spoke =>
-                <div class="app-task-list">
-                    <ul class="app-task-list__items">
-                        <li class="app-task-list__item">
-                            <a id="section-before-you-start-link" class="govuk-link app-task-list__task-name" href="@spoke.link.target">
-                            @messages(spoke.link.text)
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            }
-        </section>
-
-        <section aria-labelledby="section-about-header">
-            @taskSections.about.header.map{ item=>
-                <h3 id="section-about-header" class="govuk-heading-m">
-                    @messages(item)
-                </h3>
-            }
-
-            <div class="app-task-list">
-                <ul class="app-task-list__items">
-                @for((item, i) <- taskSections.about.entities.zipWithIndex) {
-                    <li class="app-task-list__item">
-                        <a id="section-about-link-@i" class="govuk-link app-task-list__task-name" href="@{
-                            item.link.target
-                        }">
-                        @messages(item.link.text)
-                        </a>
-                    </li>
-                }
-                </ul>
-            </div>
-        </section>
-
-        <section aria-labelledby="section-establishers-header">
-            <h2 id="section-establishers-header" class="govuk-heading-l govuk-!-margin-bottom-3">
-                @messages("messages__schemeTaskList__sectionEstablishers_header")
-            </h2>
-
-            @if(taskSections.establishers.nonEmpty){
-                <ul class="app-task-list__items">
-                    @for((item, i) <- taskSections.establishers.zipWithIndex){
-                            <li>@messages(item)</li>
-                    }
-                </ul>
-            }
-        </section>
-
-        @if(taskSections.trustees.nonEmpty){
-            <section aria-labelledby="section-trustees-header">
-                    @taskSections.trusteeHeader.map { _ =>
-                        <h2 id="section-trustees-header" class="govuk-heading-l govuk-!-margin-bottom-3">
-                            @messages("messages__schemeTaskList__sectionTrustees_header")
-                        </h2>
-                    }
-
-                    <ul class="app-task-list__items">
-                        @for((item, i) <- taskSections.trustees.zipWithIndex){
-                                    <li>@messages(item)</li>
-                        }
-                    </ul>
-            </section>
+        @taskSections.beforeYouStart.header.map{ item=>
+            <h3 id="section-information-h3" class="govuk-heading-m">
+                @messages(item)
+            </h3>
         }
 
+        @taskSections.beforeYouStart.entities.map{ spoke =>
+            <div class="app-task-list">
+                <ul class="app-task-list__items">
+                    <li class="app-task-list__item">
+                        <a id="section-before-you-start-link" class="govuk-link app-task-list__task-name" href="@spoke.link.target">
+                        @messages(spoke.link.text)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        }
+    </section>
+
+    <section aria-labelledby="section-about-header">
+        @taskSections.about.header.map{ item=>
+            <h3 id="section-about-header" class="govuk-heading-m">
+                @messages(item)
+            </h3>
+        }
+
+        <div class="app-task-list">
+            <ul class="app-task-list__items">
+            @for((item, i) <- taskSections.about.entities.zipWithIndex) {
+                <li class="app-task-list__item">
+                    <a id="section-about-link-@i" class="govuk-link app-task-list__task-name" href="@{
+                        item.link.target
+                    }">
+                    @messages(item.link.text)
+                    </a>
+                </li>
+            }
+            </ul>
+        </div>
+    </section>
+
+    <section aria-labelledby="section-establishers-header">
+        <h2 id="section-establishers-header" class="govuk-heading-l govuk-!-margin-bottom-3">
+            @messages("messages__schemeTaskList__sectionEstablishers_header")
+        </h2>
+
+        @if(taskSections.establishers.nonEmpty){
+            <ul class="app-task-list__items">
+                @for((item, i) <- taskSections.establishers.zipWithIndex){
+                        <li>@messages(item)</li>
+                }
+            </ul>
+        }
+    </section>
+
+    @if(taskSections.trustees.nonEmpty){
+        <section aria-labelledby="section-trustees-header">
+                @taskSections.trusteeHeader.map { _ =>
+                    <h2 id="section-trustees-header" class="govuk-heading-l govuk-!-margin-bottom-3">
+                        @messages("messages__schemeTaskList__sectionTrustees_header")
+                    </h2>
+                }
+
+                <ul class="app-task-list__items">
+                    @for((item, i) <- taskSections.trustees.zipWithIndex){
+                                <li>@messages(item)</li>
+                    }
+                </ul>
+        </section>
+    }
 
     <hr aria-hidden="true">
+
     <p class="govuk-body">
-    <a id="save-and-return" class="govuk-link"
-       href="@appConfig.managePensionsSchemeDetailsPspUrl.format(taskSections.srn)">
-       @messages("messages__complete__returnToSchemeOverview", schemeName)
-    </a>
+        <a id="save-and-return" class="govuk-link"
+           href="@appConfig.managePensionsSchemeDetailsPspUrl.format(taskSections.srn)">
+           @messages("messages__complete__returnToSchemeOverview", schemeName)
+        </a>
     </p>
 
 }

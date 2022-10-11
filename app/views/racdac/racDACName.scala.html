@@ -17,13 +17,10 @@
 @import config.FrontendAppConfig
 @import controllers.racdac.routes._
 @import models.Mode
-@import models.register._
-@import models.register.SchemeType.MasterTrust
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         layout: templates.Layout,
@@ -35,12 +32,6 @@
 )
 
 @(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
-
-@headingContent= {
-    <span class="govuk-heading-xl">
-        @messages("messages__racdac_name__heading")
-    </span>
-}
 
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__racdac_name__title"))) {

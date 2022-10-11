@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.register.establishers.routes
 @import models.Mode
 @import models.register.Establisher
-@import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
 @this(
     layout: templates.Layout,
@@ -39,30 +36,44 @@
     schemeName: Option[String],
     srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
+
+@layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
+
     @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
+
         @if(establishers.isEmpty) {
+
             @components_refactored.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
+
             @components_refactored.paragraph_text(messages("messages__establishers__add_hint"))
+
             @submit_button("site.continue", true)
+
         } else {
+
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
             }
+
             @components_refactored.heading(
                 headingKey=messages("messages__establishers__add__title")
             )
+
             @add_entity_list(establishers, mode, srn, messages("messages__establishers__add__title"))
+
             @input_yes_no(
                 field = form("value"),
                 label = messages("messages__establishers__add_legend_more"),
                 hint = None
             )
+
             @submit_button("site.save_and_continue", true)
+
         }
+
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

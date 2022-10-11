@@ -41,8 +41,8 @@
     schemeName: String
 )(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
+
     @formHelper(action = routes.EstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
@@ -52,30 +52,30 @@
         @components_refactored.heading(messages("messages__established_country__h1", schemeName), true)
 
         <div class="govuk-!-width-two-thirds">
-        @govukSelect(Select(
-            id = "value",
-            name = "value",
-            classes = "govuk-!-width-one-third country",
-            items = Seq(SelectItem(value = Some(""))) ++
-            options.map(valueOption =>
-                SelectItem(
-                    value = Some(valueOption.value),
-                    text = valueOption.label
+            @govukSelect(Select(
+                id = "value",
+                name = "value",
+                classes = "govuk-!-width-one-third country",
+                items = Seq(SelectItem(value = Some(""))) ++
+                options.map(valueOption =>
+                    SelectItem(
+                        value = Some(valueOption.value),
+                        text = valueOption.label
+                    )
+                ),
+                label = Label(
+                    content = Text(messages("messages__established_country__h1", schemeName)),
+                    isPageHeading = false,
+                    classes = "govuk-visually-hidden",
+                    attributes = Map("aria-hidden" -> "true")
                 )
-            ),
-            label = Label(
-                content = Text(messages("messages__established_country__h1", schemeName)),
-                isPageHeading = false,
-                classes = "govuk-visually-hidden",
-                attributes = Map("aria-hidden" -> "true")
+                ).withFormField(form("value"))
             )
-            ).withFormField(form("value"))
-        )
         </div>
 
         @submit_button("site.save_and_continue", true)
 
         @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
+
     }
 }
-

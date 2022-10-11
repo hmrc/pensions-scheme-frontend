@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -34,9 +33,7 @@
 
 @(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__workingKnowledge__title"))
-){
+@layout(pageTitle = titleWithErrors(form, messages("messages__workingKnowledge__title"))){
 
     @formHelper(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -47,7 +44,9 @@
         @components_refactored.heading(messages("messages__workingKnowledge__heading"))
 
         @components_refactored.paragraph_text(messages("messages__workingKnowledge__p1"), Some("p1"))
+
         @components_refactored.paragraph_text(messages("messages__workingKnowledge__p2"), Some("p2"))
+
         @components_refactored.paragraph_text(messages("messages__workingKnowledge__p3"), Some("p3"))
 
         @input_yes_no(
@@ -59,5 +58,6 @@
         @submit_button("site.save_and_continue")
 
         @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
+
     }
 }

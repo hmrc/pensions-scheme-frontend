@@ -20,11 +20,11 @@
 @import views.html._
 
 @this(
-        layout: templates.Layout,
-        appConfig: FrontendAppConfig,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        incompleteAlert: components_refactored.incomplete_alert
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    incompleteAlert: components_refactored.incomplete_alert
 )
 
 @(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -193,4 +193,5 @@
         }
         </a>
     </p>
+
 }

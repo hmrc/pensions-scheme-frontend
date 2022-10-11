@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
 @import play.api.mvc.Call
 @import utils.InputOption
@@ -37,6 +35,7 @@
 @(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, titleMessage)) {
+
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {

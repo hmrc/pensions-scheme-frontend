@@ -15,16 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import play.api.mvc.Call
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
 @import viewmodels.SchemeDetailsTaskListTrustees
-@import models.NormalMode
-@import controllers.register.establishers.routes._
-@import controllers.register.trustees.routes._
 
 @this(
     layout: templates.Layout,
@@ -100,4 +94,5 @@
     </p>
 
     @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+
 }

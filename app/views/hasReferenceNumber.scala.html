@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import models.Mode
 @import viewmodels.CommonFormWithHintViewModel
 @import utils.ViewHelper.titleWithErrors
 
@@ -33,23 +30,24 @@
 
 @(form: Form[_], viewmodel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewmodel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
-            @input_yes_no(
-                field = form(viewmodel.formFieldName.fold("value")(identity)),
-                label = viewmodel.heading,
-                hint = viewmodel.hint.map{ hint => messages(hint) },
-                headingIsLegend = true
-            )
+
+        @input_yes_no(
+            field = form(viewmodel.formFieldName.fold("value")(identity)),
+            label = viewmodel.heading,
+            hint = viewmodel.hint.map{ hint => messages(hint) },
+            headingIsLegend = true
+        )
 
         @submit_button()
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+
     }
 }

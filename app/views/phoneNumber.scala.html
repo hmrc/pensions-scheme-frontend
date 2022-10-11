@@ -14,26 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import viewmodels.CommonFormWithHintViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components_refactored.input_text,
+    submit_button: components_refactored.submit_button
 )
 
 @(form: Form[_], viewModel: CommonFormWithHintViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, viewModel.title)) {
+@layout(pageTitle = titleWithErrors(form, viewModel.title)) {
 
     @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
 
@@ -45,7 +42,8 @@
             field = form("phone"),
             label = messages(viewModel.heading),
             typeValue = "tel",
-            hint = Some(viewModel.hint.map(p => messages(p)).getOrElse(""))
+            hint = Some(viewModel.hint.map(p => messages(p)).getOrElse("")),
+            headingIsLegend = true
         )
 
         @submit_button("site.save_and_continue")

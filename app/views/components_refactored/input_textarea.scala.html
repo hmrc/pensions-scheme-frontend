@@ -15,20 +15,17 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     govukTextarea : GovukTextarea
 )
 
 @(
-        field: Field,
-        label: String,
-        inputClass: Option[String] = None,
-        labelClass: Option[String] = None,
-        hint: Option[String] = None,
-
+    field: Field,
+    label: String,
+    inputClass: Option[String] = None,
+    labelClass: Option[String] = None,
+    hint: Option[String] = None,
 )(implicit messages: Messages)
 
 
@@ -45,5 +42,4 @@
     hint = hint.map(hintValue => Hint(content = Text(hintValue))),
     classes = inputClass.fold("")(classes => classes),
     errorMessage = field.error.map(errorValue => ErrorMessage(content = Text(errorValue.message)))
-  ))
-
+))

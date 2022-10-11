@@ -14,16 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 @(messageKey: String, numberOfBulletPoints: Int)(implicit messages: Messages)
 
 <ul class="govuk-list govuk-list--bullet">
- @for(num <- 1 to numberOfBulletPoints){
-  <li>@messages(messageKey + "_" + num)</li>
- }
+    @for(num <- 1 to numberOfBulletPoints){
+        <li>
+            @messages(messageKey + "_" + num)
+        </li>
+    }
 </ul>
 
 

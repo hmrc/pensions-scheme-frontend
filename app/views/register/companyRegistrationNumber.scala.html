@@ -14,17 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import controllers.register.trustees.company.routes._
-@import models.Mode
 @import play.api.mvc.Call
-@import forms.CompanyRegistrationNumberFormProvider
 @import viewmodels.CompanyRegistrationNumberViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         layout: templates.Layout,

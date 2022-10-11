@@ -18,21 +18,18 @@
 @import controllers.routes._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    submit_button: components_refactored.submit_button
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = messages("messages__what_you_will_need_benefits__title")) {
+@layout(pageTitle = messages("messages__what_you_will_need_benefits__title")) {
 
     @formHelper(action = WhatYouWillNeedBenefitsInsuranceController.onSubmit, 'autoComplete -> "off") {
 
@@ -58,5 +55,6 @@
         @submit_button("site.continue")
 
         @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+
     }
 }
