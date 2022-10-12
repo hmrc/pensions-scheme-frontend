@@ -1,4 +1,3 @@
-@import "lib/govuk-frontend/govuk/base";
 @import 'location-autocomplete.min';
 
 .autocomplete__wrapper ul, .autocomplete__wrapper li {
@@ -68,4 +67,8 @@
             }
         }
     }
+}
+
+[role="region"][aria-labelledby] {
+    overflow: auto;
 }

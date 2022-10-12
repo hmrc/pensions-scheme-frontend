@@ -1,3 +1,7 @@
+// initialise GovUK lib
+GOVUKFrontend.initAll();
+HMRCFrontend.initAll();
+
 // prevent resubmit warning
 if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
     window.history.replaceState(null, null, window.location.href);
@@ -5,13 +9,22 @@ if (window.history && window.history.replaceState && typeof window.history.repla
 
 document.addEventListener('DOMContentLoaded', function(event) {
 
-    // handle back click
     var backLink = document.querySelector('.govuk-back-link');
-    if (backLink !== null) {
-        backLink.addEventListener('click', function(e){
+    if (backLink) {
+        // backLink.classList.remove('js-visible');
+        backLink.addEventListener('click', function (e) {
             e.preventDefault();
-            e.stopPropagation();
-            window.history.back();
+            if (window.history && window.history.back && typeof window.history.back === 'function') {
+                window.history.back();
+            }
+        });
+    }
+
+    var printLink = document.querySelector('.print-this-page');
+    if (printLink) {
+        printLink.addEventListener('click', function (e) {
+            window.print();
+            return false;
         });
     }
 
