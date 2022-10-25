@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     var backLink = document.querySelector('.govuk-back-link');
     if (backLink) {
-        // backLink.classList.remove('js-visible');
         backLink.addEventListener('click', function (e) {
             e.preventDefault();
             if (window.history && window.history.back && typeof window.history.back === 'function') {
@@ -27,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
 
     var selectEl = document.querySelector('select')
-    if( selectEl !== null ){
+    if (selectEl !== null){
         accessibleAutocomplete.enhanceSelectElement({
             defaultValue: "",
             selectElement: selectEl
