@@ -26,7 +26,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    govukPanel: GovukPanel,
+    panel: components.panel,
     submit_button: components.submit_button
 )
 
@@ -39,10 +39,9 @@
 
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
 
-        @govukPanel(
-            Panel(
-                title = Text(messages("messages__complete_racdac__heading",schemeName))
-            )
+        @panel(
+            panelTitle = messages("messages__complete_racdac__heading",schemeName),
+            panelContent = ""
         )
 
         <p class="govuk-body">@messages("messages__complete_racdac__email")
@@ -56,7 +55,7 @@
         <h2 class="govuk-heading-l">@messages("messages__complete_racdac__save_or_print")</h2>
 
         <p class="govuk-body">
-            <a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
+            <a id="print-this-page-link" class="govuk-link" href="#">@messages("site.printThisPage")</a>
         </p>
 
         @submit_button("messages__finish")

@@ -86,7 +86,6 @@
             value = Some(input.value),
             content = Text(messages(input.label)),
             hint = input.hint.headOption.map(hintValue => Hint(content = Text(messages(hintValue)))),
-            attributes = input.dataTarget.fold(Map.empty[String,String])(dtValue => Map("data-target" -> dtValue)),
             conditionalHtml = conditionalHtml(chtml_name,input.value)
         )
     )

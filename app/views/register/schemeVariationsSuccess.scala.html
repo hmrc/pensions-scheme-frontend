@@ -15,23 +15,21 @@
  *@
 
 @import utils.DateHelper
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
     layout: templates.Layout,
-    govukPanel: GovukPanel
+    panel: components.panel
 )
 
 @(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@printThisPageLink = {<a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
+@printThisPageLink = {<a id="print-this-page-link" class="govuk-link" href="#">@messages("site.printThisPage")</a>}
 
 @layout(pageTitle = messages("messages__variations_complete__title")) {
 
-    @govukPanel(
-        Panel(
-            title = Text(messages("messages__variations_complete__heading"))
-        )
+    @panel(
+        panelTitle = messages("messages__variations_complete__heading"),
+        panelContent = ""
     )
 
     <div class="print-page">

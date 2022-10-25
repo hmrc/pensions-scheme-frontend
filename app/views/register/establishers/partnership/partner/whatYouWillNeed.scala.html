@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-
 @this(
     layout: templates.Layout,
-    govukInsetText : GovukInsetText,
+    inset_text: components.inset_text,
     button_link: components.button_link
 )
 
@@ -41,9 +39,9 @@
         <li>@messages("messages__whatYouWillNeed__item8")</li>
     </ul>
 
-    @govukInsetText(InsetText(
-        content = Text(messages("messages__atLeast_two_partners"))
-    ))
+    @inset_text(
+        content = messages("messages__atLeast_two_partners")
+    )
 
     @button_link("site.continue", href.url, "submit")
 

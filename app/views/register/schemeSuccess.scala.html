@@ -27,8 +27,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    govukPanel: GovukPanel,
-    govukInsetText: GovukInsetText,
+    panel: components.panel,
+    inset_text: components.inset_text,
     submit_button: components.submit_button
 )
 
@@ -43,10 +43,8 @@
 }
 
 @panelContent = {
-    <div class="govuk-panel__body">
-        @Html(Message("messages__complete__application_number_is")) <br>
-        <strong>@applicationNumber</strong>
-    </div>
+    @Html(Message("messages__complete__application_number_is")) <br>
+    <strong>@applicationNumber</strong>
 }
 
 @insetContent = {
@@ -56,42 +54,37 @@
 
 @layout(pageTitle = messages("messages__complete__title"), showBackLink = false) {
 
-    @govukPanel(
-        Panel(
-            title = Text(messages("messages__complete__heading")),
-            content = HtmlContent(panelContent)
-        )
-    )
-
-    <p class="govuk-body">@messages("messages__complete__email")
-        <strong>@email</strong>
-    </p>
-
-    @govukInsetText(
-        InsetText(
-            content = HtmlContent(insetContent)
-        )
-    )
-
-    <h2 class="govuk-heading-m">@messages("messages__complete__what_happens_next")</h2>
-
-    @components.paragraph_text(messages("messages__complete__copy_3"))
-    @components.paragraph_text(messages("messages__complete__copy_4"))
-    @components.paragraph_text(messages("messages__complete__copy_5"))
-
-    @if(showMasterTrustContent) {
-        <h2 class="govuk-heading-m">@messages("messages__complete__master_trust_heading")</h2>
-        @components.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
-    }
-
-    <p class="govuk-body">
-        <a id="print-this-page-link" class="govuk-link" onclick="window.print();
-        return false;" href="#">@messages("site.printThisPage")</a>
-    </p>
-
-
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
-        @submit_button("messages__finish")
-    }
 
+        @panel(
+            panelTitle = messages("messages__complete__heading"),
+            panelContent = panelContent.toString
+        )
+
+        <p class="govuk-body">@messages("messages__complete__email")
+            <strong>@email</strong>
+        </p>
+
+        @inset_text(
+            content = insetContent.toString
+        )
+
+        <h2 class="govuk-heading-m">@messages("messages__complete__what_happens_next")</h2>
+
+        @components.paragraph_text(messages("messages__complete__copy_3"))
+        @components.paragraph_text(messages("messages__complete__copy_4"))
+        @components.paragraph_text(messages("messages__complete__copy_5"))
+
+        @if(showMasterTrustContent) {
+            <h2 class="govuk-heading-m">@messages("messages__complete__master_trust_heading")</h2>
+            @components.paragraph_text_to_html(Message("messages__complete__pension_regulator", pensionsRegulatorLink))
+        }
+
+        <p class="govuk-body">
+            <a id="print-this-page-link" class="govuk-link" href="#">@messages("site.printThisPage")</a>
+        </p>
+
+        @submit_button("messages__finish")
+
+    }
 }

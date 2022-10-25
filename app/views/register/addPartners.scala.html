@@ -28,7 +28,7 @@
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInsetText : GovukInsetText,
+    inset_text: components.inset_text,
     input_yes_no: components.input_yes_no,
     entity_list: components.entity_list,
     submit_button: components.submit_button
@@ -57,26 +57,35 @@
         )
 
         @if(partners.isEmpty) {
+
             @components.paragraph_text(messages("messages__addPartners_lede"))
+
             @submit_button("messages__addPartners_add_partner")
+
         } else {
 
             @entity_list(partners, viewOnly, mode, srn, messages("messages__addPartners__heading"))
 
             @if(!viewOnly){
-                @govukInsetText(InsetText(
-                    content = Text(messages("messages__atLeast_two_partners"))
-                ))
+
+                @inset_text(
+                    content = messages("messages__atLeast_two_partners")
+                )
 
                 @if(partners.size < appConfig.maxPartners) {
+
                     @input_yes_no(
                         field = form("value"),
                         label = messages("messages__addPartners_add_more"),
                         hint = Some(messages("messages__addPartners_lede"))
                     )
+
                 } else {
+
                     @components.paragraph_text(messages("messages__addPartners_at_maximum"))
+
                     @components.paragraph_text(messages("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more"))
+
                 }
 
                 @submit_button("site.save_and_continue")
