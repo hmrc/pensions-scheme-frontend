@@ -46,7 +46,7 @@
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
                             <a id="section-before-you-start-link" href="@spoke.link.target">
-                            @messages(spoke.link.text)
+                                @messages(spoke.link.text)
                             </a>
                         </span>
                     </li>
@@ -62,32 +62,32 @@
             }
 
             <ul class="app-task-list__items">
-            @for((item, i) <- taskSections.about.entities.zipWithIndex) {
-                <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                        <a id="section-about-link-@i" href="@{item.link.target}">
-                        @messages(item.link.text)
-                        </a>
-                    </span>
-                </li>
-            }
+                @for((item, i) <- taskSections.about.entities.zipWithIndex) {
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a id="section-about-link-@i" href="@{item.link.target}">
+                                @messages(item.link.text)
+                            </a>
+                        </span>
+                    </li>
+                }
             </ul>
         </li>
 
         <li aria-labelledby="section-establishers-header">
             <h2 id="section-establishers-header" class="govuk-heading-l govuk-!-margin-top-7">
-            @messages("messages__schemeTaskList__sectionEstablishers_header")
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
             </h2>
 
             @if(taskSections.establishers.nonEmpty){
                 <ul class="app-task-list__items">
-                @for((item, i) <- taskSections.establishers.zipWithIndex){
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                        @messages(item)
-                        </span>
-                    </li>
-                }
+                    @for((item, i) <- taskSections.establishers.zipWithIndex){
+                        <li class="app-task-list__item">
+                            <span class="app-task-list__task-name">
+                                @messages(item)
+                            </span>
+                        </li>
+                    }
                 </ul>
             }
         </li>
@@ -101,13 +101,13 @@
                 }
 
                 <ul class="app-task-list__items">
-                @for((item, i) <- taskSections.trustees.zipWithIndex){
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                        @messages(item)
-                        </span>
-                    </li>
-                }
+                    @for((item, i) <- taskSections.trustees.zipWithIndex){
+                        <li class="app-task-list__item">
+                            <span class="app-task-list__task-name">
+                                @messages(item)
+                            </span>
+                        </li>
+                    }
                 </ul>
             </li>
         }
@@ -115,7 +115,7 @@
 
     <p class="govuk-body">
         <a id="save-and-return" class="govuk-link" href="@appConfig.managePensionsSchemeDetailsPspUrl.format(taskSections.srn)">
-        @messages("messages__complete__returnToSchemeOverview", schemeName)
+           @messages("messages__complete__returnToSchemeOverview", schemeName)
         </a>
     </p>
 
