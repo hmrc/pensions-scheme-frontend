@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.register.trustees.routes._
 @import models.Mode
 @import models.register.trustees.TrusteeKind
 @import play.api.mvc.Call
@@ -29,8 +26,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_radio: components_refactored.input_radio,
-    submit_button: components_refactored.submit_button
+    input_radio: components.input_radio,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
@@ -46,14 +43,13 @@
         @input_radio(
             field = form("value"),
             legend = messages("messages__trusteeKind__heading"),
-            legendClass = Some("govuk-label--xl"),
             legendAsHeading = true,
             inputs = TrusteeKind.options
         )
 
         @submit_button("site.save_and_continue", true)
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

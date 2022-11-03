@@ -14,29 +14,24 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], nextPageUrl: Call, partnershipName: String, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__detailsFor", messages("messages__thePartnership")).capitalize) {
 
-    @components_refactored.heading(messages("messages__detailsFor", partnershipName))
+    @components.heading(messages("messages__detailsFor", partnershipName))
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedPartnershipDetails__p1", partnershipName))
+    @components.paragraph_text(messages("messages__whatYouWillNeedPartnershipDetails__p1", partnershipName))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedPartnershipDetails__item1")</li>
     </ul>
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedPartnershipDetails__p2", partnershipName))
+    @components.paragraph_text(messages("messages__whatYouWillNeedPartnershipDetails__p2", partnershipName))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedPartnershipDetails__item2")</li>
@@ -45,6 +40,6 @@
 
     @button_link("site.continue", nextPageUrl.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

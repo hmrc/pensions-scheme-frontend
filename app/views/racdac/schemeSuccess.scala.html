@@ -16,21 +16,18 @@
 
 @import config.FrontendAppConfig
 @import controllers.racdac.routes
-@import java.time.LocalDate
 @import utils.DateHelper
 @import viewmodels.Message
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        govukPanel: GovukPanel,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    panel: components.panel,
+    submit_button: components.submit_button
 )
 
 @(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -38,31 +35,30 @@
 @yourSchemesLink = {<a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" class="govuk-link" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
-@layout(
-    pageTitle = messages("messages__complete_racdac__title",schemeName), showBackLink = false) {
-
-    @govukPanel(
-        Panel(
-            title = Text(messages("messages__complete_racdac__heading",schemeName))
-        )
-    )
-
-    <p class="govuk-body">@messages("messages__complete_racdac__email")
-        <strong>@email</strong>
-    </p>
-
-    <h2 class="govuk-heading-l">@messages("messages__complete_racdac__what_happens_next")</h2>
-
-    @components_refactored.paragraph_text_to_html(Message("messages__complete_racdac__statement1", yourSchemesLink))
-
-    <h2 class="govuk-heading-l">@messages("messages__complete_racdac__save_or_print")</h2>
-
-    <p class="govuk-body">
-        <a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
-    </p>
+@layout(pageTitle = messages("messages__complete_racdac__title",schemeName), showBackLink = false) {
 
     @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
-        @submit_button("messages__finish")
-    }
 
+        @panel(
+            panelTitle = messages("messages__complete_racdac__heading",schemeName),
+            panelContent = ""
+        )
+
+        <p class="govuk-body">@messages("messages__complete_racdac__email")
+            <strong>@email</strong>
+        </p>
+
+        <h2 class="govuk-heading-l">@messages("messages__complete_racdac__what_happens_next")</h2>
+
+        @components.paragraph_text_to_html(Message("messages__complete_racdac__statement1", yourSchemesLink))
+
+        <h2 class="govuk-heading-l">@messages("messages__complete_racdac__save_or_print")</h2>
+
+        <p class="govuk-body">
+            <a id="print-this-page-link" class="govuk-link" href="#">@messages("site.printThisPage")</a>
+        </p>
+
+        @submit_button("messages__finish")
+
+    }
 }

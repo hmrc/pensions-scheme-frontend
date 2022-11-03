@@ -14,22 +14,18 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-
 @this(layout: templates.Layout)
 
 @(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__stillNeedDetails__title")) {
 
-    @components_refactored.heading(messages("messages__stillNeedDetails__heading"))
+    @components.heading(messages("messages__stillNeedDetails__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__stillNeedDetails__p1"))
+    @components.paragraph_text(messages("messages__stillNeedDetails__p1"))
 
-    @components_refactored.paragraph_text(messages("messages__stillNeedDetails__p2"))
+    @components.paragraph_text(messages("messages__stillNeedDetails__p2"))
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
 }

@@ -15,10 +15,16 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(text: String, para_id: Option[String] = None)
-<p @if(para_id.nonEmpty) {id="@para_id"} class="govuk-body">@Html(text)</p>
+@this(
+    govukInsetText : GovukInsetText
+)
 
+@(content: String, id: Option[String] = None)(implicit messages: Messages)
 
+@govukInsetText(
+    InsetText(
+        content = HtmlContent(content),
+        id = id
+    )
+)

@@ -14,20 +14,17 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import models.Mode
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
+@this(govukButton : GovukButton)
 
-@(mode: Mode, schemeName:String, appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+@(messageKey: String = "", href: String, id: String, classes: Option[String] = None )(implicit messages: Messages)
 
-@{
- mode match {
-  case CheckMode =>
-   components_refactored.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
-  case _ =>
-   components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
- }
-}
+<p class="govuk-body">
+    @govukButton(Button(
+        content = Text(messages(messageKey)),
+        href = Some(href),
+        attributes = Map("id" -> id),
+        classes = classes.fold("")(classes => classes),
+    ))
+</p>

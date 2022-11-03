@@ -20,11 +20,11 @@
 @import views.html._
 
 @this(
-        layout: templates.Layout,
-        appConfig: FrontendAppConfig,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        incompleteAlert: components_refactored.incomplete_alert
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    incompleteAlert: components.incomplete_alert
 )
 
 @(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -61,10 +61,9 @@
         }
     }
 
-    @components_refactored.heading(taskSections.h1)
+    @components.heading(taskSections.h1)
 
     <ol class="app-task-list">
-
         <li>
             <h2 id="section-scheme-details-header" class="govuk-heading-l">
             @messages("messages__scheme_details__title")
@@ -252,4 +251,5 @@
         }
         </a>
     </p>
+
 }

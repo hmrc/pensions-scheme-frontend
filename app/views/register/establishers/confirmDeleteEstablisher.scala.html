@@ -14,27 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import play.api.mvc.Call
-@import viewmodels.Message
 @import utils.ViewHelper.titleWithErrors
 
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], establisherName: String, hintText: Option[String], postCall: Call, schemeName: Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__confirmDeleteEstablisher__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__confirmDeleteEstablisher__title"))) {
 
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
@@ -46,13 +42,12 @@
             field = form("value"),
             label = messages("messages__confirmDeleteEstablisher__heading", establisherName),
             hint = hintText,
-            headingIsLegend = true,
-            labelClass = Some("govuk-label--xl")
+            headingIsLegend = true
         )
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

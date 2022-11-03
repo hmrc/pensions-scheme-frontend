@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
 @import play.api.mvc.Call
 @import utils.InputOption
@@ -28,13 +25,14 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_radio: components_refactored.input_radio,
-    submit_button: components_refactored.submit_button
+    input_radio: components.input_radio,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[InputOption], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, titleMessage)) {
+
     @formHelper(action = postCall, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
@@ -45,7 +43,6 @@
             @input_radio(
                 field = form("value"),
                 legend = pageHeading,
-                legendClass = Some("govuk-label--xl"),
                 legendAsHeading = true,
                 inputs = options
             )
@@ -53,7 +50,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
 
     }
 }

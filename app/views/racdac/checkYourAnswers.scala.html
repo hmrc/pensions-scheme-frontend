@@ -15,28 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.register.establishers.individual.routes._
-@import models.Index
-@import play.api.mvc.Call
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
-@import models.{NormalMode, Mode}
+@import viewmodels.{AnswerSection}
 @import viewmodels.CYAViewModel
 
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    answer_section: components_refactored.answer_section,
-    button_link: components_refactored.button_link
+    answer_section: components.answer_section,
+    button_link: components.button_link
 )
 
 @(vm:CYAViewModel, returnToName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
 
-@layout( pageTitle = vm.title.resolve.capitalize) {
+@layout(pageTitle = vm.title.resolve.capitalize) {
 
-    @components_refactored.heading(vm.h1.resolve)
+    @components.heading(vm.h1.resolve)
 
     @for((section, i) <- vm.answerSections.zipWithIndex){
         @{
@@ -50,6 +43,6 @@
         @button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    @components_refactored.return_link("messages__psaSchemeDetails__return_link", Some(returnToName))
+    @components.return_link("messages__psaSchemeDetails__return_link", Some(returnToName))
 
 }

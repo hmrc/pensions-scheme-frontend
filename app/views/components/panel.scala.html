@@ -14,9 +14,17 @@
  * limitations under the License.
  *@
 
-@this()
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@()
+@this(
+    govukPanel: GovukPanel
+)
 
-<link rel="stylesheet" media="all" type="text/css" href='@routes.Assets.versioned("stylesheets/pensionsschemefrontend-app.css")' />
-<script src='@routes.Assets.versioned("javascripts/pensionsschemefrontend-app.js")'></script>
+@(panelTitle: String, panelContent: String)(implicit messages: Messages)
+
+@govukPanel(
+    Panel(
+        title = Text(panelTitle),
+        content = HtmlContent(panelContent)
+    )
+)

@@ -14,24 +14,18 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.register.establishers.company.director.routes._
-
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__directors__heading")) {
 
-    @components_refactored.heading(messages("messages__directors__heading"))
+    @components.heading(messages("messages__directors__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
+    @components.paragraph_text(messages("messages__whatYouWillNeedDirectors__p1"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeed__item1")</li>
@@ -46,6 +40,6 @@
 
     @button_link("site.continue", href.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

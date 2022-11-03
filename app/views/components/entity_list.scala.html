@@ -14,13 +14,8 @@
  * limitations under the License.
  *@
 
-@import play.api.mvc.AnyContent
-@import config.FrontendAppConfig
-@import models.requests.DataRequest
-@import models.register.{Entity, Establisher}
+@import models.register.{Entity}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     govukTable : GovukTable
@@ -43,8 +38,7 @@
 }
 
 <div class="govuk-form-group">
-    @govukTable(
-        Table(
+    @govukTable(Table(
             rows =
                 entities.zipWithIndex.map { case (entity, index) =>
                     Seq(

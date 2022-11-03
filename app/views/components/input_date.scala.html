@@ -16,17 +16,27 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(govukButton : GovukButton)
+@this( govukDateInput : GovukDateInput )
 
-@(messageKey: String = "", href: String, id: String, classes: Option[String] = None )(implicit messages: Messages)
+@(
+    field: Field,
+    legend: String,
+    headingIsLegend: Boolean,
+    legendClass: Option[String] = None,
+    hint: Option[String] = None
+)(implicit messages: Messages)
 
-<p class="govuk-body">
-    @govukButton(Button(
-        content = Text(messages(messageKey)),
-        href = Some(href),
-        attributes = Map("id" -> id),
-        classes = classes.fold("")(classes => classes),
-    ))
-</p>
+@govukDateInput(DateInput(
+    id = field.id,
+    namePrefix = None,
+    fieldset = Some(Fieldset(
+        legend = Some(Legend(
+            content = Text(legend),
+            classes = "govuk-fieldset__legend--xl",
+            isPageHeading = headingIsLegend
+        ))
+    )),
+    hint = hint.map(hintValue => Hint(content = Text(hintValue))),
+    errorMessage = field.error.map(e => ErrorMessage.errorMessageWithDefaultStringsTranslated(content = Text(messages(e.message, e.args:_*))))
+).withFormField(field))

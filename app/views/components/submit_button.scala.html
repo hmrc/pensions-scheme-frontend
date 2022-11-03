@@ -15,16 +15,15 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(messageKey: String, numberOfBulletPoints: Int)(implicit messages: Messages)
+@this(govukButton: GovukButton)
 
-<ul class="govuk-list govuk-list--bullet">
- @for(num <- 1 to numberOfBulletPoints){
-  <li>@messages(messageKey + "_" + num)</li>
- }
-</ul>
+@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true, idForButton: String = "submit")(implicit messages: Messages)
 
-
-
+ <div class="govuk-form-row">
+  @govukButton(Button(
+   attributes = Map("id" -> idForButton),
+   content = Text(messages(messageKey)),
+   disabled = !enableSubmission
+  ))
+ </div>

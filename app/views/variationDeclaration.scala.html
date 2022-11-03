@@ -15,26 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import play.api.mvc.Call
 
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__variationDeclaration__title")) {
 
-    @components_refactored.heading(messages("messages__variationDeclaration__heading"))
+    @components.heading(messages("messages__variationDeclaration__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__variationDeclaration__declare"))
+    @components.paragraph_text(messages("messages__variationDeclaration__declare"))
 
     <ol class="govuk-list govuk-list--number">
         <li>@messages("messages__variationDeclaration__statement1")</li>
@@ -44,6 +39,6 @@
 
     @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components_refactored.return_link("site.return_to", schemeName, None, srn)
+    @components.return_link("site.return_to", schemeName, None, srn)
 
 }

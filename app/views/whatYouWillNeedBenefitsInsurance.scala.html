@@ -18,27 +18,24 @@
 @import controllers.routes._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    submit_button: components.submit_button
 )
 
 @(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = messages("messages__what_you_will_need_benefits__title")) {
+@layout(pageTitle = messages("messages__what_you_will_need_benefits__title")) {
 
     @formHelper(action = WhatYouWillNeedBenefitsInsuranceController.onSubmit, 'autoComplete -> "off") {
 
-        @components_refactored.heading(headingKey = messages("messages__what_you_will_need_benefits__h1"))
+        @components.heading(headingKey = messages("messages__what_you_will_need_benefits__h1"))
 
-        @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits__p1"))
+        @components.paragraph_text(messages("messages__what_you_will_need_benefits__p1"))
 
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_benefits__item_1")</li>
@@ -47,7 +44,7 @@
             <li>@messages("messages__what_you_will_need_benefits__item_4")</li>
         </ul>
 
-        @components_refactored.paragraph_text(messages("messages__what_you_will_need_benefits_contract__p1"))
+        @components.paragraph_text(messages("messages__what_you_will_need_benefits_contract__p1"))
 
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("messages__what_you_will_need_benefits_contract__item_1")</li>
@@ -57,6 +54,7 @@
 
         @submit_button("site.continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+
     }
 }

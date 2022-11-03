@@ -14,24 +14,18 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.register.trustees.company.routes._
-
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__detailsFor", messages("messages__theIndividual")).capitalize) {
 
-    @components_refactored.heading(headingKey = messages("messages__detailsFor", establisherName))
+    @components.heading(headingKey = messages("messages__detailsFor", establisherName))
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedIndividual__p1", establisherName))
+    @components.paragraph_text(messages("messages__whatYouWillNeedIndividual__p1", establisherName))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedIndividual__item1")</li>
@@ -41,6 +35,6 @@
 
     @button_link("site.continue", href.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

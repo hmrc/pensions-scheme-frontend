@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.{Mode}
 @import models.Members
@@ -28,14 +26,13 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    radio: components_refactored.input_radio,
-    submit_button: components_refactored.submit_button
+    radio: components.input_radio,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__future_members__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__future_members__title"))) {
 
     @formHelper(action = FutureMembersController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -46,13 +43,13 @@
         @radio(
             field = form("value"),
             legend = messages("messages__future_members__h1", schemeName),
-            legendClass = Some("govuk-label--xl"),
             inputs = Members.options,
             legendAsHeading = true
         )
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+
     }
 }

@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import utils.InputOption
 
@@ -59,6 +58,14 @@
     }
 }
 
+@cssAdjust = @{
+    if(legendAsHeading == true){
+        legendClass.fold("govuk-fieldset__legend--xl govuk-!-margin-bottom-5")(classes => classes)
+    } else {
+        legendClass.fold("")(classes => classes)
+    }
+}
+
 @govukRadios(Radios(
     name = field.name,
     classes = if(inline) "govuk-radios--inline" else "",
@@ -71,7 +78,7 @@
         legend = Some(Legend(
             content = Text(legend),
             isPageHeading = legendAsHeading,
-            classes = legendClass.getOrElse("govuk-fieldset__legend--l")
+            classes = cssAdjust
         )),
     )),
     items = inputs.map(input =>
@@ -79,7 +86,6 @@
             value = Some(input.value),
             content = Text(messages(input.label)),
             hint = input.hint.headOption.map(hintValue => Hint(content = Text(messages(hintValue)))),
-            attributes = input.dataTarget.fold(Map.empty[String,String])(dtValue => Map("data-target" -> dtValue)),
             conditionalHtml = conditionalHtml(chtml_name,input.value)
         )
     )

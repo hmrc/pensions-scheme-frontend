@@ -14,24 +14,19 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import controllers.register.trustees.company.routes._
-@import models.Mode
 @import play.api.mvc.Call
-@import forms.CompanyRegistrationNumberFormProvider
 @import viewmodels.CompanyRegistrationNumberViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+        input_text: components.input_text,
+        submit_button: components.submit_button
 )
 
 @(viewmodel: CompanyRegistrationNumberViewModel, form: Form[_], schemeName: Option[String], submitUrl: Call, srn: Option[String])( implicit request: Request[_], messages: Messages)
@@ -47,14 +42,12 @@
         @input_text(
             field = form("companyRegistrationNumber"),
             label = messages(viewmodel.heading),
-            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true,
-            inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages(viewmodel.hint))
         )
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

@@ -63,11 +63,11 @@ lazy val root = (project in file("."))
   .settings(
     // concatenate js
     Concat.groups := Seq(
-      "javascripts/pensionsschemefrontend-app.js" -> group(Seq(
-        "javascripts/jquery-3.6.0.min.js",
+      "javascripts/application.js" -> group(Seq(
         "javascripts/autocomplete/location-autocomplete.min.js",
         "javascripts/pensionsschemefrontend.js"
-      ))),
+      ))
+    ),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),

@@ -17,28 +17,23 @@
 @import config.FrontendAppConfig
 @import controllers.routes._
 @import models.Mode
-@import models.register._
-@import models.register.SchemeType.MasterTrust
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    input_text: components.input_text,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))
-){
+@layout(pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))){
 
     @formHelper(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -49,13 +44,12 @@
         @input_text(
             field = form("schemeName"),
             label = messages("messages__scheme_name__heading"),
-            inputClass = Some("govuk-!-width-one-half"),
-            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
         @submit_button()
 
-        @components_refactored.return_link_before_you_start(mode, schemeName, appConfig)
+        @components.return_link_before_you_start(mode, schemeName, appConfig)
+
     }
 }

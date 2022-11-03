@@ -14,24 +14,20 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import viewmodels.CommonFormWithHintViewModel
 
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], viewModel: CommonFormWithHintViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = viewModel.title) {
 
-    @components_refactored.heading(viewModel.heading)
+    @components.heading(viewModel.heading)
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedPartnershipContact__p1"))
+    @components.paragraph_text(messages("messages__whatYouWillNeedPartnershipContact__p1"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedPartnershipContact__item1")</li>
@@ -40,6 +36,6 @@
 
     @button_link("site.continue", viewModel.postCall.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
 
 }

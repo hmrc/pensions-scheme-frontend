@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import models.address.Address
 @import viewmodels.address.AddressListViewModel
 @import utils.ViewHelper.titleWithErrors
 
@@ -28,7 +26,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios : GovukRadios,
-    submit_button: components_refactored.submit_button
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -41,7 +39,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewModel.heading))
+        @components.heading(messages(viewModel.heading))
 
         <p class="govuk-body">
             @viewModel.selectAddress.resolve
@@ -71,7 +69,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
 
     }
 }

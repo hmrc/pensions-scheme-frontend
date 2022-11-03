@@ -14,21 +14,19 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import models.Mode
 @import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components.input_text,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
@@ -44,8 +42,6 @@
         @input_text(
             field = form("phone"),
             label = messages("messages__adviser__phone__heading", adviserName),
-            labelClass = Some("govuk-label--xl"),
-            inputClass = Some("govuk-!-width-one-half"),
             headingIsLegend = true,
             typeValue = "tel",
             hint = Some(messages("messages__adviser__phone__hint", adviserName, schemeName))
@@ -53,7 +49,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
 
     }
 }

@@ -17,30 +17,21 @@
 @import config.FrontendAppConfig
 @import controllers.racdac.routes._
 @import models.Mode
-@import models.register._
-@import models.register.SchemeType.MasterTrust
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
         layout: templates.Layout,
         formHelper: PlayFrontendFormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         appConfig: FrontendAppConfig,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+        input_text: components.input_text,
+        submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
-
-@headingContent= {
-    <span class="govuk-heading-xl">
-        @messages("messages__racdac_name__heading")
-    </span>
-}
 
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__racdac_name__title"))) {
@@ -54,13 +45,11 @@
         @input_text(
             field = form("value"),
             label = messages("messages__racdac_name__heading"),
-            inputClass = Some("govuk-!-width-one-half"),
-            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
         @submit_button()
 
-        @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

@@ -14,16 +14,8 @@
  * limitations under the License.
  *@
 
-@this(
-    layout: templates.Layout
-)
+@(text: String, para_id: Option[String] = None)
 
-@()(implicit request: Request[_], messages: Messages)
+<p @if(para_id.nonEmpty) {id="@para_id"} class="govuk-body">@Html(text)</p>
 
-@layout(pageTitle = messages("messages__session_expired__title")) {
 
-    @components.heading(messages("messages__session_expired__title"))
-
-    @components.paragraph_text(messages("messages__session_expired__guidance"))
-
-}

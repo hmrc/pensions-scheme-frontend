@@ -14,19 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@(text: String, para_id: Option[String] = None)
 
-@(
- headingKey: String,
- headingClass: Boolean = false,
- headingSize: String = "govuk-heading-xl",
- headingSizeAlt: String = "govuk-label--xl govuk-!-margin-top-0"
-)(implicit messages: Messages)
-
-<h1 class="@if(headingClass == true) {@headingSizeAlt} else {@headingSize}">@Html(headingKey)</h1>
-
-
-
-
+<p @if(para_id.nonEmpty) {id="@para_id"} class="govuk-body">@text</p>

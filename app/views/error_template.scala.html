@@ -15,21 +15,18 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
- layout: templates.Layout,
- appConfig: FrontendAppConfig
+    layout: templates.Layout,
+    appConfig: FrontendAppConfig
 )
 
 @(pageTitle: String, heading: String, message: String, appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages(pageTitle)) {
 
-    @components_refactored.heading(messages(heading))
+    @components.heading(messages(heading))
 
-    @components_refactored.paragraph_text(messages(message))
+    @components.paragraph_text(messages(message))
 
 }
