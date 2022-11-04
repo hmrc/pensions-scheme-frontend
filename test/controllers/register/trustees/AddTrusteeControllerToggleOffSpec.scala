@@ -30,7 +30,8 @@ import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json._
@@ -42,7 +43,7 @@ import views.html.register.trustees.{addTrustee, addTrusteeOld}
 
 import scala.concurrent.Future
 
-class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach {
+class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach with MockitoSugar {
   appRunning()
 
   private lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(

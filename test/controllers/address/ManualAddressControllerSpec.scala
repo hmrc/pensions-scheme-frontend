@@ -28,10 +28,10 @@ import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
-import org.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
@@ -69,7 +69,9 @@ object ManualAddressControllerSpec {
 
   val tolerantAddress: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("ZZ1 1ZZ"), Some("GB"))
   val address: Address = Address("address line 1", "address line 2", None, None, Some("ZZ1 1ZZ"), "GB")
+
   object FakeAddressIdentifier extends TypedIdentifier[Address]
+
   object FakeSelectedAddressIdentifier extends TypedIdentifier[TolerantAddress]
 
   private val answers = Json.obj(fakeAddressId.toString -> address,

@@ -22,6 +22,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterCRNId, CompanyEnterPAYEId, CompanyEnterUTRId, CompanyEnterVATId, CompanyNoCRNReasonId, CompanyNoUTRReasonId, HasCompanyCRNId, HasCompanyPAYEId, HasCompanyUTRId, HasCompanyVATId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import org.mockito.Mockito._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}

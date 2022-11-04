@@ -61,7 +61,7 @@
         <a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
     </p>
 
-    @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit, Symbol("autoComplete") -> "off") {
         @submit_button("messages__finish")
     }
 

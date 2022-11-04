@@ -19,10 +19,9 @@ package controllers
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.whatYouWillNeedBenefitsInsurance
 
 class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -30,6 +29,7 @@ class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase 
   def onwardRoute: Call = controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)
 
   private val view = injector.instanceOf[whatYouWillNeedBenefitsInsurance]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
     new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
       messagesApi,

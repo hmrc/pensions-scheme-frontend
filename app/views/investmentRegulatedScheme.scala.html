@@ -37,7 +37,7 @@
     pageTitle = titleWithErrors(form, messages("messages__investment_regulated_scheme__title"))
 ){
 
-    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
 
         @if(form.errors.nonEmpty) {

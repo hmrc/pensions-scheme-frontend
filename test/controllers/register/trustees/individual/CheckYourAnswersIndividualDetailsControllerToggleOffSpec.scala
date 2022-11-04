@@ -22,6 +22,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeEnterNINOId, TrusteeHasNINOId, TrusteeHasUTRId, TrusteeNameId, TrusteeNoNINOReasonId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import org.mockito.Mockito._
 import models._
 import models.person.PersonName
 import org.mockito.ArgumentMatchers.any

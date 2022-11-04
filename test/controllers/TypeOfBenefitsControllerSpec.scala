@@ -22,7 +22,7 @@ import forms.TypeOfBenefitsFormProvider
 import identifiers.{SchemeNameId, TypeOfBenefitsId}
 import models.{NormalMode, TypeOfBenefits}
 import navigators.Navigator
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
@@ -47,11 +47,11 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     view(form, postCall, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(
-    dataRetrievalAction: DataRetrievalAction = getEmptyData,
-    authAction: AuthAction = FakeAuthAction,
-    navigator: Navigator = FakeNavigator,
-    cache: UserAnswersService = FakeUserAnswersService
-  ): TypeOfBenefitsController =
+                          dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                          authAction: AuthAction = FakeAuthAction,
+                          navigator: Navigator = FakeNavigator,
+                          cache: UserAnswersService = FakeUserAnswersService
+                        ): TypeOfBenefitsController =
     new TypeOfBenefitsController(
       messagesApi,
       cache,
@@ -69,7 +69,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
-                                                                             authAction: AuthAction): Action[AnyContent] =
+                                                   authAction: AuthAction): Action[AnyContent] =
     controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
 
   private def saveAction: UserAnswersService => Action[AnyContent] = cache =>

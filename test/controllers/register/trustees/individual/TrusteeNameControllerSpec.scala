@@ -26,7 +26,8 @@ import models.person.PersonName
 import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
@@ -63,7 +64,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(),any()))
+    when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
@@ -157,6 +158,7 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val firstTrusteeIndex: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+
   private def onwardRoute: Call = Call("GET", "/foward-url")
 
 

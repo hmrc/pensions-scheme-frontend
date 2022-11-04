@@ -38,7 +38,7 @@
     pageTitle = titleWithErrors(form, messages("messages__workingKnowledge__title"))
 ){
 
-    @formHelper(action = WorkingKnowledgeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = WorkingKnowledgeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

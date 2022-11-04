@@ -19,10 +19,9 @@ package controllers
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -30,6 +29,7 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
   def onwardRoute: Call = controllers.routes.AdviserNameController.onPageLoad(NormalMode)
 
   private val view = injector.instanceOf[whatYouWillNeedWorkingKnowledge]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedWorkingKnowledgeController =
     new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,
       messagesApi,

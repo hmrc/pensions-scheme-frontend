@@ -36,7 +36,7 @@
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__scheme_uk_bank_account__title"))) {
 
-    @formHelper(action = UKBankAccountController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = UKBankAccountController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

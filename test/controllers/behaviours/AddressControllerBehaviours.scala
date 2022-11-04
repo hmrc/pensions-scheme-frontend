@@ -22,7 +22,7 @@ import identifiers.TypedIdentifier
 import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call

@@ -22,7 +22,9 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import org.mockito.ArgumentMatchers._
-import org.mockito.{ArgumentCaptor, MockitoSugar}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsNull, JsObject, JsValue}
@@ -82,7 +84,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "return OK and the correct view for a GET" in {
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
-      when(mockPensionAdminstratorConnector.getPSAEmail(any(),any())).thenReturn(Future.successful(email))
+      when(mockPensionAdminstratorConnector.getPSAEmail(any(), any())).thenReturn(Future.successful(email))
 
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK

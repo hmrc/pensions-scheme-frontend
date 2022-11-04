@@ -325,7 +325,10 @@ class JsLensSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks
 
         forAll(gen) {
           case (idx, arr) =>
+            println(s"\n\n\n Idx: $idx")
+            println(s"\n\n\n arr: $arr")
             val lens = JsLens.atIndex(idx)
+            println(s"\n\n\n lens.remove(arr).asOpt.value: ${lens.remove(arr).asOpt.value}")
             lens.remove(arr).asOpt.value mustEqual arr
         }
       }

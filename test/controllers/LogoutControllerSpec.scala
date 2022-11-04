@@ -19,14 +19,15 @@ package controllers
 import connectors.SessionDataCacheConnector
 import controllers.actions.FakeAuthAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, times, verify, when}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Results
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
 
-class LogoutControllerSpec extends ControllerSpecBase with Results {
+class LogoutControllerSpec extends ControllerSpecBase with Results with MockitoSugar {
 
   private val mockSessionDataCacheConnector = mock[SessionDataCacheConnector]
 

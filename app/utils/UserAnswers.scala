@@ -178,11 +178,11 @@ final case class UserAnswers(json: JsValue = Json.obj())
   //scalastyle:off method.length
   def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
 
-    private def noOfRecords: Int = json.validate((__ \ 'trustees).readNullable(__.read(
-      Reads.seq((__ \ 'trusteeKind).read[String].flatMap {
-        case "individual" => (__ \ 'trusteeDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-        case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+    private def noOfRecords: Int = json.validate((__ \ Symbol("trustees")).readNullable(__.read(
+      Reads.seq((__ \ Symbol("trusteeKind")).read[String].flatMap {
+        case "individual" => (__ \ Symbol("trusteeDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "company" => (__ \ Symbol("companyDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "partnership" => (__ \ Symbol("partnershipDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
       }).map(_.count(deleted => !deleted.value))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
@@ -297,11 +297,11 @@ final case class UserAnswers(json: JsValue = Json.obj())
   //scalastyle:off method.length
   def readEstablishers(mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
 
-    private def noOfRecords: Int = json.validate((__ \ 'establishers).readNullable(__.read(
-      Reads.seq((__ \ 'establisherKind).read[String].flatMap {
-        case "individual" => (__ \ 'establisherDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-        case "company" => (__ \ 'companyDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
-        case "partnership" => (__ \ 'partnershipDetails \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+    private def noOfRecords: Int = json.validate((__ \ Symbol("establishers")).readNullable(__.read(
+      Reads.seq((__ \ Symbol("establisherKind")).read[String].flatMap {
+        case "individual" => (__ \ Symbol("establisherDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "company" => (__ \ Symbol("companyDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
+        case "partnership" => (__ \ Symbol("partnershipDetails") \ "isDeleted").json.pick[JsBoolean] orElse notDeleted
       }).map(_.count(deleted => !deleted.value))))) match {
       case JsSuccess(Some(ele), _) => ele
       case _ => 0
@@ -481,7 +481,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   }
 
   protected def schemeType: Option[String] =
-    json.transform((__ \ 'schemeType \ 'name).json.pick[JsString]) match {
+    json.transform((__ \ Symbol("schemeType") \ Symbol("name")).json.pick[JsString]) match {
       case JsSuccess(scheme, _) => Some(scheme.value)
       case JsError(_) => None
     }

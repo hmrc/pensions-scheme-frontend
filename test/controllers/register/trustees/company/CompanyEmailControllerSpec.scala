@@ -23,7 +23,7 @@ import identifiers.SchemeNameId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.{CompanyDetails, Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -75,13 +75,13 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.CompanyEmailController.onSubmit(NormalMode,firstIndex, None),
+        routes.CompanyEmailController.onSubmit(NormalMode, firstIndex, None),
         Message("messages__trustee_email__title"),
         Message("messages__enterEmail", "test company name"),
         Some(Message("messages__contact_email__hint", "test company name", schemeName)),
         None
       ),
-     Some(schemeName)
+      Some(schemeName)
     )(fakeRequest, messages).toString
 
   "CompanyEmailController" when {

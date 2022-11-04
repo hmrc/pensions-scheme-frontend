@@ -40,7 +40,7 @@
     pageTitle = titleWithErrors(form, messages("messages__scheme_name__title"))
 ){
 
-    @formHelper(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = SchemeNameController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

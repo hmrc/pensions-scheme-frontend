@@ -24,7 +24,8 @@ import forms.DOBFormProvider
 import models.Mode
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.JsObject
 import play.api.mvc._
@@ -38,10 +39,12 @@ import scala.concurrent.Future
 
 trait DateOfBirthControllerBehaviours extends ControllerSpecBase
   with MockitoSugar
-  with ScalaFutures{
+  with ScalaFutures {
 
   val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
+
   val formProvider: DOBFormProvider = new DOBFormProvider
   val form: Form[LocalDate] = formProvider()
   val day: Int = LocalDate.now().getDayOfMonth

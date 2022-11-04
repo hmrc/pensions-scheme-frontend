@@ -18,7 +18,7 @@ package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
 import config.FrontendAppConfig
-import connectors.{FakeUserAnswersCacheConnector, _}
+import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import helpers.DataCompletionHelper
@@ -27,9 +27,11 @@ import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import models.{MinimalPSA, PSAMinimalFlags}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentCaptor, ArgumentMatchers, MockitoSugar}
+import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -57,10 +59,10 @@ class DeclarationControllerSpec
     "return OK and the correct view " in {
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
-        val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to you must contact HMRC page when deceased flag is true" in {
@@ -102,8 +104,8 @@ class DeclarationControllerSpec
       verify(mockEmailConnector, times(1))
         .sendEmail(ArgumentMatchers.eq(minimalPsa.email), ArgumentMatchers.eq("pods_racdac_scheme_register"),
           ArgumentMatchers.eq(emailParams), any(), any())(any(), any())
-      val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId,minimalPsa.email )
-      verify(mockAuditService,times(1)).sendEvent(ArgumentMatchers.eq(expectedAuditEvent))(any(),any())
+      val expectedAuditEvent = RACDACSubmissionEmailEvent(psaId, minimalPsa.email)
+      verify(mockAuditService, times(1)).sendEvent(ArgumentMatchers.eq(expectedAuditEvent))(any(), any())
 
     }
 
@@ -134,6 +136,7 @@ class DeclarationControllerSpec
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
+
   private val schemeName = "scheme"
   private val minimalPsa = MinimalPSA(email = "a@a.c", isPsaSuspended = false, organisationName = Some("org"), individualDetails = None)
   private val emailParams = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName)

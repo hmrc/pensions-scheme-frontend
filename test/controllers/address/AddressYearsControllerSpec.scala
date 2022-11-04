@@ -26,7 +26,8 @@ import models.requests.DataRequest
 import models.{AddressYears, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
@@ -59,11 +60,13 @@ object AddressYearsControllerSpec {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
       implicit def request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "cacheId", answers, Some(PsaId("A0000000")))
+
       get(FakeIdentifier, formProvider("error"), viewmodel)
     }
 
     def onSubmit(viewmodel: AddressYearsViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
       implicit def request: DataRequest[AnyContent] = DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000")))
+
       post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)
     }
   }

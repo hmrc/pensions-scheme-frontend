@@ -37,7 +37,7 @@
 @(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, titleMessage)) {
-    @formHelper(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

@@ -41,7 +41,8 @@ import models.person.PersonName
 import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.inject.bind
@@ -56,7 +57,7 @@ import views.html.personName
 
 import scala.concurrent.Future
 
-class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach{
+class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   import EstablisherNameControllerToggleOffSpec._
 
@@ -77,7 +78,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggle)
-    when(mockFeatureToggle.get(any())(any(),any()))
+    when(mockFeatureToggle.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
@@ -170,6 +171,7 @@ object EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Mo
   private val mockFeatureToggle = mock[FeatureToggleService]
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+
   private def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
 }
 

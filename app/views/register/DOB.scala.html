@@ -36,7 +36,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__DOB__title", viewModel.token))) {
 
-    @formHelper(action = viewModel.postCall, 'autoComplete -> "off", 'novalidate -> "novalidate") {
+    @formHelper(action = viewModel.postCall, Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

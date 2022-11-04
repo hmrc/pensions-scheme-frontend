@@ -34,7 +34,7 @@
 @layout(
     pageTitle = messages("messages__what_you_will_need_wk__title")) {
 
-    @formHelper(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @components_refactored.heading(headingKey = messages("messages__what_you_will_need_wk__h1"))
 

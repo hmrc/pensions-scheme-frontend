@@ -37,7 +37,7 @@
 
 @layout( pageTitle = titleWithErrors(form, messages("messages__type_of_benefits__title"))) {
 
-    @formHelper(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

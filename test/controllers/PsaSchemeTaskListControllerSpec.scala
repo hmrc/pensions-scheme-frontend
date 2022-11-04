@@ -23,7 +23,8 @@ import identifiers.SchemeNameId
 import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import services.FeatureToggleService

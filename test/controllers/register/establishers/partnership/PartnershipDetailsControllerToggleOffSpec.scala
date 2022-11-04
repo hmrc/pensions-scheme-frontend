@@ -24,8 +24,9 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -36,16 +37,19 @@ import views.html.register.establishers.partnership.partnershipDetails
 
 import scala.concurrent.Future
 
-class PartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class PartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
   def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex)
+
   def onwardRouteToggleOff: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new PartnershipDetailsFormProvider()
   private val form = formProvider()
   private val firstIndex = Index(0)
   private val postCall = routes.PartnershipDetailsController.onSubmit _
+
   private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
+
   private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[partnershipDetails]
@@ -83,13 +87,13 @@ class PartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with 
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(PartnershipDetails("test partnership name")))
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("partnershipName", "test partnership name"), ("vatNumber", "GB123456789"), ("payeNumber", "1234567824"))
-      val result = controller().onSubmit(NormalMode,firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRouteToggleOff.url)
     }

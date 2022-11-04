@@ -26,7 +26,8 @@ import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
@@ -67,8 +68,10 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), srn, Index(index)).url, userAnswers)
     ))
   }
+
   private val view = injector.instanceOf[checkYourAnswers]
   private val mockFeatureToggleService = mock[FeatureToggleService]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
     new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
@@ -86,7 +89,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(),
-                   title:Message, h1:Message): String =
+                   title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

@@ -23,6 +23,8 @@ import controllers.register.establishers.individual.routes.{AddressController, P
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.{Index, NormalMode}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.mockito._
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call

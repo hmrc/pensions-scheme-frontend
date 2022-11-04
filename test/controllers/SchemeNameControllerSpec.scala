@@ -23,7 +23,8 @@ import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
+
   private val scheme = "A scheme"
   private val psaName = "Mr Maxwell"
   val formProvider = new SchemeNameFormProvider()
@@ -62,7 +64,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val view = injector.instanceOf[schemeName]
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory:NameMatchingFactory = FakeNameMatchingFactory): SchemeNameController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nameMatchingFactory: NameMatchingFactory = FakeNameMatchingFactory): SchemeNameController =
     new SchemeNameController(
       messagesApi,
       FakeUserAnswersCacheConnector,

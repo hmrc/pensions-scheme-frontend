@@ -25,7 +25,7 @@ import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.inject.bind
@@ -46,6 +46,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import PartnershipPostcodeLookupControllerSpec._
+
   private val view = injector.instanceOf[postcodeLookup]
 
   "IndividualPostCodeLookup Controller" must {
@@ -65,7 +66,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
           val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
-        }
+      }
     }
 
     "redirect to next page on POST request" which {
@@ -81,12 +82,12 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
         )) {
           implicit app =>
             val request = addCSRFToken(FakeRequest()
-            .withFormUrlEncodedBody("postcode" -> validPostcode))
+              .withFormUrlEncodedBody("postcode" -> validPostcode))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
             val result = controller.onSubmit(NormalMode, Index(0), None)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
-          }
+        }
 
       }
     }

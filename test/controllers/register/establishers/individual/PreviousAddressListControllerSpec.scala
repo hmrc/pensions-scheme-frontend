@@ -24,7 +24,7 @@ import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -39,6 +39,7 @@ import views.html.address.addressList
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
+
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0))
@@ -143,7 +144,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         .onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(PreviousAddressListId(firstIndex)).value mustEqual(previousAddresses.head.copy(countryOpt = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(PreviousAddressListId(firstIndex)).value mustEqual (previousAddresses.head.copy(countryOpt = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

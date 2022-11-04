@@ -28,7 +28,8 @@ import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import identifiers.register.establishers.IsEstablisherNewId
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
@@ -39,7 +40,9 @@ import java.time.LocalDate
 
 import scala.concurrent.Future
 
-class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with BeforeAndAfterEach{
+class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase
+  with Matchers with NavigatorBehaviour with Generators with BeforeAndAfterEach with MockitoSugar {
+
   import OldEstablishersIndividualDetailsNavigatorSpec._
 
   val navigator: Navigator = injector.instanceOf[OldEstablishersIndividualDetailsNavigator]
@@ -47,7 +50,7 @@ class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Matche
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggle)
-    when(mockFeatureToggle.get(any())(any(),any()))
+    when(mockFeatureToggle.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
@@ -134,7 +137,7 @@ object OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Match
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
   private val srn = Some("srn")
-  private val someDate =  LocalDate.now()
+  private val someDate = LocalDate.now()
 }
 
 

@@ -24,7 +24,8 @@ import identifiers.register.trustees.partnership.PartnershipHasVATId
 import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call

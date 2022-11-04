@@ -26,9 +26,9 @@ import models.requests.DataRequest
 import models.{CheckUpdateMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ OptionValues}
+import org.scalatest.{OptionValues}
 import org.scalatest.matchers.must.Matchers
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -115,7 +115,7 @@ class PayeControllerSpec extends SpecBase with Matchers with OptionValues with S
       )) {
         app =>
           val request = FakeRequest().withFormUrlEncodedBody(
-          ("paye", "123456789")
+            ("paye", "123456789")
           )
           val controller = app.injector.instanceOf[TestController]
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
@@ -155,6 +155,7 @@ class PayeControllerSpec extends SpecBase with Matchers with OptionValues with S
 object PayeControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]
+
   val companyName = "test company name"
 
   class TestController @Inject()(

@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -49,7 +49,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, index=Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index = Index(0), None)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

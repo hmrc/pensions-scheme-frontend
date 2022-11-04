@@ -21,7 +21,8 @@ import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import identifiers.racdac.RACDACNameId
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -32,7 +33,7 @@ import views.html.deleteSchemeRacdac
 
 import scala.concurrent.Future
 
-class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach{
+class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val formProvider = new DeleteSchemeFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -55,6 +56,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
     when(minimalPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
     super.beforeEach()
   }
+
   private def dataRetrievalAction: DataRetrievalAction = {
     UserAnswers()
       .set(RACDACNameId)(schemeName).asOpt.get

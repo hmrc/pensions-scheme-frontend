@@ -24,8 +24,9 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -36,7 +37,7 @@ import views.html.register.establishers.partnership.partnershipDetails
 
 import scala.concurrent.Future
 
-class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar{
 
   def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex)
   def onwardRouteToggleOff: Call = controllers.routes.IndexController.onPageLoad

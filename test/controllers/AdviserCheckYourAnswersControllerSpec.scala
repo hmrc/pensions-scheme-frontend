@@ -22,7 +22,7 @@ import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
 import models.{CheckMode, Link, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call

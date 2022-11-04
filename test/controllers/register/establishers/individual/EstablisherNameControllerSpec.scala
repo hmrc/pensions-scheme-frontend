@@ -25,7 +25,8 @@ import models.person.PersonName
 import models.{FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.inject.bind
@@ -42,7 +43,7 @@ import scala.concurrent.Future
 
 class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
-import EstablisherNameControllerSpec._
+  import EstablisherNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
     routes.EstablisherNameController.onSubmit(NormalMode, index, None),
@@ -61,7 +62,7 @@ import EstablisherNameControllerSpec._
 
   override protected def beforeEach(): Unit = {
     reset(mockFeatureToggle)
-    when(mockFeatureToggle.get(any())(any(),any()))
+    when(mockFeatureToggle.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
@@ -157,6 +158,7 @@ object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSuga
   private val mockFeatureToggle = mock[FeatureToggleService]
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
+
   private def onwardRoute: Call = Call("GET", "/index")
 }
 

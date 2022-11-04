@@ -36,7 +36,7 @@
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
 
-    @formHelper(action = BankAccountDetailsController.onSubmit(mode), 'autoComplete -> "off", 'novalidate -> "novalidate") {
+    @formHelper(action = BankAccountDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

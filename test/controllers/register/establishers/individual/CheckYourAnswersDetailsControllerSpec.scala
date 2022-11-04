@@ -26,6 +26,8 @@ import models._
 import models.person.PersonName
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, FeatureToggleService}
@@ -36,7 +38,7 @@ import views.html.checkYourAnswers
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
+class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach with MockitoSugar {
 
   import CheckYourAnswersDetailsControllerSpec._
 

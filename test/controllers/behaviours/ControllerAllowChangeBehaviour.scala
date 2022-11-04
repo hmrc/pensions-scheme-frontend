@@ -22,7 +22,7 @@ import models.Mode
 import models.requests.DataRequest
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.Helpers._
 import utils.AllowChangeHelper
@@ -34,13 +34,13 @@ trait ControllerAllowChangeBehaviour extends ControllerSpecBase
   with ScalaFutures
   with OptionValues {
 
-  protected def allowChangeHelper(saveAndContinueButton:Boolean):AllowChangeHelper = new AllowChangeHelper {
-    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode:Mode):Boolean = saveAndContinueButton
+  protected def allowChangeHelper(saveAndContinueButton: Boolean): AllowChangeHelper = new AllowChangeHelper {
+    override def hideSaveAndContinueButton(request: DataRequest[AnyContent], newId: TypedIdentifier[Boolean], mode: Mode): Boolean = saveAndContinueButton
   }
 
-  protected val ach:AllowChangeHelper = allowChangeHelper(saveAndContinueButton = false)
+  protected val ach: AllowChangeHelper = allowChangeHelper(saveAndContinueButton = false)
 
-  def changeableController(res: AllowChangeHelper => Future[Result]):Unit = {
+  def changeableController(res: AllowChangeHelper => Future[Result]): Unit = {
     "return OK and displays save and continue button when asked to" in {
       val result = res(allowChangeHelper(saveAndContinueButton = false))
       status(result) mustBe OK

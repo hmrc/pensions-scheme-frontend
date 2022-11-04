@@ -25,6 +25,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models.{Index, NormalMode, _}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._

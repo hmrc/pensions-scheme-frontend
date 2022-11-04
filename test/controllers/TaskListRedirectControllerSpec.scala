@@ -23,7 +23,8 @@ import identifiers.racdac.IsRacDacId
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers.{redirectLocation, status, _}
 import services.FakeUserAnswersService.appConfig
 import utils.UserAnswers
@@ -42,7 +43,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PSASchemeTaskList Controller" must {
     "work" in {
       val userAnswers = UserAnswers().setOrException(IsRacDacId)(true)
-      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(),any()))
+      when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(userAnswers))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -55,7 +56,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PsaMinimalFlag has isDeceased flag as True and rlsFlag as false" must {
     "return REDIRECT to youMustContactHMRCUrl" in {
       val psaMinimalFlags = PSAMinimalFlags(false, true, false)
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -66,7 +67,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PsaMinimalFlag has isDeceased flag as false and rlsFlag as true" must {
     "return REDIRECT to psaUpdateContactDetailsUrl" in {
       val psaMinimalFlags = PSAMinimalFlags(true, false, true)
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(),any()))
+      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER

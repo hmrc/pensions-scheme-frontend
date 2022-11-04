@@ -20,7 +20,8 @@ import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -30,7 +31,7 @@ import views.html.deleteScheme
 
 import scala.concurrent.Future
 
-class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach{
+class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val formProvider = new DeleteSchemeFormProvider()
   val form: Form[Boolean] = formProvider()

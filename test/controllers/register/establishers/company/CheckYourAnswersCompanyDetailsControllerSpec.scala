@@ -24,6 +24,7 @@ import identifiers.register.establishers.company._
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models.register.DeclarationDormant
+import org.mockito.Mockito._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}

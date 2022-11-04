@@ -23,6 +23,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId, PartnershipEnterUTRId, PartnershipEnterVATId, PartnershipHasPAYEId, PartnershipHasUTRId, PartnershipHasVATId, PartnershipNoUTRReasonId}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import org.mockito.Mockito._
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}

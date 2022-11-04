@@ -27,7 +27,9 @@ import identifiers.register.{DeclarationDormantId, DeclarationId}
 import models._
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.{ArgumentCaptor, MockitoSugar}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form

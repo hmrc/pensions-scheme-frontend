@@ -36,7 +36,7 @@
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__confirmDeletePartner__title"))) {
 
-    @formHelper(action = postCall, 'autoComplete -> "off") {
+    @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
