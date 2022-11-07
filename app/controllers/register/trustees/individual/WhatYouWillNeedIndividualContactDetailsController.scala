@@ -51,7 +51,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
       implicit request => {
         val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)
 
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           name =>
             Future.successful(Ok(view(
               existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))

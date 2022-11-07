@@ -53,19 +53,19 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
   override protected val form: Form[String] = formProvider()
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode, srn).retrieve.right map get
+        viewmodel(index, mode, srn).retrieve map get
     }
 
   private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        trusteeName(index).retrieve.right.map {
+        trusteeName(index).retrieve.map {
           name =>
             PostcodeLookupViewModel(
               routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index, srn),
@@ -82,7 +82,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode, srn).retrieve.right.map { vm =>
+      viewmodel(index, mode, srn).retrieve.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)
       }
   }

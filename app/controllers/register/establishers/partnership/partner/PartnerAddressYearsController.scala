@@ -52,7 +52,7 @@ class PartnerAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { partnerDetails =>
           get(PartnerAddressYearsId(establisherIndex, partnerIndex), form(partnerDetails.fullName),
             viewModel(mode, establisherIndex, partnerIndex, partnerDetails.fullName, srn))
         }
@@ -74,7 +74,7 @@ class PartnerAddressYearsController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { partnerDetails =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { partnerDetails =>
           post(
             PartnerAddressYearsId(establisherIndex, partnerIndex),
             mode,

@@ -52,7 +52,7 @@ class AddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map { establisherName =>
+        EstablisherNameId(index).retrieve.map { establisherName =>
           get(AddressYearsId(index), form(establisherName.fullName), viewModel(mode, index, establisherName.fullName,
             srn))
         }
@@ -73,7 +73,7 @@ class AddressYearsController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherNameId(index).retrieve.right.map { establisherName =>
+      EstablisherNameId(index).retrieve.map { establisherName =>
         post(AddressYearsId(index), mode, form(establisherName.fullName), viewModel(mode, index, establisherName
           .fullName, srn))
       }

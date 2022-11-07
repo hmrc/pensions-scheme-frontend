@@ -54,7 +54,7 @@ class ConfirmDeletePartnerController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           partner =>
             if (partner.isDeleted) {
               Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(mode, establisherIndex,
@@ -77,7 +77,7 @@ class ConfirmDeletePartnerController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           partnerDetails =>
             form(partnerDetails.fullName).bindFromRequest().fold(
               (formWithErrors: Form[_]) =>

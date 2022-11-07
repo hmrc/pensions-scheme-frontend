@@ -64,7 +64,7 @@ class PartnerNoNINOReasonController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { name =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>
           get(PartnerNoNINOReasonId(establisherIndex, partnerIndex),
             viewModel(mode, establisherIndex, partnerIndex, srn, name.fullName), form(name.fullName))
         }
@@ -73,7 +73,7 @@ class PartnerNoNINOReasonController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { name =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>
           post(PartnerNoNINOReasonId(establisherIndex, partnerIndex), mode,
             viewModel(mode, establisherIndex, partnerIndex, srn, name.fullName), form(name.fullName))
         }

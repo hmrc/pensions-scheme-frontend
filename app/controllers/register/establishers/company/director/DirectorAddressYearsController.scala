@@ -51,13 +51,13 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
 
   private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map { name =>
+        directorName(establisherIndex, directorIndex).retrieve.map { name =>
           get(DirectorAddressYearsId(establisherIndex, directorIndex), form(name),
             viewModel(mode, establisherIndex, directorIndex, name, srn))
         }
@@ -66,7 +66,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map { name =>
+        directorName(establisherIndex, directorIndex).retrieve.map { name =>
           post(
             DirectorAddressYearsId(establisherIndex, directorIndex),
             mode,

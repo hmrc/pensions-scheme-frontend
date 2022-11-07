@@ -50,12 +50,12 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map(get)
+      viewModel(mode).map(get)
   }
 
   private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.right.map {
+    (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.map {
       case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.AdviserAddressListController.onSubmit(mode),
@@ -70,7 +70,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      viewModel(mode).right.map {
+      viewModel(mode).map {
         vm =>
           post(vm, AdviserAddressListId, AdviserAddressId, mode, s"Adviser Address: ${vm.entityName}",
             AdviserAddressPostCodeLookupId)

@@ -67,9 +67,9 @@ class AlreadyDeletedController @Inject()(
                                                                               dataRequest: DataRequest[AnyContent])
   : Either[Future[Result], String] = {
     establisherKind match {
-      case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
-      case Indivdual => EstablisherNameId(index).retrieve.right.map(_.fullName)
-      case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
+      case Company => CompanyDetailsId(index).retrieve.map(_.companyName)
+      case Indivdual => EstablisherNameId(index).retrieve.map(_.fullName)
+      case Partnership => PartnershipDetailsId(index).retrieve.map(_.name)
     }
   }
 }

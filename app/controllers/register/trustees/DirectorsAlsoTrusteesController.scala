@@ -86,7 +86,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   def onPageLoad(index: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
-        SchemeNameId.retrieve.right.map { schemeName =>
+        SchemeNameId.retrieve.map { schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
             case true =>
               val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
@@ -125,7 +125,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
-        SchemeNameId.retrieve.right.map { schemeName =>
+        SchemeNameId.retrieve.map { schemeName =>
           if (candidateDirectors.size > 1) {
             val boundForm: Form[List[Int]] = formCheckBox(request.userAnswers, implicitly).bindFromRequest()
             boundForm.value match {

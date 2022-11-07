@@ -51,7 +51,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
-        SubmissionReferenceNumberId.retrieve.right.map { submissionReferenceNumber =>
+        SubmissionReferenceNumberId.retrieve.map { submissionReferenceNumber =>
           val newUserAnswers: JsResult[UserAnswers] = {
             request.userAnswers.get(RACDACNameId) match {
               case Some(racDacName) =>

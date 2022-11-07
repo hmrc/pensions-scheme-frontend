@@ -57,7 +57,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
+        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
           vm =>
             get(vm)
         )
@@ -66,7 +66,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map(
+        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
           vm =>
             post(PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex), vm, mode)
         )
@@ -74,7 +74,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
 
   private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) = Retrieval {
     implicit request =>
-      PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map(
+      PartnerNameId(establisherIndex, partnerIndex).retrieve.map(
         details => PostcodeLookupViewModel(
           routes.PartnerPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, partnerIndex, srn),
           routes.PartnerPreviousAddressController.onPageLoad(mode, establisherIndex, partnerIndex, srn),

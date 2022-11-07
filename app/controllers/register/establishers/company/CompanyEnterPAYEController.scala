@@ -52,7 +52,7 @@ class CompanyEnterPAYEController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             get(CompanyEnterPAYEId(index), form(details.companyName), viewmodel(mode, index, srn, details.companyName))
         }
@@ -61,7 +61,7 @@ class CompanyEnterPAYEController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
+      CompanyDetailsId(index).retrieve.map {
         details =>
           post(CompanyEnterPAYEId(index), mode, form(details.companyName), viewmodel(mode, index, srn, details
             .companyName))

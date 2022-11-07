@@ -52,13 +52,13 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).right.map(get)
+        viewModel(mode, index, srn).map(get)
     }
 
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).right.map {
+        viewModel(mode, index, srn).map {
           vm =>
             post(
               viewModel = vm,
@@ -73,7 +73,7 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
 
   private def viewModel(mode: Mode, index: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (EstablisherNameId(index) and PostCodeLookupId(index)).retrieve.right.map {
+    (EstablisherNameId(index) and PostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.AddressListController.onSubmit(mode, index, srn),

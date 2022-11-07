@@ -54,9 +54,9 @@ class TrusteeEnterNINOController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val fullNameOption: Either[Future[Result], String] =
-          TrusteeNameId(index).retrieve.right.map(_.fullName)
+          TrusteeNameId(index).retrieve.map(_.fullName)
 
-        fullNameOption.right.map {
+        fullNameOption.map {
           fullName =>
             get(TrusteeEnterNINOId(index), formProvider(fullName), viewmodel(fullName, index, mode, srn))
         }
@@ -66,9 +66,9 @@ class TrusteeEnterNINOController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       val fullNameOption: Either[Future[Result], String] =
-        TrusteeNameId(index).retrieve.right.map(_.fullName)
+        TrusteeNameId(index).retrieve.map(_.fullName)
 
-      fullNameOption.right.map {
+      fullNameOption.map {
         fullName =>
           post(TrusteeEnterNINOId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
       }

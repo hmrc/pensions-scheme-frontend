@@ -50,7 +50,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             get(HasBeenTradingCompanyId(index), form(details.companyName), viewModel(mode, index, srn, details
               .companyName))
@@ -73,7 +73,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             post(HasBeenTradingCompanyId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
               .companyName))

@@ -52,7 +52,7 @@ class TrusteeEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).retrieve.right.map {
+        viewModel(mode, index, srn).retrieve.map {
           vm =>
             get(TrusteeEmailId(index), form, vm)
         }
@@ -61,7 +61,7 @@ class TrusteeEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).retrieve.right.map {
+        viewModel(mode, index, srn).retrieve.map {
           vm =>
             post(TrusteeEmailId(index), mode, form, vm, None)
         }
@@ -70,7 +70,7 @@ class TrusteeEmailController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.TrusteeEmailController.onSubmit(mode, index, srn),

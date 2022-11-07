@@ -54,14 +54,14 @@ class PartnerPreviousAddressListController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).right.map(get)
+        viewModel(mode, establisherIndex, partnerIndex, srn).map(get)
 
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).right.map { vm =>
+        viewModel(mode, establisherIndex, partnerIndex, srn).map { vm =>
           post(
             viewModel = vm,
             navigatorId = PartnerPreviousAddressListId(establisherIndex, partnerIndex),
@@ -77,7 +77,7 @@ class PartnerPreviousAddressListController @Inject()(
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (PartnerNameId(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex,
-      partnerIndex)).retrieve.right.map {
+      partnerIndex)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.PartnerPreviousAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),

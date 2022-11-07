@@ -50,7 +50,7 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           trusteeName =>
             get(TrusteeNoUTRReasonId(index), viewModel(mode, index, srn, trusteeName.fullName), form(trusteeName
               .fullName))
@@ -60,7 +60,7 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           trusteeName =>
             post(TrusteeNoUTRReasonId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form
             (trusteeName.fullName))

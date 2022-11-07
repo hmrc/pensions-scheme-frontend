@@ -43,7 +43,7 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val partnerIndex = request.userAnswers.allPartners(index).size
-      PartnershipDetailsId(index).retrieve.right.map { partnershipDetails =>
+      PartnershipDetailsId(index).retrieve.map { partnershipDetails =>
         Future.successful(Ok(view(
           existingSchemeName,
           srn,

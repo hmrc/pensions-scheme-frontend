@@ -52,7 +52,7 @@ class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map {
+        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.map {
           vm =>
             get(PartnerEmailId(establisherIndex, partnerIndex), form, vm)
         }
@@ -61,7 +61,7 @@ class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.right.map {
+        viewModel(mode, establisherIndex, partnerIndex, srn).retrieve.map {
           vm =>
             post(PartnerEmailId(establisherIndex, partnerIndex), mode, form, vm, None)
         }
@@ -71,7 +71,7 @@ class PartnerEmailController @Inject()(val appConfig: FrontendAppConfig,
   : Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.PartnerEmailController.onSubmit(mode, establisherIndex, partnerIndex, srn),

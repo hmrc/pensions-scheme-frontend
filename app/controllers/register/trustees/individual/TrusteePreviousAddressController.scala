@@ -57,7 +57,7 @@ class TrusteePreviousAddressController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
@@ -65,7 +65,7 @@ class TrusteePreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.map {
+        trusteeName(index).retrieve.map {
           name =>
             get(
               id = TrusteePreviousAddressId(index),
@@ -87,7 +87,7 @@ class TrusteePreviousAddressController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      trusteeName(index).retrieve.right.map {
+      trusteeName(index).retrieve.map {
         name =>
           post(
             id = TrusteePreviousAddressId(index),

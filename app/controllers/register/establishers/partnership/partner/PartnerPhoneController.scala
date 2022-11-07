@@ -54,7 +54,7 @@ class PartnerPhoneController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.right.map {
+        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.map {
           vm =>
             get(PartnerPhoneId(establisherIndex, partnerIndex), form, vm)
         }
@@ -63,7 +63,7 @@ class PartnerPhoneController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.right.map {
+        viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.map {
           vm =>
             post(PartnerPhoneId(establisherIndex, partnerIndex), mode, form, vm)
         }
@@ -73,7 +73,7 @@ class PartnerPhoneController @Inject()(
   : Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.PartnerPhoneController.onSubmit(mode, establisherIndex, partnerIndex, srn),

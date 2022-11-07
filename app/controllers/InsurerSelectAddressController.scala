@@ -53,13 +53,13 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
-      viewModel(mode, srn).right.map(get)
+      viewModel(mode, srn).map(get)
   }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn).right.map {
+        viewModel(mode, srn).map {
           vm =>
             post(
               viewModel = vm,
@@ -75,7 +75,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
   private def viewModel(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent])
   : Either[Future[Result],
     AddressListViewModel] = {
-    (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.right.map {
+    (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.map {
       case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),

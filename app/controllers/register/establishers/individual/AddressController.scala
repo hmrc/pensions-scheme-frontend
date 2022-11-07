@@ -62,7 +62,7 @@ class AddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           details =>
             get(AddressId(index), AddressListId(index), viewmodel(index, mode, srn, details.fullName))
         }
@@ -71,7 +71,7 @@ class AddressController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherNameId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.map {
         details =>
           val context = s"Establisher Individual Address: ${details.fullName}"
           post(AddressId(index), AddressListId(index),

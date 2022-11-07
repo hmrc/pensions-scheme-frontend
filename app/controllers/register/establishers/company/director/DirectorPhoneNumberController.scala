@@ -55,7 +55,7 @@ class DirectorPhoneNumberController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
+        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.map {
           vm =>
             get(DirectorPhoneNumberId(establisherIndex, directorIndex), form, vm)
         }
@@ -65,7 +65,7 @@ class DirectorPhoneNumberController @Inject()(
   : Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.DirectorPhoneNumberController.onSubmit(mode, establisherIndex, directorIndex, srn),
@@ -80,7 +80,7 @@ class DirectorPhoneNumberController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.right.map {
+        viewModel(mode, srn, establisherIndex, directorIndex).retrieve.map {
           vm =>
             post(DirectorPhoneNumberId(establisherIndex, directorIndex), mode, form, vm)
         }

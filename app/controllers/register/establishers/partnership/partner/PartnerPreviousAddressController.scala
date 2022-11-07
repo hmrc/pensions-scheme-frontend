@@ -63,7 +63,7 @@ class PartnerPreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           partner =>
             get(PartnerPreviousAddressId(establisherIndex, partnerIndex),
               PartnerPreviousAddressListId(establisherIndex, partnerIndex),
@@ -84,7 +84,7 @@ class PartnerPreviousAddressController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           partner =>
             val context = s"Partnership Partner Previous Address: ${partner.fullName}"
             post(

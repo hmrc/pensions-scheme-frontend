@@ -53,7 +53,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
+        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
           vm =>
             get(DirectorEmailId(establisherIndex, directorIndex), form, vm)
         }
@@ -65,7 +65,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                         srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.DirectorEmailController.onSubmit(mode, establisherIndex, directorIndex, srn),
@@ -80,7 +80,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.right.map {
+        viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
           vm =>
             post(DirectorEmailId(establisherIndex, directorIndex), mode, form, vm, None)
         }

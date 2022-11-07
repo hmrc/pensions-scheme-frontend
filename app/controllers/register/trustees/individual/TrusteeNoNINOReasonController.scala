@@ -53,7 +53,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map { name =>
+        TrusteeNameId(index).retrieve.map { name =>
           get(TrusteeNoNINOReasonId(index),
             viewModel(mode, index, srn, name.fullName), form(name.fullName))
         }
@@ -62,7 +62,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map { name =>
+        TrusteeNameId(index).retrieve.map { name =>
           post(TrusteeNoNINOReasonId(index), mode,
             viewModel(mode, index, srn, name.fullName), form(name.fullName))
         }

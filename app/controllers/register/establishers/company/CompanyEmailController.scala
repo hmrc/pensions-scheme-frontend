@@ -54,7 +54,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             get(CompanyEmailId(index), form, vm)
         }
@@ -63,7 +63,7 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             post(CompanyEmailId(index), mode, form, vm, None)
         }
@@ -73,8 +73,8 @@ class CompanyEmailController @Inject()(val appConfig: FrontendAppConfig,
     Retrieval {
       implicit request =>
         for {
-        schemeName <- SchemeNameId.retrieve.right
-        details <- CompanyDetailsId(index).retrieve.right
+        schemeName <- SchemeNameId.retrieve
+        details <- CompanyDetailsId(index).retrieve
         } yield {
             CommonFormWithHintViewModel(
               routes.CompanyEmailController.onSubmit(mode, srn, index),

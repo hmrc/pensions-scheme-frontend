@@ -51,7 +51,7 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map { details =>
+        EstablisherNameId(index).retrieve.map { details =>
           val name = details.fullName
           get(EstablisherNoNINOReasonId(index), viewModel(mode, index, srn, name), form(name))
         }
@@ -60,7 +60,7 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map { details =>
+        EstablisherNameId(index).retrieve.map { details =>
           val name = details.fullName
           post(EstablisherNoNINOReasonId(index), mode, viewModel(mode, index, srn, name), form(name))
         }

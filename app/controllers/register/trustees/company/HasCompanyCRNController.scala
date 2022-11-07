@@ -51,7 +51,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             get(HasCompanyCRNId(index), form(details.companyName), viewModel(mode, index, srn, details.companyName))
         }
@@ -72,7 +72,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             post(HasCompanyCRNId(index), mode, form(details.companyName), viewModel(mode, index, srn, details
               .companyName))

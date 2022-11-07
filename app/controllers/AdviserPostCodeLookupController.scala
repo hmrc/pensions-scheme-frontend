@@ -55,7 +55,7 @@ class AdviserPostCodeLookupController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
-        AdviserNameId.retrieve.right.map { adviserName =>
+        AdviserNameId.retrieve.map { adviserName =>
           get(viewmodel(mode, adviserName))
         }
     }
@@ -63,7 +63,7 @@ class AdviserPostCodeLookupController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] =
     (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
-        AdviserNameId.retrieve.right.map { adviserName =>
+        AdviserNameId.retrieve.map { adviserName =>
           post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName), mode)
         }
     }

@@ -52,7 +52,7 @@ class PartnershipEnterPAYEController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
+        PartnershipDetailsId(index).retrieve.map {
           details =>
             get(PartnershipEnterPAYEId(index), form(details.name), viewmodel(mode, index, srn, details.name))
         }
@@ -75,7 +75,7 @@ class PartnershipEnterPAYEController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
+      PartnershipDetailsId(index).retrieve.map {
         details =>
           post(PartnershipEnterPAYEId(index), mode, form(details.name), viewmodel(mode, index, srn, details.name))
       }

@@ -70,9 +70,9 @@ class AlreadyDeletedController @Inject()(
   private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])
                          (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
-      case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
-      case Individual => TrusteeNameId(index).retrieve.right.map(_.fullName)
-      case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
+      case Company => CompanyDetailsId(index).retrieve.map(_.companyName)
+      case Individual => TrusteeNameId(index).retrieve.map(_.fullName)
+      case Partnership => PartnershipDetailsId(index).retrieve.map(_.name)
     }
   }
 }

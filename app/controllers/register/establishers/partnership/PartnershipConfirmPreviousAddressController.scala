@@ -56,7 +56,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(srn, index).retrieve.right.map { vm =>
+      viewmodel(srn, index).retrieve.map { vm =>
         get(PartnershipConfirmPreviousAddressId(index), vm)
       }
   }
@@ -64,7 +64,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      viewmodel(srn, index).retrieve.right.map { vm =>
+      viewmodel(srn, index).retrieve.map { vm =>
         post(PartnershipConfirmPreviousAddressId(index), PartnershipPreviousAddressId(index), vm, mode)
       }
   }
@@ -72,7 +72,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
   private def viewmodel(srn: Option[String], index: Int) =
     Retrieval(
       implicit request =>
-        (PartnershipDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.right.map {
+        (PartnershipDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),
