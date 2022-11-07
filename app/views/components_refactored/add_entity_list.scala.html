@@ -51,7 +51,7 @@
     }
 }
 
-@removeLink(deleteLink: Option[String] = None,entity: Entity[_]) = {
+@removeLink(deleteLink: Option[String], entity: Entity[_]) = {
 
     @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
         <a id="person-@{entity.index}-delete" class="govuk-link" href=@deleteLink

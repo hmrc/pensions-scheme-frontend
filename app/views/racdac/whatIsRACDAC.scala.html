@@ -34,7 +34,7 @@
 @layout(
     pageTitle = messages("messages__what_is_rac_dac__title")) {
 
-    @formHelper(action = WhatIsRACDACController.onSubmit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = WhatIsRACDACController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @components_refactored.heading(messages("messages__what_is_rac_dac__h1"))
 

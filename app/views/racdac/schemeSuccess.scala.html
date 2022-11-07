@@ -36,7 +36,6 @@
 @(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @yourSchemesLink = {<a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
-@pensionsRegulatorLink = {<a id="regulator-contact" class="govuk-link" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
 
 @layout(
     pageTitle = messages("messages__complete_racdac__title",schemeName), showBackLink = false) {
@@ -61,7 +60,7 @@
         <a id="print-this-page-link" class="govuk-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>
     </p>
 
-    @formHelper(action = routes.SchemeSuccessController.onSubmit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit(), Symbol("autoComplete") -> "off") {
         @submit_button("messages__finish")
     }
 

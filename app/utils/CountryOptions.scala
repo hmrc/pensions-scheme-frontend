@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 class CountryOptions(val options: Seq[InputOption]) {
 
   @Inject()
-  def this(environment: Environment, config: FrontendAppConfig) {
+  def this(environment: Environment, config: FrontendAppConfig) = {
     this(
       environment.resourceAsStream(config.locationCanonicalList).flatMap {
         in =>
