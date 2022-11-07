@@ -208,10 +208,10 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
   private def readsDirectors(implicit ua: UserAnswers): Reads[Seq[Option[Seq[IndividualDetails]]]] = new Reads[Seq[Option[Seq[IndividualDetails]]]] {
     private def readsAllDirectors(estIndex: Int)(implicit ua: UserAnswers): Reads[Seq[IndividualDetails]] = {
       case JsArray(directors) =>
-        val jsResults: IndexedSeq[JsResult[IndividualDetails]] = directors.zipWithIndex.map { case (jsValue, dirIndex) =>
+        val jsResults: collection.IndexedSeq[JsResult[IndividualDetails]] = directors.zipWithIndex.map { case (jsValue, dirIndex) =>
           readsDirector(estIndex, dirIndex).reads(jsValue)
         }
-        asJsResultSeq(jsResults)
+        asJsResultSeq(jsResults.toSeq)
       case _ => JsSuccess(Nil)
     }
 
@@ -231,7 +231,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
               }
               readsForEstablisherKind.reads(jsValue)
           }
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }
@@ -268,7 +268,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     override def reads(json: JsValue): JsResult[Seq[Option[IndividualDetails]]] = {
       ua.json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
-          val jsResults: IndexedSeq[JsResult[Option[IndividualDetails]]] = trustees.zipWithIndex.map { case (jsValue, index) =>
+          val jsResults: collection.IndexedSeq[JsResult[Option[IndividualDetails]]] = trustees.zipWithIndex.map { case (jsValue, index) =>
             val trusteeKind = (jsValue \ TrusteeKindId.toString).validate[String].asOpt
             val readsForTrusteeKind = trusteeKind match {
               case Some(TrusteeKind.Individual.toString) => readsIndividualTrustee(index)
@@ -276,7 +276,7 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
             }
             readsForTrusteeKind.reads(jsValue)
           }
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }

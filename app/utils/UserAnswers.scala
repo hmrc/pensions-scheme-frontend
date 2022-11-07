@@ -237,7 +237,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForTrusteeKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }
@@ -356,7 +356,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForEstablisherKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }
@@ -518,7 +518,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForEstablisherKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }
@@ -560,7 +560,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForTrusteeKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults)
+          asJsResultSeq(jsResults.toSeq)
         case _ => JsSuccess(Nil)
       }
     }

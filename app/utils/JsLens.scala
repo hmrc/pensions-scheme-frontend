@@ -200,7 +200,7 @@ object JsLens {
       override def getAll(s: JsValue): JsResult[Seq[JsValue]] =
         s match {
           case JsArray(values) =>
-            JsSuccess(values)
+            JsSuccess(values.toSeq)
           case JsNull =>
             JsSuccess(Seq(JsNull))
           case _ =>
