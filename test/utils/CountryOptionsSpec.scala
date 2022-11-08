@@ -50,7 +50,7 @@ class CountryOptionsSpec extends SpecBase {
         ))
 
       an[ConfigException.BadValue] shouldBe thrownBy {
-        new CountryOptions(builder.environment, builder.injector.instanceOf[FrontendAppConfig])
+        new CountryOptions(builder.environment, builder.injector().instanceOf[FrontendAppConfig])
       }
     }
   }

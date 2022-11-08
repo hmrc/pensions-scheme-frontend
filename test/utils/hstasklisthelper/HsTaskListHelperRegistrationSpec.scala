@@ -41,7 +41,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
 
   override protected def beforeEach(): Unit = {
-    reset(mockAppConfig, mockSpokeCreationService)
+    reset(mockAppConfig)
+    reset(mockSpokeCreationService)
     when(mockAppConfig.daysDataSaved).thenReturn(10)
   }
 

@@ -106,8 +106,10 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[FeatureToggleService].toInstance(mockFeatureToggleService)
   )
 
-  override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
+  override def beforeEach(): Unit = {
+    reset(mockDataPrefillService)
+    reset(mockUserAnswersService)
+    reset(mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))

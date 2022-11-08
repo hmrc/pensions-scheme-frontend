@@ -87,8 +87,9 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
   private val index = 0
 
-  override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService)
+  override def beforeEach(): Unit = {
+    reset(mockDataPrefillService)
+    reset(mockUserAnswersService)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
