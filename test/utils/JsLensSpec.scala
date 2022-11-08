@@ -17,8 +17,8 @@
 package utils
 
 import org.scalacheck.Gen
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
@@ -320,15 +320,12 @@ class JsLensSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks
 
         val gen: Gen[(Int, JsArray)] = for {
           idx <- Gen.chooseNum(0, 50)
-          arr <- Gen.listOfN(idx - 1, jsLeafGen).map(JsArray(_))
+          arr <- Gen.listOfN(idx, jsLeafGen).map(JsArray(_))
         } yield (idx, arr)
 
         forAll(gen) {
           case (idx, arr) =>
-            println(s"\n\n\n Idx: $idx")
-            println(s"\n\n\n arr: $arr")
             val lens = JsLens.atIndex(idx)
-            println(s"\n\n\n lens.remove(arr).asOpt.value: ${lens.remove(arr).asOpt.value}")
             lens.remove(arr).asOpt.value mustEqual arr
         }
       }
