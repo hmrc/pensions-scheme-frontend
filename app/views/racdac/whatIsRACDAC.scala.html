@@ -18,15 +18,13 @@
 @import controllers.racdac.routes._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        appConfig: FrontendAppConfig,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    appConfig: FrontendAppConfig,
+    submit_button: components.submit_button
 )
 
 @(psaName: String)(implicit request: Request[_], messages: Messages)
@@ -36,21 +34,22 @@
 
     @formHelper(action = WhatIsRACDACController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-        @components_refactored.heading(messages("messages__what_is_rac_dac__h1"))
+        @components.heading(messages("messages__what_is_rac_dac__h1"))
 
-        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__p1"))
+        @components.paragraph_text(messages("messages__what_is_rac_dac__p1"))
 
         <h2 class="govuk-heading-l">@messages("messages__what_is_rac_dac__h2")</h2>
         <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__rac_h3")</h3>
 
-        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__rac_p"))
+        @components.paragraph_text(messages("messages__what_is_rac_dac__rac_p"))
 
         <h3 class="govuk-heading-m">@messages("messages__what_is_rac_dac__dac_h3")</h3>
 
-        @components_refactored.paragraph_text(messages("messages__what_is_rac_dac__dac_p"))
+        @components.paragraph_text(messages("messages__what_is_rac_dac__dac_p"))
 
         @submit_button("site.continue")
 
-        @components_refactored.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+
     }
 }

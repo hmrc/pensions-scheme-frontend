@@ -14,18 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import config.FrontendAppConfig
+@import models.Mode
 
-@this(govukButton: GovukButton)
+@(mode: Mode, schemeName:String, appConfig: FrontendAppConfig)(implicit messages: Messages)
 
-@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true, idForButton: String = "submit")(implicit messages: Messages)
-
- <div class="govuk-form-row">
-  @govukButton(Button(
-   attributes = Map("id" -> idForButton),
-   content = Text(messages(messageKey)),
-   disabled = !enableSubmission
-  ))
- </div>
+@{
+    mode match {
+        case CheckMode =>
+        components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
+        case _ =>
+        components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    }
+}

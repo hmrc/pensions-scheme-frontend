@@ -14,24 +14,18 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.register.establishers.company.routes._
-
 @this(
     layout: templates.Layout,
-    button_link: components_refactored.button_link
+    button_link: components.button_link
 )
 
 @(schemeName: Option[String], href: Call, srn:Option[String], companyName:String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__whatYouWillNeedAddress__title")) {
 
-    @components_refactored.heading(messages("messages__addressFor", companyName))
+    @components.heading(messages("messages__addressFor", companyName))
 
-    @components_refactored.paragraph_text(messages("messages__whatYouWillNeedEstablisherCompanyAddress__lede"))
+    @components.paragraph_text(messages("messages__whatYouWillNeedEstablisherCompanyAddress__lede"))
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__whatYouWillNeedEstablisherCompanyAddress__item1")</li>
@@ -40,6 +34,6 @@
 
     @button_link("site.continue", href.url, "submit")
 
-    @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

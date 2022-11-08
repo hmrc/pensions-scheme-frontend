@@ -18,13 +18,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
-@import controllers.routes._
-@import models.Mode
 @import viewmodels.Message
 @import play.api.mvc.Call
-@import views.html._
 @import utils.ViewHelper.titleWithErrors
 
 @this(
@@ -32,8 +28,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], schemeName: String, postCall: Call, psaName : String)(implicit request: Request[_], messages: Messages)
@@ -46,21 +42,21 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(Message("messages__deleteSchemeChanges__heading", schemeName))
+        @components.heading(Message("messages__deleteSchemeChanges__heading", schemeName))
 
-        @components_refactored.paragraph_text(messages("messages__deleteSchemeChanges__p1"))
+        @components.paragraph_text(messages("messages__deleteSchemeChanges__p1"))
 
-        @components_refactored.paragraph_text(messages("messages__deleteSchemeChanges__p2"))
+        @components.paragraph_text(messages("messages__deleteSchemeChanges__p2"))
 
         @input_yes_no(
             field = form("value"),
             label = messages("messages__deleteSchemeChanges__title"),
-            labelClass = Some("govuk-visually-hidden"),
-            headingIsLegend = false
+            labelClass = Some("govuk-visually-hidden")
         )
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+
     }
 }

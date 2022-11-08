@@ -27,12 +27,12 @@
 
 @layout(pageTitle = messages("messages__scheme_details__title")) {
 
-    @components_refactored.heading(taskSections.h1)
+    @components.heading(taskSections.h1)
 
     <ol class="app-task-list">
         <li aria-labelledby="section-before-you-start-header">
             <h2 id="section-before-you-start-header" class="govuk-heading-l govuk-!-margin-bottom-5">
-                @messages("messages__scheme_details__title")
+            @messages("messages__scheme_details__title")
             </h2>
 
             @taskSections.beforeYouStart.header.map{ item=>

@@ -14,40 +14,31 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import models.Mode
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
-@import viewmodels.Checkbox
 @import models.MoneyPurchaseBenefits
 
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    radio: components_refactored.input_radio,
-    submit_button: components_refactored.submit_button
+    radio: components.input_radio,
+    submit_button: components.submit_button
 )
 
 @(
-        form: Form[_],
-        mode: Mode,
-        schemeName: Option[String],
-        postCall: Call,
-        srn: Option[String]
-)(
-        implicit request: Request[_],
-        messages: Messages
-)
+    form: Form[_],
+    mode: Mode,
+    schemeName: Option[String],
+    postCall: Call,
+    srn: Option[String]
+)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))
-) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))) {
 
     @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
@@ -60,13 +51,13 @@
                 field = form("value"),
                 legend = messages("messages__moneyPurchaseBenefits__h1", sn),
                 inputs = MoneyPurchaseBenefits.options,
-                legendClass = Some("govuk-label--xl"),
                 legendAsHeading = true
             )
         }
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

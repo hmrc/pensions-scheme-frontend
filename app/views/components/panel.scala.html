@@ -15,18 +15,16 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(
- headingKey: String,
- headingClass: Boolean = false,
- headingSize: String = "govuk-heading-xl",
- headingSizeAlt: String = "govuk-label--xl govuk-!-margin-top-0"
+@this(
+    govukPanel: GovukPanel
 )
 
-<h1 class="@if(headingClass) {@headingSizeAlt} else {@headingSize}">@Html(headingKey)</h1>
+@(panelTitle: String, panelContent: String)(implicit messages: Messages)
 
-
-
-
+@govukPanel(
+    Panel(
+        title = Text(panelTitle),
+        content = HtmlContent(panelContent)
+    )
+)

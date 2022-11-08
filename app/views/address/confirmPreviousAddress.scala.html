@@ -17,7 +17,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import utils.CountryOptions
 @import viewmodels.address.ConfirmAddressViewModel
 @import utils.ViewHelper.titleWithErrors
@@ -26,15 +25,16 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(
     form: Form[_],
     viewModel: ConfirmAddressViewModel,
     countryOptions: CountryOptions,
-    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+    schemeName: Option[String]
+)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages(viewModel.title))) {
 
@@ -44,10 +44,10 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages(viewModel.heading))
+        @components.heading(messages(viewModel.heading))
 
         @viewModel.hint.map{ hintText =>
-            @components_refactored.paragraph_text(messages(hintText))
+            @components.paragraph_text(messages(hintText))
         }
 
         <p class="govuk-body">
@@ -59,12 +59,12 @@
         @input_yes_no(
             field = form("value"),
             label = messages(viewModel.heading),
-            labelClass = Some("govuk-visually-hidden"),
-            headingIsLegend = false
+            labelClass = Some("govuk-visually-hidden")
         )
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewModel.srn)
+
     }
 }

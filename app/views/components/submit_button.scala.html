@@ -15,10 +15,15 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(text: String, para_id: Option[String] = None)
-<p @if(para_id.nonEmpty) {id="@para_id"} class="govuk-body">@Html(text)</p>
+@this(govukButton: GovukButton)
 
+@(messageKey: String = "site.save_and_continue", enableSubmission: Boolean = true, idForButton: String = "submit")(implicit messages: Messages)
 
+ <div class="govuk-form-row">
+  @govukButton(Button(
+   attributes = Map("id" -> idForButton),
+   content = Text(messages(messageKey)),
+   disabled = !enableSubmission
+  ))
+ </div>

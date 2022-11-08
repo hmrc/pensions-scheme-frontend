@@ -16,9 +16,6 @@
 
 @import config.FrontendAppConfig
 @import models.Link
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -29,11 +26,11 @@
 
 @layout(pageTitle = messages("messages__pageNotFound404__title")) {
 
-    @components_refactored.heading(messages("messages__pageNotFound404__heading"))
+    @components.heading(messages("messages__pageNotFound404__heading"))
 
-    @components_refactored.paragraph_text(messages("messages__pageNotFound404__p1"))
+    @components.paragraph_text(messages("messages__pageNotFound404__p1"))
 
-    @components_refactored.paragraph_text(messages("messages__pageNotFound404__p2"))
+    @components.paragraph_text(messages("messages__pageNotFound404__p2"))
 
     <p class="govuk-body"><a id="return" class="govuk-link" href="@returnLink.target">@returnLink.text</a></p>
 

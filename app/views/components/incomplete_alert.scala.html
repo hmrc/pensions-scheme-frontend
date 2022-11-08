@@ -15,16 +15,11 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@(messageKey: String, numberOfBulletPoints: Int)(implicit messages: Messages)
+@this(govukErrorSummary : GovukErrorSummary)
 
-<ul class="govuk-list govuk-list--bullet">
- @for(num <- 1 to numberOfBulletPoints){
-  <li>@messages(messageKey + "_" + num)</li>
- }
-</ul>
+@(alert: String)
 
-
-
+<div class="govuk-error-summary alert-incomplete" aria-labelledby="error-summary-title" role="alert" data-disable-auto-focus="true" data-module="govuk-error-summary">
+    <p class="govuk-error-message govuk-!-margin-bottom-0" id="error-summary-title">@alert</p>
+</div>

@@ -17,11 +17,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html._
 @import controllers.routes._
-@import models.Mode
-@import viewmodels.Message
 @import utils.ViewHelper.titleWithErrors
 @import config.FrontendAppConfig
 
@@ -30,8 +27,8 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)
@@ -47,14 +44,13 @@
         @input_yes_no(
             field = form("value"),
             label = messages("messages__deleteScheme__heading", schemeName),
-            labelClass = Some("govuk-label--l"),
             headingIsLegend = true,
             hint = Some(Messages(hintTextMessageKey))
         )
 
         @submit_button("site.continue")
 
-        @components_refactored.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 
     }
 }

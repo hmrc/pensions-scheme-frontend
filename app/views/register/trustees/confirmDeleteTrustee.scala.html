@@ -14,28 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import models.Mode
-@import viewmodels.Message
 @import utils.ViewHelper.titleWithErrors
 
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], trusteeName: String, postCall: Call, schemeName: Option[String], mode: Mode, srn: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__confirmDeleteTrustee__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__confirmDeleteTrustee__title"))) {
 
     @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
@@ -46,13 +41,12 @@
         @input_yes_no(
             field = form("value"),
             label = messages("messages__confirmDeleteTrustee__heading", trusteeName),
-            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true
         )
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

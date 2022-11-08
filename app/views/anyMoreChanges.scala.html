@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import controllers.routes._
 @import play.api.mvc.Call
 @import models.{Mode, UpdateMode}
 @import utils.ViewHelper.titleWithErrors
@@ -28,8 +25,8 @@
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    input_yes_no: components_refactored.input_yes_no,
-    submit_button: components_refactored.submit_button
+    input_yes_no: components.input_yes_no,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_],
@@ -40,8 +37,7 @@
     mode: Mode = UpdateMode
 )(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__any_more_changes__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__any_more_changes__title"))) {
 
     @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
@@ -49,21 +45,21 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__any_more_changes__title"))
+        @components.heading(messages("messages__any_more_changes__title"))
 
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p1"))
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p2"))
-        @components_refactored.paragraph_text(messages("messages__any_more_changes__p3_date", dateToComplete))
+        @components.paragraph_text(messages("messages__any_more_changes__p1"))
+        @components.paragraph_text(messages("messages__any_more_changes__p2"))
+        @components.paragraph_text(messages("messages__any_more_changes__p3_date", dateToComplete))
 
         @input_yes_no(
             field = form("value"),
             label = messages("messages__any_more_changes__title"),
-            labelClass = Some("govuk-visually-hidden"),
-            headingIsLegend = false
+            labelClass = Some("govuk-visually-hidden")
         )
 
         @submit_button("site.save_and_continue")
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+
     }
 }

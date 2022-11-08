@@ -14,16 +14,15 @@
  * limitations under the License.
  *@
 
-@this(
-    layout: templates.Layout
-)
+@(messageKey: String, numberOfBulletPoints: Int)(implicit messages: Messages)
 
-@()(implicit request: Request[_], messages: Messages)
+<ul class="govuk-list govuk-list--bullet">
+    @for(num <- 1 to numberOfBulletPoints){
+        <li>
+            @messages(messageKey + "_" + num)
+        </li>
+    }
+</ul>
 
-@layout(pageTitle = messages("messages__session_expired__title")) {
 
-    @components.heading(messages("messages__session_expired__title"))
 
-    @components.paragraph_text(messages("messages__session_expired__guidance"))
-
-}

@@ -14,27 +14,24 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components.input_text,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
+@layout(pageTitle = titleWithErrors(form, messages("messages__bank_account_details__title"))) {
 
     @formHelper(action = BankAccountDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
 
@@ -42,7 +39,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components_refactored.heading(messages("messages__bank_account_details__h1", schemeName))
+        @components.heading(messages("messages__bank_account_details__h1", schemeName))
 
         @input_text(
             field = form("sortCode"),
@@ -62,6 +59,7 @@
 
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+
     }
 }

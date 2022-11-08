@@ -14,29 +14,23 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import controllers.routes._
-@import models.Mode
 @import viewmodels.NinoViewModel
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
-        layout: templates.Layout,
-        formHelper: PlayFrontendFormWithCSRF,
-        govukErrorSummary: GovukErrorSummary,
-        input_text: components_refactored.input_text,
-        submit_button: components_refactored.submit_button
-
+    layout: templates.Layout,
+    formHelper: PlayFrontendFormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    input_text: components.input_text,
+    submit_button: components.submit_button
 )
 
 @(form: Form[_], viewmodel: NinoViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@layout(
-    pageTitle = titleWithErrors(form, messages(viewmodel.title))) {
+@layout(pageTitle = titleWithErrors(form, messages(viewmodel.title))) {
 
     @formHelper(action = viewmodel.postCall, Symbol("autoComplete") -> "off") {
 
@@ -47,14 +41,13 @@
         @input_text(
             field = form("nino"),
             label = messages(viewmodel.heading),
-            labelClass = Some("govuk-label--xl"),
             headingIsLegend = true,
-            inputClass = Some("govuk-!-width-one-half"),
             hint = Some(messages("messages__common__nino_hint"))
         )
+
         @submit_button()
 
-        @components_refactored.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, viewmodel.srn)
 
     }
 }

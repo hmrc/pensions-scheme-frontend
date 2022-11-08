@@ -14,9 +14,17 @@
  * limitations under the License.
  *@
 
-@this()
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@()
+@this(
+    govukInsetText : GovukInsetText
+)
 
-<link rel="stylesheet" media="all" type="text/css" href='@routes.Assets.versioned("stylesheets/pensionsschemefrontend-app.css")' />
-<script src='@routes.Assets.versioned("javascripts/pensionsschemefrontend-app.js")'></script>
+@(content: String, id: Option[String] = None)(implicit messages: Messages)
+
+@govukInsetText(
+    InsetText(
+        content = HtmlContent(content),
+        id = id
+    )
+)

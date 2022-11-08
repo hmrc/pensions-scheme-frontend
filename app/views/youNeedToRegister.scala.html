@@ -15,12 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
-@import models.Mode
 @import viewmodels.Message
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(
     layout: templates.Layout,
@@ -34,13 +29,13 @@
 
 @layout(pageTitle = messages("messages__youNeedToRegister__title")) {
 
-    @components_refactored.heading(messages("messages__youNeedToRegister__heading"))
+    @components.heading(messages("messages__youNeedToRegister__heading"))
 
     <p class="govuk-body-l">@messages("messages__youNeedToRegister__lede")</p>
 
-    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p1", psaGovUkLink))
+    @components.paragraph_text_to_html(Message("messages__youNeedToRegister__p1", psaGovUkLink))
 
-    @components_refactored.paragraph_text_to_html(Message("messages__youNeedToRegister__p2", pspGovUkLink))
+    @components.paragraph_text_to_html(Message("messages__youNeedToRegister__p2", pspGovUkLink))
 
     <p class="govuk-body">
         <a id="redirect-to-psa" class="govuk-button" href="@appConfig.registerSchemeAdministratorUrl" role="button">@messages("messages__youNeedToRegister__button")</a>
@@ -49,4 +44,5 @@
     <p class="govuk-body">
         <a id="gov-uk-link" class="govuk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
     </p>
+
 }

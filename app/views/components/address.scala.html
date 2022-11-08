@@ -21,8 +21,8 @@
 @import utils.InputOption
 
 @this(
-        govukSelect: GovukSelect,
-        input_text: components_refactored.input_text,
+    govukSelect: GovukSelect,
+    input_text: components.input_text
 )
 
 @(form: Form[_], options: Seq[InputOption])(implicit messages: Messages)
@@ -69,14 +69,14 @@
         classes = "govuk-!-width-one-third country",
         items = Seq(SelectItem(value = Some(""))) ++
         options.map(valueOption =>
-        SelectItem(
-            value = Some(valueOption.value),
-            text = valueOption.label
-        )
+            SelectItem(
+                value = Some(valueOption.value),
+                text = valueOption.label
+            )
         ),
         label = Label(
             content = Text(messages("messages__common__country"))
         )
-        ).withFormField(form("country"))
-    )
+        ).withFormField(form("country")
+    ))
 </div>
