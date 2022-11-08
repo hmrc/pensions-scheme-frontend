@@ -42,7 +42,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
 
   protected def lastUpdatedUrl(id: String) : String
 
-  def cacheConnector[I<: UserAnswersCacheConnector](connector: () => I): Unit = {
+  def cacheConnector[I<: UserAnswersCacheConnector](connector: => I): Unit = {
 
     ".fetch" must {
 
@@ -55,7 +55,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().fetch("foo") map {
+        connector.fetch("foo") map {
           result =>
             result mustNot be(defined)
         }
@@ -69,7 +69,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().fetch("foo") map {
+        connector.fetch("foo") map {
           result =>
             result.value mustEqual Json.obj()
         }
@@ -86,7 +86,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
         )
 
         recoverToExceptionIf[HttpException] {
-          connector().fetch("foo")
+          connector.fetch("foo")
         } map {
           _.responseCode mustEqual Status.INTERNAL_SERVER_ERROR
         }
@@ -119,7 +119,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().save("foo", FakeIdentifier, "foobar") map {
+        connector.save("foo", FakeIdentifier, "foobar") map {
           _ mustEqual json
         }
       }
@@ -153,7 +153,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().save("foo", FakeIdentifier, "foobar") map {
+        connector.save("foo", FakeIdentifier, "foobar") map {
           _ mustEqual updatedJson
         }
       }
@@ -186,7 +186,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().save("foo", FakeIdentifier, "foobar") map {
+        connector.save("foo", FakeIdentifier, "foobar") map {
           _ mustEqual updatedJson
         }
       }
@@ -221,7 +221,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
 
 
         recoverToExceptionIf[HttpException] {
-          connector().save("foo", FakeIdentifier, "foobar")
+          connector.save("foo", FakeIdentifier, "foobar")
         } map {
           _.responseCode mustEqual Status.INTERNAL_SERVER_ERROR
         }
@@ -253,7 +253,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().upsert("foo", json) map {
+        connector.upsert("foo", json) map {
           _ mustEqual json
         }
       }
@@ -287,7 +287,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().upsert("foo", updatedJson) map {
+        connector.upsert("foo", updatedJson) map {
           _ mustEqual updatedJson
         }
       }
@@ -320,7 +320,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().upsert("foo", updatedJson) map {
+        connector.upsert("foo", updatedJson) map {
           _ mustEqual updatedJson
         }
       }
@@ -355,7 +355,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
 
 
         recoverToExceptionIf[HttpException] {
-          connector().upsert("foo", updatedJson)
+          connector.upsert("foo", updatedJson)
         } map {
           _.responseCode mustEqual Status.INTERNAL_SERVER_ERROR
         }
@@ -392,7 +392,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().remove("foo", FakeIdentifier) map {
+        connector.remove("foo", FakeIdentifier) map {
           _ mustEqual updatedJson
         }
       }
@@ -404,7 +404,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
           willReturn(ok)
         )
 
-        connector().removeAll("foo").map {
+        connector.removeAll("foo").map {
           _ mustEqual Ok
         }
       }
@@ -458,7 +458,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
         )
 
         recoverToExceptionIf[HttpException] {
-          connector().lastUpdated("foo")
+          connector.lastUpdated("foo")
         } map {
           _.responseCode mustEqual INTERNAL_SERVER_ERROR
         }
