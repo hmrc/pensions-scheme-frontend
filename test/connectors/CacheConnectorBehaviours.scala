@@ -411,7 +411,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
     }
   }
 
-  def cacheConnectorWithLastUpdate[I<: UserAnswersCacheConnector](connector: () => I): Unit = {
+  def cacheConnectorWithLastUpdate[I<: UserAnswersCacheConnector](connector: => I): Unit = {
     ".lastUpdated" must {
 
       "return `None` when the server returns a 404" in {
@@ -423,7 +423,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().lastUpdated("foo") map {
+        connector.lastUpdated("foo") map {
           result =>
             result mustNot be(defined)
         }
@@ -442,7 +442,7 @@ trait CacheConnectorBehaviours extends AsyncWordSpec with Matchers with WireMock
             )
         )
 
-        connector().lastUpdated("foo") map {
+        connector.lastUpdated("foo") map {
           result =>
             result.value mustEqual json
         }

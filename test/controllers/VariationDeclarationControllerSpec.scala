@@ -68,15 +68,13 @@ class VariationDeclarationControllerSpec
 
   private val view = injector.instanceOf[variationDeclaration]
 
-  override def beforeEach {
-    reset(
-      pensionsSchemeConnector,
-      lockConnector,
-      updateSchemeCacheConnector,
-      schemeDetailsReadOnlyCacheConnector,
-      auditService,
-      schemeDetailsConnector
-    )
+  override def beforeEach(): Unit = {
+    reset(pensionsSchemeConnector)
+    reset(lockConnector)
+    reset(updateSchemeCacheConnector)
+    reset(schemeDetailsReadOnlyCacheConnector)
+    reset(auditService)
+    reset(schemeDetailsConnector)
   }
 
   private def viewAsString(): String = view(Some(schemeName), srn, postCall)(fakeRequest, messages).toString

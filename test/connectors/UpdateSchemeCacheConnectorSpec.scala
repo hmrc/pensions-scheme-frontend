@@ -22,7 +22,7 @@ class UpdateSchemeCacheConnectorSpec extends CacheConnectorBehaviours {
 
   override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/update-scheme/$id/lastUpdated"
 
-  protected def connector(): UpdateSchemeCacheConnector = injector.instanceOf[UpdateSchemeCacheConnector]
+  protected def connector: UpdateSchemeCacheConnector = injector.instanceOf[UpdateSchemeCacheConnector]
 
   "UpdateSchemeCacheConnector" when {
 

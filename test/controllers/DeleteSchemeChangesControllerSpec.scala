@@ -64,11 +64,11 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
   def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
-    reset(fakeCacheConnector, fakeMinPsaConnector)
+    reset(fakeCacheConnector)
+    reset(fakeMinPsaConnector)
     when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
       "schemeName" -> schemeName))))
     when(fakeMinPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
-    super.beforeEach()
   }
 
   "DeleteScheme Controller" must {
