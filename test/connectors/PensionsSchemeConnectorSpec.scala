@@ -237,7 +237,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.left.get.status shouldBe INTERNAL_SERVER_ERROR
+      response.swap.getOrElse(NOT_FOUND) shouldBe INTERNAL_SERVER_ERROR
     )
   }
 
@@ -253,7 +253,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.left.get.status shouldBe BAD_REQUEST
+      response.swap.getOrElse(NOT_FOUND) shouldBe BAD_REQUEST
     )
   }
 
@@ -269,7 +269,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.left.get.status shouldBe NOT_FOUND
+      response.swap.getOrElse(NOT_IMPLEMENTED) shouldBe NOT_FOUND
     )
   }
 }
