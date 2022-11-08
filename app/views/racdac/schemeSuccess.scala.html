@@ -36,7 +36,7 @@
 
 @layout(pageTitle = messages("messages__complete_racdac__title",schemeName), showBackLink = false) {
 
-    @formHelper(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @panel(
             panelTitle = messages("messages__complete_racdac__heading",schemeName),
