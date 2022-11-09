@@ -60,15 +60,6 @@ class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar wi
         contentAsString(result) mustBe viewAsString()
       }
     }
-
-    //    "on a POST" must {
-    //      "redirect to bank account page" in {
-    //        val result = controller().onSubmit()(fakeRequest)
-    //
-    //        status(result) mustBe SEE_OTHER
-    //        redirectLocation(result) mustBe Some(controllers.racdac.routes.RACDACNameController.onPageLoad().url)
-    //      }
-    //    }
   }
 }
 
