@@ -23,7 +23,8 @@ import identifiers.SchemeNameId
 import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import services.FeatureToggleService
@@ -39,7 +40,8 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
   import PsaSchemeTaskListControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    reset(fakeHsTaskListHelperRegistration, mockUserAnswersCacheConnector)
+    reset(fakeHsTaskListHelperRegistration)
+    reset(mockUserAnswersCacheConnector)
     when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
     when(mockFeatureToggleService.get(any())(any(), any()))

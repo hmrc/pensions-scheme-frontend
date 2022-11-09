@@ -33,7 +33,6 @@
 package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
-import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
@@ -44,9 +43,9 @@ import models.{CompanyDetails, DataPrefillRadio, FeatureToggle, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.never
-import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -59,7 +58,7 @@ import views.html.dataPrefillRadio
 
 import scala.concurrent.Future
 
-class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
   private val onwardRoute: Call = Call("GET", "/dummy")
   private val establisherIndex = 0
   private val companyDetails = CompanyDetails(companyName = "Wibble Inc")
@@ -107,8 +106,10 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[FeatureToggleService].toInstance(mockFeatureToggleService)
   )
 
-  override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService, mockNavigator)
+  override def beforeEach(): Unit = {
+    reset(mockDataPrefillService)
+    reset(mockUserAnswersService)
+    reset(mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))

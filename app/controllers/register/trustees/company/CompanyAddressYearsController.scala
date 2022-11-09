@@ -52,7 +52,7 @@ class CompanyAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.map {
           vm =>
             get(CompanyAddressYearsId(index), form, vm)
         }
@@ -61,7 +61,7 @@ class CompanyAddressYearsController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode, srn).retrieve.right.map {
+        viewmodel(index, mode, srn).retrieve.map {
           vm =>
             post(CompanyAddressYearsId(index), mode, form, vm)
         }
@@ -70,7 +70,7 @@ class CompanyAddressYearsController @Inject()(
   private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
-        CompanyDetailsId(index.id).retrieve.right.map {
+        CompanyDetailsId(index.id).retrieve.map {
           details =>
             val questionText = "messages__company_address_years__title"
             val title = "messages__company_trustee_address_years__title"

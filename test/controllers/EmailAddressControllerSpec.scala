@@ -25,9 +25,9 @@ import models.CheckUpdateMode
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ OptionValues}
+import org.scalatest.{OptionValues}
 import org.scalatest.matchers.must.Matchers
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._
@@ -150,6 +150,7 @@ class EmailAddressControllerSpec extends SpecBase with Matchers with OptionValue
 object EmailAddressControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[String]
+
   val companyName = "test company name"
 
   class TestController @Inject()(

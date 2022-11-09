@@ -28,7 +28,7 @@ class ReasonFormProviderSpec extends StringFieldBehaviours with SpecBase{
   private val requiredReasonKey = Message("messages__reason__error_utrRequired", "test company").resolve
   private val invalidReasonKey = "messages__reason__error_invalid"
   private def formError(errorKey: String) = FormError("reason", errorKey)
-  private val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
+  private val regexSafeText = """^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,160}$"""
 
   "A form with a Reason" should {
     val testForm = new ReasonFormProvider().apply("messages__reason__error_utrRequired", "test company")

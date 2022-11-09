@@ -62,7 +62,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           details =>
             get(PartnerHasUTRId(establisherIndex, partnerIndex), form(details.fullName),
               viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))
@@ -72,7 +72,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           details =>
             post(PartnerHasUTRId(establisherIndex, partnerIndex), mode, form(details.fullName),
               viewModel(mode, establisherIndex, partnerIndex, srn, details.fullName))

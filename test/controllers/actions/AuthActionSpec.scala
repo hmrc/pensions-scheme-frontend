@@ -23,8 +23,9 @@ import identifiers.AdministratorOrPractitionerId
 import models.AuthEntity.{PSA, PSP}
 import models.{AdministratorOrPractitioner, AuthEntity}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.Helpers._
@@ -37,7 +38,7 @@ import utils.UserAnswers
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
+class AuthActionSpec extends SpecBase with BeforeAndAfterEach with MockitoSugar {
 
   import AuthActionSpec._
 
@@ -271,7 +272,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
   }
 }
 
-object AuthActionSpec extends SpecBase with BeforeAndAfterEach {
+object AuthActionSpec extends SpecBase with BeforeAndAfterEach with MockitoSugar {
 
   private def fakeAuthConnector(stubbedRetrievalResult: Future[_]) = new AuthConnector {
 
@@ -309,7 +310,7 @@ object AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
   private val bothEnrolments = Set(enrolmentPSA, enrolmentPSP)
 
-  private val mockSessionDataCacheConnector = mock[SessionDataCacheConnector]
+  private val mockSessionDataCacheConnector: SessionDataCacheConnector = mock[SessionDataCacheConnector]
 
   override def beforeEach(): Unit = {
     reset(mockSessionDataCacheConnector)

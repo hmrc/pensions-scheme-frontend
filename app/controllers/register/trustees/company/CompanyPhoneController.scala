@@ -53,7 +53,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             get(CompanyPhoneId(index), form, vm)
         }
@@ -62,7 +62,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             post(CompanyPhoneId(index), mode, form, vm)
         }
@@ -72,8 +72,8 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
     Retrieval {
       implicit request =>
         for {
-          schemeName <- SchemeNameId.retrieve.right
-          details <- CompanyDetailsId(index).retrieve.right
+          schemeName <- SchemeNameId.retrieve
+          details <- CompanyDetailsId(index).retrieve
         } yield {
             CommonFormWithHintViewModel(
               routes.CompanyPhoneController.onSubmit(mode, index, srn),

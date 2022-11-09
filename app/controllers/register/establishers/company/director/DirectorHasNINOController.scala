@@ -52,7 +52,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map {
           details =>
             get(DirectorHasNINOId(establisherIndex, directorIndex), form(details.fullName),
               viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))
@@ -62,7 +62,7 @@ class DirectorHasNINOController @Inject()(override val appConfig: FrontendAppCon
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map {
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map {
           details =>
             post(DirectorHasNINOId(establisherIndex, directorIndex), mode, form(details.fullName),
               viewModel(mode, establisherIndex, directorIndex, srn, details.fullName))

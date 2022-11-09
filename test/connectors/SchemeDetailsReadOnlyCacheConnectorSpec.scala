@@ -22,7 +22,7 @@ class SchemeDetailsReadOnlyCacheConnectorSpec extends CacheConnectorBehaviours {
 
   override protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme-details/$id/lastUpdated"
 
-  protected def connector(): SchemeDetailsReadOnlyCacheConnector = injector.instanceOf[SchemeDetailsReadOnlyCacheConnector]
+  protected def connector: SchemeDetailsReadOnlyCacheConnector = injector.instanceOf[SchemeDetailsReadOnlyCacheConnector]
 
   "SchemeDetailsReadOnlyCacheConnector" when {
 

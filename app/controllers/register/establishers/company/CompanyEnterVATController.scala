@@ -51,7 +51,7 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           get(CompanyEnterVATId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
@@ -60,7 +60,7 @@ class CompanyEnterVATController @Inject()(override val appConfig: FrontendAppCon
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           post(CompanyEnterVATId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }

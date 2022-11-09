@@ -51,7 +51,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      SchemeNameId.retrieve.right.map { schemeName =>
+      SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(BankAccountDetailsId) match {
           case None => form
           case Some(value) => form.fill(value)
@@ -64,7 +64,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          SchemeNameId.retrieve.right.map { schemeName =>
+          SchemeNameId.retrieve.map { schemeName =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },
         value =>

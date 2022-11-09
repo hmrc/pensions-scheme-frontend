@@ -53,7 +53,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).retrieve.right.map {
+        viewModel(mode, index, srn).retrieve.map {
           vm =>
             get(EstablisherEmailId(index), form, vm)
         }
@@ -62,7 +62,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           name =>
             CommonFormWithHintViewModel(
               EstablisherEmailController.onSubmit(mode, index, srn),
@@ -77,7 +77,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, index, srn).retrieve.right.map {
+        viewModel(mode, index, srn).retrieve.map {
           vm =>
             post(EstablisherEmailId(index), mode, form, vm, None)
         }

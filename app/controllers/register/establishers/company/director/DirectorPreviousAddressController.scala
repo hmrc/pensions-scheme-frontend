@@ -63,13 +63,13 @@ class DirectorPreviousAddressController @Inject()(
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map {
+        directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
             get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId
             (establisherIndex, directorIndex),
@@ -90,7 +90,7 @@ class DirectorPreviousAddressController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map {
+        directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
             val context = s"Company Director Previous Address: $name"
             post(

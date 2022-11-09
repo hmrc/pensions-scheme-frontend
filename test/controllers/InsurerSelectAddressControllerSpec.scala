@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
 import models.NormalMode
 import models.address.TolerantAddress
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -37,6 +37,7 @@ import views.html.address.addressList
 class InsurerSelectAddressControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
+
   val fakeAuditService = new StubSuccessfulAuditService()
   val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"
@@ -53,6 +54,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
   val form: Form[_] = formProvider(Seq(0))
 
   private val view = injector.instanceOf[addressList]
+
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs,
                   userAnswersService: UserAnswersService = FakeUserAnswersService
@@ -147,7 +149,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
         .onSubmit(NormalMode, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(InsurerSelectAddressId).value mustEqual(addresses.head.copy(countryOpt = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(InsurerSelectAddressId).value mustEqual (addresses.head.copy(countryOpt = Some("GB")))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
@@ -39,7 +39,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       controllerComponents
     )
 
-  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, index=Index(0))
+  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, index = Index(0))
 
   def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
 

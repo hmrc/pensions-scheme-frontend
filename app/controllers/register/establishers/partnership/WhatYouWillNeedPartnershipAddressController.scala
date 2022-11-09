@@ -44,7 +44,7 @@ class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: Front
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
+        PartnershipDetailsId(index).retrieve.map {
           case PartnershipDetails(partnershipName, _) =>
             val href = routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)
             Future.successful(Ok(view(existingSchemeName, href, srn, partnershipName, Message

@@ -39,7 +39,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
 
-    @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), 'autoComplete -> "off") {
+    @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(establishers.isEmpty) {
 

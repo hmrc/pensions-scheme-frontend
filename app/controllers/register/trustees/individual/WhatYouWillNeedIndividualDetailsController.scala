@@ -43,7 +43,7 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
-      TrusteeNameId(index).retrieve.right.map {
+      TrusteeNameId(index).retrieve.map {
         details =>
           val href = routes.TrusteeDOBController.onPageLoad(mode, index, srn)
           Future.successful(Ok(view(existingSchemeName, href, srn, details.fullName)))

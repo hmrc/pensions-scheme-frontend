@@ -52,13 +52,13 @@ class TrusteeAddressYearsController @Inject()(
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.map { name =>
+        trusteeName(index).retrieve.map { name =>
           get(TrusteeAddressYearsId(index), form(name), viewModel(mode, index, name, srn))
         }
     }
@@ -66,7 +66,7 @@ class TrusteeAddressYearsController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      trusteeName(index).retrieve.right.map { name =>
+      trusteeName(index).retrieve.map { name =>
         post(TrusteeAddressYearsId(index), mode, form(name), viewModel(mode, index, name, srn))
       }
   }

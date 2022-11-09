@@ -53,7 +53,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(
       implicit request => {
         val nextPageHref = EstablisherEmailController.onPageLoad(mode, index, srn)
 
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           name =>
             Future.successful(Ok(
               view(existingSchemeName, nextPageHref, srn, name.fullName, Message("messages__theIndividual"))))

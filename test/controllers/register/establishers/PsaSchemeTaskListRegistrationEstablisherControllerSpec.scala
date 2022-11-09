@@ -21,7 +21,8 @@ import controllers.actions.{DataRetrievalAction, FakeAllowAccessProvider, FakeAu
 import identifiers.SchemeNameId
 import models.{EntitySpoke, NormalMode, TaskListLink}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import utils.UserAnswers
@@ -49,15 +50,15 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListEstablishers)
     }
 
-        "redirect to Session Expired for a GET if srn specified" in {
-          when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
-            .thenReturn(schemeDetailsTaskListEstablishers)
+    "redirect to Session Expired for a GET if srn specified" in {
+      when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
+        .thenReturn(schemeDetailsTaskListEstablishers)
 
-          val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-            .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
-        }
+      val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
+        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+    }
   }
 }
 
@@ -107,7 +108,6 @@ object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeT
       view,
       mockHsTaskListHelperRegistration
     )
-
 
 
   private def viewAsString(taskSections: SchemeDetailsTaskListEstablishers): String =

@@ -53,7 +53,7 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             get(PartnershipEmailId(index), form, vm)
         }
@@ -63,8 +63,8 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
     Retrieval {
       implicit request =>
         for {
-          schemeName <- SchemeNameId.retrieve.right
-          details <- PartnershipDetailsId(index).retrieve.right
+          schemeName <- SchemeNameId.retrieve
+          details <- PartnershipDetailsId(index).retrieve
         } yield {
             CommonFormWithHintViewModel(
               controllers.register.establishers.partnership.routes.PartnershipEmailController.onSubmit(mode, index,
@@ -80,7 +80,7 @@ class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             post(PartnershipEmailId(index), mode, form, vm, None)
         }

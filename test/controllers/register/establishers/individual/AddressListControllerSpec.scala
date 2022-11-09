@@ -23,7 +23,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
 import models.{Index, NormalMode, person}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -36,6 +36,7 @@ import views.html.address.addressList
 
 class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar {
   val fakeAuditService = new StubSuccessfulAuditService()
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val formProvider = new AddressListFormProvider()
@@ -54,7 +55,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
           person.PersonName("test first name", "test last name", false),
         EstablisherHasUTRId.toString -> true,
         EstablisherUTRId.toString -> "1234567891"
-    )))
+      )))
 
   private val view = injector.instanceOf[addressList]
 
@@ -148,7 +149,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         .onSubmit(NormalMode, firstIndex, None)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeUserAnswersService.userAnswer.get(AddressListId(firstIndex)).value mustEqual(addresses.head.copy(countryOpt = Some("GB")))
+      FakeUserAnswersService.userAnswer.get(AddressListId(firstIndex)).value mustEqual (addresses.head.copy(countryOpt = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

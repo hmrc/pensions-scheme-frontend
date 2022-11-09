@@ -19,8 +19,8 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{NormalMode, PartnershipDetails}
-import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -31,6 +31,7 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
   private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
+
   def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
 
   def viewAsString(): String = view(

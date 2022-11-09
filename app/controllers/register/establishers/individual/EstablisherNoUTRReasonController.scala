@@ -60,7 +60,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map { details =>
+        EstablisherNameId(index).retrieve.map { details =>
           val name = details.fullName
           get(EstablisherNoUTRReasonId(index), viewModel(mode, index, srn, name), form(name))
         }
@@ -69,7 +69,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map { details =>
+        EstablisherNameId(index).retrieve.map { details =>
           val name = details.fullName
           post(EstablisherNoUTRReasonId(index), mode, viewModel(mode, index, srn, name), form(name))
         }

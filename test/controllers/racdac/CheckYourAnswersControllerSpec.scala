@@ -22,7 +22,8 @@ import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.{CheckMode, Link, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeCountryOptions
@@ -55,6 +56,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   private val racDACContractNo = "Test RACDAC Contract No"
   private val view = injector.instanceOf[checkYourAnswers]
   private val mockPensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
+
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,

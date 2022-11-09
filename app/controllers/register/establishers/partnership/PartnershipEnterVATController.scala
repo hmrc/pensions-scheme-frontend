@@ -51,7 +51,7 @@ class PartnershipEnterVATController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
+        PartnershipDetailsId(index).retrieve.map { details =>
           val partnershipName = details.name
           get(PartnershipEnterVATId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }
@@ -74,7 +74,7 @@ class PartnershipEnterVATController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
+        PartnershipDetailsId(index).retrieve.map { details =>
           val partnershipName = details.name
           post(PartnershipEnterVATId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }

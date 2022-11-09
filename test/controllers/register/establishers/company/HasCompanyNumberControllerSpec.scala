@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.HasCompanyCRNId
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -31,9 +31,11 @@ import views.html.hasReferenceNumber
 
 class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSugar with MockValidationHelper {
   private val schemeName = None
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
+
   val formProvider = new HasCRNFormProvider()
-  val form = formProvider("messages__hasCompanyNumber__error__required","test company name")
+  val form = formProvider("messages__hasCompanyNumber__error__required", "test company name")
   val index = Index(0)
   val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)

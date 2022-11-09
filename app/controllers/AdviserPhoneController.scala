@@ -54,8 +54,8 @@ class AdviserPhoneController @Inject()(
     implicit request =>
       val form = formProvider()
       for {
-        schemeName <- SchemeNameId.retrieve.right
-        adviserName <- AdviserNameId.retrieve.right
+        schemeName <- SchemeNameId.retrieve
+        adviserName <- AdviserNameId.retrieve
       } yield {
         val preparedForm = request.userAnswers.get(AdviserPhoneId) match {
           case None => form
@@ -70,8 +70,8 @@ class AdviserPhoneController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           for {
-            schemeName <- SchemeNameId.retrieve.right
-            adviserName <- AdviserNameId.retrieve.right
+            schemeName <- SchemeNameId.retrieve
+            adviserName <- AdviserNameId.retrieve
           } yield {
             Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
           }

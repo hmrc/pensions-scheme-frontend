@@ -24,7 +24,8 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -36,7 +37,7 @@ import views.html.register.establishers.company.companyDetails
 
 import scala.concurrent.Future
 
-class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
   def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex)
   def onwardRouteToggleOff: Call = controllers.routes.IndexController.onPageLoad
@@ -49,7 +50,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[companyDetails]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
+  private val mockFeatureToggleService: FeatureToggleService = mock[FeatureToggleService]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,

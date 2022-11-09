@@ -20,12 +20,12 @@ import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
 import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-
+import org.scalatestplus.mockito.MockitoSugar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -37,7 +37,7 @@ class FakeAllowAccessAction(srn: Option[String],
 }
 
 object FakeAllowAccessAction extends MockitoSugar {
-  def getMockConfig:FrontendAppConfig = mock[FrontendAppConfig]
+  def getMockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 }
 
 case class FakeAllowAccessProvider(srn: Option[String] = None,
@@ -56,7 +56,7 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
       pensionsSchemeConnector match {
         case None =>
           val psc = mock[PensionsSchemeConnector]
-          when(psc.checkForAssociation(any(), any())(any(),any(),any()))
+          when(psc.checkForAssociation(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(Right(true)))
           psc
         case Some(psc) => psc

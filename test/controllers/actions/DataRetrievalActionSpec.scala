@@ -24,7 +24,9 @@ import matchers.JsonMatchers
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.{ArgumentCaptor, MockitoSugar}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsNull, JsObject, Json}
@@ -88,8 +90,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     .set(SchemeSrnId)(srn).asOpt.value
 
   override def beforeEach(): Unit = {
-    reset(dataCacheConnector, viewCacheConnector, updateCacheConnector,
-      lockRepoConnector, schemeDetailsConnector, minimalPsaConnector)
+    reset(dataCacheConnector)
+    reset(viewCacheConnector)
+    reset(updateCacheConnector)
+    reset(lockRepoConnector)
+    reset(schemeDetailsConnector)
+    reset(minimalPsaConnector)
     when(minimalPsaConnector.getMinimalFlags(any())(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
     when(updateCacheConnector.upsert(any(), any())(any(), any()))

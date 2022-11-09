@@ -26,7 +26,9 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -109,7 +111,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
-
 
 
         val validPostcode = "ZZ1 1ZZ"

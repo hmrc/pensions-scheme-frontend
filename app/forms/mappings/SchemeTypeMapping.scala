@@ -51,9 +51,9 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
 
       schemeTypeTuple match {
         case (key, Some(value)) if key == other => Other(value)
-        case (key, _) if mappings.keySet.contains(key) => {
+        case (key, _) if mappings.keySet.contains(key) =>
           mappings.apply(key)
-        }
+        case _ => throw new Exception(s"Invalid scheme type: ${schemeTypeTuple._1}")
       }
     }
 

@@ -26,7 +26,8 @@ import models.FeatureToggleName.SchemeRegistration
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.prop._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
@@ -35,7 +36,7 @@ import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach {
+class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
 
   import OldEstablisherPartnershipDetailsNavigatorSpec._
 

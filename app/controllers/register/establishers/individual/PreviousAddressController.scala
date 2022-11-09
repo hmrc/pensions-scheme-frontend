@@ -61,7 +61,7 @@ class PreviousAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           details =>
             get(
               PreviousAddressId(index),
@@ -84,7 +84,7 @@ class PreviousAddressController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherNameId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.map {
         details =>
           val context = s"Establisher Individual Previous Address: ${details.fullName}"
           post(

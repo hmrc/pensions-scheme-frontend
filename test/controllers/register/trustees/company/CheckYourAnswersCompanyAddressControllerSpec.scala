@@ -19,14 +19,15 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.routes.PsaSchemeTaskListController
 import controllers.register.trustees.routes._
+import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.trustees.company.CompanyConfirmPreviousAddressId
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
-import models.address.Address
 import models._
+import models.address.Address
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._

@@ -45,7 +45,7 @@ class AlreadyDeletedController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map {
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           details =>
             Future.successful(Ok(view(vm(mode, establisherIndex, details.fullName, srn))))
         }

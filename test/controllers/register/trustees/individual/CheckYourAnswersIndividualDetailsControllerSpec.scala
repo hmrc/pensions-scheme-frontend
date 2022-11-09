@@ -23,6 +23,7 @@ import identifiers.register.trustees.individual._
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models.person.PersonName
+import org.mockito.Mockito._
 import models.{NormalMode, _}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}

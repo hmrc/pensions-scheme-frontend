@@ -100,17 +100,17 @@ class ConfirmDeleteEstablisherController @Inject()(
 
         establisherKind match {
           case Company =>
-            CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+            CompanyDetailsId(establisherIndex).retrieve.map { companyDetails =>
               updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex,
                 Some(companyDetails), None, None, mode, srn)
             }
           case Indivdual =>
-            EstablisherNameId(establisherIndex).retrieve.right.map { establisherDetails =>
+            EstablisherNameId(establisherIndex).retrieve.map { establisherDetails =>
               updateEstablisherKind(establisherDetails.fullName, establisherKind, establisherIndex,
                 None, Some(establisherDetails), None, mode, srn)
             }
           case Partnership =>
-            PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+            PartnershipDetailsId(establisherIndex).retrieve.map { partnershipDetails =>
               updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex,
                 None, None, Some(partnershipDetails), mode, srn)
             }

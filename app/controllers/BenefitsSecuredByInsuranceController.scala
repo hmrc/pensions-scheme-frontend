@@ -53,7 +53,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        SchemeNameId.retrieve.right.map { schemeName =>
+        SchemeNameId.retrieve.map { schemeName =>
           val preparedForm = request.userAnswers.get(BenefitsSecuredByInsuranceId) match {
             case None => form(schemeName)
             case Some(value) => form(schemeName).fill(value)
@@ -67,7 +67,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
-      SchemeNameId.retrieve.right.map { schemeName =>
+      SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),

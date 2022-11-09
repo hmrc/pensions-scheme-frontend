@@ -54,20 +54,20 @@ class DirectorAddressPostcodeLookupController @Inject()(
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right map get
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve map get
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.right.map(
+        viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.map(
           vm =>
             post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
         )
@@ -77,7 +77,7 @@ class DirectorAddressPostcodeLookupController @Inject()(
   : Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map {
+        directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
             PostcodeLookupViewModel(
               postCall = routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex,

@@ -24,7 +24,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -97,7 +97,7 @@ private object TrusteeDOBControllerSpec extends MockitoSugar {
     TrusteesId.toString -> Json.arr(
       Json.obj(
         TrusteeNameId.toString -> PersonName("Test", "Name"),
-        TrusteeDOBId.toString  -> LocalDate.of(year, month, day)
+        TrusteeDOBId.toString -> LocalDate.of(year, month, day)
       )
     )
   )

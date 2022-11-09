@@ -28,7 +28,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousA
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import navigators.Navigator
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
@@ -47,6 +47,7 @@ import views.html.address.manualAddress
 class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
+
   private val view = injector.instanceOf[manualAddress]
 
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))

@@ -54,13 +54,13 @@ class DirectorEnterNINOController @Inject()(
   private[controllers] val hint: String = "messages__common__nino_hint"
   private val directorName: (Index, Index) => Retrieval[String] = (establisherIndex, directorIndex) => Retrieval {
     implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map {
+        directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
             get(DirectorEnterNINOId(establisherIndex, directorIndex), formProvider(name),
               viewmodel(establisherIndex, directorIndex, mode, srn, name))
@@ -70,7 +70,7 @@ class DirectorEnterNINOController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        directorName(establisherIndex, directorIndex).retrieve.right.map {
+        directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
             post(DirectorEnterNINOId(establisherIndex, directorIndex), mode, formProvider(name),
               viewmodel(establisherIndex, directorIndex, mode, srn, name))

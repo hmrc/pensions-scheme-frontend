@@ -51,7 +51,7 @@ class CompanyEnterUTRController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           get(CompanyEnterUTRId(index), viewModel(mode, index, srn, companyName), form)
         }
@@ -60,7 +60,7 @@ class CompanyEnterUTRController @Inject()(
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           post(CompanyEnterUTRId(index), mode, viewModel(mode, index, srn, companyName), form)
         }

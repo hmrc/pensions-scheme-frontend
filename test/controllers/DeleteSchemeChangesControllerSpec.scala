@@ -20,7 +20,8 @@ import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, Upda
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -31,7 +32,7 @@ import views.html.deleteSchemeChanges
 
 import scala.concurrent.Future
 
-class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach{
+class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val formProvider = new DeleteSchemeChangesFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -41,6 +42,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
   val fakeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
   val fakeLockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   val fakeMinPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
+
   def postCall: Call = controllers.routes.DeleteSchemeChangesController.onSubmit(srn)
 
   val view: deleteSchemeChanges = app.injector.instanceOf[deleteSchemeChanges]
@@ -62,11 +64,11 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
   def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
-    reset(fakeCacheConnector, fakeMinPsaConnector)
+    reset(fakeCacheConnector)
+    reset(fakeMinPsaConnector)
     when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
       "schemeName" -> schemeName))))
     when(fakeMinPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
-    super.beforeEach()
   }
 
   "DeleteScheme Controller" must {
@@ -88,7 +90,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
       verify(fakeCacheConnector, times(1)).removeAll(any())(any(), any())
-      verify(fakeLockConnector, times(1)).releaseLock(any(),any())(any(), any())
+      verify(fakeLockConnector, times(1)).releaseLock(any(), any())(any(), any())
     }
 
     "redirect to the overview page when user answers No" in {

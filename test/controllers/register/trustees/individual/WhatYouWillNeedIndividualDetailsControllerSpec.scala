@@ -21,7 +21,7 @@ import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, Mode, NormalMode, UpdateMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
 import utils.UserAnswers
@@ -32,6 +32,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
   private val personName = "Test Name"
   private val mandatoryTrustee = UserAnswers().set(TrusteeNameId(0))(PersonName("Test", "Name")).asOpt.value.dataRetrievalAction
   private val view = injector.instanceOf[whatYouWillNeedIndividualDetails]
+
   def controller(dataRetrievalAction: DataRetrievalAction = mandatoryTrustee): WhatYouWillNeedIndividualDetailsController =
     new WhatYouWillNeedIndividualDetailsController(frontendAppConfig,
       messagesApi,
@@ -44,7 +45,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
     )
 
   def viewAsString(mode: Mode): String = {
-    val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(mode, index=Index(0), None)
+    val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(mode, index = Index(0), None)
     view(None, href, None, personName)(fakeRequest, messages).toString
   }
 

@@ -53,7 +53,7 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             get(EstablisherPhoneId(index), form, vm)
         }
@@ -62,7 +62,7 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           name =>
             CommonFormWithHintViewModel(
               EstablisherPhoneController.onSubmit(mode, index, srn),
@@ -77,7 +77,7 @@ class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             post(EstablisherPhoneId(index), mode, form, vm)
         }

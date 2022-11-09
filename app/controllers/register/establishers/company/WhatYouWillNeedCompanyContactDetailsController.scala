@@ -46,7 +46,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val href = CompanyEmailController.onSubmit(mode, srn, index)
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           Future.successful(
             Ok(view(existingSchemeName, href, srn, details.companyName, Message("messages__theCompany"))))
         }

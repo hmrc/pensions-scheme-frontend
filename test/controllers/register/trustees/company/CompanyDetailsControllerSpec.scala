@@ -17,7 +17,6 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
@@ -25,8 +24,9 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import models.FeatureToggleName.SchemeRegistration
 import models.{CompanyDetails, FeatureToggle, Index, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,7 +37,7 @@ import views.html.register.trustees.company.companyDetails
 
 import scala.concurrent.Future
 
-class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
+class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
   appRunning()
 

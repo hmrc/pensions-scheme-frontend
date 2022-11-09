@@ -19,7 +19,6 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import controllers.register.establishers.individual.CheckYourAnswersAddressControllerSpec.mockFeatureToggleService
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.CompanyConfirmPreviousAddressId
 import models.FeatureToggleName.SchemeRegistration
@@ -27,6 +26,7 @@ import models.Mode.checkMode
 import models._
 import models.address.Address
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._

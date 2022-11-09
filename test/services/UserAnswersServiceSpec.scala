@@ -27,7 +27,8 @@ import models._
 import models.address.Address
 import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
@@ -298,27 +299,26 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   )
 
   class TestServiceNotAnnotated @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
-                              override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                              override val lockConnector: PensionSchemeVarianceLockConnector,
-                              override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                              override val appConfig: FrontendAppConfig
-                             ) extends UserAnswersService
+                                          override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                          override val lockConnector: PensionSchemeVarianceLockConnector,
+                                          override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
+                                          override val appConfig: FrontendAppConfig
+                                         ) extends UserAnswersService
 
   class TestServiceEstAndTrustees @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
                                             override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
                                             override val lockConnector: PensionSchemeVarianceLockConnector,
                                             override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
-
+                                           ) extends UserAnswersServiceEstablishersAndTrusteesImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
 
   class TestServiceInsurance @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
-                                            override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                            override val lockConnector: PensionSchemeVarianceLockConnector,
+                                       override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                       override val lockConnector: PensionSchemeVarianceLockConnector,
                                        override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
-                                            override val appConfig: FrontendAppConfig
-  ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
+                                       override val appConfig: FrontendAppConfig
+                                      ) extends UserAnswersServiceInsuranceImpl(subscriptionCacheConnector, updateSchemeCacheConnector, lockConnector, viewConnector, appConfig)
 
   protected val subscriptionConnector: UserAnswersCacheConnector = mock[SubscriptionCacheConnector]
   protected val updateConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]

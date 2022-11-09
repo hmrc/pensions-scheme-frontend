@@ -31,7 +31,7 @@
 
 @layout(pageTitle = messages("messages__what_you_will_need_bank_details__title")) {
 
-    @formHelper(action = WhatYouWillNeedBankDetailsController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = WhatYouWillNeedBankDetailsController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @components.heading(headingKey = messages("messages__what_you_will_need_bank_details__h1"))
 

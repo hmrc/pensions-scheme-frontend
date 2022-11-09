@@ -58,7 +58,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals with 
       case None => form
     }
 
-    personNameId.retrieve.right.map {
+    personNameId.retrieve.map {
       personName =>
         Future.successful(Ok(
           view(preparedForm, mode, existingSchemeName, personName.fullName, viewModel)
@@ -72,7 +72,7 @@ trait DateOfBirthController extends FrontendBaseController with Retrievals with 
 
     form.bindFromRequest().fold(
       formWithErrors =>
-        personNameId.retrieve.right.map {
+        personNameId.retrieve.map {
           personName =>
             Future.successful(BadRequest(
               view(formWithErrors, mode, existingSchemeName, personName.fullName, viewModel)

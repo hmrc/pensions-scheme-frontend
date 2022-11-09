@@ -26,6 +26,7 @@ import models.address.Address
 import models.person.PersonName
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

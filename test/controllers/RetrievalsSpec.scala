@@ -32,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
 import utils.{FakeDataRequest, FakeOptionalDataRequest, UserAnswers}
 
 import scala.concurrent.Future
@@ -116,14 +115,14 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
         implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
-        testIdentifier.retrieve.right.value mustEqual "result"
+        testIdentifier.retrieve contains "result"
       }
 
       "identifier uses and to get the value from answers" in {
 
         implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
 
-        (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
+        (testIdentifier and secondIdentifier).retrieve contains new ~("result", "answer")
       }
     }
 

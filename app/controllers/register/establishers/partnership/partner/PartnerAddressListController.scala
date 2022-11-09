@@ -52,13 +52,13 @@ class PartnerAddressListController @Inject()(override val appConfig: FrontendApp
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).right.map(get)
+        viewModel(mode, establisherIndex, partnerIndex, srn).map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, establisherIndex, partnerIndex, srn).right.map {
+        viewModel(mode, establisherIndex, partnerIndex, srn).map {
           vm =>
             post(
               viewModel = vm,
@@ -74,7 +74,7 @@ class PartnerAddressListController @Inject()(override val appConfig: FrontendApp
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
     (PartnerNameId(establisherIndex, partnerIndex) and PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
-      ).retrieve.right.map {
+      ).retrieve.map {
       case partnerDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.PartnerAddressListController.onSubmit(mode, establisherIndex, partnerIndex, srn),

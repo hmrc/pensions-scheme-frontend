@@ -24,7 +24,8 @@ import models._
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -40,7 +41,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
 
   override protected def beforeEach(): Unit = {
-    reset(mockAppConfig, mockSpokeCreationService)
+    reset(mockAppConfig)
+    reset(mockSpokeCreationService)
     when(mockAppConfig.daysDataSaved).thenReturn(10)
   }
 
@@ -207,7 +209,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         srn = None,
         establisher = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
         allComplete = false,
-        statsSection = Some(StatsSection(0,4,None))
+        statsSection = Some(StatsSection(0, 4, None))
       )
     }
 
@@ -225,7 +227,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         srn = None,
         establisher = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         allComplete = false,
-        statsSection = Some(StatsSection(0,4,None))
+        statsSection = Some(StatsSection(0, 4, None))
       )
     }
   }

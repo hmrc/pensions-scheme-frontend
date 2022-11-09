@@ -64,7 +64,7 @@ class PartnershipAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
+        PartnershipDetailsId(index).retrieve.map {
           details =>
             get(PartnershipAddressId(index), PartnershipAddressListId(index), viewmodel(index, mode, srn, details.name))
         }
@@ -83,7 +83,7 @@ class PartnershipAddressController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      PartnershipDetailsId(index).retrieve.right.map {
+      PartnershipDetailsId(index).retrieve.map {
         details =>
           val context = s"Partnership Address: ${details.name}"
           post(PartnershipAddressId(index), PartnershipAddressListId(index),

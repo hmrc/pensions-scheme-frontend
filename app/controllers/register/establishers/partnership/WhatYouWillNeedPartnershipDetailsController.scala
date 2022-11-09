@@ -45,7 +45,7 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
     implicit request =>
       val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode,
         index, srn)
-      PartnershipDetailsId(index).retrieve.right.map { details =>
+      PartnershipDetailsId(index).retrieve.map { details =>
         Future.successful(Ok(view(existingSchemeName, href, details.name, srn)))
       }
   }

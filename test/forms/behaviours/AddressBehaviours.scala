@@ -26,7 +26,7 @@ import wolfendale.scalacheck.regexp.RegexpGen
 trait AddressBehaviours extends FormSpec with StringFieldBehaviours with Constraints with AddressMapping {
 
 
-  private val testAddressLineRegex = """^[A-Za-z0-9 &!'‘’(),./\u2014\u2013\u2010\u002d]{1,35}$"""
+  private val testAddressLineRegex = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
 
   def formWithAddressField(
                             form: Form[_],

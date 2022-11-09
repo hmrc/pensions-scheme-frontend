@@ -20,7 +20,8 @@ import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -30,9 +31,12 @@ import scala.concurrent.Future
 
 class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
   private val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
+
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+
   private val psaName = "Psa Name"
   private val view = injector.instanceOf[whatIsRACDAC]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatIsRACDACController =
     new WhatIsRACDACController(messagesApi,
       FakeAuthAction,
@@ -57,14 +61,14 @@ class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar wi
       }
     }
 
-//    "on a POST" must {
-//      "redirect to bank account page" in {
-//        val result = controller().onSubmit()(fakeRequest)
-//
-//        status(result) mustBe SEE_OTHER
-//        redirectLocation(result) mustBe Some(controllers.racdac.routes.RACDACNameController.onPageLoad().url)
-//      }
-//    }
+    //    "on a POST" must {
+    //      "redirect to bank account page" in {
+    //        val result = controller().onSubmit()(fakeRequest)
+    //
+    //        status(result) mustBe SEE_OTHER
+    //        redirectLocation(result) mustBe Some(controllers.racdac.routes.RACDACNameController.onPageLoad().url)
+    //      }
+    //    }
   }
 }
 

@@ -26,7 +26,8 @@ import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
@@ -65,7 +66,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
         routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](
-         Some(messages("messages__enterPhoneNumber", cn)),
+          Some(messages("messages__enterPhoneNumber", cn)),
           Some(messages("messages__visuallyhidden__dynamic_phone_number", cn))
         )().row(CompanyPhoneId(index))(
           routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
@@ -90,7 +91,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index), title:Message, h1:Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

@@ -24,7 +24,8 @@ import forms.racdac.ContractOrPolicyNumberFormProvider
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -35,6 +36,7 @@ import scala.concurrent.Future
 
 class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with MockitoSugar {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
+
   private val psaName = "Mr Maxwell"
   val formProvider = new ContractOrPolicyNumberFormProvider()
 
@@ -82,7 +84,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val validData =Json.obj("racdac" -> Json.obj(
+      val validData = Json.obj("racdac" -> Json.obj(
         RACDACNameId.toString -> racdacName,
         ContractOrPolicyNumberId.toString -> "value 1")
       )

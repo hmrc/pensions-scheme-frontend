@@ -21,7 +21,9 @@ import connectors._
 import controllers.actions._
 import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
-import org.mockito.{ArgumentCaptor, MockitoSugar}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures.whenReady
 import play.api.inject.bind
@@ -66,15 +68,13 @@ class VariationDeclarationControllerSpec
 
   private val view = injector.instanceOf[variationDeclaration]
 
-  override def beforeEach {
-    reset(
-      pensionsSchemeConnector,
-      lockConnector,
-      updateSchemeCacheConnector,
-      schemeDetailsReadOnlyCacheConnector,
-      auditService,
-      schemeDetailsConnector
-    )
+  override def beforeEach(): Unit = {
+    reset(pensionsSchemeConnector)
+    reset(lockConnector)
+    reset(updateSchemeCacheConnector)
+    reset(schemeDetailsReadOnlyCacheConnector)
+    reset(auditService)
+    reset(schemeDetailsConnector)
   }
 
   private def viewAsString(): String = view(Some(schemeName), srn, postCall)(fakeRequest, messages).toString

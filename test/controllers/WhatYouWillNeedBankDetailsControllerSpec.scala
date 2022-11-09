@@ -19,10 +19,9 @@ package controllers
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.whatYouWillNeedBankDetails
 
 class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -30,6 +29,7 @@ class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with M
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
   private val view = injector.instanceOf[whatYouWillNeedBankDetails]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBankDetailsController =
     new WhatYouWillNeedBankDetailsController(frontendAppConfig,
       messagesApi,

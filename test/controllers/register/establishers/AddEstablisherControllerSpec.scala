@@ -17,7 +17,6 @@
 package controllers.register.establishers
 
 import controllers.ControllerSpecBase
-import controllers.PsaSchemeTaskListControllerSpec.{reset, when}
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -29,8 +28,9 @@ import models.register.establishers.EstablisherKind
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, FeatureToggle, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +41,7 @@ import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 
 import scala.concurrent.Future
 
-class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfterEach{
+class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar{
 
   import AddEstablisherControllerSpec._
 
@@ -133,7 +133,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
   }
 }
 
-object AddEstablisherControllerSpec extends AddEstablisherControllerSpec{
+object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddEstablisherFormProvider()
@@ -232,15 +232,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec{
 }
 
 
-
-
-
-
-
-
-
-
-class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndAfterEach{
+class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   import AddEstablisherControllerOldSpec._
 
@@ -332,7 +324,7 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
   }
 }
 
-object AddEstablisherControllerOldSpec extends AddEstablisherControllerSpec{
+object AddEstablisherControllerOldSpec extends AddEstablisherControllerSpec {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new AddEstablisherFormProvider()

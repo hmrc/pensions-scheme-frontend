@@ -36,7 +36,7 @@
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__racdac_name__title"))) {
 
-    @formHelper(action = RACDACNameController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = RACDACNameController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

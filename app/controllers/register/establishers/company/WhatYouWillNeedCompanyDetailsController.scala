@@ -44,7 +44,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(mode, srn, index)
-      CompanyDetailsId(index).retrieve.right.map { details =>
+      CompanyDetailsId(index).retrieve.map { details =>
         Future.successful(Ok(view(existingSchemeName, href, srn, details.companyName)))
       }
   }

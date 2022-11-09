@@ -22,6 +22,7 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import org.mockito.Mockito._
 import models._
 import models.address.Address
 import models.person.PersonName

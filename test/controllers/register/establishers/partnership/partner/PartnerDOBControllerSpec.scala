@@ -25,7 +25,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
 import models.person.PersonName
 import models.{Index, Mode, NormalMode, PartnershipDetails}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -102,7 +102,7 @@ object PartnerDOBControllerSpec extends MockitoSugar {
         "partner" -> Json.arr(
           Json.obj(
             PartnerNameId.toString -> PersonName("first", "last"),
-            PartnerDOBId.toString  -> LocalDate.of(year, month, day)
+            PartnerDOBId.toString -> LocalDate.of(year, month, day)
           )
         )
       )

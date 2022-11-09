@@ -51,7 +51,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
 
   val directorName = (establisherIndex: Index, directorIndex: Index) => Retrieval {
     implicit request =>
-      DirectorNameId(establisherIndex, directorIndex).retrieve.right.map(_.fullName)
+      DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
   private[controllers] val postCall = routes.DirectorConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
@@ -60,7 +60,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map { vm =>
+        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map { vm =>
           get(DirectorConfirmPreviousAddressId(establisherIndex, directorIndex), vm)
         }
     }
@@ -68,7 +68,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.right.map { vm =>
+        viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map { vm =>
           post(DirectorConfirmPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressId
           (establisherIndex, directorIndex), vm, mode)
         }
@@ -78,7 +78,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
     Retrieval(
       implicit request =>
         (directorName(establisherIndex, directorIndex) and ExistingCurrentAddressId(establisherIndex, directorIndex))
-          .retrieve.right.map {
+          .retrieve.map {
           case name ~ address =>
             ConfirmAddressViewModel(
               postCall(establisherIndex, directorIndex, srn),

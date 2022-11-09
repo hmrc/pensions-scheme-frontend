@@ -25,6 +25,7 @@ import models.Mode.checkMode
 import models._
 import models.person.PersonName
 import navigators.Navigator
+import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind

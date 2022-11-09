@@ -28,10 +28,11 @@ import models.Mode.checkMode
 import models._
 import models.person.PersonName
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.mockito.Mockito._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import services.FeatureToggleService
@@ -42,7 +43,7 @@ import scala.concurrent.Future
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
 
-class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with BeforeAndAfterEach{
+class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
 
   import EstablishersCompanyNavigatorSpec._
 
@@ -50,7 +51,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
   val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
 
-  override def beforeEach(): Unit ={
+  override def beforeEach(): Unit = {
     reset(mockFeatureToggleService)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
@@ -87,8 +88,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(NormalMode, 0)),
           row(AddCompanyDirectorsId(0))(true, directorName(NormalMode, 0)),
           row(AddCompanyDirectorsId(0))(true, otherDirectors(NormalMode), ua = Some(addCompanyDirectorsMoreThanTen)),
-          rowNoValue(OtherDirectorsId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */taskList(NormalMode)),
-          rowNoValue(CheckYourAnswersId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */addCompanyDirectors(0, NormalMode)),
+          rowNoValue(OtherDirectorsId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */ taskList(NormalMode)),
+          rowNoValue(CheckYourAnswersId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */ addCompanyDirectors(0, NormalMode)),
           rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(NormalMode)),
           rowNoValue(CompanyEnterCRNId(0))(hasCompanyUTR(NormalMode)),
           rowNoValue(CompanyPhoneId(0))(cyaCompanyContactDetails(NormalMode)),
@@ -106,6 +107,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           row(TrusteesAlsoDirectorsId(0))(Seq(1), addCompanyDirectors(0, NormalMode),
             ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector))
         )
+
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
     }
 
@@ -147,6 +149,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValue(CompanyAddressListId(0))(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))),
           rowNoValueNewEstablisher(CompanyAddressListId(0))(getCya(NormalMode, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))))
         )
+
       behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
     }
 
@@ -189,10 +192,11 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValue(CompanyEnterPAYEId(0))(cyaCompanyDetails(UpdateMode)),
           rowNoValue(CompanyEnterCRNId(0))(hasCompanyUTR(UpdateMode)),
           row(HasCompanyPAYEId(0))(false, cyaCompanyDetails(UpdateMode)),
-          rowNoValueNewEstablisher(CompanyNoCRNReasonId(0))( hasCompanyUTR(UpdateMode)),
-          rowNoValue(CompanyAddressListId(0))( companyAddressYears(UpdateMode)),
-          rowNoValueNewEstablisher(CompanyAddressListId(0))( companyAddressYears(UpdateMode))
+          rowNoValueNewEstablisher(CompanyNoCRNReasonId(0))(hasCompanyUTR(UpdateMode)),
+          rowNoValue(CompanyAddressListId(0))(companyAddressYears(UpdateMode)),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))(companyAddressYears(UpdateMode))
         )
+
       behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
     }
 
@@ -232,9 +236,10 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValue(CompanyEnterCRNId(0))(exitJourney(UpdateMode, emptyAnswers, 0, cyaCompanyDetails(UpdateMode))),
           row(HasCompanyPAYEId(0))(false, exitJourney(UpdateMode, establisherHasPAYE(false), 0, cyaCompanyDetails(UpdateMode))),
           rowNoValueNewEstablisher(CompanyNoCRNReasonId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyDetails(UpdateMode))),
-          rowNoValue(CompanyAddressListId(0))( confirmPreviousAddress),
+          rowNoValue(CompanyAddressListId(0))(confirmPreviousAddress),
           rowNoValueNewEstablisher(CompanyAddressListId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode)))
         )
+
       behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
     }
   }
@@ -342,7 +347,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int , cyaPage: Call) = {
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int, cyaPage: Call) = {
     if (mode == NormalMode)
       cyaPage
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
@@ -398,8 +403,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def addOneCompanyDirectorsTrusteeAlsoDirector =
     UserAnswers(validData(johnDoe)).setOrException(TrusteeAlsoDirectorId(0))(1)
 
-  private def getCya(mode: Mode, cyaPage: Call) =  cyaPage
+  private def getCya(mode: Mode, cyaPage: Call) = cyaPage
 
   private def previousAddressRoutes(mode: Mode) =
-      cyaCompanyAddressDetails(mode)
+    cyaCompanyAddressDetails(mode)
 }

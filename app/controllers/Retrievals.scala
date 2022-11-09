@@ -90,8 +90,8 @@ trait Retrievals {
     def and[B](query: Retrieval[B]): Retrieval[A ~ B] =
       (request: DataRequest[AnyContent]) => {
         for {
-          a <- self.retrieve(request).right
-          b <- query.retrieve(request).right
+          a <- self.retrieve(request)
+          b <- query.retrieve(request)
         } yield new ~(a, b)
       }
   }

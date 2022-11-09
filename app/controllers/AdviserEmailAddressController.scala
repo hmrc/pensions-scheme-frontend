@@ -55,8 +55,8 @@ class AdviserEmailAddressController @Inject()(
     implicit request =>
       val form = formProvider()
       for {
-        schemeName <- SchemeNameId.retrieve.right
-        adviserName <- AdviserNameId.retrieve.right
+        schemeName <- SchemeNameId.retrieve
+        adviserName <- AdviserNameId.retrieve
       } yield {
         val preparedForm = request.userAnswers.get(AdviserEmailId) match {
           case None => form
@@ -71,8 +71,8 @@ class AdviserEmailAddressController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           for {
-            schemeName <- SchemeNameId.retrieve.right
-            adviserName <- AdviserNameId.retrieve.right
+            schemeName <- SchemeNameId.retrieve
+            adviserName <- AdviserNameId.retrieve
           } yield {
             Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
           }

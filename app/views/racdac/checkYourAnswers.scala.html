@@ -35,6 +35,7 @@
         @{
             section match {
                 case a: AnswerSection => answer_section(a, i.toString, vm.hideEditLinks, Some("govuk-check-your-answers"), true)
+                case _ => Html("")
             }
         }
     }

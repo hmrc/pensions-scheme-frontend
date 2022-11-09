@@ -50,7 +50,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      SchemeNameId.retrieve.right.map { schemeName =>
+      SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(CurrentMembersId) match {
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
@@ -61,7 +61,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      SchemeNameId.retrieve.right.map { schemeName =>
+      SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),

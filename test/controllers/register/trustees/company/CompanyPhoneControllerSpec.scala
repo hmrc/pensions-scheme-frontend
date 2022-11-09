@@ -23,7 +23,7 @@ import identifiers.SchemeNameId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
 import models.{CompanyDetails, Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json

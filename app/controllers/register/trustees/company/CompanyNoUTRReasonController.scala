@@ -53,7 +53,7 @@ class CompanyNoUTRReasonController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           get(CompanyNoUTRReasonId(index), viewModel(mode, index, srn, companyName), form(companyName))
         }
@@ -62,7 +62,7 @@ class CompanyNoUTRReasonController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map { details =>
+        CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
           post(CompanyNoUTRReasonId(index), mode, viewModel(mode, index, srn, companyName), form(companyName))
         }

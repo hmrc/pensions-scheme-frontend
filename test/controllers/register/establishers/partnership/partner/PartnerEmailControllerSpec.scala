@@ -22,7 +22,7 @@ import forms.EmailFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.Call
@@ -42,6 +42,7 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val estCompanyPartner = UserAnswers().set(PartnerNameId(0, 0))(PersonName("first", "last")).asOpt.value.dataRetrievalAction
   private val view = injector.instanceOf[emailAddress]
+
   def controller(dataRetrievalAction: DataRetrievalAction = estCompanyPartner): PartnerEmailController =
     new PartnerEmailController(frontendAppConfig,
       messagesApi,

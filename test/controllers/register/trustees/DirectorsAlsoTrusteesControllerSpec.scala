@@ -17,7 +17,6 @@
 package controllers.register.trustees
 
 import controllers.ControllerSpecBase
-import controllers.PsaSchemeTaskListControllerSpec.when
 import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
@@ -25,8 +24,8 @@ import models.FeatureToggleName.SchemeRegistration
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio, FeatureToggle, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.never
-import org.mockito.MockitoSugar.{atLeastOnce, mock, reset, verify}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
@@ -41,7 +40,7 @@ import views.html.dataPrefillRadio
 
 import scala.concurrent.Future
 
-class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
   private val companyDetails = CompanyDetails(companyName = "Wibble Inc")
   private val schemeName = "aa"
 
@@ -88,8 +87,9 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
   private val index = 0
 
-  override def beforeEach: Unit = {
-    reset(mockDataPrefillService, mockUserAnswersService)
+  override def beforeEach(): Unit = {
+    reset(mockDataPrefillService)
+    reset(mockUserAnswersService)
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }

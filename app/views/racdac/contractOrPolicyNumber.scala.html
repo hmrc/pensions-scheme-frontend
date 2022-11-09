@@ -35,7 +35,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__racdac_contract_or_policy_number__title", schemeName))) {
 
-    @formHelper(action = ContractOrPolicyNumberController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = ContractOrPolicyNumberController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

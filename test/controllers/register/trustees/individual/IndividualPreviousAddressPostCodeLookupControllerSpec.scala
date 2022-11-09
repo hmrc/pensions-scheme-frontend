@@ -26,7 +26,7 @@ import models.address.TolerantAddress
 import models.person.PersonName
 import models.{Index, NormalMode}
 import navigators.Navigator
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.inject.bind
@@ -47,6 +47,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import IndividualPreviousAddressPostCodeLookupControllerSpec._
+
   private val view = injector.instanceOf[postcodeLookup]
 
   "IndividualPreviousAddressPostCodeLookup Controller" must {
@@ -62,11 +63,11 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
       )) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
-        val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
-        val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
+          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
-        }
+      }
     }
 
     "redirect to next page on POST request" which {
@@ -86,7 +87,7 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
             val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
-          }
+        }
       }
     }
   }

@@ -19,10 +19,9 @@ package controllers
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import views.html.whatYouWillNeedMembers
 
 class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -30,6 +29,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
   def onwardRoute: Call = controllers.routes.CurrentMembersController.onPageLoad(NormalMode)
 
   private val view = injector.instanceOf[whatYouWillNeedMembers]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedMembersController =
     new WhatYouWillNeedMembersController(frontendAppConfig,
       messagesApi,

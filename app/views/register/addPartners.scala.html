@@ -46,7 +46,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))){
 
-    @formHelper(action = postUrl, 'autoComplete -> "off") {
+    @formHelper(action = postUrl, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

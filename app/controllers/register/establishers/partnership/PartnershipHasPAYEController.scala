@@ -50,7 +50,7 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
   def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
+        PartnershipDetailsId(index).retrieve.map {
           details =>
             get(PartnershipHasPAYEId(index), form(details.name), viewModel(mode, index, srn, details.name))
         }
@@ -72,7 +72,7 @@ class PartnershipHasPAYEController @Inject()(override val appConfig: FrontendApp
   def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map {
+        PartnershipDetailsId(index).retrieve.map {
           details =>
             post(PartnershipHasPAYEId(index), mode, form(details.name), viewModel(mode, index, srn, details.name))
         }

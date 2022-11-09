@@ -23,7 +23,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyEnterCRNId, CompanyNoCRNReasonId, HasCompanyCRNId}
 import models.{CompanyDetails, Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -50,7 +50,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
     hint = Some(Message("messages__hasCompanyNumber__p1"))
   )
 
-  private def getTrusteeCompanyPlusCrn(hasCrnValue:Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
+  private def getTrusteeCompanyPlusCrn(hasCrnValue: Boolean): FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       TrusteesId.toString -> Json.arr(
         Json.obj(
@@ -65,6 +65,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
       )
     ))
   )
+
   private val view = injector.instanceOf[hasReferenceNumber]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): HasCompanyCRNController =

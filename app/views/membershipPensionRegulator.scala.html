@@ -31,7 +31,7 @@
 @layout(
     pageTitle = messages("messages__membership_pension_regulator__title")) {
 
-    @formHelper(action = MembershipPensionRegulatorController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = MembershipPensionRegulatorController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @components.heading(headingKey = messages("messages__membership_pension_regulator__h1"))
 

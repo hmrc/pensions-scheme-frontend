@@ -50,7 +50,7 @@ class PartnerEnterUTRController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
           get(PartnerEnterUTRId(establisherIndex, partnerIndex), viewModel(mode, establisherIndex, partnerIndex, srn,
             partnerName), form)
@@ -60,7 +60,7 @@ class PartnerEnterUTRController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnerNameId(establisherIndex, partnerIndex).retrieve.right.map { details =>
+        PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
           post(PartnerEnterUTRId(establisherIndex, partnerIndex), mode, viewModel(mode, establisherIndex,
             partnerIndex, srn, partnerName), form)

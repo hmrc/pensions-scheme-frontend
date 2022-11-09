@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.company.HasCompanyVATId
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.data.Form
 import play.api.test.Helpers._
@@ -34,9 +34,11 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   with OptionValues with MockValidationHelper {
 
   private val schemeName = None
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
+
   private val formProvider = new HasReferenceNumberFormProvider()
-  private val form = formProvider("messages__hasCompanyVat__error__required","test company name")
+  private val form = formProvider("messages__hasCompanyVat__error__required", "test company name")
   private val index = Index(0)
   private val srn = None
   private val postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(NormalMode, index, srn)

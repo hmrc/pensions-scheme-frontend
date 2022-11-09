@@ -45,7 +45,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           name =>
             val trusteeName = name.fullName
             val href = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController

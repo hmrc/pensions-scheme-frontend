@@ -55,7 +55,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           details =>
             get(EstablisherEnterNINOId(index), formProvider(details.fullName), viewmodel(details, index, mode, srn))
         }
@@ -74,7 +74,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      EstablisherNameId(index).retrieve.right.map {
+      EstablisherNameId(index).retrieve.map {
         details =>
           post(EstablisherEnterNINOId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode,
             srn))

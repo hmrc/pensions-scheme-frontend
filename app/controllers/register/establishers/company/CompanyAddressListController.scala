@@ -55,13 +55,13 @@ class CompanyAddressListController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).right.map(get)
+        viewModel(mode, srn, index).map(get)
     }
 
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).right.map(
+        viewModel(mode, srn, index).map(
           vm =>
             post(
               viewModel = vm,
@@ -76,7 +76,7 @@ class CompanyAddressListController @Inject()(
 
   private def viewModel(mode: Mode, srn: Option[String], index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.right.map {
+    (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.map {
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),

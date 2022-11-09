@@ -22,7 +22,7 @@ import forms.EmailFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{Index, NormalMode}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.mvc.Call

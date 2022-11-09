@@ -37,7 +37,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addTrustee__title"))) {
 
-    @formHelper(action = AddTrusteeController.onSubmit(mode, srn), 'autoComplete -> "off") {
+    @formHelper(action = AddTrusteeController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

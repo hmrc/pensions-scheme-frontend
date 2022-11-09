@@ -51,7 +51,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           name =>
             val trusteeName = name.fullName
             get(TrusteeHasUTRId(index), form(trusteeName), viewModel(mode, index, srn, trusteeName))
@@ -73,7 +73,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           name =>
             val trusteeName = name.fullName
             post(TrusteeHasUTRId(index), mode, form(trusteeName), viewModel(mode, index, srn, trusteeName))

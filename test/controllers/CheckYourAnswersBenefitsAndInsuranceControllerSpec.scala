@@ -21,7 +21,7 @@ import models.Mode._
 import models._
 import models.address.Address
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
@@ -78,7 +78,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val schemeName = "Test Scheme Name"
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
+
   private def postUrl(mode: Mode) = routes.PsaSchemeTaskListController.onPageLoad(mode, None)
+
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
@@ -89,6 +91,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     .insuranceCompanyName(insuranceCompanyName).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]
+
   private def controller(dataRetrievalAction: DataRetrievalAction): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
       messagesApi,
@@ -102,9 +105,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       view
     )
 
-  private def benefitsAndInsuranceSection(mode : Mode) = AnswerSection(
+  private def benefitsAndInsuranceSection(mode: Mode) = AnswerSection(
     None,
-    commonRows(mode) ++  Seq(
+    commonRows(mode) ++ Seq(
       AnswerRow(
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
@@ -113,7 +116,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
-        messages("messages__addressFor",insuranceCompanyName),
+        messages("messages__addressFor", insuranceCompanyName),
         Seq(
           insurerAddress.addressLine1,
           insurerAddress.addressLine2,
@@ -127,7 +130,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   )
 
-  private def updateBenefitsAndInsuranceSection(mode : Mode) = AnswerSection(
+  private def updateBenefitsAndInsuranceSection(mode: Mode) = AnswerSection(
     None,
     commonRows(mode) ++ Seq(
       AnswerRow(
@@ -138,7 +141,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
-        messages("messages__addressFor",insuranceCompanyName),
+        messages("messages__addressFor", insuranceCompanyName),
         Seq("site.not_entered"),
         answerIsMessageKey = true,
         Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
@@ -146,13 +149,15 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     )
   )
 
-  private def commonRows(mode : Mode):  Seq[AnswerRow] ={
+  private def commonRows(mode: Mode): Seq[AnswerRow] = {
     Seq(
       AnswerRow(
         messages("messages__investment_regulated_scheme__h1", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        if(mode==UpdateMode) { None } else {
+        if (mode == UpdateMode) {
+          None
+        } else {
           Some(Link("site.change", routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url,
             Some(messages("messages__visuallyhidden__investmentRegulated", schemeName))))
         }
@@ -161,7 +166,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__occupational_pension_scheme__h1", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        if(mode==UpdateMode) { None } else {
+        if (mode == UpdateMode) {
+          None
+        } else {
           Some(Link("site.change", routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url,
             Some(messages("messages__visuallyhidden__occupationalPensionScheme", schemeName))))
         }
@@ -193,7 +200,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   def heading(name: String, mode: Mode): String = if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
     Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-  def vm(mode : Mode, hideSaveAndContinueButton:Boolean, data: AnswerSection): CYAViewModel = CYAViewModel(
+  def vm(mode: Mode, hideSaveAndContinueButton: Boolean, data: AnswerSection): CYAViewModel = CYAViewModel(
     answerSections = Seq(data),
     href = postUrl(mode),
     schemeName = Some(schemeName),
@@ -205,10 +212,10 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     h1 = heading(schemeName, mode)
   )
 
-  private def viewAsString(mode : Mode = NormalMode, hideSaveAndContinueButton:Boolean = false): String =
+  private def viewAsString(mode: Mode = NormalMode, hideSaveAndContinueButton: Boolean = false): String =
     view(vm(mode, hideSaveAndContinueButton, benefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
-  private def viewAsStringWithLessData(mode : Mode): String =
+  private def viewAsStringWithLessData(mode: Mode): String =
     view(vm(mode, hideSaveAndContinueButton = true, updateBenefitsAndInsuranceSection(mode)))(fakeRequest, messages).toString
 
 }

@@ -53,7 +53,7 @@ class DirectorNoNINOReasonController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map { name =>
           get(DirectorNoNINOReasonId(establisherIndex, directorIndex),
             viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }
@@ -62,7 +62,7 @@ class DirectorNoNINOReasonController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        DirectorNameId(establisherIndex, directorIndex).retrieve.right.map { name =>
+        DirectorNameId(establisherIndex, directorIndex).retrieve.map { name =>
           post(DirectorNoNINOReasonId(establisherIndex, directorIndex), mode,
             viewModel(mode, establisherIndex, directorIndex, srn, name.fullName), form(name.fullName))
         }

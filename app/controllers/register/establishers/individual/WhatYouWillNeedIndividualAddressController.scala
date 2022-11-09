@@ -44,7 +44,7 @@ class WhatYouWillNeedIndividualAddressController @Inject()(val appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        EstablisherNameId(index).retrieve.right.map {
+        EstablisherNameId(index).retrieve.map {
           establisherName =>
             val name = establisherName.fullName
             val href = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode,

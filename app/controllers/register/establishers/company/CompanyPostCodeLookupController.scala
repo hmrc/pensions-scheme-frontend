@@ -59,13 +59,13 @@ class CompanyPostCodeLookupController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, srn, mode).retrieve.right map get
+        viewmodel(index, srn, mode).retrieve map get
     }
 
   private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             PostcodeLookupViewModel(
               routes.CompanyPostCodeLookupController.onSubmit(mode, srn, index),
@@ -80,7 +80,7 @@ class CompanyPostCodeLookupController @Inject()(
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(index, srn, mode).retrieve.right.map {
+        viewmodel(index, srn, mode).retrieve.map {
           vm =>
             post(CompanyPostCodeLookupId(index), vm, mode)
         }

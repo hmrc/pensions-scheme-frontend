@@ -28,8 +28,9 @@ import models.register.PartnerEntity
 import models.{FeatureToggle, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -40,7 +41,7 @@ import views.html.register.addPartners
 
 import scala.concurrent.Future
 
-class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
+class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar{
 
   appRunning()
 

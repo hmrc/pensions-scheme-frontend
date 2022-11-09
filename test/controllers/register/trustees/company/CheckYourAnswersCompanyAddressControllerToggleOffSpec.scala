@@ -23,6 +23,7 @@ import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.trustees.company.CompanyConfirmPreviousAddressId
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
+import org.mockito.Mockito._
 import models._
 import models.address.Address
 import org.mockito.ArgumentMatchers.any

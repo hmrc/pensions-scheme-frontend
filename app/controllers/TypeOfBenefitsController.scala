@@ -56,7 +56,7 @@ class TypeOfBenefitsController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        SchemeNameId.retrieve.right.map {
+        SchemeNameId.retrieve.map {
           schemeName =>
             val preparedForm =
               request.userAnswers.get(TypeOfBenefitsId) match {
@@ -76,7 +76,7 @@ class TypeOfBenefitsController @Inject()(
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        SchemeNameId.retrieve.right.map {
+        SchemeNameId.retrieve.map {
           schemeName =>
             form(schemeName).bindFromRequest().fold(
               (formWithErrors: Form[_]) =>

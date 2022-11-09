@@ -65,7 +65,7 @@ class CompanyAddressController @Inject()(
   def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        CompanyDetailsId(index).retrieve.right.map {
+        CompanyDetailsId(index).retrieve.map {
           details =>
             get(CompanyAddressId(index), CompanyAddressListId(index), viewmodel(index, mode, srn, details.companyName))
         }
@@ -74,7 +74,7 @@ class CompanyAddressController @Inject()(
   def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map {
+      CompanyDetailsId(index).retrieve.map {
         details =>
           val context = s"Establisher Company Address: ${details.companyName}"
           post(CompanyAddressId(index), CompanyAddressListId(index),

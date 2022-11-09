@@ -51,7 +51,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
-      TrusteeNameId(trusteeIndex).retrieve.right.map(_.fullName)
+      TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
   private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
@@ -60,8 +60,8 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.flatMap { trusteeName =>
-          viewmodel(trusteeName, mode, index, srn).retrieve.right.map { vm =>
+        trusteeName(index).retrieve.flatMap { trusteeName =>
+          viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>
             get(IndividualConfirmPreviousAddressId(index), vm)
           }
         }
@@ -70,7 +70,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   private def viewmodel(trusteeName: String, mode: Mode, index: Int, srn: Option[String]) = {
     Retrieval(
       implicit request =>
-        ExistingCurrentAddressId(index).retrieve.right.map { address =>
+        ExistingCurrentAddressId(index).retrieve.map { address =>
           ConfirmAddressViewModel(
             postCall(index, srn),
             title = Message(title),
@@ -87,8 +87,8 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        trusteeName(index).retrieve.right.flatMap { trusteeName =>
-          viewmodel(trusteeName, mode, index, srn).retrieve.right.map { vm =>
+        trusteeName(index).retrieve.flatMap { trusteeName =>
+          viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>
             post(IndividualConfirmPreviousAddressId(index), TrusteePreviousAddressId(index), vm, mode)
           }
         }

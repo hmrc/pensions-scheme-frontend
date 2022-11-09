@@ -62,7 +62,7 @@ class PartnershipNoUTRReasonController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
+        PartnershipDetailsId(index).retrieve.map { details =>
           val partnershipName = details.name
           get(PartnershipNoUTRReasonId(index), viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }
@@ -71,7 +71,7 @@ class PartnershipNoUTRReasonController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        PartnershipDetailsId(index).retrieve.right.map { details =>
+        PartnershipDetailsId(index).retrieve.map { details =>
           val partnershipName = details.name
           post(PartnershipNoUTRReasonId(index), mode, viewModel(mode, index, srn, partnershipName), form(partnershipName))
         }

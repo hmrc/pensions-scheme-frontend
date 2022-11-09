@@ -33,7 +33,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__occupational_pension_scheme__title"))){
 
-    @formHelper(action = OccupationalPensionSchemeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = OccupationalPensionSchemeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

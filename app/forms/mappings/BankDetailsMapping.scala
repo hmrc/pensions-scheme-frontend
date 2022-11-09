@@ -32,8 +32,8 @@ trait BankDetailsMapping extends Mappings {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
 
         baseFormatter.bind(key, data)
-          .right.map(_.trim.replaceAll("[^0-9]", ""))
-          .right.flatMap {
+          .map(_.trim.replaceAll("[^0-9]", ""))
+          .flatMap {
           case str if str.trim.replaceAll("[^0-9]", "").length != 6 =>
             Left(Seq(FormError(key, maxErrorKey)))
           case str if !str.matches(regexSortCode) =>
@@ -65,8 +65,8 @@ trait BankDetailsMapping extends Mappings {
         def strip(value: String): String = value.replaceAll("\\s", "")
 
         baseFormatter.bind(key, data)
-          .right.map(strip)
-          .right.flatMap {
+          .map(strip)
+          .flatMap {
           case str if strip(str).length != 8 =>
             Left(Seq(FormError(key, invalidKey)))
           case str if !strip(str).matches(regexAccountNo) =>

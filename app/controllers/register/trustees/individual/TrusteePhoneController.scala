@@ -54,7 +54,7 @@ class TrusteePhoneController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             get(TrusteePhoneId(index), form, vm)
         }
@@ -63,7 +63,7 @@ class TrusteePhoneController @Inject()(
   def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewModel(mode, srn, index).retrieve.right.map {
+        viewModel(mode, srn, index).retrieve.map {
           vm =>
             post(TrusteePhoneId(index), mode, form, vm)
         }
@@ -72,7 +72,7 @@ class TrusteePhoneController @Inject()(
   private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
-        TrusteeNameId(index).retrieve.right.map {
+        TrusteeNameId(index).retrieve.map {
           details =>
             CommonFormWithHintViewModel(
               routes.TrusteePhoneController.onSubmit(mode, index, srn),

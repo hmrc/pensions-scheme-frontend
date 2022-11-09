@@ -63,7 +63,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
-        InsuranceCompanyNameId.retrieve.right.map { companyName =>
+        InsuranceCompanyNameId.retrieve.map { companyName =>
           get(InsurerConfirmAddressId, InsurerSelectAddressId, viewmodel(mode, srn, companyName))
         }
     }
@@ -80,7 +80,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
-      InsuranceCompanyNameId.retrieve.right.map { companyName =>
+      InsuranceCompanyNameId.retrieve.map { companyName =>
         post(InsurerConfirmAddressId,
           InsurerSelectAddressId,
           viewmodel(mode, srn, companyName),

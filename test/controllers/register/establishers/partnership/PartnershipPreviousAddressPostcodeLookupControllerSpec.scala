@@ -24,6 +24,8 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.{Index, NormalMode, PartnershipDetails}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import org.mockito._
 import play.api.data.Form
 import play.api.libs.json._
