@@ -27,7 +27,7 @@ object AppDependencies {
     "com.github.tomakehurst"       %  "wiremock-jre8"          % "2.35.0"            % Test,
     "io.github.wolfendale"         %% "scalacheck-gen-regexp"  % "1.0.0"             % Test,
     "com.vladsch.flexmark"         %  "flexmark-all"           % "0.62.2"            % Test,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.13.4"            % Test
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.14.0"            % Test
   )
 
   def apply(): Seq[ModuleID] = compile ++ test
