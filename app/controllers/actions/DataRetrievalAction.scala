@@ -75,16 +75,18 @@ class DataRetrievalImpl(
                                         hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     (refresh, optionLock) match {
       case (true, Some(VarianceLock)) =>
-        val optJs: Future[Option[JsValue]] = updateConnector.fetch(srn).flatMap {
+        updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
-          case _ => Future.successful(None)
+            val optJs = addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
+            createOptionalRequest(optJs, viewOnly = false)
+          case _ =>
+            lockConnector.releaseLock(psaId, srn).flatMap(_ => getRequestWithNoLock(srn, refresh, psaId))
         }
-        createOptionalRequest(optJs, viewOnly = false)
       case (false, Some(VarianceLock)) => createOptionalRequest(updateConnector.fetch(srn), viewOnly = false)
       case (_, Some(_)) => getRequestWithLock(srn, refresh, psaId)
       case _ => getRequestWithNoLock(srn, refresh, psaId)
     }
+
 
   private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
                                       (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
