@@ -291,6 +291,39 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       }
     }
 
+
+    "when refreshData is true and there is no data in the update cache in UpdateMode and " +
+      s"variance lock is held by psa then release the lock and get data in readonly cache" in {
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, srn = srn).set(UKBankAccountId)(true).asOpt.value
+      when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(Some(VarianceLock)))
+      when(lockRepoConnector.releaseLock(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future((): Unit))
+      when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn Future(None)
+      when(updateCacheConnector.fetch(any())(any(), any())) thenReturn Future(None)
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
+
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val action = new Harness(viewConnector = viewCacheConnector,
+        lockConnector = lockRepoConnector,
+        mode = UpdateMode,
+        srn = srnOpt,
+        refreshData = true)
+
+      val futureResult = action.callTransform(authRequest)
+
+      whenReady(futureResult) { result =>
+        result.userAnswers mustBe Some(uaInsertedIntoViewCache)
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
+        verify(lockRepoConnector, times(1)).releaseLock(eqTo(psa), eqTo(srn))(any(), any())
+        jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.json.as[JsObject])
+      }
+    }
+
+
+
+
+
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "overwrite data with new user answers with data retrieved from scheme details and add it to the request" +
       "and set view only to false" in {

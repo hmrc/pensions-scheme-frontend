@@ -87,6 +87,7 @@ class DataRetrievalImpl(
       case _ => getRequestWithNoLock(srn, refresh, psaId)
     }
 
+
   private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
                                       (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
