@@ -23,10 +23,10 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.register.establishers.EstablisherKind
 import models.{LastUpdated, Mode, NormalMode}
 import utils.{Enumerable, UserAnswers}
@@ -282,7 +282,8 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
     if (completionQ1 && completionQ2) 1 else 0
 
   private[utils] def completedSectionCount(userAnswers: UserAnswers): Int = {
-    val trusteesCount = toInt(userAnswers.get(HaveAnyTrusteesId).contains(true), isAllTrusteesCompleted(userAnswers))
+
+    val trusteesCount = toInt(isAllTrusteesCompleted(userAnswers))
     val workingKnowledgeCount = toInt(userAnswers.get(DeclarationDutiesId).contains(false), userAnswers.isWorkingKnowledgeCompleted.contains(true))
     val beforeYouStartCount = toInt(userAnswers.isBeforeYouStartCompleted(NormalMode))
     val membersCount = toInt(userAnswers.isMembersCompleted.contains(true))
