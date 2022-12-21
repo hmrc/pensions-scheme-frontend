@@ -22,15 +22,16 @@ import identifiers._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models._
 import models.person.PersonName
+import models.register.SchemeType
 import models.register.establishers.EstablisherKind
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import utils.{Enumerable, UserAnswers}
-import viewmodels.{Message, SchemeDetailsTaskList, SchemeDetailsTaskListEntitySection, SchemeDetailsTaskListEstablishers, StatsSection}
+import viewmodels._
 
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
@@ -404,12 +405,21 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         .setOrException(HaveAnyTrusteesId)(false)
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
+
+    "return 7 when all complete and working knowledge answered as no and trustees question not answered and scheme type single trust" in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 7
+    }
+
+    "return 6 when all complete and working knowledge answered as no and trustees question not answered and scheme type is body corp " in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(false)
+        .setOrException(SchemeTypeId)(SchemeType.BodyCorporate)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 6
+    }
+
   }
-
-
-  //  "completedSectionCountEstablishers" must {
-  //    "return 3 sections"
-  //  }
 }
 
 object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumerable.Implicits {
