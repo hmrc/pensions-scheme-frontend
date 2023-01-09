@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,5 @@ case class PostcodeLookupViewModel(
                                     subHeading: Option[Message] = None,
                                     enterPostcode: Message = Message
                                     ("messages__common__postcode_lookup__enter_postcode"),
-                                    formLabel: Message = Message("messages__common__postcode_lookup__address_postcode"),
                                     srn: Option[String] = None
                                   )
