@@ -23,7 +23,8 @@ import identifiers.racdac.IsRacDacId
 import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
+import play.api.Logger
+import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -227,7 +228,7 @@ class RacdacDataRetrievalImpl(
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
                                srnOpt: Option[String])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
-
+  private val logger = Logger(classOf[RacdacDataRetrievalImpl])
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     mode match {
@@ -285,14 +286,16 @@ class RacdacDataRetrievalImpl(
     id =>
       viewConnector.fetch(id) flatMap {
         case None => refreshSchemeDetails
-        case Some(jsonValue) => (jsonValue \ "srn").validate[String] match {
+        case Some(jsonValue) => (jsonValue \ SchemeSrnId.toString).validate[String] match {
           case JsSuccess(value, _) =>
             if (value eq srn) {
               Future.successful(Some(jsonValue))
             } else {
               refreshSchemeDetails
             }
-          case JsError(errors) => throw JsResultException(errors)
+          case JsError(_) =>
+            logger.warn(s"No SRN found for id $id when retrieving from read-only scheme cache. Refreshing data.")
+            refreshSchemeDetails
         }
       }
   }
