@@ -3,12 +3,12 @@ import sbt._
 object AppDependencies {
 
   import play.sbt.PlayImport._
-
+  private val playVersion = "7.13.0"
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"                   %%  "http-caching-client"           % "10.0.0-play-28",
     "uk.gov.hmrc"                   %%  "play-conditional-form-mapping" % "1.12.0-play-28",
-    "uk.gov.hmrc"                   %%  "bootstrap-frontend-play-28"    % "7.13.0",
+    "uk.gov.hmrc"                   %%  "bootstrap-frontend-play-28"    % playVersion,
     "uk.gov.hmrc"                   %%  "domain"                        % "8.1.0-play-28",
     "com.typesafe.play"             %%  "play-json-joda"                % "2.9.4",
     "com.google.inject.extensions"  %   "guice-multibindings"           % "4.2.3",
@@ -16,6 +16,7 @@ object AppDependencies {
   )
 
   val test: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % playVersion         % Test,
     "org.scalatest"                %% "scalatest"              % "3.2.15"            % Test,
     "org.scalatestplus"            %% "scalacheck-1-17"        % "3.2.14.0"          % Test,
     "org.scalatestplus"            %% "mockito-4-6"            % "3.2.15.0"          % Test,
