@@ -19,9 +19,10 @@ package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
 import connectors.{SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
-import identifiers.{SchemeNameId, SchemeSrnId}
 import identifiers.racdac.{IsRacDacId, RACDACNameId}
+import identifiers.{SchemeNameId, SchemeSrnId}
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
+import play.api.libs.json.JsValue
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -37,16 +38,17 @@ class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCac
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+    def isSchemeDataForCurrentSRN(data: JsValue): Boolean = (data \ SchemeSrnId.toString).asOpt[String].contains(srn)
+
     viewConnector.fetch(request.externalId).flatMap {
-      case None =>
+      case Some(data) if isSchemeDataForCurrentSRN(data) =>
+        Future.successful(OptionalDataRequest(
+          request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true, request.administratorOrPractitioner))
+      case _ =>
         val pspId = request.pspId.getOrElse(throw IdNotFound("PspIdNotFound")).id
         schemeDetailsConnector.getPspSchemeDetails(pspId, srn).map { ua =>
           OptionalDataRequest(request.request, request.externalId, Some(additionalUserAnswers(ua)), request.psaId, request.pspId, viewOnly = true, request.administratorOrPractitioner)
         }
-
-      case Some(data) =>
-        Future.successful(OptionalDataRequest(
-          request.request, request.externalId, Some(UserAnswers(data)), request.psaId, request.pspId, viewOnly = true, request.administratorOrPractitioner))
     }
   }
 
