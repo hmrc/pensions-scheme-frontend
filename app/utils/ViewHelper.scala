@@ -16,6 +16,7 @@
 
 package utils
 
+import org.owasp.encoder.Encode
 import play.api.data.Form
 import play.api.i18n.Messages
 
@@ -23,4 +24,6 @@ object ViewHelper {
 
   def titleWithErrors(form: Form[_], title: String)(implicit messages: Messages): String =
     s"${if (form.hasErrors) messages("site.error") else ""} $title"
+
+  val sanitiseInput: String => String = (input: String) => Encode.forHtml(input)
 }

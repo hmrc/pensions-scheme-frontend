@@ -16,6 +16,7 @@
 
 @import viewmodels.AnswerSection
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import utils.ViewHelper.sanitiseInput
 
 @this(
     govukSummaryList : GovukSummaryList
@@ -48,7 +49,8 @@
                     } else {
                         HtmlContent((for((r, index2) <- rowVal.answer.zipWithIndex)
                         yield{
-                            s"""<div id="cya-$idPath-$indexVal-$index2-answer" class="govuk-!-display-block">$r</div>"""
+                            val sanitisedR = sanitiseInput(r)
+                            s"""<div id="cya-$idPath-$indexVal-$index2-answer" class="govuk-!-display-block">$sanitisedR</div>"""
                         }).mkString)
                     }
                 ),
