@@ -25,5 +25,5 @@ object ViewHelper {
   def titleWithErrors(form: Form[_], title: String)(implicit messages: Messages): String =
     s"${if (form.hasErrors) messages("site.error") else ""} $title"
 
-  val sanitiseInput: String => String = (input: String) => Encode.forHtml(input)
+  val sanitiseOutput: String => String = (input: String) => Encode.forHtml(input)
 }

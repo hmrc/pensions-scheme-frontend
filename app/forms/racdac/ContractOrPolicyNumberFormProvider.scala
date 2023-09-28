@@ -25,7 +25,11 @@ class ContractOrPolicyNumberFormProvider extends Mappings with Constraints {
 
   def apply(name: String)(implicit messages: Messages): Form[String] = Form(
     "value" -> text(messages("messages__error__racdac_contract_or_policy_number", name)).
-      verifying(firstError(
-        maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length")))
+      verifying(
+        firstError(
+          maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length"),
+          contractOrPolicyNumber("messages__error__racdac_contract_or_policy_number_invalid")
+        )
+      )
   )
 }

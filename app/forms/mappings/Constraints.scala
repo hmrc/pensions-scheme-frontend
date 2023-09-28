@@ -46,6 +46,7 @@ trait Constraints {
   val regexAddressLine = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
   val adviserNameRegex = """^[a-zA-Z0-9À-ÿ !#$%&'‘’\"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,107}$"""
   val regexPolicyNumber = """^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,55}$"""
+  val regexContractOrPolicyNumber = """^[a-zA-Z0-9À-ÿ!#$%&''‘’"“”«»()*+,./:;=?@\[\]|~£€¥\\—–‐_^`-]{1,50}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -221,4 +222,6 @@ trait Constraints {
   protected def userResearchName(errorKey: String): Constraint[String] = regexp(regexUserResearch, errorKey)
 
   protected def policyNumber(errorKey: String): Constraint[String] = regexp(regexPolicyNumber, errorKey)
+
+  protected def contractOrPolicyNumber(errorKey: String): Constraint[String] = regexp(regexContractOrPolicyNumber, errorKey)
 }

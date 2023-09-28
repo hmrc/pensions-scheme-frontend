@@ -1901,6 +1901,7 @@ messages__visuallyhidden__racdac_contract_or_policy_number = {0}’s contract or
 
 messages__error__racdac_contract_or_policy_number = Enter the contract or policy number for {0}
 messages__error__racdac_contract_or_policy_number_length = The contract or policy number cannot be more than 50 characters
+messages__error__racdac_contract_or_policy_number_invalid = The contract or policy number contains invalid characters
 
 messages__declaration_racdac__title = Declaration
 messages__declaration_racdac__heading = Declaration
