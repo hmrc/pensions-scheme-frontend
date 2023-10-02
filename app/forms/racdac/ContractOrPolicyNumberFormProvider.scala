@@ -16,16 +16,22 @@
 
 package forms.racdac
 
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.{Constraints, Mappings, Transforms}
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class ContractOrPolicyNumberFormProvider extends Mappings with Constraints {
+class ContractOrPolicyNumberFormProvider extends Mappings with Constraints with Transforms {
   private val maxLength = 50
 
   def apply(name: String)(implicit messages: Messages): Form[String] = Form(
-    "value" -> text(messages("messages__error__racdac_contract_or_policy_number", name)).
-      verifying(firstError(
-        maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length")))
+    "value" -> text(messages("messages__error__racdac_contract_or_policy_number", name))
+      .transform(strip, noTransform)
+      .verifying(
+        firstError(
+          maxLength(maxLength, "messages__error__racdac_contract_or_policy_number_length"),
+          contractOrPolicyNumber("messages__error__racdac_contract_or_policy_number_invalid")
+        )
+      )
   )
 }
+

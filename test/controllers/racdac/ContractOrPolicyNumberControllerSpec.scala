@@ -106,10 +106,21 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
     }
 
     "return a Bad Request and errors" when {
-      "invalid data is submitted" in {
+      "invalid data is submitted (empty)" in {
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
         val boundForm = form.bind(Map("value" -> ""))
+
+        val result = controller().onSubmit(NormalMode)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
+
+      "invalid data is submitted (contains HTML)" in {
+        when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<p>Hello world!</p>"))
+        val boundForm = form.bind(Map("value" -> "<p>Hello world!</p>"))
 
         val result = controller().onSubmit(NormalMode)(postRequest)
 
