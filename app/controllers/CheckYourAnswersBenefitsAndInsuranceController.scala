@@ -55,7 +55,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData) {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
       implicit request =>
         Ok(view(vm(UpdateMode, Some(srn))))
     }
