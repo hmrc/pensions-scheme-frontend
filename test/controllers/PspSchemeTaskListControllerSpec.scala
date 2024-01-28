@@ -82,7 +82,8 @@ object PspSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       dataRetrievalAction,
       controllerComponents,
       view,
-      fakeHsTaskListHelper
+      fakeHsTaskListHelper,
+      FakeAllowAccessProvider()
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
