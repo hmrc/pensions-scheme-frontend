@@ -27,7 +27,7 @@ import models.requests.OptionalDataRequest
 import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
@@ -36,7 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class AllowAccessAction(srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  config: FrontendAppConfig,
-                                 errorHandler: FrontendErrorHandler
+                                 errorHandler: FrontendErrorHandler,
+                                 allowPsa: Boolean,
+                                 allowPsp: Boolean
                                 )(implicit val executionContext: ExecutionContext) extends
   ActionFilter[OptionalDataRequest] {
 
@@ -66,22 +68,54 @@ abstract class AllowAccessAction(srn: Option[String],
 
   private def checkForAssociation[A](request: OptionalDataRequest[A],
                                      extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] = {
-    request.psaId.map { psaId =>
-      pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN)(hc, implicitly, request).flatMap {
-        case Right(true) => Future.successful(None)
-        case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+
+    def isAllowed(req: Future[Either[HttpResponse, Boolean]]) = req.map {
+      case Right(true) => true
+      case _ => false
+    }.recover { _ => false}
+
+    def optFtrToFtrOpt[T](x: Option[Future[T]]): Future[Option[T]] =
+      x match {
+        case Some(f) => f.map(Some(_))
+        case None    => Future.successful(None)
+      }
+
+    val psaAllowedOpt = if(allowPsa) request.psaId.map { psaId =>
+      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN, isPsa = true)(hc, implicitly, request))
+    } else None
+
+    val pspAllowedOpt = if (allowPsp) request.psaId.map { psaId =>
+      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN, isPsa = false)(hc, implicitly, request))
+    } else None
+
+
+    val accessAllowed = for {
+      psaAllowed <- optFtrToFtrOpt(psaAllowedOpt)
+      pspAllowed <- optFtrToFtrOpt(pspAllowedOpt)
+    } yield {
+      psaAllowed -> pspAllowed match {
+        case (Some(true), _) => true
+        case (_, Some(true)) => true
+        case _ => false
       }
     }
-  }.getOrElse(errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply))
+
+    accessAllowed.flatMap {
+      case true => Future.successful(None)
+      case false => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+    }
+  }
 }
 
 class AllowAccessActionMain(
                              srn: Option[String],
                              pensionsSchemeConnector: PensionsSchemeConnector,
                              config: FrontendAppConfig,
-                             errorHandler: FrontendErrorHandler
+                             errorHandler: FrontendErrorHandler,
+                             allowPsa: Boolean,
+                             allowPsp: Boolean
                            )(implicit executionContext: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler) {
+  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -97,9 +131,11 @@ class AllowAccessActionTaskList(
                                  srn: Option[String],
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  config: FrontendAppConfig,
-                                 errorHandler: FrontendErrorHandler
+                                 errorHandler: FrontendErrorHandler,
+                                 allowPsa: Boolean = true,
+                                 allowPsp: Boolean = false
                                )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler) {
+  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -114,9 +150,11 @@ class AllowAccessActionNoSuspendedCheck(
                                          srn: Option[String],
                                          pensionsSchemeConnector: PensionsSchemeConnector,
                                          config: FrontendAppConfig,
-                                         errorHandler: FrontendErrorHandler
+                                         errorHandler: FrontendErrorHandler,
+                                         allowPsa: Boolean = true,
+                                         allowPsp: Boolean = false
                                        )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler) {
+  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -134,8 +172,8 @@ class AllowAccessActionProviderMainImpl @Inject()(
                                                    errorHandler: ErrorHandlerWithReturnLinkToManage
                                                  )(implicit ec: ExecutionContext) extends AllowAccessActionProvider {
 
-  def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessActionMain(srn, pensionsSchemeConnector, config, errorHandler)
+  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+    new AllowAccessActionMain(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
 
@@ -146,8 +184,8 @@ class AllowAccessActionProviderTaskListImpl @Inject()(
                                                      )(implicit ec: ExecutionContext) extends
   AllowAccessActionProvider {
 
-  def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessActionTaskList(srn, pensionsSchemeConnector, config, errorHandler)
+  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+    new AllowAccessActionTaskList(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
 
@@ -158,12 +196,12 @@ class AllowAccessActionProviderNoSuspendedCheckImpl @Inject()(
                                                              )(implicit ec: ExecutionContext) extends
   AllowAccessActionProvider {
 
-  def apply(srn: Option[String]): AllowAccessAction = {
-    new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, config, errorHandler)
+  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+    new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
 
 
 trait AllowAccessActionProvider {
-  def apply(srn: Option[String]): AllowAccessAction
+  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction
 }

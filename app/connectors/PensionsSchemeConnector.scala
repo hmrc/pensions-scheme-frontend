@@ -39,7 +39,7 @@ trait PensionsSchemeConnector {
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(psaId: String, srn: String)
+  def checkForAssociation(psaId: String, srn: String, isPsa: Boolean = true)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]]
 }
@@ -84,11 +84,11 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     }
   }
 
-  def checkForAssociation(psaId: String, srn: String)
+  def checkForAssociation(userId: String, srn: String, isPsa: Boolean)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
     val headers: Seq[(String, String)] =
-      Seq(("psaId", psaId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+      Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
 
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
