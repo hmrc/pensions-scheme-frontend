@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.UserAnswers
 
@@ -313,12 +313,16 @@ class AllowAccessActionSpec
 
       def hasAccess(allowPsa: Boolean, allowPsp: Boolean)(isPsa: Boolean) = {
         reset(psc)
-        when(psc.checkForAssociation(any(), any(), ArgumentMatchers.eq(true))(any(), any(), any()))
+        when(psc.checkForAssociation(ArgumentMatchers.eq("A0000000"), any(), ArgumentMatchers.eq(true))(any(), any(), any()))
           .thenReturn(Future.successful(Right(isPsa)))
-        when(psc.checkForAssociation(any(), any(), ArgumentMatchers.eq(false))(any(), any(), any()))
+        when(psc.checkForAssociation(ArgumentMatchers.eq("20000000"), any(), ArgumentMatchers.eq(false))(any(), any(), any()))
           .thenReturn(Future.successful(Right(!isPsa)))
+
+        val psaId = if(isPsa) Some(PsaId("A0000000")) else None
+        val pspId = if(!isPsa) Some(PspId("20000000")) else None
+
         new TestAllowAccessActionTaskList(srn, psc, allowPsa = allowPsa, allowPsp = allowPsp)
-          .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
+          .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), psaId, pspId))
           .map { case Some(value) => false
           case None => true
           }

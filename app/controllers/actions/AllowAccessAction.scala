@@ -84,8 +84,8 @@ abstract class AllowAccessAction(srn: Option[String],
       isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN, isPsa = true)(hc, implicitly, request))
     } else None
 
-    val pspAllowedOpt = if (allowPsp) request.psaId.map { psaId =>
-      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN, isPsa = false)(hc, implicitly, request))
+    val pspAllowedOpt = if (allowPsp) request.pspId.map { pspId =>
+      isAllowed(pensionsSchemeConnector.checkForAssociation(pspId.id, extractedSRN, isPsa = false)(hc, implicitly, request))
     } else None
 
 

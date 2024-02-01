@@ -39,7 +39,7 @@ trait PensionsSchemeConnector {
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(psaId: String, srn: String, isPsa: Boolean = true)
+  def checkForAssociation(userId: String, srn: String, isPsa: Boolean = true)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]]
 }
