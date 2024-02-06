@@ -35,7 +35,8 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                                            minimalPsaConnector: MinimalPsaConnector,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
-                                           val controllerComponents: MessagesControllerComponents
+                                           val controllerComponents: MessagesControllerComponents,
+                                           psaSchemeAuthAction: PsaSchemeAuthAction
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -54,7 +55,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = authenticate(Some(PSA)).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen psaSchemeAuthAction(srn)).async {
     implicit request =>
 
       redirects.flatMap {

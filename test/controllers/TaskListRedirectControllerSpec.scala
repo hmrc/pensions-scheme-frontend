@@ -91,6 +91,7 @@ object TaskListRedirectControllerSpec extends ControllerSpecBase with MockitoSug
       mockMinimalPsaConnector,
       messagesApi,
       FakeAuthAction,
-      controllerComponents
+      controllerComponents,
+      fakePsaSchemeAuthAction
     )
 }
