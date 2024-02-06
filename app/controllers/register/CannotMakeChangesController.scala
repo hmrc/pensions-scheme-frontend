@@ -19,13 +19,11 @@ package controllers.register
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-
 import javax.inject.Inject
 import models.UpdateMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.TaskList
 import views.html.register.cannotMakeChanges
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,12 +36,12 @@ class CannotMakeChangesController @Inject()(
                                              requireData: DataRequiredAction,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: cannotMakeChanges,
-                                             @TaskList allowAccessAction: AllowAccessActionProvider
+                                             psaSchemeAuthAction: PsaSchemeAuthAction
                                            )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen allowAccessAction(srn)).async {
+  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen psaSchemeAuthAction(srn) andThen getData(UpdateMode, srn)).async {
     implicit request =>
       Future.successful(Ok(view(srn, existingSchemeName)))
   }

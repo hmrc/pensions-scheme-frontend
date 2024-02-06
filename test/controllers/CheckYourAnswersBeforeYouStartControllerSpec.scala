@@ -79,7 +79,9 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view
+      view,
+      fakePsaSchemeAuthAction,
+      fakePspSchemeAuthAction
     )
 
   private def postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)

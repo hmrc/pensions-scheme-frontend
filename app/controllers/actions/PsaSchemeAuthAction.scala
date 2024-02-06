@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-private class PsaSchemeActionImpl (srn: String, schemeDetailsConnector: SchemeDetailsConnector, errorHandler: ErrorHandler)
+private class PsaSchemeActionImpl (srnOpt: Option[String], schemeDetailsConnector: SchemeDetailsConnector, errorHandler: ErrorHandler)
                           (implicit val executionContext: ExecutionContext)
   extends ActionFunction[AuthenticatedRequest, AuthenticatedRequest] with FrontendHeaderCarrierProvider with Logging {
 
@@ -37,31 +37,35 @@ private class PsaSchemeActionImpl (srn: String, schemeDetailsConnector: SchemeDe
   private def notFoundTemplate(implicit request: AuthenticatedRequest[_]) = NotFound(errorHandler.notFoundTemplate)
 
   override def invokeBlock[A](request: AuthenticatedRequest[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    request.psaId.map { psaId =>
-      val schemeDetails = schemeDetailsConnector.getSchemeDetails(
-        psaId = psaId.id,
-        idNumber = srn,
-        schemeIdType = "srn"
-      )(hc(request), executionContext)
 
-      schemeDetails.flatMap { schemeDetails =>
-        val admins = schemeDetails.json.as[PsaSchemeDetails].psaDetails.map(_.id)
-        if (admins.contains(psaId.id)) {
-          block(request)
-        } else {
-          Future.successful(notFoundTemplate(request))
-        }
-      } recover {
-        case err =>
-          logger.error("scheme details request failed", err)
-          notFoundTemplate(request)
-      }
+    request.psaId.map { psaId =>
+      srnOpt
+        .map { srn =>
+          val schemeDetails = schemeDetailsConnector.getSchemeDetails(
+            psaId = psaId.id,
+            idNumber = srn,
+            schemeIdType = "srn"
+          )(hc(request), executionContext)
+
+          schemeDetails.flatMap { schemeDetails =>
+            val admins = schemeDetails.json.as[PsaSchemeDetails].psaDetails.map(_.id)
+            if (admins.contains(psaId.id)) {
+              block(request)
+            } else {
+              Future.successful(notFoundTemplate(request))
+            }
+          } recover {
+            case err =>
+              logger.error("scheme details request failed", err)
+              notFoundTemplate(request)
+          }
+        }.getOrElse(block(request))
     }.getOrElse(Future.successful(notFoundTemplate(request)))
   }
 }
 
 
 class PsaSchemeAuthAction @Inject()(schemeDetailsConnector: SchemeDetailsConnector, errorHandler: ErrorHandler)(implicit ec: ExecutionContext){
-  def apply(srn: String): ActionFunction[AuthenticatedRequest, AuthenticatedRequest] =
+  def apply(srn: Option[String]): ActionFunction[AuthenticatedRequest, AuthenticatedRequest] =
     new PsaSchemeActionImpl(srn, schemeDetailsConnector, errorHandler)
 }

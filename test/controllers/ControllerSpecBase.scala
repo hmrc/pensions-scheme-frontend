@@ -18,7 +18,9 @@ package controllers
 
 
 import base.SpecBase
-import controllers.actions.{FakeDataRetrievalAction, FakePspDataRetrievalAction}
+import connectors.SchemeDetailsConnector
+import controllers.actions.{FakeDataRetrievalAction, FakePsaSchemeAuthAction, FakePspDataRetrievalAction, FakePspSchemeAuthAction}
+import handlers.ErrorHandler
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
@@ -38,7 +40,9 @@ import utils.{Enumerable, MapFormats}
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
 
   implicit val global = scala.concurrent.ExecutionContext.Implicits.global
-
+  val fakePsaSchemeAuthAction = new FakePsaSchemeAuthAction(app.injector.instanceOf[SchemeDetailsConnector], app.injector.instanceOf[ErrorHandler])
+  val fakePspSchemeAuthAction: FakePspSchemeAuthAction =
+    new FakePspSchemeAuthAction(app.injector.instanceOf[SchemeDetailsConnector], app.injector.instanceOf[ErrorHandler])
   val cacheMapId = "id"
 
   def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))

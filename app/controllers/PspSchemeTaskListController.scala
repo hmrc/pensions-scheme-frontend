@@ -37,14 +37,15 @@ class PspSchemeTaskListController @Inject()(
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: pspTaskList,
                                              hsTaskListHelperPsp: HsTaskListHelperPsp,
-                                             @TaskList allowAccessAction: AllowAccessActionProvider
+                                             @TaskList allowAccessAction: AllowAccessActionProvider,
+                                             pspSchemeAuthAction: PspSchemeAuthAction
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
   private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
-    andThen allowAccessAction(Some(srn), allowPsa = true, allowPsp = true)) {
+  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen pspSchemeAuthAction(srn) andThen getData(srn)
+    andThen allowAccessAction(Some(srn))) {
     implicit request =>
 
       request.userAnswers match {

@@ -61,14 +61,14 @@ class PsaSchemeAuthActionSpec
 
     "return not found if PSAId not found" in {
       val request = AuthenticatedRequest(fakeRequest, "", None, None)
-      val result = action.apply("srn").invokeBlock(request, { x: AuthenticatedRequest[_] => Future.successful(Ok("")) })
+      val result = action.apply(Some("srn")).invokeBlock(request, { x: AuthenticatedRequest[_] => Future.successful(Ok("")) })
       status(result) mustBe NOT_FOUND
     }
 
     "return not found if getSchemeDetails fails" in {
       when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any())).thenReturn(Future.failed(new RuntimeException("")))
       val request = AuthenticatedRequest(fakeRequest, "", Some(PsaId("A0000000")), None , Administrator)
-      val result = action.apply("srn").invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
+      val result = action.apply(Some("srn")).invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
       status(result) mustBe NOT_FOUND
     }
 
@@ -80,7 +80,7 @@ class PsaSchemeAuthActionSpec
           )
         )))
       val request = AuthenticatedRequest(fakeRequest, "", Some(PsaId("A0000001")), None , Administrator)
-      val result = action.apply("srn").invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
+      val result = action.apply(Some("srn")).invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
       status(result) mustBe NOT_FOUND
     }
 
@@ -92,7 +92,7 @@ class PsaSchemeAuthActionSpec
           )
         )))
       val request = AuthenticatedRequest(fakeRequest, "", Some(PsaId("A0000000")), None , Administrator)
-      val result = action.apply("srn").invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
+      val result = action.apply(Some("srn")).invokeBlock(request, { x:AuthenticatedRequest[_] => Future.successful(Ok("")) })
       status(result) mustBe OK
     }
   }

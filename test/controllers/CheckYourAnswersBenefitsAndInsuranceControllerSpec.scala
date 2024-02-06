@@ -102,7 +102,9 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view
+      view,
+      fakePsaSchemeAuthAction,
+      fakePspSchemeAuthAction
     )
 
   private def benefitsAndInsuranceSection(mode: Mode) = AnswerSection(

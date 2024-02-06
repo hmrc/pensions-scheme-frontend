@@ -20,7 +20,6 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import models._
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
-
 import utils.UserAnswers
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -70,7 +69,9 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       controllerComponents,
-      view
+      view,
+      fakePsaSchemeAuthAction,
+      fakePspSchemeAuthAction
     )
 
   private val membersSection = AnswerSection(

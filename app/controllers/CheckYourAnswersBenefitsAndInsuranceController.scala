@@ -43,19 +43,21 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
                                                                requireData: DataRequiredAction,
                                                                implicit val countryOptions: CountryOptions,
                                                                val controllerComponents: MessagesControllerComponents,
-                                                               val view: checkYourAnswers
+                                                               val view: checkYourAnswers,
+                                                               psaSchemeAuthAction: PsaSchemeAuthAction,
+                                                               pspSchemeAuthAction: PspSchemeAuthAction
                                                               )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+    (authenticate() andThen psaSchemeAuthAction(srn) andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         Ok(view(vm(mode, srn)))
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
+    (authenticate(Some(PSP)) andThen pspSchemeAuthAction(srn) andThen getPspData(srn) andThen allowAccess(Some(srn)) andThen requireData) {
       implicit request =>
         Ok(view(vm(UpdateMode, Some(srn))))
     }

@@ -31,10 +31,8 @@ import scala.concurrent.Future
 
 class FakeAllowAccessAction(srn: Option[String],
                             pensionsSchemeConnector: PensionsSchemeConnector,
-                            errorHandler: FrontendErrorHandler,
-                            allowPsa: Boolean = true,
-                            allowPsp: Boolean = false) extends
-  AllowAccessAction(srn, pensionsSchemeConnector, FakeAllowAccessAction.getMockConfig, errorHandler, allowPsa, allowPsp) {
+                            errorHandler: FrontendErrorHandler) extends
+  AllowAccessAction(srn, pensionsSchemeConnector, FakeAllowAccessAction.getMockConfig, errorHandler) {
   override def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = Future.successful(None)
 }
 
@@ -52,13 +50,13 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
     override def messagesApi: MessagesApi = ???
   }
 
-  override def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false ): AllowAccessAction = {
+  override def apply(srn: Option[String]): AllowAccessAction = {
     new FakeAllowAccessAction(
       srn,
       pensionsSchemeConnector match {
         case None =>
           val psc = mock[PensionsSchemeConnector]
-          when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
+          when(psc.checkForAssociation(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(Right(true)))
           psc
         case Some(psc) => psc
