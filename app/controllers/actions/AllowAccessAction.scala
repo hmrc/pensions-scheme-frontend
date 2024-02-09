@@ -67,7 +67,9 @@ abstract class AllowAccessAction(srn: Option[String],
         request.psaId -> request.pspId match {
           case (Some(_), _) if allowPsa => Future.successful(None)
           case (_, Some(_)) if allowPsp => Future.successful(None)
-          case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+          case _ =>
+            logger.warn("Prevented PSP access to PSA page")
+            errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
         }
     }
   }
