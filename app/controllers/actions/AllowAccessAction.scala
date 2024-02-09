@@ -24,6 +24,7 @@ import PsaMinimalFlagsId._
 import config.FrontendAppConfig
 import models.{PSAMinimalFlags, UpdateMode}
 import models.requests.OptionalDataRequest
+import play.api.Logging
 import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
@@ -40,7 +41,7 @@ abstract class AllowAccessAction(srn: Option[String],
                                  allowPsa: Boolean,
                                  allowPsp: Boolean
                                 )(implicit val executionContext: ExecutionContext) extends
-  ActionFilter[OptionalDataRequest] {
+  ActionFilter[OptionalDataRequest] with Logging {
 
   protected def filter[A](request: OptionalDataRequest[A],
                           destinationForNoUserAnswersAndSRN: => Option[Result],
@@ -107,7 +108,9 @@ abstract class AllowAccessAction(srn: Option[String],
 
     accessAllowed.flatMap {
       case true => Future.successful(None)
-      case false => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+      case false =>
+        logger.warn("Potentially prevented unauthorised access")
+        errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
     }
   }
 }
