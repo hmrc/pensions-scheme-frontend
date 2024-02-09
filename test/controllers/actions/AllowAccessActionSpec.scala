@@ -334,6 +334,8 @@ class AllowAccessActionSpec
         hasAccess(allowPsa = true, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
         hasAccess(allowPsa = true, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
         hasAccess(allowPsa = false, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = false, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = false, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
       }
       test(withSrn = true)
       test(withSrn = false)
