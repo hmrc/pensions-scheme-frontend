@@ -311,7 +311,7 @@ class AllowAccessActionSpec
     "allow access PSA/PSP permutations" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
 
-      def hasAccess(allowPsa: Boolean, allowPsp: Boolean)(isPsa: Boolean) = {
+      def hasAccess(allowPsa: Boolean, allowPsp: Boolean, withSrn: Boolean)(isPsa: Boolean) = {
         reset(psc)
         when(psc.checkForAssociation(ArgumentMatchers.eq("A0000000"), any(), ArgumentMatchers.eq(true))(any(), any(), any()))
           .thenReturn(Future.successful(Right(isPsa)))
@@ -321,19 +321,22 @@ class AllowAccessActionSpec
         val psaId = if(isPsa) Some(PsaId("A0000000")) else None
         val pspId = if(!isPsa) Some(PspId("20000000")) else None
 
-        new TestAllowAccessActionTaskList(srn, psc, allowPsa = allowPsa, allowPsp = allowPsp)
+        new TestAllowAccessActionTaskList(if(withSrn) srn else None, psc, allowPsa = allowPsa, allowPsp = allowPsp)
           .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), psaId, pspId))
           .map { case Some(value) => false
           case None => true
           }
       }
-
-      hasAccess(allowPsa = true, allowPsp = false)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
-      hasAccess(allowPsa = true, allowPsp = true)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
-      hasAccess(allowPsa = false, allowPsp = true)(isPsa = true).map { hasAccess => assert(hasAccess, false)}
-      hasAccess(allowPsa = true, allowPsp = false)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
-      hasAccess(allowPsa = true, allowPsp = true)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
-      hasAccess(allowPsa = false, allowPsp = true)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+      def test(withSrn: Boolean) = {
+        hasAccess(allowPsa = true, allowPsp = false, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = true, allowPsp = true, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = true, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = true, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = true, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+      }
+      test(withSrn = true)
+      test(withSrn = false)
     }
 
   }
