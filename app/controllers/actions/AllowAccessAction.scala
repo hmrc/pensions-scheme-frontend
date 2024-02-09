@@ -62,7 +62,13 @@ abstract class AllowAccessAction(srn: Option[String],
         case None => destinationForNoUserAnswersAndSRN
         case notAssociatedResult@Some(_) => notAssociatedResult
       }
-      case _ => Future.successful(None)
+      case _ =>
+        request.psaId -> request.pspId match {
+          case (Some(_), Some(_)) if allowPsa || allowPsp => Future.successful(None)
+          case (Some(_), None) if allowPsa => Future.successful(None)
+          case (None, Some(_)) if allowPsp => Future.successful(None)
+          case _ => errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
+        }
     }
   }
 
