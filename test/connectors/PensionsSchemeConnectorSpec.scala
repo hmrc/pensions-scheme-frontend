@@ -26,11 +26,11 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsBoolean, JsResultException, Json}
-import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
 
-class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper with FutureAwaits with DefaultAwaitTimeout {
+class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
   import PensionsSchemeConnectorSpec._
 
@@ -298,7 +298,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     connector.checkForAssociation(psaId, schemeId, isPsa = true).map {
       case Right(resp) => resp shouldBe true
-      case _ => ???
+      case _ => fail("Expected right found left")
     }
   }
 
@@ -325,7 +325,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     connector.checkForAssociation(pspId, schemeId, isPsa = false).map {
       case Right(resp) => resp shouldBe true
-      case _ => ???
+      case _ => fail("Expected right found left")
     }
   }
 }
