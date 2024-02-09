@@ -26,11 +26,11 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsBoolean, JsResultException, Json}
-import play.api.test.FakeRequest
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
 
-class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
+class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper with FutureAwaits with DefaultAwaitTimeout {
 
   import PensionsSchemeConnectorSpec._
 
@@ -272,6 +272,62 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
       response.swap.map(_.status).getOrElse(HttpResponse(0, "")) shouldBe NOT_FOUND
     )
   }
+
+  "checkForAssociation" should "call with psaId if isPsa boolean is true" in {
+    implicit val request = FakeRequest("GET", "/")
+
+    val validResponse =
+      Json.stringify(
+        JsBoolean(true)
+      )
+
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("psaId", equalTo(psaId))
+        .withHeader("schemeReferenceNumber", equalTo(schemeId))
+        .willReturn(
+          ok(validResponse)
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+
+
+    connector.checkForAssociation(psaId, schemeId, isPsa = true).map {
+      case Right(resp) => resp shouldBe true
+      case _ => ???
+    }
+  }
+
+  "checkForAssociation" should "call with pspId if isPsa boolean is false" in {
+    implicit val request = FakeRequest("GET", "/")
+
+    val validResponse =
+      Json.stringify(
+        JsBoolean(true)
+      )
+
+    server.stubFor(
+      get(urlEqualTo(checkAssociationUrl))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("pspId", equalTo(pspId))
+        .withHeader("schemeReferenceNumber", equalTo(schemeId))
+        .willReturn(
+          ok(validResponse)
+            .withHeader("Content-Type", "application/json")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionsSchemeConnector]
+
+    connector.checkForAssociation(pspId, schemeId, isPsa = false).map {
+      case Right(resp) => resp shouldBe true
+      case _ => ???
+    }
+  }
 }
 
 object PensionsSchemeConnectorSpec extends OptionValues {
@@ -286,6 +342,7 @@ object PensionsSchemeConnectorSpec extends OptionValues {
   private val userAnswers = UserAnswers()
   private val schemeId = "test-scheme-id"
   private val psaId = "test-psa-id"
+  private val pspId = "test-psp-id"
   private val pstr = "test-pstr"
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeId)
 
