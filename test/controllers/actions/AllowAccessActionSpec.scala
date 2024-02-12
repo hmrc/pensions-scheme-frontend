@@ -23,7 +23,8 @@ import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
 import models.{PSAMinimalFlags, UpdateMode}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
@@ -32,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Request, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.UserAnswers
 
@@ -53,7 +54,7 @@ class AllowAccessActionSpec
     s"respond correctly where association between psa id and srn and " +
       s"user answers present and an srn IS present and viewonly mode and $description" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
@@ -65,7 +66,7 @@ class AllowAccessActionSpec
     s"respond correctly where association between psa id and srn and " +
       s"user answers present and an srn IS present and not viewonly mode and $description" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
@@ -86,7 +87,7 @@ class AllowAccessActionSpec
 
   private val pensionsSchemeConnector: PensionsSchemeConnector = {
     val psc = mock[PensionsSchemeConnector]
-    when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+    when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(Right(true)))
     psc
   }
@@ -98,7 +99,7 @@ class AllowAccessActionSpec
   class TestAllowAccessAction(srn: Option[String],
                               psc: PensionsSchemeConnector = pensionsSchemeConnector
                              )
-    extends AllowAccessActionMain(srn, psc, config, errorHandler)
+    extends AllowAccessActionMain(srn, psc, config, errorHandler, true, false)
       with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
       super.filter(request)
@@ -107,9 +108,11 @@ class AllowAccessActionSpec
 
   class TestAllowAccessActionTaskList(
                                        srn: Option[String],
-                                       psc: PensionsSchemeConnector = pensionsSchemeConnector
+                                       psc: PensionsSchemeConnector = pensionsSchemeConnector,
+                                       allowPsa: Boolean = true,
+                                       allowPsp: Boolean = false
                                      )
-    extends AllowAccessActionTaskList(srn, psc, config, errorHandler)
+    extends AllowAccessActionTaskList(srn, psc, config, errorHandler, allowPsa, allowPsp)
       with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
       super.filter(request)
@@ -181,7 +184,7 @@ class AllowAccessActionSpec
     "redirect to task list page where association between psa id and srn and " +
       "no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
@@ -209,7 +212,7 @@ class AllowAccessActionSpec
 
     "allow access where association between psa id and srn and no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
@@ -232,7 +235,7 @@ class AllowAccessActionSpec
     "redirect to task list page where association between psa id and srn and " +
       "no user answers present but an srn IS present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = generateTestHarnessForAllowAccessNoSuspendedCheck(srn, pensionsSchemeConnector)
@@ -247,7 +250,7 @@ class AllowAccessActionSpec
     "allow access where association between psa id and srn and " +
       "user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
@@ -260,7 +263,7 @@ class AllowAccessActionSpec
 
     "return NOT FOUND for user where NO association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(false)))
 
       val futureResult = testHarness(srn, psc)
@@ -275,7 +278,7 @@ class AllowAccessActionSpec
 
     "allow access for user where association between psa id and both srn and user answers present" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
-      when(psc.checkForAssociation(any(), any())(any(), any(), any()))
+      when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
       val futureResult = testHarness(srn, psc)
@@ -304,5 +307,39 @@ class AllowAccessActionSpec
 
       assertEqual(futureResult, None)
     }
+
+    "allow access PSA/PSP permutations" in {
+      val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
+
+      def hasAccess(allowPsa: Boolean, allowPsp: Boolean, withSrn: Boolean)(isPsa: Boolean) = {
+        reset(psc)
+        when(psc.checkForAssociation(ArgumentMatchers.eq("A0000000"), any(), ArgumentMatchers.eq(true))(any(), any(), any()))
+          .thenReturn(Future.successful(Right(isPsa)))
+        when(psc.checkForAssociation(ArgumentMatchers.eq("20000000"), any(), ArgumentMatchers.eq(false))(any(), any(), any()))
+          .thenReturn(Future.successful(Right(!isPsa)))
+
+        val psaId = if(isPsa) Some(PsaId("A0000000")) else None
+        val pspId = if(!isPsa) Some(PspId("20000000")) else None
+
+        new TestAllowAccessActionTaskList(if(withSrn) srn else None, psc, allowPsa = allowPsa, allowPsp = allowPsp)
+          .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), psaId, pspId))
+          .map { case Some(value) => false
+          case None => true
+          }
+      }
+      def test(withSrn: Boolean) = {
+        hasAccess(allowPsa = true, allowPsp = false, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = true, allowPsp = true, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = true, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = true, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = true, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = true, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, true)}
+        hasAccess(allowPsa = false, allowPsp = false, withSrn)(isPsa = true).map { hasAccess => assert(hasAccess, false)}
+        hasAccess(allowPsa = false, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
+      }
+      test(withSrn = true)
+      test(withSrn = false)
+    }
+
   }
 }

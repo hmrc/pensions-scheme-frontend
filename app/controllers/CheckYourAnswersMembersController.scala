@@ -53,7 +53,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
     }
 
   def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
     }
