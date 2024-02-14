@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -25,8 +24,9 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
+import org.apache.pekko.stream.Materializer
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ OptionValues}
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind

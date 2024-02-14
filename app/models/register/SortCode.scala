@@ -16,10 +16,10 @@
 
 package models.register
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SortCode(first: String, second: String, third: String)
 
 object SortCode {
-  implicit val format = Json.format[SortCode]
+  implicit val format: OFormat[SortCode] = Json.format[SortCode]
 }

@@ -26,6 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.http.Status._
 import play.api.libs.json.{JsBoolean, JsResultException, Json}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http._
 import utils.{UserAnswers, WireMockHelper}
@@ -199,7 +200,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
   }
 
   "checkForAssociation" should "return without exceptions for a valid request/response" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
     val validResponse =
       Json.stringify(
@@ -225,7 +226,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
   }
 
   it should "return left INTERNAL_SERVER_ERROR where 500 response is received" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
@@ -237,12 +238,12 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.swap.map(_.status).getOrElse(HttpResponse(0, "")) shouldBe INTERNAL_SERVER_ERROR
+      response.swap.map(_.status) shouldBe Right(INTERNAL_SERVER_ERROR)
     )
   }
 
   it should "return left BAD_REQUEST where 400 response is received" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
         .willReturn(
@@ -253,12 +254,12 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.swap.map(_.status).getOrElse(HttpResponse(0, "")) shouldBe BAD_REQUEST
+      response.swap.map(_.status) shouldBe Right(BAD_REQUEST)
     )
   }
 
   it should "return left NOT_FOUND where 404 response is received" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
     server.stubFor(
       get(urlEqualTo(checkAssociationUrl))
         .willReturn(
@@ -269,12 +270,12 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     connector.checkForAssociation(psaId, pstr).map(response =>
-      response.swap.map(_.status).getOrElse(HttpResponse(0, "")) shouldBe NOT_FOUND
+      response.swap.map(_.status) shouldBe Right(NOT_FOUND)
     )
   }
 
   "checkForAssociation" should "call with psaId if isPsa boolean is true" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
     val validResponse =
       Json.stringify(
@@ -303,7 +304,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
   }
 
   "checkForAssociation" should "call with pspId if isPsa boolean is false" in {
-    implicit val request = FakeRequest("GET", "/")
+    implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
 
     val validResponse =
       Json.stringify(

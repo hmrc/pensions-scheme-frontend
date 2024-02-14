@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class PSAName(psaName: String, psaEmail: Option[String] = None)
 
 object PSAName {
-  implicit val format = Json.format[PSAName]
+  implicit val format: OFormat[PSAName] = Json.format[PSAName]
 }
