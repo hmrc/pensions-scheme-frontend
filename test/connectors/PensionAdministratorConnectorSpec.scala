@@ -26,7 +26,7 @@ import utils.WireMockHelper
 
 class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
 
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override protected def portConfigKey: String = "microservice.services.pension-administrator.port"
 

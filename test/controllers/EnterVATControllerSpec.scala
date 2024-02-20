@@ -16,7 +16,7 @@
 
 package controllers
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
@@ -48,7 +48,7 @@ class EnterVATControllerSpec extends SpecBase with Matchers with OptionValues wi
 
   private val view = injector.instanceOf[enterVATView]
 
-  val viewmodel = EnterVATViewModel(
+  val viewmodel: EnterVATViewModel = EnterVATViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",

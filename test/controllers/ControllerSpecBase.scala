@@ -35,9 +35,11 @@ import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
 import utils.{Enumerable, MapFormats}
 
+import scala.concurrent.ExecutionContext
+
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
 
-  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val global: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   val cacheMapId = "id"
 
@@ -55,7 +57,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     Json.obj(
       "establishers" -> Json.arr(
         Json.obj(
-          EstablisherNameId.toString -> PersonName("Test", "Name", false)
+          EstablisherNameId.toString -> PersonName("Test", "Name", isDeleted = false)
         )
       )
     )))

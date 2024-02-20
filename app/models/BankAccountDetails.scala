@@ -17,10 +17,10 @@
 package models
 
 import models.register.SortCode
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class BankAccountDetails(sortCode: SortCode, accountNumber: String)
 
 object BankAccountDetails {
-  implicit val format = Json.format[BankAccountDetails]
+  implicit val format: OFormat[BankAccountDetails] = Json.format[BankAccountDetails]
 }

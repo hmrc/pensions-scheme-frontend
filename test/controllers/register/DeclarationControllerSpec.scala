@@ -157,7 +157,8 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
-      reset(mockAuditService, mockPensionSchemeConnector)
+      reset(mockAuditService)
+      reset(mockPensionSchemeConnector)
       when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
 
@@ -245,7 +246,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
   private val href = controllers.register.routes.DeclarationController.onClickAgree
-  val psaId = PsaId("A0000000")
+  val psaId: PsaId = PsaId("A0000000")
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
