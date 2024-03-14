@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
-@import views.html.helper.CSPNonce
 @import config.FrontendAppConfig
 @import controllers.routes
 
@@ -85,7 +84,6 @@
         signOutUrl = if(canSignOut) Some(routes.LogoutController.onPageLoad.url) else None,
         phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl))
     )),
-    cspNonce = CSPNonce.get,
     beforeContentBlock = Some(beforeContentBlock),
     scriptsBlock = Some(scripts),
     mainContentLayout = if(fullWidthLayout) None else Some(defaultMainContentLayout(_)),

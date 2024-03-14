@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package models.register
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SortCode(first: String, second: String, third: String)
 
 object SortCode {
-  implicit val format = Json.format[SortCode]
+  implicit val format: OFormat[SortCode] = Json.format[SortCode]
 }

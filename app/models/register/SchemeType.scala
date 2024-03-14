@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ object SchemeType {
       schemeTypeStr.flatMap { schemeStr =>
         List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme =>
           schemeStr.toLowerCase.contains(scheme.toLowerCase)).map { str =>
-          s"messages__scheme_details__type_${str}"
+          s"messages__scheme_details__type_$str"
         }
       }
     }
@@ -100,8 +100,8 @@ object SchemeType {
     }
   }
 
-  implicit lazy val writes = new Writes[SchemeType] {
-    def writes(o: SchemeType) = {
+  implicit lazy val writes: Writes[SchemeType] = new Writes[SchemeType] {
+    def writes(o: SchemeType): JsObject = {
       o match {
         case SchemeType.Other(schemeTypeDetails) =>
           Json.obj("name" -> other, "schemeTypeDetails" -> schemeTypeDetails)

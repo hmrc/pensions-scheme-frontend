@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class PSAName(psaName: String, psaEmail: Option[String] = None)
 
 object PSAName {
-  implicit val format = Json.format[PSAName]
+  implicit val format: OFormat[PSAName] = Json.format[PSAName]
 }

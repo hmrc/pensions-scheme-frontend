@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import models.AuthEntity.PSP
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.annotations.TaskList
 import utils.hstasklisthelper.HsTaskListHelperPsp
 import views.html.pspTaskList
 
@@ -35,13 +36,15 @@ class PspSchemeTaskListController @Inject()(
                                              getData: PspDataRetrievalAction,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: pspTaskList,
-                                             hsTaskListHelperPsp: HsTaskListHelperPsp
+                                             hsTaskListHelperPsp: HsTaskListHelperPsp,
+                                             @TaskList allowAccessAction: AllowAccessActionProvider
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
   private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)) {
+  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
+    andThen allowAccessAction(Some(srn), allowPsa = true, allowPsp = true)) {
     implicit request =>
 
       request.userAnswers match {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): CannotMakeChangesController =
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
-      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view)
+      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view, FakeAllowAccessProvider())
 
   def viewAsString(): String = view(srn, Some(schemeName))(fakeRequest, messages).toString
 
