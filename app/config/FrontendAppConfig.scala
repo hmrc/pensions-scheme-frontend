@@ -23,10 +23,8 @@ import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Mode, Environment}
 import uk.gov.hmrc.domain.{PsaId, PspId}
-import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
-import uk.gov.hmrc.play.bootstrap.binders.{OnlyRelative, RedirectUrl}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -135,10 +133,4 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
 
   private def getConfigString(key: String) = servicesConfig.getConfString(key, throw new Exception(s"Could not find " +
     s"config '$key'"))
-
-  def identityValidationFrontEndEntry(relativeCompletionURL: RedirectUrl, relativeFailureURL: RedirectUrl): String = {
-    val url = loadConfig("urls.ivUpliftEntry")
-    val query = s"?origin=pods&confidenceLevel=250&completionURL=${relativeCompletionURL.get(OnlyRelative).url}&failureURL=${relativeFailureURL.get(OnlyRelative).url}"
-    url + query
-  }
 }

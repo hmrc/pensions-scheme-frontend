@@ -32,7 +32,6 @@ import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.UserAnswers
 
@@ -50,7 +49,7 @@ class AuthImpl(override val authConnector: AuthConnector,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
       .fromRequestAndSession(request, request.session)
 
-    authorised(ConfidenceLevel.L250).retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
+    authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
         createAuthRequest(id, enrolments, request, block)
       case _ =>
@@ -62,10 +61,7 @@ class AuthImpl(override val authConnector: AuthConnector,
       case _: InsufficientEnrolments =>
         Redirect(routes.UnauthorisedController.onPageLoad)
       case _: InsufficientConfidenceLevel =>
-        val completionURL = RedirectUrl(request.uri)
-        val failureURL = RedirectUrl(routes.UnauthorisedController.onPageLoad.url)
-        val url = config.identityValidationFrontEndEntry(completionURL, failureURL)
-        SeeOther(url)
+        Redirect(routes.UnauthorisedController.onPageLoad)
       case _: UnsupportedAuthProvider =>
         Redirect(routes.UnauthorisedController.onPageLoad)
       case _: UnsupportedAffinityGroup =>
