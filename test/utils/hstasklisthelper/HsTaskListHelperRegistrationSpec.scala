@@ -33,6 +33,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
+import java.time.{Clock, Instant, ZoneOffset}
+
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
   import HsTaskListHelperRegistrationSpec._
@@ -246,7 +248,8 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
-      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(1662360059285L)))
+      val lastUpdatedDate = Instant.now(Clock.fixed(Instant.parse("2022-09-05T00:00:00Z"), ZoneOffset.UTC))
+      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(lastUpdatedDate)))
 
       result mustBe SchemeDetailsTaskList(
         schemeName, None,
