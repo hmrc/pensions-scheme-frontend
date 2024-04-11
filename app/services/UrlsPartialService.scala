@@ -18,15 +18,15 @@ package services
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UserAnswersCacheConnector, UpdateSchemeCacheConnector}
+import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
 import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
 import models.requests.OptionalDataRequest
 import models.{LastUpdated, PSAMinimalFlags}
 import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport}
-import play.api.libs.json.{JsResultException, JsError, JsSuccess, JsValue}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,8 +34,9 @@ import utils.UserAnswers
 import utils.annotations.Racdac
 import viewmodels.Message
 
-import java.sql.Timestamp
+import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
 
 class UrlsPartialService @Inject()(
@@ -246,13 +247,14 @@ class UrlsPartialService @Inject()(
   //DATE FORMATIING HELPER METHODS
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
-  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
-    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
+  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String = {
+    formatter.format(dt.timestamp.plus(daysToAdd, ChronoUnit.DAYS).atZone(ZoneId.of("UTC")))
+  }
 
   private def parseDateElseException(dateOpt: Option[JsValue]): LastUpdated =
     dateOpt.map(ts =>
       LastUpdated(
-        ts.validate[Long] match {
+        ts.validate[Instant] match {
           case JsSuccess(value, _) => value
           case JsError(errors) => throw JsResultException(errors)
         }

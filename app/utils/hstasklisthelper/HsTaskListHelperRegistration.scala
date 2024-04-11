@@ -32,8 +32,9 @@ import models.{LastUpdated, Mode, NormalMode}
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
-import java.sql.Timestamp
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
   spokeCreationService) {
@@ -43,7 +44,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
   private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
-    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
+    formatter.format(dt.timestamp.plus(daysToAdd, ChronoUnit.DAYS).atZone(ZoneId.of("UTC")))
 
   override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
                         lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
