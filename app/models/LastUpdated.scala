@@ -18,9 +18,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.Instant
-
-case class LastUpdated(timestamp: Instant)
+case class LastUpdated(timestamp: Long)
 
 object LastUpdated {
   implicit val format: OFormat[LastUpdated] = Json.format[LastUpdated]

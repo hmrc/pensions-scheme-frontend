@@ -34,9 +34,8 @@ import utils.UserAnswers
 import utils.annotations.Racdac
 import viewmodels.Message
 
-import java.time.{Instant, ZoneId}
+import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
 
 class UrlsPartialService @Inject()(
@@ -247,14 +246,13 @@ class UrlsPartialService @Inject()(
   //DATE FORMATIING HELPER METHODS
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
-  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String = {
-    formatter.format(dt.timestamp.plus(daysToAdd, ChronoUnit.DAYS).atZone(ZoneId.of("UTC")))
-  }
+  private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
+    new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
 
   private def parseDateElseException(dateOpt: Option[JsValue]): LastUpdated =
     dateOpt.map(ts =>
       LastUpdated(
-        ts.validate[Instant] match {
+        ts.validate[Long] match {
           case JsSuccess(value, _) => value
           case JsError(errors) => throw JsResultException(errors)
         }
