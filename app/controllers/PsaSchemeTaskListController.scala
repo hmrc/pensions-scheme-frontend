@@ -32,7 +32,6 @@ import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import views.html.{oldPsaTaskList, psaTaskListRegistration}
 
-import java.time.Instant
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +53,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   private def parseDateElseException(dateOpt: Option[JsValue]): Option[LastUpdated] =
     dateOpt.map(ts =>
       LastUpdated(
-        ts.validate[Instant] match {
+        ts.validate[Long] match {
           case JsSuccess(value, _) => value
           case JsError(errors) => throw JsResultException(errors)
         }

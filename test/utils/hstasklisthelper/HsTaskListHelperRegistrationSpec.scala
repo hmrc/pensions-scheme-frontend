@@ -248,7 +248,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
-      val lastUpdatedDate = Instant.now(Clock.fixed(Instant.parse("2022-09-05T00:00:00Z"), ZoneOffset.UTC))
+      val lastUpdatedDate = Instant.now(Clock.fixed(Instant.parse("2022-09-05T00:00:00Z"), ZoneOffset.UTC)).toEpochMilli
       val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(lastUpdatedDate)))
 
       result mustBe SchemeDetailsTaskList(
