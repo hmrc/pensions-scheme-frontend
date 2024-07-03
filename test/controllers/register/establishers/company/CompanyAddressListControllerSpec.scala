@@ -82,7 +82,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         val viewModel: AddressListViewModel = addressListViewModel(addresses)
         val form = new AddressListFormProvider()(viewModel.addresses)
 
-        contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString
+        contentAsString(result).removeAllNonces() mustBe view(form, viewModel, None)(fakeRequest, messages).toString
       }
 
     }
