@@ -41,6 +41,10 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   implicit val global: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
+  implicit class StringOps(s: String) {
+    def removeAllNonces(): String = s.replaceAll("""nonce="[^"]*"""", "")
+  }
+
   val cacheMapId = "id"
 
   def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))

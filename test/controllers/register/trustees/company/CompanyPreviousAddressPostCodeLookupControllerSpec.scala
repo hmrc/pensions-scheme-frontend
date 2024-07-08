@@ -101,7 +101,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual view(
+          contentAsString(result).removeAllNonces() mustEqual view(
             form,
             viewModel,
             None

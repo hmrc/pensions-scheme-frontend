@@ -90,7 +90,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         val viewModel: AddressListViewModel = addressListViewModel(addresses)
         val form = new AddressListFormProvider()(viewModel.addresses)
 
-        contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString
+        contentAsString(result).removeAllNonces() mustBe view(form, viewModel, None)(request, messages).toString
       }
     }
 

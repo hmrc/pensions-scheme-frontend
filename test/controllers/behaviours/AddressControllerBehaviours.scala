@@ -72,7 +72,7 @@ trait AddressControllerBehaviours extends ControllerSpecBase
 
           status(result) must be(OK)
 
-          contentAsString(result) mustEqual view(
+          contentAsString(result).removeAllNonces() mustEqual view(
             form,
             viewmodel,
             None

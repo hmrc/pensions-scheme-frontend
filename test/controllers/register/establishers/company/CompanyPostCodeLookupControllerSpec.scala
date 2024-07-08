@@ -73,7 +73,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
         val result = controller.onPageLoad(NormalMode, None, index = 0)(fakeRequest)
         status(result) mustBe OK
-        contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString
+        contentAsString(result).removeAllNonces() mustBe view(form, viewModel, None)(fakeRequest, messages).toString
     }
   }
 

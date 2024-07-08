@@ -91,7 +91,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
       val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result).removeAllNonces() mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
