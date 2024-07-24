@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import identifiers.SchemeNameId
+import identifiers.{SchemeNameId, UKBankAccountId}
 import models.AuthEntity.PSA
 import models._
 import play.api.Logger
@@ -78,7 +78,9 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
             featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
               case true =>
                 Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
-              case _ => Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
+              case _ =>
+                dataCacheConnector.save(request.externalId, UKBankAccountId, false)
+                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
             }
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
