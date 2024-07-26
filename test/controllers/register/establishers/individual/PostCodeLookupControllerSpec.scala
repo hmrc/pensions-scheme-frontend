@@ -148,7 +148,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
 
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val boundForm = form.bind(Map("postcode" -> ""))
 
       val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
 
