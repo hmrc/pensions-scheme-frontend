@@ -12,7 +12,7 @@ object AppDependencies {
     "uk.gov.hmrc"                   %%  "domain-play-30"                % "9.0.0",
     "com.typesafe.play"             %%  "play-json-joda"                % "2.9.4",
     "com.google.inject.extensions"  %   "guice-multibindings"           % "4.2.3",
-    "uk.gov.hmrc"                   %%  "play-frontend-hmrc-play-30"    % "8.3.0",
+    "uk.gov.hmrc"                   %%  "play-frontend-hmrc-play-30"    % "10.5.0",
     "org.owasp.encoder"             %   "encoder"                       % "1.2.3"
   )
 
