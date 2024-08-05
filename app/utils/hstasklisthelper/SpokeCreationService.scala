@@ -42,7 +42,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     Seq(
       createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
       createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, index, None)
-    ) ++ (if (srn.isEmpty) Seq(createSpoke(answers, AboutBankDetailsSpoke, mode, srn, name, index, None)) else Nil)
+    )
   }
 
   def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,

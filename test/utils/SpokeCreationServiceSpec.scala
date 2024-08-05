@@ -101,8 +101,6 @@ class SpokeCreationServiceSpec
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_add", schemeName),
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_add", schemeName),
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), Some(false))
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
@@ -117,8 +115,6 @@ class SpokeCreationServiceSpec
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text_continue", schemeName),
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text_continue", schemeName),
-            controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), Some(false))
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
@@ -136,8 +132,6 @@ class SpokeCreationServiceSpec
             controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), Some(true)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
             controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), Some(true)),
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_bank_details_link_text", schemeName),
-            controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url), Some(true))
         )
 
         val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
