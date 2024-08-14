@@ -269,7 +269,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
             "messages__schemeTaskList__sectionDeclaration_incomplete")
         ),
         None,
-        Some(StatsSection(0, 5, Some("15 September 2022")))
+        Some(StatsSection(0, 4, Some("15 September 2022")))
       )
     }
 
@@ -301,38 +301,38 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   }
 
   "totalSections" must {
-    "return 7 when neither trustees nor declaration question answered" in {
-      HsTaskListHelperRegistration.totalSections(userAnswersWithSchemeName) mustBe 7
+    "return 6 when neither trustees nor declaration question answered" in {
+      HsTaskListHelperRegistration.totalSections(userAnswersWithSchemeName) mustBe 6
     }
-    "return 6 when both trustees and declaration question answered as yes" in {
+    "return 5 when both trustees and declaration question answered as yes" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(DeclarationDutiesId)(value = true).asOpt.value
-      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
-    }
-    "return 7 when trustees question answered as yes and declaration question answered as no" in {
-      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-        .set(HaveAnyTrusteesId)(true).asOpt.value
-        .set(DeclarationDutiesId)(value = false).asOpt.value
-      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
-    }
-    "return 5 when trustees question answered as no and declaration question answered as yes" in {
-      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-        .set(HaveAnyTrusteesId)(false).asOpt.value
         .set(DeclarationDutiesId)(value = true).asOpt.value
       HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
     }
-    "return 6 when trustees question answered as no and declaration question answered as no" in {
+    "return 6 when trustees question answered as yes and declaration question answered as no" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
-        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(HaveAnyTrusteesId)(true).asOpt.value
         .set(DeclarationDutiesId)(value = false).asOpt.value
       HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
     }
+    "return 4 when trustees question answered as no and declaration question answered as yes" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = true).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 4
+    }
+    "return 5 when trustees question answered as no and declaration question answered as no" in {
+      val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
+        .set(HaveAnyTrusteesId)(false).asOpt.value
+        .set(DeclarationDutiesId)(value = false).asOpt.value
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
+    }
 
-    "return 7 when trustees question not answered and declaration question answered as no" in {
+    "return 6 when trustees question not answered and declaration question answered as no" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(DeclarationDutiesId)(value = false).asOpt.value
-      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
     }
 
     "return 5 when trustees question not answered and declaration question answered as yes" in {

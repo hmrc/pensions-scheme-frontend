@@ -266,14 +266,14 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
 
   private[utils] def totalSections(userAnswers: UserAnswers): Int = {
     (userAnswers.get(HaveAnyTrusteesId), userAnswers.get(DeclarationDutiesId)) match {
-      case (Some(false), Some(false)) => 6
-      case (Some(true), Some(true)) => 6
-      case (Some(true), Some(false)) => 7
-      case (Some(false), Some(true)) => 5
-      case (Some(false), _) => 6
-      case (_, Some(false)) => 7
+      case (Some(false), Some(false)) => 5
+      case (Some(true), Some(true)) => 5
+      case (Some(true), Some(false)) => 6
+      case (Some(false), Some(true)) => 4
+      case (Some(false), _) => 5
+      case (_, Some(false)) => 6
       case (_, Some(true)) => 5
-      case _ => 7
+      case _ => 6
     }
   }
 
