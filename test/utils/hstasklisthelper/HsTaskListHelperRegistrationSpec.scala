@@ -335,10 +335,10 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 7
     }
 
-    "return 6 when trustees question not answered and declaration question answered as yes" in {
+    "return 5 when trustees question not answered and declaration question answered as yes" in {
       val userAnswers = userAnswersWithSchemeName.establisherCompanyEntity(index = 0)
         .set(DeclarationDutiesId)(value = true).asOpt.value
-      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 6
+      HsTaskListHelperRegistration.totalSections(userAnswers) mustBe 5
     }
   }
 

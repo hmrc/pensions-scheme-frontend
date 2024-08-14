@@ -246,7 +246,6 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     Seq(
       Some(userAnswers.isBeforeYouStartCompleted(NormalMode)),
       userAnswers.isMembersCompleted,
-      userAnswers.isBankDetailsCompleted,
       userAnswers.isBenefitsAndInsuranceCompleted,
       userAnswers.isWorkingKnowledgeCompleted,
       Some(isAllEstablishersCompleted(userAnswers, NormalMode)),
@@ -273,7 +272,7 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
       case (Some(false), Some(true)) => 5
       case (Some(false), _) => 6
       case (_, Some(false)) => 7
-      case (_, Some(true)) => 6
+      case (_, Some(true)) => 5
       case _ => 7
     }
   }
