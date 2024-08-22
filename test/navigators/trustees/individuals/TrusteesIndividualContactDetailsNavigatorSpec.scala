@@ -90,7 +90,7 @@ object TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Match
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val srn                   = Some("srn")
 
-  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersIndividualContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

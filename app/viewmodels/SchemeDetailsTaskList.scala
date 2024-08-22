@@ -18,7 +18,7 @@ package viewmodels
 
 case class SchemeDetailsTaskList(
                                   h1: String,
-                                  srn: Option[String],
+                                  srn: SchemeReferenceNumber,
                                   beforeYouStart: SchemeDetailsTaskListEntitySection,
                                   about: SchemeDetailsTaskListEntitySection,
                                   workingKnowledge: Option[SchemeDetailsTaskListEntitySection],

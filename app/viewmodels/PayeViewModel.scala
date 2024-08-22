@@ -23,6 +23,6 @@ case class PayeViewModel(
                           title: Message,
                           heading: Message,
                           hint: Option[Message] = None,
-                          srn: Option[String] = None,
+                          srn: SchemeReferenceNumber = None,
                           entityName: Option[String] = None
                         )

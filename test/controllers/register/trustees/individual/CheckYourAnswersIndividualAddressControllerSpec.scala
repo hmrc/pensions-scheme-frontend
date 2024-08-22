@@ -113,13 +113,13 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def trusteeAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteeAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteeAddressController.onPageLoad(mode, index, srn).url
 
-  private def trusteeAddressYearsRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteeAddressYearsRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteeAddressYearsController.onPageLoad(mode, index, srn).url
 
-  private def trusteePreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteePreviousAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = UserAnswers().
@@ -130,9 +130,9 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
 
   def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  def submitUrlUpdateMode(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrlUpdateMode(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -140,7 +140,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
       Some(Message("messages__visuallyhidden__dynamic_address", trusteeName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", trusteeName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -148,7 +148,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
       Some(Message("messages__visuallyhidden__dynamic_addressYears", trusteeName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteePreviousAddress", trusteeName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -156,13 +156,13 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
+  def answerSection(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): Seq[AnswerSection] = Seq(AnswerSection(None,
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None,
                    postUrl: Call = submitUrl(index), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

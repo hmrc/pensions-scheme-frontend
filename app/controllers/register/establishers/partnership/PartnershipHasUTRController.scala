@@ -47,7 +47,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                                            )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -56,7 +56,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -65,7 +65,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__thePartnership")),

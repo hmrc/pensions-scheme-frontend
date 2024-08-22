@@ -102,7 +102,7 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
     )
   }
 
-  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String],
+  private def removePostCodeLookupAddress(mode: Mode, srn: SchemeReferenceNumber,
                                           postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
     if (request.userAnswers.get(postCodeLookupId).nonEmpty) {

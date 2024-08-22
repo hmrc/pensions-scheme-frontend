@@ -48,7 +48,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -57,7 +57,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(mode, srn, index),
       title = Message("messages__hasUTR", Message("messages__theCompany")),
@@ -69,7 +69,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__hasCompanyUtr__error__required", companyName)
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {

@@ -27,7 +27,7 @@
 @this(
     govukTable : GovukTable
 )
-@(entities: Seq[Entity[_]], mode: Mode, srn: Option[String], entityNameHeader: String)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], mode: Mode, srn: SchemeReferenceNumber, entityNameHeader: String)(implicit messages: Messages)
 
 
 @getKind(entity: Entity[_]) = @{

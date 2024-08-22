@@ -48,7 +48,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
                                         )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -58,7 +58,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber,
                         personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(mode, establisherIndex, partnerIndex, srn),
@@ -71,7 +71,7 @@ class PartnerHasNINOController @Inject()(override val appConfig: FrontendAppConf
   private def form(personName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider(Message("messages__genericHasNino__error__required", personName), personName)
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {

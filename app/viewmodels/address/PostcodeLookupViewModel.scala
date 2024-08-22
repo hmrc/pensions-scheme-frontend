@@ -27,5 +27,5 @@ case class PostcodeLookupViewModel(
                                     subHeading: Option[Message] = None,
                                     enterPostcode: Message = Message
                                     ("messages__common__postcode_lookup__enter_postcode"),
-                                    srn: Option[String] = None
+                                    srn: SchemeReferenceNumber = None
                                   )

@@ -140,16 +140,16 @@ object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
     UserAnswers(uaWithToggle)
   }
 
-  private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
+  private def addTrusteesPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     AddTrusteeController.onPageLoad(Mode.journeyMode(mode), srn)
 
   private def TrusteesTaskListPage(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def hasVatPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
-  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 }
 

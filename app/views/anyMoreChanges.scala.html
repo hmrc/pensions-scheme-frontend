@@ -33,7 +33,7 @@
     schemeName:Option[String],
     dateToComplete: String,
     postCall: Call,
-    srn: Option[String],
+    srn: SchemeReferenceNumber,
     mode: Mode = UpdateMode
 )(implicit request: Request[_], messages: Messages)
 

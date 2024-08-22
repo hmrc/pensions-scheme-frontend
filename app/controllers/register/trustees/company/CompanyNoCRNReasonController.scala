@@ -48,7 +48,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends ReasonController with
   I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -59,7 +59,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider(name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoCRN", Message("messages__theCompany")),
@@ -68,7 +68,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>

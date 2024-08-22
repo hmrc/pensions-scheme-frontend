@@ -47,21 +47,21 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                            (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         get(EstablisherHasUTRId(index), form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         post(EstablisherHasUTRId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode,
         index, srn),

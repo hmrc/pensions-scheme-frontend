@@ -62,11 +62,11 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
 
   protected def rowNoValue(id: Identifier)(call: Call, ua: Option[UserAnswers] = None): (id.type, UserAnswers, Call) =
     Tuple3(id, ua.getOrElse(UserAnswers()), call)
-  protected def anyMoreChangesPage(srn: Option[String] = None): Call = AnyMoreChangesController.onPageLoad(srn)
+  protected def anyMoreChangesPage(srn: SchemeReferenceNumber = None): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigatorWithRoutesForMode(mode: Mode)(navigator: Navigator,
                                                        routes: TableFor3[Identifier, UserAnswers, Call],
-                                                       srn: Option[String]): Unit = {
+                                                       srn: SchemeReferenceNumber): Unit = {
     forAll(routes) {
       (id: Identifier, userAnswers: UserAnswers, call: Call) =>
         s"move from $id to $call in ${Mode.jsLiteral.to(mode)} with data: ${userAnswers.toString}" in {
@@ -84,7 +84,7 @@ trait NavigatorBehaviour extends ScalaCheckPropertyChecks with OptionValues {
                                                                routes: TableFor6[A, UserAnswers, Call, Boolean, B, Boolean],
                                                                describer: UserAnswers => String,
                                                                mode: Mode = NormalMode,
-                                                               srn: Option[String] = None
+                                                               srn: SchemeReferenceNumber = None
                                                              ): Unit = {
 
     s"behave like a navigator in ${Mode.jsLiteral.to(mode)} journey" when {

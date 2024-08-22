@@ -47,7 +47,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -56,7 +56,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -66,7 +66,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(mode, index, srn),
       title = Message("messages__hasVAT", Message("messages__theCompany")),

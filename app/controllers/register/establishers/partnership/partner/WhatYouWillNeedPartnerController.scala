@@ -39,7 +39,7 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
                                                  val view: whatYouWillNeed
                                                 ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate() andThen
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val partnerIndex = request.userAnswers.allPartners(index).size

@@ -25,7 +25,7 @@ case class ManualAddressViewModel(
                                    countryOptions: Seq[InputOption],
                                    title: Message,
                                    heading: Message,
-                                   srn: Option[String] = None
+                                   srn: SchemeReferenceNumber = None
                                  ) {
 
 }

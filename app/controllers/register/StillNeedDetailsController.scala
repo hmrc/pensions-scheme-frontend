@@ -39,7 +39,7 @@ class StillNeedDetailsController @Inject()(
     with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn)).async {
       implicit request =>
         Future.successful(Ok(view(srn, existingSchemeName)))

@@ -100,7 +100,7 @@ trait AddressListController extends FrontendBaseController with Retrievals with 
 
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
 
-  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String],
+  private def removePostCodeLookupAddress(mode: Mode, srn: SchemeReferenceNumber,
                                           postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
     if (request.userAnswers.get(postCodeLookupId).nonEmpty) {

@@ -51,7 +51,7 @@ class ConfirmDeletePartnerController @Inject()(
                                               )(implicit val executionContext: ExecutionContext
                                               ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -74,7 +74,7 @@ class ConfirmDeletePartnerController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -106,7 +106,7 @@ class ConfirmDeletePartnerController @Inject()(
 
   private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
-  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String]
+  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: SchemeReferenceNumber
                    )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] =
     request.userAnswers.get(PartnerNameId(establisherIndex, partnerIndex)).map { partner =>
       userAnswersService.save(mode, srn, PartnerNameId(establisherIndex, partnerIndex), partner.copy(isDeleted = true))

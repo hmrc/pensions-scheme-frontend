@@ -47,7 +47,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index,
-                        srn: Option[String], personName: String): CommonFormWithHintViewModel =
+                        srn: SchemeReferenceNumber, personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasUTR", Message("messages__thePartner")),
@@ -59,7 +59,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
 
   private def form(personName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasUtr__error__required", personName)
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -69,7 +69,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {

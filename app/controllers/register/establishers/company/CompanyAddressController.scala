@@ -62,7 +62,7 @@ class CompanyAddressController @Inject()(
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -71,7 +71,7 @@ class CompanyAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map {
@@ -82,7 +82,7 @@ class CompanyAddressController @Inject()(
       }
   }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+  private def viewmodel(index: Int, mode: Mode, srn: SchemeReferenceNumber, name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, srn, Index(index)),

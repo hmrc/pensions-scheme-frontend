@@ -49,7 +49,7 @@ class PartnershipEnterPAYEController @Inject()(
                                               )(implicit val ec: ExecutionContext) extends PayeController with
   I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -58,7 +58,7 @@ class PartnershipEnterPAYEController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.map {
@@ -70,7 +70,7 @@ class PartnershipEnterPAYEController @Inject()(
   protected def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(partnershipName)
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): PayeViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: SchemeReferenceNumber, partnershipName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.PartnershipEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__thePartnership")),

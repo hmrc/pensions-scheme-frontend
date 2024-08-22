@@ -85,7 +85,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
   val form = new PayeFormProvider()("test company name")
   val firstIndex: Index = Index(0)
-  val srn: Option[String] = Some("S123")
+  val srn: SchemeReferenceNumber = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

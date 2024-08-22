@@ -266,7 +266,7 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def variationsDeleteDate(srn: String)
+  private def variationsDeleteDate(srn: SchemeReferenceNumber)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     updateConnector.lastUpdated(srn).map { dateOpt =>
       s"${createFormattedDate(parseDateElseException(dateOpt), appConfig.daysDataSaved)}"

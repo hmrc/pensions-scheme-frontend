@@ -22,5 +22,5 @@ case class ReasonViewModel(
                             postCall: Call,
                             title: Message,
                             heading: Message,
-                            srn: Option[String] = None
+                            srn: SchemeReferenceNumber = None
                           )

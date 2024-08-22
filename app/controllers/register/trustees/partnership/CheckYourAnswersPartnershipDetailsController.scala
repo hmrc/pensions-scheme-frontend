@@ -57,7 +57,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
   extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers

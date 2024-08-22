@@ -48,19 +48,19 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         Ok(view(vm(mode, srn)))
     }
 
-  def pspOnPageLoad(srn: String): Action[AnyContent] =
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
       implicit request =>
         Ok(view(vm(UpdateMode, Some(srn))))
     }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
 
       implicit val userAnswers: UserAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(

@@ -51,21 +51,21 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
 
   val form: Form[LocalDate] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
         ("messages__theIndividual")), mode)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         post(EstablisherDOBId(index), EstablisherNameId(index), viewModel(mode, index, srn, Message
         ("messages__theIndividual")), mode)
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,

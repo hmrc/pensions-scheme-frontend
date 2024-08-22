@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   private def seqAnswerSection(mode: Mode,
                                establisherIndex: Index,
                                partnerIndex: Index,
-                               srn: Option[String])(implicit
+                               srn: SchemeReferenceNumber)(implicit
                                                     request: DataRequest[AnyContent]) =
     Seq(AnswerSection(
       None,
@@ -104,7 +104,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     )
     )
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
         val answers = seqAnswerSection(mode, establisherIndex, partnerIndex, srn)

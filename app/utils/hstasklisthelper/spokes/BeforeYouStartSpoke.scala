@@ -23,19 +23,19 @@ case object BeforeYouStartSpoke extends Spoke {
   private val registrationLinkText = "messages__schemeTaskList__before_you_start_link_text"
   private val variationsLinkText = "messages__schemeTaskList__scheme_info_link_text"
 
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
       controllers.routes.SchemeNameController.onPageLoad(mode, srn.get).url
     )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
       controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(mode, srn).url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
       controllers.routes.SchemeNameController.onPageLoad(mode, srn.get).url

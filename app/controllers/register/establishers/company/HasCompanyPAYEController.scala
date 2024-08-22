@@ -49,7 +49,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -58,7 +58,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -68,7 +68,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__hasPAYE", Message("messages__theCompany")),

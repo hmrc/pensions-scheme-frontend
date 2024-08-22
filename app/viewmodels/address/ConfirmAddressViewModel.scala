@@ -27,7 +27,7 @@ case class ConfirmAddressViewModel(
                                     hint: Option[Message] = None,
                                     address: Address,
                                     name: String,
-                                    srn: Option[String] = None
+                                    srn: SchemeReferenceNumber = None
                                   ) {
 
 }

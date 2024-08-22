@@ -58,7 +58,7 @@ class PreviousAddressController @Inject()(
   private[controllers] val postCall = routes.PreviousAddressController.onSubmit _
   private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
@@ -71,7 +71,7 @@ class PreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: SchemeReferenceNumber, name: String): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
@@ -81,7 +81,7 @@ class PreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {

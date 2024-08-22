@@ -18,7 +18,7 @@ package viewmodels
 
 case class SchemeDetailsTaskListEstablishers(
                                   h1: String,
-                                  srn: Option[String],
+                                  srn: SchemeReferenceNumber,
                                   establisher: SchemeDetailsTaskListEntitySection,
                                   allComplete: Boolean,
                                   statsSection: Option[StatsSection]

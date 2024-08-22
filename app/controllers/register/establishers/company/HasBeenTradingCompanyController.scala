@@ -48,7 +48,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                 implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -58,7 +58,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -68,7 +68,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String)
   : CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(mode, srn,

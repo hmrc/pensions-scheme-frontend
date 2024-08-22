@@ -47,7 +47,7 @@ class PartnerEnterUTRController @Inject()(
                                            val view: utr
                                          )(implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
@@ -57,7 +57,7 @@ class PartnerEnterUTRController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
@@ -69,7 +69,7 @@ class PartnerEnterUTRController @Inject()(
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber,
                         partnerName: String): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit

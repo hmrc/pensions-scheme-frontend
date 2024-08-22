@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                      schemeDetailsConnector: SchemeDetailsConnector,
-                                     srn: String
+                                     srn: SchemeReferenceNumber
                                     )(implicit val executionContext: ExecutionContext) extends PspDataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
@@ -68,12 +68,12 @@ class PspDataRetrievalActionImpl @Inject()(
                                             viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             schemeDetailsConnector: SchemeDetailsConnector
                                           )(implicit ec: ExecutionContext) extends PspDataRetrievalAction {
-  override def apply(srn: String): PspDataRetrieval = {
+  override def apply(srn: SchemeReferenceNumber): PspDataRetrieval = {
     new PspDataRetrievalImpl(viewConnector, schemeDetailsConnector, srn)
   }
 }
 
 @ImplementedBy(classOf[PspDataRetrievalActionImpl])
 trait PspDataRetrievalAction {
-  def apply(srn: String): PspDataRetrieval
+  def apply(srn: SchemeReferenceNumber): PspDataRetrieval
 }

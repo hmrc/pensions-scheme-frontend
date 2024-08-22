@@ -25,7 +25,7 @@
     button_link: components.button_link
 )
 
-@(psaName: String, srn: String)( implicit request: Request[_], messages: Messages)
+@(psaName: String, srn: SchemeReferenceNumber)( implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__before_you_start__title")) {
 

@@ -52,7 +52,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
   private[controllers] val postCall = controllers.register.establishers.individual.routes
     .EstablisherEnterNINOController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
@@ -61,7 +61,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[String])
+  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: SchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
@@ -71,7 +71,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {

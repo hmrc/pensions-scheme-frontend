@@ -23,5 +23,5 @@ case class NinoViewModel(
                           title: String,
                           heading: String,
                           hint: String,
-                          srn: Option[String] = None
+                          srn: SchemeReferenceNumber = None
                         )

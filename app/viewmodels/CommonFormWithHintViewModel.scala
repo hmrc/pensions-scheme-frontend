@@ -23,6 +23,6 @@ case class CommonFormWithHintViewModel(
                                         title: Message,
                                         heading: Message,
                                         hint: Option[Message] = None,
-                                        srn: Option[String] = None,
+                                        srn: SchemeReferenceNumber = None,
                                         formFieldName: Option[String] = None
                                       )

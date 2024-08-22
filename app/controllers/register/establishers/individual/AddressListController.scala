@@ -49,13 +49,13 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
                                      )(implicit val ec: ExecutionContext) extends GenericAddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map {
@@ -71,7 +71,7 @@ class AddressListController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (EstablisherNameId(index) and PostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>

@@ -41,7 +41,7 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
-                                       srn: Option[String]): PartialFunction[Identifier, Call] = {
+                                       srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(index) => // TODO: Remove Json code below when SchemeRegistration toggle is removed
       (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
         case Some(true) => trusteeTaskList(index)
@@ -67,12 +67,12 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   private def updateModeRoutes(mode: VarianceMode,
                                ua: UserAnswers,
-                               srn: Option[String]): PartialFunction[Identifier, Call] = {
+                               srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(_) => addTrusteesPage(mode, srn)
     case id@PartnershipHasUTRId(index) =>
       booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
@@ -84,12 +84,12 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipEnterPAYEId(index) => cyaPage(mode, index, srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
   private def checkUpdateModeRoutes(mode: VarianceMode,
                                     ua: UserAnswers,
-                                    srn: Option[String]): PartialFunction[Identifier, Call] = {
+                                    srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
       srn))
     case PartnershipEnterUTRId(index) if isNewTrustee(index, ua) => cyaPage(mode, index, srn)
@@ -113,28 +113,28 @@ object TrusteesPartnershipDetailsNavigator {
   private def isNewTrustee(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsTrusteeNewId(index)).getOrElse(false)
 
-  private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
+  private def addTrusteesPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     AddTrusteeController.onPageLoad(mode, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def utrPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipEnterUTRController.onPageLoad(mode, index, srn)
 
-  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def hasVat(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasVat(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipHasVATController.onPageLoad(mode, index, srn)
 
-  private def enterVat(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def enterVat(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipEnterVATController.onPageLoad(mode, index, srn)
 
-  private def hasPaye(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasPaye(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipHasPAYEController.onPageLoad(mode, index, srn)
 
-  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def payePage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     PartnershipEnterPAYEController.onPageLoad(mode, index, srn)
 
-  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def cyaPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
 }

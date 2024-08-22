@@ -112,27 +112,27 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
 
-  private def addTrustee(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+  private def addTrustee(mode: Mode, srn: SchemeReferenceNumber) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
-  private def companyDetails(mode: Mode, srn: Option[String]) =
+  private def companyDetails(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn)
 
-  private def partnershipDetails(mode: Mode, srn: Option[String]) =
+  private def partnershipDetails(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, srn)
 
-  private def moreThanTenTrustees(mode: Mode, srn: Option[String]) =
+  private def moreThanTenTrustees(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 
-  private def trusteeName(mode: Mode, srn: Option[String]) =
+  private def trusteeName(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, srn)
 
   private def directorsAlsoTrustees =
     controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
 
-  private def trusteeKind(index: Int, mode: Mode, srn: Option[String]) =
+  private def trusteeKind(index: Int, mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)
 
-  private def taskList(mode: Mode, srn: Option[String]) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def taskList(mode: Mode, srn: SchemeReferenceNumber) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   implicit class TrusteeUserAnswersOps(answers: UserAnswers) {
 

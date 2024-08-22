@@ -41,7 +41,7 @@ class DataRetrievalImpl(
                          schemeDetailsConnector: SchemeDetailsConnector,
                          minimalPsaConnector: MinimalPsaConnector,
                          mode: Mode,
-                         srn: Option[String],
+                         srn: SchemeReferenceNumber,
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
@@ -53,7 +53,7 @@ class DataRetrievalImpl(
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
         (srn, request.psaId) match {
-          case (Some(extractedSrn), Some(psaId)) =>
+          case ((extractedSrn), Some(psaId)) =>
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
           case _ => Future(OptionalDataRequest(
@@ -68,7 +68,7 @@ class DataRetrievalImpl(
     }
   }
 
-  private def getOptionalDataRequest[A](srn: String,
+  private def getOptionalDataRequest[A](srn: SchemeReferenceNumber,
                                         optionLock: Option[Lock],
                                         psaId: String,
                                         refresh: Boolean)
@@ -112,7 +112,7 @@ class DataRetrievalImpl(
       )
     }
 
-  private def refreshBasedJsFetch[A](refresh: Boolean, srn: String, psaId: String)
+  private def refreshBasedJsFetch[A](refresh: Boolean, srn: SchemeReferenceNumber, psaId: String)
                                     (implicit request: AuthenticatedRequest[A],
                                      hc: HeaderCarrier): Future[Option[JsValue]] =
     if (refresh) {
@@ -124,7 +124,7 @@ class DataRetrievalImpl(
       viewConnector.fetch(request.externalId)
     }
 
-  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
+  private def addMinimalFlagsAndUpdateRepository[A](srn: SchemeReferenceNumber,
                                                     jsValue: JsValue,
                                                     psaId: String,
                                                     upsertUserAnswers: JsValue => Future[JsValue])
@@ -138,7 +138,7 @@ class DataRetrievalImpl(
     }
   }
 
-  private def getRequestWithLock[A](srn: String, refresh: Boolean, psaId: String)
+  private def getRequestWithLock[A](srn: SchemeReferenceNumber, refresh: Boolean, psaId: String)
                                    (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(data) =>
@@ -177,7 +177,7 @@ class DataRetrievalImpl(
         )
     }
 
-  private def getRequestWithNoLock[A](srn: String, refresh: Boolean, psaId: String)
+  private def getRequestWithNoLock[A](srn: SchemeReferenceNumber, refresh: Boolean, psaId: String)
                                      (implicit request: AuthenticatedRequest[A], hc: HeaderCarrier): Future[OptionalDataRequest[A]] =
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(answersJsValue) =>
@@ -227,7 +227,7 @@ class RacdacDataRetrievalImpl(
                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
-                               srnOpt: Option[String])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                               srnOpt: String)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
   private val logger = Logger(classOf[RacdacDataRetrievalImpl])
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -238,7 +238,7 @@ class RacdacDataRetrievalImpl(
 
       case UpdateMode | CheckUpdateMode =>
         (srnOpt, request.psaId) match {
-          case (Some(srn), Some(psaId)) =>
+          case ((srn), Some(psaId)) =>
             getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc), viewOnly = true)(request)
           case _ => Future(OptionalDataRequest(
             request = request.request,
@@ -275,7 +275,7 @@ class RacdacDataRetrievalImpl(
       )
     }
 
-  private def dataInUpdateMode[A](srn: String, psaId: String)
+  private def dataInUpdateMode[A](srn: SchemeReferenceNumber, psaId: String)
                                  (implicit request: AuthenticatedRequest[A],
                                   hc: HeaderCarrier): String => Future[Option[JsValue]] = {
 
@@ -300,7 +300,7 @@ class RacdacDataRetrievalImpl(
       }
   }
 
-  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
+  private def addMinimalFlagsAndUpdateRepository[A](srn: SchemeReferenceNumber,
                                                     jsValue: JsValue,
                                                     psaId: String,
                                                     upsertUserAnswers: JsValue => Future[JsValue])
@@ -329,7 +329,7 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         schemeDetailsConnector: SchemeDetailsConnector,
                                         minimalPsaConnector: MinimalPsaConnector
                                        )(implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
+  override def apply(mode: Mode, srn: SchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
     new DataRetrievalImpl(dataConnector,
       viewConnector,
       updateConnector,
@@ -347,12 +347,12 @@ class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswers
                                               schemeDetailsConnector: SchemeDetailsConnector,
                                               minimalPsaConnector: MinimalPsaConnector)
                                              (implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[String], refreshData: Boolean): DataRetrieval = {
-    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: Option[String])
+  override def apply(mode: Mode, srn: SchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
+    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: SchemeReferenceNumber)
   }
 }
 
 
 trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: Option[String] = None, refreshData: Boolean = false): DataRetrieval
+  def apply(mode: Mode = NormalMode, srn: SchemeReferenceNumber, refreshData: Boolean = false): DataRetrieval
 }

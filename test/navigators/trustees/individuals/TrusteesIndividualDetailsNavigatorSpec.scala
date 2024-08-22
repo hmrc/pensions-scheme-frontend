@@ -132,7 +132,7 @@ object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers wit
     UserAnswers(uaWithToggle)
   }
 
-  private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

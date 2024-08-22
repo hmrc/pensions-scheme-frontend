@@ -58,7 +58,7 @@ class VariationDeclarationController @Inject()(
     with I18nSupport
     with Enumerable.Implicits {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) {
@@ -76,7 +76,7 @@ class VariationDeclarationController @Inject()(
         }
     }
 
-  def onClickAgree(srn: Option[String]): Action[AnyContent] =
+  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn) andThen requireData).async {
       implicit request =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)

@@ -61,7 +61,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
                 minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: Option[String] = None,
+                srn: SchemeReferenceNumber = None,
                 refreshData: Boolean = false
                ) extends
     DataRetrievalImpl(
@@ -86,7 +86,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val answersFromDESWithSuspensionFlag = answersFromDES
     .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
 
-  private def userAnswersDummy(status: String, srn: String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
+  private def userAnswersDummy(status: String, srn: SchemeReferenceNumber) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
     .set(SchemeSrnId)(srn).asOpt.value
 
   override def beforeEach(): Unit = {

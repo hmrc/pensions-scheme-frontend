@@ -182,7 +182,7 @@ class DeclarationController @Inject()(
   }
 
 
-  private def sendEmail(srn: String, psaId: PsaId)
+  private def sendEmail(srn: SchemeReferenceNumber, psaId: PsaId)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
 
@@ -200,7 +200,7 @@ class DeclarationController @Inject()(
   }
 
   //scalastyle:off magic.number
-  private def formatSrnForEmail(srn: String): String = {
+  private def formatSrnForEmail(srn: SchemeReferenceNumber): String = {
     //noinspection ScalaStyle
     val (start, end) = srn.splitAt(6)
     start + ' ' + end

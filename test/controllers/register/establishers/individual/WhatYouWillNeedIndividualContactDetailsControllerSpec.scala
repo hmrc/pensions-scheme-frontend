@@ -32,11 +32,11 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
   private val index = 0
   private val srn = Some("srn")
 
-  private def onwardRoute(mode: Mode, srn: Option[String]): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
+  private def onwardRoute(mode: Mode, srn: SchemeReferenceNumber): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): String = view(
     None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {

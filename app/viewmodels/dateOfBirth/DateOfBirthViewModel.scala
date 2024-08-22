@@ -20,6 +20,6 @@ import play.api.mvc.Call
 
 case class DateOfBirthViewModel(
                                  postCall: Call,
-                                 srn: Option[String] = None,
+                                 srn: SchemeReferenceNumber = None,
                                  token: String
                                )

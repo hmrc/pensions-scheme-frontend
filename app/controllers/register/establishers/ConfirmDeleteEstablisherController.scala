@@ -57,7 +57,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         getDeletableEstablisher(index, establisherKind, request.userAnswers) map {
@@ -93,7 +93,7 @@ class ConfirmDeleteEstablisherController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: Option[String])
+  def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: SchemeReferenceNumber)
   : Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
@@ -124,7 +124,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     establisherName: Option[PersonName],
                                     partnershipDetails: Option[PartnershipDetails],
                                     mode: Mode,
-                                    srn: Option[String])(implicit dataRequest: DataRequest[AnyContent])
+                                    srn: SchemeReferenceNumber)(implicit dataRequest: DataRequest[AnyContent])
   : Future[Result] = {
     form(name).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

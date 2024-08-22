@@ -32,7 +32,7 @@ import scala.util.Failure
 
 trait Navigator {
 
-  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String] = None)
+  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: SchemeReferenceNumber = None)
               (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     nextPageOptional(id, mode, userAnswers, srn)
       .getOrElse(defaultPage(id, mode))
@@ -48,7 +48,7 @@ trait Navigator {
   def nextPageOptional(id: Identifier,
                        mode: Mode,
                        userAnswers: UserAnswers,
-                       srn: Option[String] = None)
+                       srn: SchemeReferenceNumber = None)
                       (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
 
   case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
@@ -72,7 +72,7 @@ abstract class AbstractNavigator
   override final def nextPageOptional(id: Identifier,
                                       mode: Mode,
                                       userAnswers: UserAnswers,
-                                      srn: Option[String] = None)
+                                      srn: SchemeReferenceNumber = None)
                                      (implicit ex: IdentifiedRequest,
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier): Option[Call] = {
@@ -110,9 +110,9 @@ abstract class AbstractNavigator
 
   protected def editRouteMap(from: NavigateFrom): Option[NavigateTo]
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String] = None): Option[NavigateTo]
+  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber = None): Option[NavigateTo]
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String] = None): Option[NavigateTo]
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber = None): Option[NavigateTo]
 
   // TODO: Should we remove this? It is essentially abstracting over the match, does this provide enough value?
   protected def booleanNav(id: TypedIdentifier[Boolean],
@@ -127,7 +127,7 @@ abstract class AbstractNavigator
     }
   }
 
-  protected def anyMoreChangesPage(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+  protected def anyMoreChangesPage(srn: SchemeReferenceNumber): Call = AnyMoreChangesController.onPageLoad(srn)
 
   protected def navigateTo(routeMapping: PartialFunction[Identifier, Call],
                            identifier: Identifier): Option[NavigateTo] =

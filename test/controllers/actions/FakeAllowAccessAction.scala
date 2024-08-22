@@ -29,7 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeAllowAccessAction(srn: Option[String],
+class FakeAllowAccessAction(srn: SchemeReferenceNumber,
                             pensionsSchemeConnector: PensionsSchemeConnector,
                             errorHandler: FrontendErrorHandler,
                             allowPsa: Boolean = true,
@@ -42,7 +42,7 @@ object FakeAllowAccessAction extends MockitoSugar {
   def getMockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 }
 
-case class FakeAllowAccessProvider(srn: Option[String] = None,
+case class FakeAllowAccessProvider(srn: SchemeReferenceNumber = None,
                                    pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
                                   ) extends AllowAccessActionProvider with MockitoSugar {
 
@@ -52,7 +52,7 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
     override def messagesApi: MessagesApi = ???
   }
 
-  override def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false ): AllowAccessAction = {
+  override def apply(srn: SchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false ): AllowAccessAction = {
     new FakeAllowAccessAction(
       srn,
       pensionsSchemeConnector match {

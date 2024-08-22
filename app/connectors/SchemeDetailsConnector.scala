@@ -33,10 +33,10 @@ trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean] = None)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 
-  def isPsaAssociated(psaOrPspId: String, idType: String, srn: String)
+  def isPsaAssociated(psaOrPspId: String, idType: String, srn: SchemeReferenceNumber)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]]
 
-  def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean] = None)
+  def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean] = None)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
@@ -71,7 +71,7 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
   override def isPsaAssociated(
                                 psaOrPspId: String,
                                 idType: String,
-                                srn: String
+                                srn: SchemeReferenceNumber
                               )(
                                 implicit hc: HeaderCarrier,
                                 ec: ExecutionContext
@@ -100,7 +100,7 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     }
   }
 
-  override def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean])
+  override def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean])
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
     val url = config.pspSchemeDetailsUrl

@@ -53,7 +53,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -61,7 +61,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -69,7 +69,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     }
 
-  private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
+  private def viewmodel(mode: Mode, index: Int, srn: SchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         (CompanyDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.map {

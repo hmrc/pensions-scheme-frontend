@@ -43,7 +43,7 @@ class VariationDeclarationControllerSpec
 
   private val schemeName = "Test Scheme Name"
   private val srnNumber = "S12345"
-  private val srn: Option[String] = Some(srnNumber)
+  private val srn: SchemeReferenceNumber = Some(srnNumber)
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 

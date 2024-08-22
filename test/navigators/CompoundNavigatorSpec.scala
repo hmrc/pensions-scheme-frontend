@@ -35,7 +35,7 @@ class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 
   def navigator(call: Option[Call]): Navigator =
     new Navigator {
-      override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])
+      override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: SchemeReferenceNumber)
                                    (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] =
         call
     }

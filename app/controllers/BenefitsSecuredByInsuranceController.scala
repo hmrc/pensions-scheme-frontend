@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -48,9 +49,9 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  val postCall: (Mode, Option[String]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
+  val postCall: (Mode, SchemeReferenceNumber) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map { schemeName =>
@@ -64,7 +65,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
 
   private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>

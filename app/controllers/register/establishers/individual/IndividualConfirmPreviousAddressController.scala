@@ -52,7 +52,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -60,7 +60,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -68,7 +68,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
         }
     }
 
-  private def viewmodel(mode: Mode, index: Int, srn: Option[String]) =
+  private def viewmodel(mode: Mode, index: Int, srn: SchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         (EstablisherNameId(index) and ExistingCurrentAddressId(index)).retrieve.map {

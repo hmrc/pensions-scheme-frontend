@@ -21,19 +21,19 @@ import utils.UserAnswers
 import viewmodels.Message
 
 case object WorkingKnowledgeSpoke extends Spoke {
-  override def addLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__add_details_wk"), controllers.routes
         .WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url
     )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__change_details", name), controllers.routes.AdviserCheckYourAnswersController
         .onPageLoad().url
     )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[String], index: Option[Index]): TaskListLink =
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__continue_details", name), controllers.routes
         .WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url

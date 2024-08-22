@@ -23,5 +23,5 @@ case class UTRViewModel(
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         srn: Option[String] = None
+                         srn: SchemeReferenceNumber = None
                        )

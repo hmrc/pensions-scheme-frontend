@@ -49,13 +49,13 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
                                                     )(implicit val ec: ExecutionContext) extends
   AddressListController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map {
@@ -71,7 +71,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
         }
     }
 
-  def viewModel(mode: Mode, index: Index, srn: Option[String])
+  def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber)
                (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
 
     (TrusteeNameId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.map {

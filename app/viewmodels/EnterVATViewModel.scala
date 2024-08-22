@@ -24,5 +24,5 @@ case class EnterVATViewModel(
                               heading: Message,
                               hint: Message,
                               subHeading: Option[Message] = None,
-                              srn: Option[String] = None
+                              srn: SchemeReferenceNumber = None
                             )

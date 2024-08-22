@@ -31,13 +31,13 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
 
   def lastUserAnswers: Option[UserAnswers] = userAnswers
 
-  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: Option[String])
+  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: SchemeReferenceNumber)
                        (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     userAnswers = Some(answers)
     desiredRoute
   }
 
-  override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])
+  override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: SchemeReferenceNumber)
                                (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] =
     Some(desiredRoute)
 }

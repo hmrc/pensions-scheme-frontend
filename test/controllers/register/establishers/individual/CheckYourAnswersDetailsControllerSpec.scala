@@ -112,25 +112,25 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   private val emptyAnswers = UserAnswers()
 
-  private def dob(mode: Mode, srn: Option[String]) =
+  private def dob(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def hasNino(mode: Mode, srn: Option[String]) =
+  private def hasNino(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def nino(mode: Mode, srn: Option[String]) =
+  private def nino(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def noNinoReason(mode: Mode, srn: Option[String]) =
+  private def noNinoReason(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def hasUtr(mode: Mode, srn: Option[String]) =
+  private def hasUtr(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def utr(mode: Mode, srn: Option[String]) =
+  private def utr(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def noUtrReason(mode: Mode, srn: Option[String]) =
+  private def noUtrReason(mode: Mode, srn: SchemeReferenceNumber) =
     routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
   private val fullAnswers = emptyAnswers
@@ -178,7 +178,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -196,7 +196,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     ))
 
 
-  private def allValuesNo(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -287,7 +287,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   def viewAsString(answerSections: Seq[AnswerSection],
                    mode: Mode = NormalMode,
-                   srn: Option[String] = None,
+                   srn: SchemeReferenceNumber = None,
                    postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(

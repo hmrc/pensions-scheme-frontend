@@ -61,7 +61,7 @@ class AddTrusteeController @Inject()(
   private def renderPage(
                           trustees: Seq[Trustee[_]],
                           mode: Mode,
-                          srn: Option[String],
+                          srn: SchemeReferenceNumber,
                           form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
@@ -75,14 +75,14 @@ class AddTrusteeController @Inject()(
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val trustees = request.userAnswers.allTrusteesAfterDelete
         renderPage(trustees, mode, srn, form, Ok)
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
 

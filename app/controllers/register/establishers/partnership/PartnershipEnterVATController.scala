@@ -48,7 +48,7 @@ class PartnershipEnterVATController @Inject()(
                                                val view: enterVATView
                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -60,7 +60,7 @@ class PartnershipEnterVATController @Inject()(
   private def form(companyName: String)
                   (implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, partnershipName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
       title = Message("messages__enterVAT", Message("messages__thePartnership")),
@@ -71,7 +71,7 @@ class PartnershipEnterVATController @Inject()(
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>

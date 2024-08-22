@@ -54,7 +54,7 @@ class AddPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Int, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(index) { _ =>
@@ -64,7 +64,7 @@ class AddPartnersController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode,
+  def onSubmit(mode: Mode, index: Int, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode,
     srn) andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
@@ -109,7 +109,7 @@ class AddPartnersController @Inject()(
     }
   }
 
-  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
+  private def postUrl(index: Int, mode: Mode, srn: SchemeReferenceNumber): Call =
     routes.AddPartnersController.onSubmit(mode, index, srn)
 
 }

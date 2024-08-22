@@ -47,10 +47,10 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def answerSection(mode: Mode, srn: Option[String] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: SchemeReferenceNumber = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     val cn = userAnswers.get(CompanyDetailsId(index)).map(_.companyName).value
 
@@ -93,7 +93,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), title: Message, h1: Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None, postUrl: Call = submitUrl(), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

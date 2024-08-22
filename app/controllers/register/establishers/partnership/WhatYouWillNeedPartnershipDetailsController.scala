@@ -40,7 +40,7 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
                                                            ) extends FrontendBaseController with I18nSupport with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] = (authenticate() andThen
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode,

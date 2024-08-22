@@ -30,7 +30,7 @@ object InsuranceCompany {
   implicit val formats: OFormat[InsuranceCompany] = Json.format[InsuranceCompany]
 }
 
-case class SchemeDetails(srn: Option[String],
+case class SchemeDetails(srn: SchemeReferenceNumber,
                          pstr: Option[String],
                          status: String,
                          name: String,

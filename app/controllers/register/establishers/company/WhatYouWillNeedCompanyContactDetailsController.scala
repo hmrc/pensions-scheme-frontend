@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
                                                               ) extends FrontendBaseController with I18nSupport with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val href = CompanyEmailController.onSubmit(mode, srn, index)

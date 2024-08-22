@@ -55,7 +55,7 @@ class TrusteeAddressYearsController @Inject()(
       TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.map { name =>
@@ -63,7 +63,7 @@ class TrusteeAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.map { name =>
@@ -74,7 +74,7 @@ class TrusteeAddressYearsController @Inject()(
   private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required", trusteeName))
 
-  private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: Option[String]) =
+  private def viewModel(mode: Mode, index: Index, trusteeName: String, srn: SchemeReferenceNumber) =
     AddressYearsViewModel(
     postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee")),

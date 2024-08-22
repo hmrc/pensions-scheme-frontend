@@ -57,13 +57,13 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
   private val title: Message = "messages__establisherPreviousPostCode__title"
   private val heading: Message = "messages__establisherPreviousPostCode__h1"
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve map get
     }
 
-  private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, srn: SchemeReferenceNumber, mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -78,7 +78,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve.map {

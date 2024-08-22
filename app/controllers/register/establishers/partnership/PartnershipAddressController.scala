@@ -61,7 +61,7 @@ class PartnershipAddressController @Inject()(
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnershipAddress__lede"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -70,7 +70,7 @@ class PartnershipAddressController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+  private def viewmodel(index: Int, mode: Mode, srn: SchemeReferenceNumber, name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
@@ -80,7 +80,7 @@ class PartnershipAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.map {

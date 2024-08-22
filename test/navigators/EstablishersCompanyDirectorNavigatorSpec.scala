@@ -211,7 +211,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val directorIndex    = Index(0)
   private val newDirector      = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
-  private def addressYearsLessThanTwelveEdit(mode: => Mode, userAnswers: => UserAnswers, srn: Option[String]) =
+  private def addressYearsLessThanTwelveEdit(mode: => Mode, userAnswers: => UserAnswers, srn: SchemeReferenceNumber) =
     (
       userAnswers.get(ExistingCurrentAddressId(establisherIndex, directorIndex)),
       checkMode(mode)
@@ -224,63 +224,63 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
         directorPreviousAddPostcode(checkMode(mode), srn)
     }
 
-  private def confirmPreviousAddress(srn: Option[String]) = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, srn)
+  private def confirmPreviousAddress(srn: SchemeReferenceNumber) = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, srn)
 
-  private def anyMoreChanges(srn: Option[String]) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+  private def anyMoreChanges(srn: SchemeReferenceNumber) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: Option[String]) =
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: SchemeReferenceNumber) =
     if (mode == NormalMode) checkYourAnswers(mode, srn)
     else {
       if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode, srn)
       else anyMoreChanges(srn)
     }
 
-  private def directorPhone(mode: Mode, srn: Option[String]) =
+  private def directorPhone(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorEmail(mode: Mode, srn: Option[String]) =
+  private def directorEmail(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorEmailController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorAddressPostcode(mode: Mode, srn: Option[String]) =
+  private def directorAddressPostcode(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorNinoNew(mode: Mode, srn: Option[String]) =
+  private def directorNinoNew(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorEnterNINOController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorNinoReason(mode: Mode, srn: Option[String]) =
+  private def directorNinoReason(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorAddressList(mode: Mode, srn: Option[String]) =
+  private def directorAddressList(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorAddressYears(mode: Mode, srn: Option[String]) =
+  private def directorAddressYears(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorPreviousAddPostcode(mode: Mode, srn: Option[String]) =
+  private def directorPreviousAddPostcode(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorPreviousAddList(mode: Mode, srn: Option[String]) =
+  private def directorPreviousAddList(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def checkYourAnswers(mode: Mode, srn: Option[String]) =
+  private def checkYourAnswers(mode: Mode, srn: SchemeReferenceNumber) =
     routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, mode, srn)
 
-  private def addCompanyDirectors(mode: Mode, srn: Option[String]) =
+  private def addCompanyDirectors(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex)
 
-  private def directorWhatIsDirectorUTR(mode: Mode, srn: Option[String]) =
+  private def directorWhatIsDirectorUTR(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorEnterUTRController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorWhyNoUTR(mode: Mode, srn: Option[String]) =
+  private def directorWhyNoUTR(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorNoUTRReasonController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorHasUTR(mode: Mode, srn: Option[String]) =
+  private def directorHasUTR(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorHasUTRController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorDOB(mode: Mode, srn: Option[String]) =
+  private def directorDOB(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
-  private def directorHasNINO(mode: Mode, srn: Option[String]) =
+  private def directorHasNINO(mode: Mode, srn: SchemeReferenceNumber) =
     routes.DirectorHasNINOController.onPageLoad(mode, directorIndex, establisherIndex, srn)
 
   private val addressYearsUnderAYear: UserAnswers = UserAnswers(Json.obj())

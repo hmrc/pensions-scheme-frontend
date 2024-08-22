@@ -40,7 +40,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
   private def normalAndUpdateModeRoutes(mode: Mode,
                                         ua: UserAnswers,
-                                        srn: Option[String]): PartialFunction[Identifier, Call] = {
+                                        srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case CompanyDetailsId(index) =>
       // TODO: Remove Json code below when SchemeRegistration toggle is removed
       mode match {
@@ -78,7 +78,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier, Call] = {
+  private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case id@HasCompanyCRNId(index) =>
       booleanNav(id, ua, companyNoPage(mode, index, srn), noCompanyNoPage(mode, index, srn))
     case CompanyNoCRNReasonId(index) => cyaPage(mode, index, srn)
@@ -102,15 +102,15 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
   private def checkUpdateModeRoutes(mode: Mode,
                                     ua: UserAnswers,
-                                    srn: Option[String]
+                                    srn: SchemeReferenceNumber
                                    ): PartialFunction[Identifier, Call] = {
     case id@HasCompanyCRNId(index) =>
       booleanNav(id, ua, companyNoPage(mode, index, srn), noCompanyNoPage(mode, index, srn))
@@ -156,73 +156,73 @@ object TrusteesCompanyNavigator {
   private def underAYear(ua: UserAnswers, index: Int): Boolean =
     ua.get(CompanyAddressYearsId(index)).contains(AddressYears.UnderAYear)
 
-  private def companyNoPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def companyNoPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyEnterCRNController.onPageLoad(mode, srn, index)
 
-  private def noCompanyNoPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def noCompanyNoPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyNoCRNReasonController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def utrPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyEnterUTRController.onPageLoad(mode, srn, index)
 
-  private def noUtrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def noUtrPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def vatPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def vatPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyEnterVATController.onPageLoad(mode, index, srn)
 
-  private def noVatPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def noVatPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     HasCompanyPAYEController.onPageLoad(mode, index, srn)
 
-  private def payePage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def payePage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyEnterPAYEController.onPageLoad(mode, index, srn)
 
-  private def cyaPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def cyaPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
-  private def cyaContactDetailsPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def cyaContactDetailsPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
-  private def cyaAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def cyaAddressPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), index, srn)
 
-  private def hasCompanyUtrPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasCompanyUtrPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     HasCompanyUTRController.onPageLoad(mode, index, srn)
 
-  private def hasCompanyVatPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasCompanyVatPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     HasCompanyVATController.onPageLoad(mode, index, srn)
 
-  private def hasCompanyPayePage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasCompanyPayePage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     HasCompanyPAYEController.onPageLoad(mode, index, srn)
 
-  private def phonePage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def phonePage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyPhoneController.onPageLoad(mode, index, srn)
 
-  private def addTrusteePage(mode: Mode, srn: Option[String]): Call =
+  private def addTrusteePage(mode: Mode, srn: SchemeReferenceNumber): Call =
     AddTrusteeController.onPageLoad(mode, srn)
 
   private def trusteeTaskList(index: Int): Call =
     controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def selectAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def selectAddressPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyAddressListController.onPageLoad(mode, index, srn)
 
-  private def addressYearsPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def addressYearsPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyAddressYearsController.onPageLoad(mode, index, srn)
 
-  private def hasBeenTradingPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def hasBeenTradingPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     HasBeenTradingCompanyController.onPageLoad(mode, index, srn)
 
-  private def previousAddressLookupPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def previousAddressLookupPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 
-  private def selectPreviousAddressPage(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def selectPreviousAddressPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyPreviousAddressListController.onPageLoad(mode, index, srn)
 
-  private def isThisPreviousAddressPage(index: Int, srn: Option[String]): Call =
+  private def isThisPreviousAddressPage(index: Int, srn: SchemeReferenceNumber): Call =
     CompanyConfirmPreviousAddressController.onPageLoad(index, srn)
 
-  private def moreChanges(mode: Mode, index: Int, srn: Option[String]): Call =
+  private def moreChanges(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     AnyMoreChangesController.onPageLoad(srn)
 
 }

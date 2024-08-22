@@ -48,7 +48,7 @@ class AlreadyDeletedController @Inject()(
   FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeName(index, trusteeKind, srn) match {
@@ -58,7 +58,7 @@ class AlreadyDeletedController @Inject()(
         }
     }
 
-  private def vm(index: Index, trusteeName: String, mode: Mode, srn: Option[String], schemeName: Option[String]) =
+  private def vm(index: Index, trusteeName: String, mode: Mode, srn: SchemeReferenceNumber, schemeName: Option[String]) =
     AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
@@ -67,7 +67,7 @@ class AlreadyDeletedController @Inject()(
     schemeName = schemeName
   )
 
-  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])
+  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: SchemeReferenceNumber)
                          (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.map(_.companyName)

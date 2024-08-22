@@ -54,7 +54,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
       DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.map { name =>
@@ -63,7 +63,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.map { name =>
@@ -80,7 +80,7 @@ class DirectorAddressYearsController @Inject()(val appConfig: FrontendAppConfig,
     new AddressYearsFormProvider()(Message("messages__director_address_years__form_error", directorName))
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String,
-                        srn: Option[String]) =
+                        srn: SchemeReferenceNumber) =
     AddressYearsViewModel(
       postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__director_address_years__title", Message("messages__common__address_years__director")),

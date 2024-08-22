@@ -44,7 +44,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
 
-  def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+  def get(mode: Mode, srn: SchemeReferenceNumber, index: Index, viewModel: CompanyRegistrationNumberViewModel,
           companyName: String)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
@@ -58,7 +58,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(name)
 
-  def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+  def post(mode: Mode, srn: SchemeReferenceNumber, index: Index, viewModel: CompanyRegistrationNumberViewModel,
            companyName: String)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(companyName).bindFromRequest().fold(

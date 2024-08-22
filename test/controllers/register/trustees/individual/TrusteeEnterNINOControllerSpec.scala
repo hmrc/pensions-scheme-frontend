@@ -133,7 +133,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String =trusteeFullName): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: SchemeReferenceNumber, trusteeName: String =trusteeFullName): String = {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),

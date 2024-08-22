@@ -52,7 +52,7 @@ class MoreThanTenTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
@@ -60,7 +60,7 @@ class MoreThanTenTrusteesController @Inject()(
         Future.successful(Ok(view(updatedForm, mode, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
