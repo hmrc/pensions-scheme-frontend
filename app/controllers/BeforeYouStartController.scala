@@ -38,8 +38,9 @@ class BeforeYouStartController @Inject()(override val messagesApi: MessagesApi,
 
   def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
     implicit request =>
+
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(view(psaName)))
+        Future.successful(Ok(view(psaName, "srn")))
       }
   }
 }

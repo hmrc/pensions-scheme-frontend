@@ -20,8 +20,8 @@ import connectors.{DelimitedAdminException, MinimalPsaConnector, SchemeDetailsCo
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
-import models.requests.AuthenticatedRequest
-import models.{Mode, NormalMode, PSAMinimalFlags, UpdateMode}
+import models._
+import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,13 +33,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                                            schemeDetailsConnector: SchemeDetailsConnector,
                                            minimalPsaConnector: MinimalPsaConnector,
+                                           allowAccess: AllowAccessActionProvider,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
                                            val controllerComponents: MessagesControllerComponents
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  private def redirects(implicit request: AuthenticatedRequest[AnyContent], hc: HeaderCarrier): Future[Option[Result]] = {
+  private def redirects(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier): Future[Option[Result]] = {
     request.psaId match {
       case None => Future.successful(None)
       case Some(psaId) =>
@@ -54,7 +56,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = authenticate(Some(PSA)).async {
+  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData() andThen allowAccess(srn)).async {
     implicit request =>
 
       redirects.flatMap {

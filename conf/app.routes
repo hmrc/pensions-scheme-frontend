@@ -60,9 +60,9 @@ POST        /:mode/having-pensions-working-knowledge                 controllers
 GET         /what-you-will-need-for-working-knowledge                controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST        /what-you-will-need-for-working-knowledge                controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
 
-GET         /scheme-name                                             controllers.SchemeNameController.onPageLoad(mode: Mode = NormalMode)
+GET         /scheme-name/:srn                                        controllers.SchemeNameController.onPageLoad(mode: Mode = NormalMode, srn: String)
 POST        /scheme-name                                             controllers.SchemeNameController.onSubmit(mode: Mode = NormalMode)
-GET         /:mode/scheme-name                                       controllers.SchemeNameController.onPageLoad(mode: Mode)
+GET         /:mode/scheme-name/:srn                                  controllers.SchemeNameController.onPageLoad(mode: Mode, srn: String)
 POST        /:mode/scheme-name                                       controllers.SchemeNameController.onSubmit(mode: Mode)
 
 GET         /scheme-type                                             controllers.SchemeTypeController.onPageLoad(mode: Mode = NormalMode)

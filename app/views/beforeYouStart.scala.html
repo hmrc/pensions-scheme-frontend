@@ -25,7 +25,7 @@
     button_link: components.button_link
 )
 
-@(psaName: String)( implicit request: Request[_], messages: Messages)
+@(psaName: String, srn: String)( implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__before_you_start__title")) {
 
@@ -42,7 +42,7 @@
         <li>@messages("messages__before_you_start__item_4")</li>
     </ul>
 
-    @button_link("site.continue", SchemeNameController.onPageLoad(NormalMode).url, "submit")
+    @button_link("site.continue", SchemeNameController.onPageLoad(NormalMode, srn).url, "submit")
 
     @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
 

@@ -20,7 +20,7 @@ import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.HttpClient
 import utils.{HttpResponseHelper, UserAnswers}
@@ -32,6 +32,9 @@ import scala.util.Failure
 trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean] = None)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
+
+  def isPsaAssociated(psaOrPspId: String, idType: String, srn: String)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]]
 
   def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean] = None)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
@@ -62,6 +65,38 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
       }
     } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to get scheme details", t)
+    }
+  }
+
+  override def isPsaAssociated(
+                                psaOrPspId: String,
+                                idType: String,
+                                srn: String
+                              )(
+                                implicit hc: HeaderCarrier,
+                                ec: ExecutionContext
+                              ): Future[Option[Boolean]] = {
+
+    val isSchemeAssociatedUrl = config.isSchemeAssociatedUrl
+    val idHeader = if(idType == "psa") "psaId" -> psaOrPspId else "pspId" -> psaOrPspId
+    val schemeHc =
+      hc.withExtraHeaders(
+        idHeader,
+        "schemeReferenceNumber" -> srn
+      )
+    http.GET[HttpResponse](isSchemeAssociatedUrl)(implicitly, schemeHc, implicitly).map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[Boolean] match {
+            case JsSuccess(isDataChanged, _) => Some(isDataChanged)
+            case JsError(errors) =>
+              logger.warn(s"Unable to de-serialise the response $errors")
+              None
+          }
+        case _ => handleErrorResponse("GET", isSchemeAssociatedUrl)(response)
+      }
+    } andThen {
+      case Failure(t: Throwable) => logger.warn("Unable to get  if this psaOrPspId is associated with the scheme details", t)
     }
   }
 
