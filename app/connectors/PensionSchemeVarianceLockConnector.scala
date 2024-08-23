@@ -18,8 +18,9 @@ package connectors
 
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
-import models.{Lock, SchemeVariance}
+import models.{Lock, SchemeReferenceNumber, SchemeVariance}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}

@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -79,5 +80,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
 }

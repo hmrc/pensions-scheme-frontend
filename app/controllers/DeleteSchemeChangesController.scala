@@ -20,10 +20,11 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
+import models.SchemeReferenceNumber
 
 import javax.inject.Inject
 import play.api.data.Form
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,10 +47,10 @@ class DeleteSchemeChangesController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private lazy val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
-  private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit _
+  private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit(_: SchemeReferenceNumber)
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)).async {
     implicit request =>
       request.psaId match {
         case Some(psaId) =>
@@ -78,7 +79,7 @@ class DeleteSchemeChangesController @Inject()(
           }
         }
 
-      def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+      def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)).async {
         implicit request =>
           request.psaId.map { psaId =>
             getSchemeName(srn, psaId.id) { (psaName, schemeName) =>

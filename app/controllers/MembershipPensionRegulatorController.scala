@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import identifiers.MembershipPensionRegulatorId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -43,12 +44,12 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
     implicit request =>
       Ok(view(mode, existingSchemeName))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
     implicit request =>
       Redirect(navigator.nextPage(MembershipPensionRegulatorId, mode, request.userAnswers))
   }

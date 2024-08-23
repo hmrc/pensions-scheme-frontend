@@ -3,18 +3,18 @@
 GET         /what-is-rac-dac                         controllers.racdac.WhatIsRACDACController.onPageLoad()
 POST         /what-is-rac-dac                        controllers.racdac.WhatIsRACDACController.onSubmit()
 
-GET         /name                                    controllers.racdac.RACDACNameController.onPageLoad(mode: Mode = NormalMode)
-POST        /name                                    controllers.racdac.RACDACNameController.onSubmit(mode: Mode = NormalMode)
-GET         /change/name                             controllers.racdac.RACDACNameController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/name                             controllers.racdac.RACDACNameController.onSubmit(mode: Mode = CheckMode)
+GET         /name/:srn                               controllers.racdac.RACDACNameController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
+POST        /name/:srn                               controllers.racdac.RACDACNameController.onSubmit(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
+GET         /change/name/:srn                        controllers.racdac.RACDACNameController.onPageLoad(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
+POST        /change/name/:srn                        controllers.racdac.RACDACNameController.onSubmit(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
 
-GET         /number                                  controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /number                                  controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /change/number                           controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /change/number                           controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = CheckMode)
+GET         /number/:srn                             controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
+POST        /number/:srn                             controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
+GET         /change/number/:srn                      controllers.racdac.ContractOrPolicyNumberController.onPageLoad(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
+POST        /change/number/:srn                      controllers.racdac.ContractOrPolicyNumberController.onSubmit(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
 
-GET         /declaration                             controllers.racdac.DeclarationController.onPageLoad()
-GET         /on-click-agree                          controllers.racdac.DeclarationController.onClickAgree()
+GET         /declaration/:srn                        controllers.racdac.DeclarationController.onPageLoad(srn: SchemeReferenceNumber)
+GET         /on-click-agree/:srn                     controllers.racdac.DeclarationController.onClickAgree(srn: SchemeReferenceNumber)
 
 GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None)
 GET         /:mode/check-your-answers/:srn           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
@@ -23,5 +23,5 @@ GET         /check-your-answers/:srn                 controllers.racdac.CheckYou
 GET         /confirmation                            controllers.racdac.SchemeSuccessController.onPageLoad()
 POST        /confirmation                            controllers.racdac.SchemeSuccessController.onSubmit()
 
-GET         /your-action-was-not-processed           controllers.racdac.YourActionWasNotProcessedController.onPageLoad()
+GET         /your-action-was-not-processed/:srn           controllers.racdac.YourActionWasNotProcessedController.onPageLoad(srn: SchemeReferenceNumber)
 

@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class CommonFormWithHintViewModel(
@@ -23,6 +24,6 @@ case class CommonFormWithHintViewModel(
                                         title: Message,
                                         heading: Message,
                                         hint: Option[Message] = None,
-                                        srn: SchemeReferenceNumber = None,
+                                        srn: SchemeReferenceNumber,
                                         formFieldName: Option[String] = None
                                       )

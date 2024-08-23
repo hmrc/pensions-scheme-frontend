@@ -21,8 +21,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers._
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi

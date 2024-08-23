@@ -21,7 +21,7 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
-import models.{TypeOfBenefits, UpdateMode}
+import models.{SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -61,9 +61,7 @@ class VariationDeclarationController @Inject()(
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) {
-          actualSrn =>
-            updateSchemeCacheConnector.fetch(actualSrn).map {
+            updateSchemeCacheConnector.fetch(srn).map {
               case Some(_) =>
                 Ok(view(
                   schemeName = request.userAnswers.get(SchemeNameId),
@@ -73,7 +71,6 @@ class VariationDeclarationController @Inject()(
               case _ =>
                 Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
             }
-        }
     }
 
   def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] =
@@ -81,7 +78,7 @@ class VariationDeclarationController @Inject()(
       implicit request =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         (srn, request.userAnswers.get(PstrId)) match {
-          case (Some(srnId), Some(pstr)) =>
+          case ((srnId), Some(pstr)) =>
             val ua =
               request
                 .userAnswers

@@ -22,8 +22,9 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -52,26 +53,26 @@ class AdviserPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(srn=srn) andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
-          get(viewmodel(mode, adviserName))
+          get(viewmodel(mode, adviserName, srn))
         }
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(srn=srn) andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
           post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName), mode)
         }
     }
 
-  private def viewmodel(mode: Mode, adviserName: String) =
+  private def viewmodel(mode: Mode, adviserName: String, srn: SchemeReferenceNumber) =
     PostcodeLookupViewModel(
-      routes.AdviserPostCodeLookupController.onSubmit(mode),
-      routes.AdviserAddressController.onPageLoad(mode),
+      routes.AdviserPostCodeLookupController.onSubmit(mode, srn),
+      routes.AdviserAddressController.onPageLoad(mode, srn),
       title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))

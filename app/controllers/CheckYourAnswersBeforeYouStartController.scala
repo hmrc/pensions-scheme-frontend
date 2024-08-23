@@ -56,9 +56,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
     }
 
     def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
-      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
+      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData).async {
         implicit request =>
-          Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+          Future.successful(Ok(view(vm(UpdateMode, (srn)))))
       }
 
   private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
@@ -66,7 +66,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
 
     val beforeYouStart = AnswerSection(
       None,
-      SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode, srn.get).url, mode) ++
+      SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode, srn).url, mode) ++
         SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
         HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
         EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
@@ -77,7 +77,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
       if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
     val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }
 

@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.CurrentMembersFormProvider
 import identifiers.{CurrentMembersId, SchemeNameId}
+
 import javax.inject.Inject
-import models.{Members, Mode}
+import models.{Members, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -48,7 +49,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
                                         ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits
   with Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn) andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(CurrentMembersId) match {
@@ -59,7 +60,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn) andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(

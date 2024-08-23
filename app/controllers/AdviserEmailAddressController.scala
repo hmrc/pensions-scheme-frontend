@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.adviser.AdviserEmailFormProvider
 import identifiers.{AdviserEmailId, AdviserNameId, SchemeNameId}
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,7 +51,7 @@ class AdviserEmailAddressController @Inject()(
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       val form = formProvider()
       for {
@@ -66,7 +66,7 @@ class AdviserEmailAddressController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {

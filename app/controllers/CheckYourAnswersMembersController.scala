@@ -53,24 +53,24 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
     }
 
   def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+        Future.successful(Ok(view(vm(UpdateMode, (srn)))))
     }
 
   private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
     val membersSection = AnswerSection(
       None,
-      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
-        FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
+      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode, srn).url, mode) ++
+        FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode, srn).url, mode)
     )
 
     val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
       Message("messages__membershipDetailsFor", name)
 
     val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }
 

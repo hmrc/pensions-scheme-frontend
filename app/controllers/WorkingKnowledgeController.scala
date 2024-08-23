@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
 import identifiers.DeclarationDutiesId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.data.Form
@@ -50,7 +51,7 @@ class WorkingKnowledgeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
@@ -63,7 +64,7 @@ class WorkingKnowledgeController @Inject()(
   private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
     existingSchemeName.getOrElse("")
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

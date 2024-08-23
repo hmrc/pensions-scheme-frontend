@@ -21,14 +21,14 @@ import controllers.Retrievals
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Call, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils._
+import utils.UserAnswers
 import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumber
 
@@ -40,7 +40,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
 
-  def postCall: (Mode, Option[String], Index) => Call
+  def postCall: (Mode, SchemeReferenceNumber, Index) => Call
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
 

@@ -16,7 +16,7 @@
 
 @this(layout: templates.Layout)
 
-@(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn:SchemeReferenceNumber, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__stillNeedDetails__title")) {
 
@@ -26,6 +26,6 @@
 
     @components.paragraph_text(messages("messages__stillNeedDetails__p2"))
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn.id)
 
 }

@@ -55,7 +55,7 @@ abstract class AllowAccessAction(srn: SchemeReferenceNumber,
 
     (optionUA, optionPsaMinimalFlagsId, srn) match {
       case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
-        Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(Some(srn)))))
+        Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad((srn)))))
       case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>
         Future.successful(Some(Redirect(config.youMustContactHMRCUrl)))
       case (Some(_), _, (extractedSRN)) => checkForAssociation(request, extractedSRN)
@@ -131,7 +131,7 @@ class AllowAccessActionMain(
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
       destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, Some(srn)))),
+      (UpdateMode, (srn)))),
       checkForSuspended = true
     )
   }
@@ -170,7 +170,7 @@ class AllowAccessActionNoSuspendedCheck(
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
       destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, Some(srn)))),
+      (UpdateMode, (srn)))),
       checkForSuspended = false
     )
   }

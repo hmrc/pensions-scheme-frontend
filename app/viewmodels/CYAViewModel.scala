@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class CYAViewModel(

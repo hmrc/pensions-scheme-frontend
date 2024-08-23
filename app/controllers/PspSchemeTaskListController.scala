@@ -20,6 +20,7 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSP
+import models.SchemeReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,7 +45,7 @@ class PspSchemeTaskListController @Inject()(
   private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
-    andThen allowAccessAction(Some(srn), allowPsa = true, allowPsp = true)) {
+    andThen allowAccessAction((srn), allowPsa = true, allowPsp = true)) {
     implicit request =>
 
       request.userAnswers match {

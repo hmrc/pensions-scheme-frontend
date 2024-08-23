@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class PayeViewModel(
@@ -23,6 +24,6 @@ case class PayeViewModel(
                           title: Message,
                           heading: Message,
                           hint: Option[Message] = None,
-                          srn: SchemeReferenceNumber = None,
+                          srn: SchemeReferenceNumber,
                           entityName: Option[String] = None
                         )

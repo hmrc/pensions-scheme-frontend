@@ -18,6 +18,7 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
+import models.SchemeReferenceNumber
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess, Json}

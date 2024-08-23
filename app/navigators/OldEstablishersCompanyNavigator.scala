@@ -38,7 +38,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
                               mode: Mode,
                               srn: SchemeReferenceNumber,
                               answers: UserAnswers,
-                              cyaPage: (Int, Mode, Option[String]) => Option[NavigateTo]): Option[NavigateTo] = {
+                              cyaPage: (Int, mode, SchemeReferenceNumber) => Option[NavigateTo]): Option[NavigateTo] = {
     if (mode == CheckMode || mode == NormalMode)
       cyaPage(index, journeyMode(mode), srn)
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))

@@ -25,7 +25,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.requests.DataRequest
 
 import javax.inject.Inject
-import models.{FeatureToggleName, Index, Mode}
+import models.{FeatureToggleName, Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -105,6 +105,6 @@ class AddCompanyDirectorsController @Inject()(
     }
   }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
+  private def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
 }

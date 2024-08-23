@@ -22,7 +22,7 @@ import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.Mode._
 import models.requests.DataRequest
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models.{CheckUpdateMode, Mode, NormalMode, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -55,9 +55,9 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
     }
 
   def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData) {
       implicit request =>
-        Ok(view(vm(UpdateMode, Some(srn))))
+        Ok(view(vm(UpdateMode, (srn))))
     }
 
   private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
@@ -79,7 +79,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
         Message("messages__benefitsAndInsuranceDetailsFor", name)
 
       val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-        case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+        case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
         case _ => None
       }
 

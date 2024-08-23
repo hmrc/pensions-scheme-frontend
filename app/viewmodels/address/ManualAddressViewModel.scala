@@ -16,6 +16,7 @@
 
 package viewmodels.address
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
@@ -25,7 +26,7 @@ case class ManualAddressViewModel(
                                    countryOptions: Seq[InputOption],
                                    title: Message,
                                    heading: Message,
-                                   srn: SchemeReferenceNumber = None
+                                   srn: SchemeReferenceNumber
                                  ) {
 
 }

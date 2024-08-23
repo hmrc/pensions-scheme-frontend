@@ -21,6 +21,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import connectors.{SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
 import identifiers.racdac.{IsRacDacId, RACDACNameId}
 import identifiers.{SchemeNameId, SchemeSrnId}
+import models.SchemeReferenceNumber
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
 import play.api.mvc.ActionTransformer

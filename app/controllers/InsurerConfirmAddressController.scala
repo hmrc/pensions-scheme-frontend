@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers._
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.address.Address
 import navigators.Navigator
 import play.api.data.Form

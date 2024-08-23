@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -81,6 +81,6 @@ class CompanyDetailsController @Inject()(
       )
   }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.CompanyDetailsController.onSubmit _
+  private def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit _
 
 }

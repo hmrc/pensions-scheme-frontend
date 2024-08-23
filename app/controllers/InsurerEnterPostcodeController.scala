@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
@@ -50,8 +51,8 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                val view: postcodeLookup
                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
-  val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
-  val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onPageLoad
+  val postCall: (Mode, SchemeReferenceNumber) => Call = routes.InsurerEnterPostcodeController.onSubmit
+  val manualCall: (Mode, SchemeReferenceNumber) => Call = routes.InsurerConfirmAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 

@@ -18,13 +18,13 @@ package controllers
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
 import identifiers.AnyMoreChangesId
+
 import javax.inject.Inject
-import models.UpdateMode
+import models.{SchemeReferenceNumber, UpdateMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

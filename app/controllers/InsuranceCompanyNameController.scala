@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

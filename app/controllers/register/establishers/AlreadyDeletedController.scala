@@ -22,11 +22,12 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -60,7 +61,8 @@ class AlreadyDeletedController @Inject()(
   private def vm(establisherName: String, mode: Mode, srn: SchemeReferenceNumber) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
-    returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
+    returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn),
+    srn, None
   )
 
   private def establisherName(index: Index, establisherKind: EstablisherKind)(implicit

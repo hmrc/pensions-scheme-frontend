@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -63,7 +64,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
     }
 
-  def postCall: (Mode, Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
+  def postCall: (Mode, SchemeReferenceNumber) => Call = routes.InsurancePolicyNumberController.onSubmit
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {

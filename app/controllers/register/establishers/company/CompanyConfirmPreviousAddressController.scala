@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId, CompanyPreviousAddressId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

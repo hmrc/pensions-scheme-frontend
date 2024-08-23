@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class UTRViewModel(
@@ -23,5 +24,5 @@ case class UTRViewModel(
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         srn: SchemeReferenceNumber = None
+                         srn: SchemeReferenceNumber
                        )

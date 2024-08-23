@@ -20,7 +20,7 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator

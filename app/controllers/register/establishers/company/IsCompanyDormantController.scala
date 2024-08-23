@@ -22,7 +22,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.establishers.company.IsCompanyDormantId
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
 import navigators.Navigator

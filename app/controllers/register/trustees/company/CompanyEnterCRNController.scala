@@ -48,7 +48,7 @@ class CompanyEnterCRNController @Inject()(
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
-  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit
+  def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

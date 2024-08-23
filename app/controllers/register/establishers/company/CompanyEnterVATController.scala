@@ -21,9 +21,10 @@ import controllers.EnterVATController
 import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEnterVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

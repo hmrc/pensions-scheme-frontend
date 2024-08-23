@@ -51,6 +51,7 @@ lazy val root = (project in file("."))
   )
   .settings(
     scalacOptions ++= Seq("-Xfatal-warnings", "-feature"),
+    scalacOptions ++= Seq("-Xmaxerrs", "10000"),   // Set maximum errors to 500
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MoneyPurchaseBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, TcmpChangedId}
-import models.{Mode, MoneyPurchaseBenefits}
+import models.{Mode, MoneyPurchaseBenefits, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,7 +49,7 @@ class MoneyPurchaseBenefitsController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  val postCall: (Mode, Option[String]) => Call =
+  val postCall: (Mode, SchemeReferenceNumber) => Call =
     routes.MoneyPurchaseBenefitsController.onSubmit
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()

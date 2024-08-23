@@ -20,7 +20,7 @@ import connectors.PensionAdministratorConnector
 import controllers.actions._
 
 import javax.inject.Inject
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -40,14 +40,14 @@ class WhatIsRACDACController @Inject()(override val messagesApi: MessagesApi,
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn)).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
         Future.successful(Ok(view(psaName)))
       }
   }
 
-  def onSubmit: Action[AnyContent] = authenticate() {
-      Redirect(controllers.racdac.routes.RACDACNameController.onPageLoad(NormalMode))
+  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
+      Redirect(controllers.racdac.routes.RACDACNameController.onPageLoad(NormalMode, srn))
   }
 }

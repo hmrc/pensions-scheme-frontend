@@ -18,6 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.SchemeReferenceNumber
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +34,7 @@ class CannotStartRegistrationController @Inject()(appConfig: FrontendAppConfig,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: cannotStartRegistration)(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate() {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
     implicit request =>
       Ok(view())
   }

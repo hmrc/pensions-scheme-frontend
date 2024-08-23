@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import audit.{TcmpAuditEvent, AuditService}
+import audit.{AuditService, TcmpAuditEvent}
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
@@ -24,25 +24,25 @@ import controllers.actions._
 import controllers.register.routes.DeclarationController
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.{SchemeTypeId, TypeOfBenefitsId, MoneyPurchaseBenefitsId}
+import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
 import models.enumerations.SchemeJourneyType
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{TypeOfBenefits, PSAMinimalFlags, NormalMode}
+import models.{NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport}
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result, Call, Action}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{UserAnswers, Enumerable}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import javax.inject.Inject
@@ -89,7 +89,7 @@ class DeclarationController @Inject()(
   }
 
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
@@ -97,7 +97,7 @@ class DeclarationController @Inject()(
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
           showPage(Ok.apply)
         } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)))
         }
       }
   }
@@ -153,7 +153,7 @@ class DeclarationController @Inject()(
       case _ => false
     }
 
-  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       val updatedUA = request.userAnswers.remove(identifiers.racdac.DeclarationId).asOpt
@@ -170,7 +170,7 @@ class DeclarationController @Inject()(
         Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, srn)))
         case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }
@@ -182,7 +182,7 @@ class DeclarationController @Inject()(
   }
 
 
-  private def sendEmail(srn: SchemeReferenceNumber, psaId: PsaId)
+  private def sendEmail(srn: String, psaId: PsaId)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
 
@@ -200,7 +200,7 @@ class DeclarationController @Inject()(
   }
 
   //scalastyle:off magic.number
-  private def formatSrnForEmail(srn: SchemeReferenceNumber): String = {
+  private def formatSrnForEmail(srn: String): String = {
     //noinspection ScalaStyle
     val (start, end) = srn.splitAt(6)
     start + ' ' + end

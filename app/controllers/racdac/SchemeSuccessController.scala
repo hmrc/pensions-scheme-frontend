@@ -21,6 +21,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
+import models.SchemeReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,7 +45,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>
@@ -60,7 +61,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit: Action[AnyContent] = authenticate() {
+  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
     Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 }

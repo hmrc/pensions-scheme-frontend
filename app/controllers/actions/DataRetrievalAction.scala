@@ -227,7 +227,7 @@ class RacdacDataRetrievalImpl(
                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
-                               srnOpt: String)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                               srnOpt: SchemeReferenceNumber)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
   private val logger = Logger(classOf[RacdacDataRetrievalImpl])
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

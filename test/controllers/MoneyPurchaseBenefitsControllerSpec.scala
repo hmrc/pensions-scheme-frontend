@@ -20,13 +20,12 @@ import controllers.actions._
 import forms.MoneyPurchaseBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId}
 import models.MoneyPurchaseBenefits._
-import models.{Mode, MoneyPurchaseBenefits, NormalMode}
+import models.{Mode, MoneyPurchaseBenefits, NormalMode, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-
 import utils.FakeNavigator
 import views.html.moneyPurchaseBenefits
 
@@ -37,7 +36,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
   val form: Form[MoneyPurchaseBenefits] = formProvider()
   val schemeName = "Test Scheme Name"
-  val postCall: (Mode, Option[String]) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
+  val postCall: (mode, SchemeReferenceNumber) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
 
   private val view = injector.instanceOf[moneyPurchaseBenefits]
 

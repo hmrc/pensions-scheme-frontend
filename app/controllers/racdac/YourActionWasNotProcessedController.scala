@@ -19,7 +19,7 @@ package controllers.racdac
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,8 +40,8 @@ class YourActionWasNotProcessedController @Inject()(
                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(): Action[AnyContent] = {
-    (authenticate() andThen getData(NormalMode, None) andThen requireData).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = {
+    (authenticate() andThen getData(NormalMode, srn) andThen requireData).async {
       implicit request =>
         withRACDACName { schemeName =>
           val returnUrl = appConfig.managePensionsSchemeOverviewUrl

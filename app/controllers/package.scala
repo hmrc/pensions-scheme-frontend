@@ -14,15 +14,5 @@
  * limitations under the License.
  */
 
-package viewmodels
-
-import models.SchemeReferenceNumber
-import play.api.mvc.Call
-
-case class NinoViewModel(
-                          postCall: Call,
-                          title: String,
-                          heading: String,
-                          hint: String,
-                          srn: SchemeReferenceNumber
-                        )
+package object controllers {
+}

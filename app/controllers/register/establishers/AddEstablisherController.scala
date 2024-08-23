@@ -23,7 +23,7 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import models.register.Establisher
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode, NormalMode}
+import models.{FeatureToggleName, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

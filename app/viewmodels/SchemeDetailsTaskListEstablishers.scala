@@ -16,6 +16,8 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
+
 case class SchemeDetailsTaskListEstablishers(
                                   h1: String,
                                   srn: SchemeReferenceNumber,

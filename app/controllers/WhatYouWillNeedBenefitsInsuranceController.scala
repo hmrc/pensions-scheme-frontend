@@ -18,8 +18,9 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+
 import javax.inject.Inject
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,12 +37,12 @@ class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAp
                                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
     implicit request =>
       Future.successful(Ok(view(existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate() andThen getData()).async {
-    Future.successful(Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)))
+  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
+    Future.successful(Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode, srn)))
   }
 }

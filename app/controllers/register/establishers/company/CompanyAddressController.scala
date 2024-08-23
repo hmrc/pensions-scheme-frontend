@@ -22,10 +22,11 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company._
+
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}

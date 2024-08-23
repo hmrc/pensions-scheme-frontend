@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyCRNId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,7 +49,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -69,7 +70,7 @@ class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfi
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__hasCompanyNumber__error__required", companyName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {

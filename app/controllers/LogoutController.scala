@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.SessionDataCacheConnector
 import controllers.actions.AuthAction
+import models.SchemeReferenceNumber
 
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
@@ -34,7 +35,7 @@ class LogoutController @Inject()(appConfig: FrontendAppConfig,
                                 )(implicit val ec: ExecutionContext) extends
   FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate().async { implicit request =>
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate().async { implicit request =>
     sessionDataCacheConnector.removeAll(request.externalId).map { _ =>
       Redirect(appConfig.serviceSignOut).withNewSession
     }

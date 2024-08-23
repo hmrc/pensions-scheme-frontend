@@ -56,7 +56,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData() andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(srn=srn) andThen allowAccess(srn)).async {
     implicit request =>
 
       redirects.flatMap {
@@ -64,7 +64,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
         case _ =>
 
           (mode, srn, request.psaId) match {
-            case (UpdateMode, Some(srnNo), Some(psaId)) =>
+            case (UpdateMode, (srnNo), Some(psaId)) =>
               schemeDetailsConnector.getSchemeDetails(psaId.id, schemeIdType = "srn", srnNo).map { ua =>
                 ua.get(IsRacDacId) match {
                   case Some(true) =>
@@ -74,7 +74,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                 }
               }
 
-            case (NormalMode, None, _) => Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
+            case (NormalMode, _, _) => Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
 
             case _ => Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
           }
