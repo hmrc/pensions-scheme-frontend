@@ -23,7 +23,7 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

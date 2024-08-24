@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
 import identifiers.register.establishers.partnership.OtherPartnersId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

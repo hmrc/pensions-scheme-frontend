@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.individual.EstablisherNameId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

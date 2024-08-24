@@ -21,8 +21,9 @@ import controllers.UTRController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.UTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherUTRId}
+
 import javax.inject.Inject
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

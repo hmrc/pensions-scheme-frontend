@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import models.{FeatureToggleName, Index, Mode}
+import models.{FeatureToggleName, Index, Mode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FeatureToggleService

@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherHasUTRId, EstablisherNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

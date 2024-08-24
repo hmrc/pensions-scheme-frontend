@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

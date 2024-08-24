@@ -18,7 +18,6 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.PathBindable
-import play.api.mvc.{JavascriptLiteral, PathBindable}
 
 import scala.language.implicitConversions
 import scala.util.matching.Regex
@@ -46,7 +45,7 @@ object SchemeReferenceNumber {
   implicit def schemeReferenceNumberToString(srn: SchemeReferenceNumber): String =
     srn.id
 
-  implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber =
+  implicit def stringToSchemeReferenceNumber(srn: String): SchemeReferenceNumber =
     SchemeReferenceNumber(srn)
 
   case class InvalidSchemeReferenceNumberException() extends Exception

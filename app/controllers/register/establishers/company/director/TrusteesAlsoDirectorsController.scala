@@ -87,8 +87,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       Right(formRadio(establisherIndex))
     }
 
-  def onPageLoad(establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(establisherIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -114,8 +114,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     }
 
   //scalastyle:off method.length
-  def onSubmit(establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(None) andThen requireData).async {
+  def onSubmit(establisherIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
@@ -130,7 +130,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                 }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
                 userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, None))
+                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, srn))
                 }
               case _ =>
                 renderView(BadRequest,
@@ -152,7 +152,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                 }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
 
                 userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
+                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, srn))
                 }
               case _ =>
                 renderView(BadRequest,

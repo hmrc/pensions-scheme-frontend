@@ -25,7 +25,7 @@ import identifiers.register.establishers.individual.{EstablisherEmailId, Establi
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FeatureToggleService

@@ -27,6 +27,7 @@ lazy val root = (project in file("."))
     name := appName,
     RoutesKeys.routesImport ++= Seq(
     "models.Index",
+    "models.SchemeReferenceNumber",
     "models.Mode",
     "models.CheckMode",
     "models.NormalMode",

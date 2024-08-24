@@ -56,7 +56,7 @@ class AlreadyDeletedController @Inject()(
     Message("messages__alreadyDeleted__director_title"),
     directorName,
     controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn,
-      establisherIndex)
+      establisherIndex), srn
   )
 
 }

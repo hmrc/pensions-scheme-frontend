@@ -22,8 +22,9 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.establishers.individual.routes.EstablisherEmailController
 import forms.EmailFormProvider
 import identifiers.register.establishers.individual.{EstablisherEmailId, EstablisherNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

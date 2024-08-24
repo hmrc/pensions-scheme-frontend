@@ -17,14 +17,14 @@
 package controllers.register.establishers.individual
 
 import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

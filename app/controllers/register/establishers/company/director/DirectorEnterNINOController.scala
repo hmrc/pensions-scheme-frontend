@@ -21,9 +21,10 @@ import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
