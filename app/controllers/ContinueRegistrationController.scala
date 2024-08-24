@@ -38,7 +38,7 @@ class ContinueRegistrationController @Inject()(
 
   def continue(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)) {
     implicit request =>
-      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers())))
+      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers()), srn))
   }
 
 }

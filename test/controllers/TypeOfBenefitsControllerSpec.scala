@@ -40,7 +40,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     SchemeNameId.toString -> "Test Scheme Name")).typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
-  private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, None)
+  private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, srn)
 
 
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
@@ -66,14 +66,14 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                    authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction: UserAnswersService => Action[AnyContent] = cache =>
-    controller(cache = cache).onSubmit(NormalMode, None)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
   "Type of benefits Controller" when {
 

@@ -48,7 +48,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
                                                      implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -70,7 +70,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
 
-  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {

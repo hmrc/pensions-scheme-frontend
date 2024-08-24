@@ -80,7 +80,7 @@ class AdviserEmailAddressController @Inject()(
         value =>
           dataCacheConnector.save(request.externalId, AdviserEmailId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserEmailId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserEmailId, mode, UserAnswers(cacheMap), srn))
           }
       )
   }

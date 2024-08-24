@@ -32,7 +32,7 @@ import utils.{Enumerable, UserAnswers}
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                   appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = routes(from, NormalMode, srn)
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
@@ -64,10 +64,10 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         if (answers.allTrusteesAfterDelete.isEmpty) {
           NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, None))
         } else {
-          NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, None))
+          NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, srn))
         }
       case Some(false) =>
-        NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(NormalMode, srn))
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
@@ -111,7 +111,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)

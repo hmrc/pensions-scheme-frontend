@@ -28,7 +28,7 @@ import utils.UserAnswers
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                         frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = from.id match {
     case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))
     case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
     case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
@@ -48,7 +48,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = from.id match {
     case SchemeNameId => checkYourAnswers
     case SchemeTypeId => schemeTypeEditRoutes(from.userAnswers)
     case HaveAnyTrusteesId => checkYourAnswers
@@ -69,7 +69,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   }
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, srn))
 
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 

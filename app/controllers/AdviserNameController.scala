@@ -67,7 +67,7 @@ class AdviserNameController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
-            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap), srn))
           }
       )
   }

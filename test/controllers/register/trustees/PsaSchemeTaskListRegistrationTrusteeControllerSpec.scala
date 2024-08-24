@@ -114,7 +114,7 @@ object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskL
     view(
       taskSections,
       schemeName,
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url
     )(fakeRequest, messages).toString
 }
 

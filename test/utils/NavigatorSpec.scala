@@ -128,7 +128,7 @@ object NavigatorSpec {
 
   class TestNavigator(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-    override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
       from.id match {
         case `testExistId` => NavigateTo.dontSave(testExistNormalModeCall)
         case `testSaveId` => NavigateTo.save(testSaveCall)
@@ -136,7 +136,7 @@ object NavigatorSpec {
         case _ => None
       }
 
-    override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
       from.id match {
         case `testExistId` => NavigateTo.dontSave(testExistCheckModeCall)
         case _ => None

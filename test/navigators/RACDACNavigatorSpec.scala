@@ -60,6 +60,6 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object RACDACNavigatorSpec {
   private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode)
-  private val cyaPage: Call      = controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None)
+  private val cyaPage: Call      = controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, srn)
   private val successPage: Call      = controllers.racdac.routes.SchemeSuccessController.onPageLoad()
 }

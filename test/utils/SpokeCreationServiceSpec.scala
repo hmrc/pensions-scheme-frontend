@@ -55,7 +55,7 @@ class SpokeCreationServiceSpec
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
           controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
 
-        val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -63,9 +63,9 @@ class SpokeCreationServiceSpec
         val userAnswers = userAnswersWithSchemeName.schemeType(SchemeType.SingleTrust).declarationDuties(haveWorkingKnowledge = true).
           establishedCountry(country = "UK")
         val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__before_you_start_link_text", schemeName),
-          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None).url), Some(true)))
+          controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, srn).url), Some(true)))
 
-        val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -103,7 +103,7 @@ class SpokeCreationServiceSpec
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
         )
 
-        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -117,7 +117,7 @@ class SpokeCreationServiceSpec
             controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), Some(false)),
         )
 
-        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -129,12 +129,12 @@ class SpokeCreationServiceSpec
 
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
-            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None).url), Some(true)),
+            controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn).url), Some(true)),
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_benefits_and_insurance_link_text", schemeName),
-            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, None).url), Some(true)),
+            controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(NormalMode, srn).url), Some(true)),
         )
 
-        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getAboutSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -192,7 +192,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details_wk"),
         controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), Some(false)))
 
-      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, srn, schemeName, None)
       result mustBe expectedSpoke
     }
 
@@ -201,7 +201,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__continue_details", schemeName),
         controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url), Some(false)))
 
-      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, srn, schemeName, None)
       result mustBe expectedSpoke
     }
 
@@ -210,7 +210,7 @@ class SpokeCreationServiceSpec
       val expectedSpoke = Seq(EntitySpoke(TaskListLink(Message("messages__schemeTaskList__change_details", schemeName),
         controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), Some(true)))
 
-      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, schemeName, None)
+      val result = spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, srn, schemeName, None)
       result mustBe expectedSpoke
     }
   }
@@ -219,9 +219,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links, incomplete status when establisher company is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
-        val expectedSpoke = estCompanyAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = estCompanyAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -233,7 +233,7 @@ class SpokeCreationServiceSpec
           .establishersCompanyDirectorNino(0, 0, ReferenceValue("AB100100A"))
         val expectedSpoke = estCompanyInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -242,7 +242,7 @@ class SpokeCreationServiceSpec
           establisherCompanyDormant(0, DeclarationDormant.Yes)
         val expectedSpoke = estCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -291,9 +291,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links, incomplete status when establisher partnership is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
-        val expectedSpoke = estPartnershipAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = estPartnershipAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -305,7 +305,7 @@ class SpokeCreationServiceSpec
           .establishersPartnershipPartnerNino(0, 0, ReferenceValue("AB100100A"))
         val expectedSpoke = estPartnershipInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -313,7 +313,7 @@ class SpokeCreationServiceSpec
         val userAnswers = setCompleteEstPartnership(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
         val expectedSpoke = estPartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherPartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -375,9 +375,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links, blank status when establisher individual is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isEstablisherNew(index = 0, flag = true)
-        val expectedSpoke = estIndividualAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = estIndividualAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -389,7 +389,7 @@ class SpokeCreationServiceSpec
           establishersIndividualEmail(index = 0, email = "s@s.com")
         val expectedSpoke = estIndividualInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -397,7 +397,7 @@ class SpokeCreationServiceSpec
         val userAnswers = setCompleteEstIndividual(0, userAnswersWithSchemeName).isEstablisherNew(0, flag = true)
         val expectedSpoke = estIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getEstablisherIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -446,9 +446,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links, blank status when trustee company is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
-        val expectedSpoke = trusteeCompanyAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = trusteeCompanyAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -461,7 +461,7 @@ class SpokeCreationServiceSpec
           trusteeCompanyEmail(index = 0, email = "s@s.com")
         val expectedSpoke = trusteeCompanyInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -469,7 +469,7 @@ class SpokeCreationServiceSpec
         val userAnswers = setCompleteTrusteeCompany(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
         val expectedSpoke = trusteeCompanyCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeCompanySpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -518,9 +518,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links, blank status when trustee partnership is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
-        val expectedSpoke = trusteePartnershipAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = trusteePartnershipAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -531,7 +531,7 @@ class SpokeCreationServiceSpec
           trusteePartnershipEmail(index = 0, email = "s@s.com")
         val expectedSpoke = trusteePartnershipInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -539,7 +539,7 @@ class SpokeCreationServiceSpec
         val userAnswers = setCompleteTrusteePartnership(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
         val expectedSpoke = trusteePartnershipCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteePartnershipSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -587,9 +587,9 @@ class SpokeCreationServiceSpec
     "in subscription" must {
       "display all the spokes with appropriate links when trustee individual is uninitiated" in {
         val userAnswers = userAnswersWithSchemeName.isTrusteeNew(index = 0, flag = true)
-        val expectedSpoke = trusteeIndividualAddSpokes(NormalMode, None, Some(false))
+        val expectedSpoke = trusteeIndividualAddSpokes(NormalMode, srn, Some(false))
 
-        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -601,7 +601,7 @@ class SpokeCreationServiceSpec
           trusteeEmail(index = 0, email = "s@s.com")
         val expectedSpoke = trusteeIndividualInProgressSpoke(NormalMode, srn = None, linkText = "continue", status = Some(false))
 
-        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
 
@@ -609,7 +609,7 @@ class SpokeCreationServiceSpec
         val userAnswers = setCompleteTrusteeIndividual(0, userAnswersWithSchemeName).isTrusteeNew(0, flag = true)
         val expectedSpoke = trusteeIndividualCompleteSpoke(NormalMode, srn = None, linkText = "change", status = Some(true))
 
-        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, None, schemeName, None)
+        val result = spokeCreationService.getTrusteeIndividualSpokes(userAnswers, NormalMode, srn, schemeName, None)
         result mustBe expectedSpoke
       }
     }
@@ -656,7 +656,7 @@ class SpokeCreationServiceSpec
 
   "getAddEstablisherHeaderSpokesWithToggleOff" must {
     "return no spokes when no establishers and view only" in {
-      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, srn, viewOnly = true)
       result mustBe Nil
     }
 
@@ -695,18 +695,18 @@ class SpokeCreationServiceSpec
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionEstablishers_change_link_toggleOff"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn).url),
           None
         ))
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
   }
 
   "getAddEstablisherHeaderSpokes (with toggle on)" must {
     "return no spokes when no establishers and view only" in {
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = true)
       result mustBe Nil
     }
 
@@ -730,11 +730,11 @@ class SpokeCreationServiceSpec
         Seq(EntitySpoke(
           TaskListLink(
             Message("messages__schemeTaskList__sectionEstablishers_continue_link", schemeName),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn).url),
           Some(false)
         ))
 
-      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
   }
@@ -778,10 +778,10 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), Some(false)
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), Some(false)
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -794,10 +794,10 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url), Some(false)
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url), Some(false)
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -828,7 +828,7 @@ class SpokeCreationServiceSpec
     }
 
     "return no spokes when no trustees and view only" in {
-      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswersWithSchemeName, NormalMode, srn, viewOnly = true)
       result mustBe Nil
     }
 
@@ -872,11 +872,11 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url),
           None
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -889,11 +889,11 @@ class SpokeCreationServiceSpec
       val expectedSpoke =
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url),
           None
         ))
 
-      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, None, viewOnly = false)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, NormalMode, srn, viewOnly = false)
       result mustBe expectedSpoke
     }
 
@@ -926,7 +926,7 @@ class SpokeCreationServiceSpec
     }
 
     "return no spokes when no trustees and view only" in {
-      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, None, viewOnly = true)
+      val result = spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswersWithSchemeName, NormalMode, srn, viewOnly = true)
       result mustBe Nil
     }
 

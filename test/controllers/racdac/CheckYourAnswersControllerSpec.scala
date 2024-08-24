@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSuga
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val result = controller(racdacInfo).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(racdacInfo).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

@@ -37,11 +37,11 @@ class TrusteesIndividualAddressNavigator @Inject()(
 
   import TrusteesIndividualAddressNavigator._
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
@@ -57,7 +57,7 @@ class TrusteesIndividualAddressNavigator @Inject()(
     case TrusteeAddressId(index) =>
       CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
     case TrusteeAddressYearsId(index) =>
-      trusteeAddressYearsRoutes(mode, ua, index, None)
+      trusteeAddressYearsRoutes(mode, ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) =>
       TrusteePreviousAddressListController.onPageLoad(mode, index, None)
     case TrusteePreviousAddressListId(index) =>

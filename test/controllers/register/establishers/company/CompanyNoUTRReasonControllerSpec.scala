@@ -87,7 +87,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "123456789"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -101,7 +101,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
             status(result) mustBe BAD_REQUEST
         }
       }

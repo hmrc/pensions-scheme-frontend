@@ -55,7 +55,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return OK and the old view" in {
         when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, None)(fakeRequest)
+          .onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe oldView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
@@ -64,7 +64,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -109,7 +109,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, None)(fakeRequest)
+          .onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe psaTaskListRegistrationView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
@@ -120,7 +120,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return REDIRECT to manage" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)

@@ -40,7 +40,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
     SchemeNameId.toString -> "Test Scheme Name")).benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
-  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
+  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, srn)
 
   private val view = injector.instanceOf[benefitsSecuredByInsurance]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
@@ -67,14 +67,14 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(cache: UserAnswersService): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode, None)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
   "Benefits secured by insurance Controller" when {
 

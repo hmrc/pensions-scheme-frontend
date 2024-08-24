@@ -72,7 +72,7 @@ class RACDACNameController @Inject()(
         },
           value =>
             dataCacheConnector.save(request.externalId, RACDACNameId, value).map {
-              cacheMap => Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap)))
+              cacheMap => Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap), srn))
             }
       )
   }

@@ -165,7 +165,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url)
         val expectedDirectors = Seq(
           DirectorIdentifier(establisherIndex = 1, directorIndex = 3),
           DirectorIdentifier(establisherIndex = 2, directorIndex = 5)
@@ -218,7 +218,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url)
         val expectedDirectors = Seq(
           DirectorIdentifier(establisherIndex = 1, directorIndex = 3)
         )

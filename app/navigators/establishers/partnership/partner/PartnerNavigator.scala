@@ -37,7 +37,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 
   import PartnerNavigator._
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id)
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: SchemeReferenceNumber)
@@ -86,7 +86,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)

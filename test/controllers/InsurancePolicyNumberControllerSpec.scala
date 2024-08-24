@@ -68,7 +68,7 @@ object InsurancePolicyNumberControllerSpec {
 
   val policyNumber = "test policy number"
   val companyName = "test company name"
-  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, None)
+  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, srn)
   private val formProvider = new InsurancePolicyNumberFormProvider()
   private val form = formProvider.apply()
   private val mandatoryData = UserAnswers().insuranceCompanyName(companyName)
@@ -106,14 +106,14 @@ object InsurancePolicyNumberControllerSpec {
   }
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode, None)
+    controller(base)(cache = cache).onSubmit(NormalMode, srn)
 }
 
 

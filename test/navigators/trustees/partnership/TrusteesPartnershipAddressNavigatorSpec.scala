@@ -40,16 +40,16 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with Matchers wit
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(NormalMode, None)),
-        row(PartnershipAddressId(index))(someAddress, addressYearsPage(NormalMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
-        row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(NormalMode, None)),
-        row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
+        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnershipAddressId(index))(someAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(NormalMode, srn)),
+        row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
@@ -60,13 +60,13 @@ class TrusteesPartnershipAddressNavigatorSpec extends SpecBase with Matchers wit
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, None)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
+        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, srn)),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)

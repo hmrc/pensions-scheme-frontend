@@ -72,7 +72,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber", "1234567"))
-          val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+          val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -86,7 +86,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber", "123456{0"))
-          val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+          val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
           status(result) mustBe BAD_REQUEST
       }
     }

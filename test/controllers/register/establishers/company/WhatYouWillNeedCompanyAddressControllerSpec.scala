@@ -39,7 +39,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       controllerComponents
     )
 
-  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, index = Index(0))
+  val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, srn, index = Index(0))
 
   def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
 
@@ -47,7 +47,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, srn, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

@@ -47,7 +47,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
                                             (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         get(EstablisherHasNINOId(index), form(details.fullName), viewModel(mode, index, srn, details.fullName))
@@ -67,7 +67,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
   private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__genericHasNino__error__required", establisherName)
 
-  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         post(EstablisherHasNINOId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))

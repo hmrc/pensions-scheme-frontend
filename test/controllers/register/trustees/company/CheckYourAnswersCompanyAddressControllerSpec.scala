@@ -100,7 +100,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
 object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -175,8 +175,8 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    tradingTimeAnswerRow(NormalMode, None), previousAddressAnswerRow(NormalMode, None)
+    addressAnswerRow(NormalMode, srn), addressYearsAnswerRow(NormalMode, srn),
+    tradingTimeAnswerRow(NormalMode, srn), previousAddressAnswerRow(NormalMode, srn)
   )))
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
@@ -193,7 +193,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,

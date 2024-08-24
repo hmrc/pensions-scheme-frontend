@@ -131,12 +131,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "onPageLoad" must {
 
       "return OK and display all the answers" in {
-        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, NormalMode, None)(request)
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, NormalMode, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode,
                                                     answerSectionDirector _,
-                                                    href(NormalMode, None, 0),
+                                                    href(NormalMode, srn, 0),
                                                     None,
                                                     title = Message("checkYourAnswers.hs.heading"),
                                                     h1 = Message("checkYourAnswers.hs.heading"))
@@ -158,7 +158,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       behave like changeableController(
         controller(directorAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(index, index, NormalMode, None)(request)
+          .onPageLoad(index, index, NormalMode, srn)(request)
       )
     }
   }

@@ -61,7 +61,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
                 minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: SchemeReferenceNumber = None,
+                srn: SchemeReferenceNumber,
                 refreshData: Boolean = false
                ) extends
     DataRetrievalImpl(

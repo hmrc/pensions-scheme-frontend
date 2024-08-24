@@ -80,7 +80,7 @@ class AdviserPhoneController @Inject()(
         value =>
           dataCacheConnector.save(request.externalId, AdviserPhoneId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap), srn))
           }
       )
   }

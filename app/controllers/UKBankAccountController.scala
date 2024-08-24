@@ -70,7 +70,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
           value =>
             dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap), srn))
             }
         )
       }

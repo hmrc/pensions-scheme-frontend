@@ -16,7 +16,7 @@ POST        /change/number/:srn                      controllers.racdac.Contract
 GET         /declaration/:srn                        controllers.racdac.DeclarationController.onPageLoad(srn: SchemeReferenceNumber)
 GET         /on-click-agree/:srn                     controllers.racdac.DeclarationController.onClickAgree(srn: SchemeReferenceNumber)
 
-GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None)
+GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
 GET         /:mode/check-your-answers/:srn           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 GET         /check-your-answers/:srn                 controllers.racdac.CheckYourAnswersController.pspOnPageLoad(srn: SchemeReferenceNumber)
 

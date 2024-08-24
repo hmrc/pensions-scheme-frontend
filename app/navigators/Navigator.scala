@@ -32,7 +32,7 @@ import scala.util.Failure
 
 trait Navigator {
 
-  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: SchemeReferenceNumber = None)
+  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: SchemeReferenceNumber)
               (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     nextPageOptional(id, mode, userAnswers, srn)
       .getOrElse(defaultPage(id, mode))
@@ -48,7 +48,7 @@ trait Navigator {
   def nextPageOptional(id: Identifier,
                        mode: Mode,
                        userAnswers: UserAnswers,
-                       srn: SchemeReferenceNumber = None)
+                       srn: SchemeReferenceNumber)
                       (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call]
 
   case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
@@ -72,14 +72,14 @@ abstract class AbstractNavigator
   override final def nextPageOptional(id: Identifier,
                                       mode: Mode,
                                       userAnswers: UserAnswers,
-                                      srn: SchemeReferenceNumber = None)
+                                      srn: SchemeReferenceNumber)
                                      (implicit ex: IdentifiedRequest,
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier): Option[Call] = {
 
     val navigateTo = mode match {
-      case NormalMode => routeMap(NavigateFrom(id, userAnswers))
-      case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
+      case NormalMode => routeMap(NavigateFrom(id, userAnswers), srn)
+      case CheckMode => editRouteMap(NavigateFrom(id, userAnswers), srn)
       case UpdateMode => updateRouteMap(NavigateFrom(id, userAnswers), srn)
       case CheckUpdateMode => checkUpdateRouteMap(NavigateFrom(id, userAnswers), srn)
     }
@@ -106,13 +106,13 @@ abstract class AbstractNavigator
 
   protected def dataCacheConnector: UserAnswersCacheConnector
 
-  protected def routeMap(from: NavigateFrom): Option[NavigateTo]
+  protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo]
 
-  protected def editRouteMap(from: NavigateFrom): Option[NavigateTo]
+  protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo]
 
-  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber = None): Option[NavigateTo]
+  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo]
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber = None): Option[NavigateTo]
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo]
 
   // TODO: Should we remove this? It is essentially abstracting over the match, does this provide enough value?
   protected def booleanNav(id: TypedIdentifier[Boolean],

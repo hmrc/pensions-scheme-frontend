@@ -167,7 +167,7 @@ class DeclarationController @Inject()(
         _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
         _ <- auditTcmp(psaId.id, request.userAnswers)
       } yield {
-        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), srn))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
           Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, srn)))

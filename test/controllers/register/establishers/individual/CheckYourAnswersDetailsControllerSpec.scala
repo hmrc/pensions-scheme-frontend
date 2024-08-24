@@ -55,7 +55,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -65,7 +65,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -99,7 +99,7 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
 object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private val index = Index(0)
   private val srn = Some("S123")
@@ -287,7 +287,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   def viewAsString(answerSections: Seq[AnswerSection],
                    mode: Mode = NormalMode,
-                   srn: SchemeReferenceNumber = None,
+                   srn: SchemeReferenceNumber,
                    postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(

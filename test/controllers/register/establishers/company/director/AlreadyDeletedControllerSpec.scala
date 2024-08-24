@@ -26,7 +26,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, None, establisherIndex)
+  def onwardRoute: Call = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn, establisherIndex)
 
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)

@@ -28,7 +28,7 @@ import utils.UserAnswers
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                   appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case ContinueRegistrationId =>
         continueRegistration(from.userAnswers)
@@ -41,11 +41,11 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     if (userAnswers.isBeforeYouStartCompleted(NormalMode))
-      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))
     else
       NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case _ => None
     }

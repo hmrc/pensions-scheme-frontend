@@ -51,6 +51,6 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(MembershipPensionRegulatorId, mode, request.userAnswers))
+      Redirect(navigator.nextPage(MembershipPensionRegulatorId, mode, request.userAnswers, srn))
   }
 }

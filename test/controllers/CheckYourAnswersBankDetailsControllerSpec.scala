@@ -59,7 +59,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   val bankDetails = BankAccountDetails(SortCode("34", "45", "67"), "test account number")
 

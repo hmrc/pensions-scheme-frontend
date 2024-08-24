@@ -70,7 +70,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
           value =>
             dataCacheConnector.save(request.externalId, FutureMembersId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(FutureMembersId, mode, UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(FutureMembersId, mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

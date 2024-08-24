@@ -104,19 +104,19 @@ class DeclarationController @Inject()(
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         (for {
           cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-          _ <- register(psaId, schemeName)
+          _ <- register(psaId, schemeName, srn)
         } yield {
-          Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+          Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), srn))
         }) recoverWith {
           case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-            Future.successful(Redirect(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad()))
+            Future.successful(Redirect(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad(srn)))
           case _ =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
         }
       }
   }
 
-  private def register(psaId: PsaId, schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def register(psaId: PsaId, schemeName: String, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val ua = request.userAnswers
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
@@ -125,7 +125,7 @@ class DeclarationController @Inject()(
       _ <- sendEmail(psaId, schemeName)
       _ <- dataCacheConnector.upsert(request.externalId, ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json)
     } yield {
-      Redirect(navigator.nextPage(DeclarationId, NormalMode, ua))
+      Redirect(navigator.nextPage(DeclarationId, NormalMode, ua, srn))
     }
   }
 

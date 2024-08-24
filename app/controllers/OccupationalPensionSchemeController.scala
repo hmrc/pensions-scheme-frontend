@@ -69,7 +69,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
           value =>
             dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap), srn)))
         )
       }
   }

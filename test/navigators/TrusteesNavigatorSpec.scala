@@ -45,20 +45,20 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(AddTrusteeId)(true, trusteeKind(0, NormalMode, None)),
-          row(AddTrusteeId)(true, trusteeKind(1, NormalMode, None), ua = Some(trustees(1))),
-          rowNoValue(AddTrusteeId)(trusteeKind(0, NormalMode, None)),
-          rowNoValue(AddTrusteeId)(moreThanTenTrustees(NormalMode, None), ua = Some(trustees(10))),
-          row(AddTrusteeId)(false, taskList(NormalMode, None), ua = Some(establishersOrTrusteesChanged)),
-          rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, None)),
-          row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, None)),
+          row(AddTrusteeId)(true, trusteeKind(0, NormalMode, srn)),
+          row(AddTrusteeId)(true, trusteeKind(1, NormalMode, srn), ua = Some(trustees(1))),
+          rowNoValue(AddTrusteeId)(trusteeKind(0, NormalMode, srn)),
+          rowNoValue(AddTrusteeId)(moreThanTenTrustees(NormalMode, srn), ua = Some(trustees(10))),
+          row(AddTrusteeId)(false, taskList(NormalMode, srn), ua = Some(establishersOrTrusteesChanged)),
+          rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, srn)),
+          row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, srn)),
           row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees),
-          row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, None)),
-          row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, None), ua = Some(trustees(0))),
-          row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, None), ua = Some(oneDeletedTrustee)),
-          row(HaveAnyTrusteesId)(true, addTrustee(NormalMode, None), ua = Some(oneTrustee)),
-          row(HaveAnyTrusteesId)(false, taskList(NormalMode, None)),
-          rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, None))
+          row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, srn)),
+          row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, srn), ua = Some(trustees(0))),
+          row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, srn), ua = Some(oneDeletedTrustee)),
+          row(HaveAnyTrusteesId)(true, addTrustee(NormalMode, srn), ua = Some(oneTrustee)),
+          row(HaveAnyTrusteesId)(false, taskList(NormalMode, srn)),
+          rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, srn))
         )
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
     }

@@ -35,7 +35,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
 
   import TrusteesCompanyNavigator._
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navigateTo(normalAndUpdateModeRoutes
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navigateTo(normalAndUpdateModeRoutes
   (NormalMode, from.userAnswers, None), from.id)
 
   private def normalAndUpdateModeRoutes(mode: Mode,
@@ -75,7 +75,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {

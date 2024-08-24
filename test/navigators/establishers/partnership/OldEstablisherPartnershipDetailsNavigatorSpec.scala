@@ -58,7 +58,7 @@ class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Naviga
       def navigationForEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(PartnershipDetailsId(index))(partnershipDetails, addEstablisherPage(NormalMode, None)),
+          row(PartnershipDetailsId(index))(partnershipDetails, addEstablisherPage(NormalMode, srn)),
           row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
           row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),

@@ -77,7 +77,7 @@ class ContractOrPolicyNumberController @Inject()(
           },
           value =>
             dataCacheConnector.save(request.externalId, ContractOrPolicyNumberId, value).map {
-              cacheMap => Redirect(navigator.nextPage(ContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
+              cacheMap => Redirect(navigator.nextPage(ContractOrPolicyNumberId, mode, UserAnswers(cacheMap), srn))
             }
         )
       }

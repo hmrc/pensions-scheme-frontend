@@ -101,7 +101,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
 
 object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
@@ -130,7 +130,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
 
   def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  def submitUrlUpdateMode(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrlUpdateMode(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   def addressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
@@ -156,13 +156,13 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): Seq[AnswerSection] = Seq(AnswerSection(None,
+  def answerSection(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(None,
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber,
                    postUrl: Call = submitUrl(index), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

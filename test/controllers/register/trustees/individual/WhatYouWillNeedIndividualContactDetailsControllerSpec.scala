@@ -33,7 +33,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
 
   private def onwardRoute(mode: Mode, srn: SchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, index, srn)
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
-  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber): String = view(
     None, onwardRoute(mode, srn), srn, trusteeName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {

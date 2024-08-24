@@ -48,7 +48,7 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
           bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, srn, index)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

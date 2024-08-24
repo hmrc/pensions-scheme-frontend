@@ -74,7 +74,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
       when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
-      helper.aboutSection(userAnswers, NormalMode, None) mustBe expectedAboutSection
+      helper.aboutSection(userAnswers, NormalMode, srn) mustBe expectedAboutSection
     }
   }
 
@@ -102,7 +102,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         testEstablishersEntitySpoke, None)
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
-      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
+      helper.addEstablisherHeader(userAnswers, NormalMode, srn).value mustBe expectedAddEstablisherHeader
     }
   }
 
@@ -116,7 +116,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         testTrusteeEntitySpoke, None)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
+      helper.addTrusteeHeader(userAnswers, NormalMode, srn).value mustBe expectedAddTrusteesHeader
     }
   }
 
@@ -133,7 +133,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
-      val result = helper.establishersSection(userAnswers, NormalMode, None)
+      val result = helper.establishersSection(userAnswers, NormalMode, srn)
 
       result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
         SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 2 last 2")),
@@ -154,7 +154,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
       when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
-      val result = helper.trusteesSection(userAnswers, NormalMode, None)
+      val result = helper.trusteesSection(userAnswers, NormalMode, srn)
 
       result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 3 last 3")),

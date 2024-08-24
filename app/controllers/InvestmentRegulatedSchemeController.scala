@@ -69,7 +69,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
           value =>
             dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap), srn))
             }
         )
       }

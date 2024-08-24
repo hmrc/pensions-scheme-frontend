@@ -53,7 +53,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.save(NormalMode, None, FakeIdentifier, "foobar") map {
+      testServiceEstAndTrustees.save(NormalMode, srn, FakeIdentifier, "foobar") map {
         _ mustEqual json
       }
     }
@@ -105,7 +105,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.save(NormalMode, None, FakeIdentifier, "foobar") map {
+      testServiceNotAnnotated.save(NormalMode, srn, FakeIdentifier, "foobar") map {
         _ mustEqual json
       }
     }
@@ -208,7 +208,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.remove(NormalMode, None, FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(NormalMode, srn, FakeIdentifier) map {
         _ mustEqual json
       }
     }

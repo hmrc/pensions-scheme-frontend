@@ -47,14 +47,14 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                            (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         get(EstablisherHasUTRId(index), form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         post(EstablisherHasUTRId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))

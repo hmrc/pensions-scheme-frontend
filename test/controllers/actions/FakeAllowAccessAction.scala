@@ -42,7 +42,7 @@ object FakeAllowAccessAction extends MockitoSugar {
   def getMockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 }
 
-case class FakeAllowAccessProvider(srn: SchemeReferenceNumber = None,
+case class FakeAllowAccessProvider(srn: SchemeReferenceNumber,
                                    pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
                                   ) extends AllowAccessActionProvider with MockitoSugar {
 

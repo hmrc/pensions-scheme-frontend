@@ -114,7 +114,7 @@ object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeT
     view(
       taskSections,
       schemeName,
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn).url
     )(fakeRequest, messages).toString
 }
 

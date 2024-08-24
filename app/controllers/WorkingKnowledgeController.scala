@@ -72,7 +72,7 @@ class WorkingKnowledgeController @Inject()(
         value => {
 
           dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap), srn))
           )
         }
       )

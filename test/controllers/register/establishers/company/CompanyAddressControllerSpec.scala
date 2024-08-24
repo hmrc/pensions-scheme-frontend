@@ -77,7 +77,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
     view(
       form,
       ManualAddressViewModel(
-        routes.CompanyAddressController.onSubmit(NormalMode, None, firstIndex),
+        routes.CompanyAddressController.onSubmit(NormalMode, srn, firstIndex),
         options,
         Message("messages__common__confirmAddress__h1", Message("messages__theEstablisher")),
         Message("messages__common__confirmAddress__h1", companyName)
@@ -88,7 +88,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
   "CompanyAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result).removeAllNonces() mustBe viewAsString()
@@ -107,7 +107,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, srn, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(address))
     }
@@ -120,7 +120,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
         "country" -> "GB"
       )
 
-      val result = controller().onSubmit(NormalMode, None, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -130,7 +130,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, firstIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -139,14 +139,14 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, srn, firstIndex)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody()
-          val result = controller(dontGetAnyData).onSubmit(NormalMode, None, firstIndex)(postRequest)
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, srn, firstIndex)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -182,7 +182,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
 
       fakeAuditService.reset()
 
-      val result = controller(data).onSubmit(NormalMode, None, firstIndex)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, srn, firstIndex)(postRequest)
 
       whenReady(result) {
         _ =>

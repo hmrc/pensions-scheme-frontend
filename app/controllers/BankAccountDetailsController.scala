@@ -70,7 +70,7 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
           },
         value =>
           dataCacheConnector.save(request.externalId, BankAccountDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(BankAccountDetailsId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(BankAccountDetailsId, mode, UserAnswers(cacheMap), srn)))
       )
   }
 }

@@ -68,7 +68,7 @@ class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,
           },
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap), srn))
           )
       )
   }

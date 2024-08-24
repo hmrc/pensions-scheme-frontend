@@ -27,11 +27,11 @@ import utils.UserAnswers
 class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from)
 
-  private def navRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  private def navrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case UKBankAccountId => ukBankAccountRoutes(from.userAnswers)
       case BankAccountDetailsId => checkYourAnswers

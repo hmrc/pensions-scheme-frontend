@@ -156,7 +156,7 @@ object EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Mo
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
-  private def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
+  private def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, srn)
 }
 
 

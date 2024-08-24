@@ -44,7 +44,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
-  private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+  private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, srn)
 
   private val view = injector.instanceOf[insuranceCompanyName]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
@@ -71,14 +71,14 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(cache: UserAnswersService): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode, None)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
   "InsuranceCompanyName Controller" must {
 

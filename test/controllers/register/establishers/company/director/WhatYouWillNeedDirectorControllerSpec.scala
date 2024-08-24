@@ -60,7 +60,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, srn, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -97,7 +97,7 @@ class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase 
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, srn, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

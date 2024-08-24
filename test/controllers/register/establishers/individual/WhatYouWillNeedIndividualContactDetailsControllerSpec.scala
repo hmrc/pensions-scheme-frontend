@@ -36,7 +36,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber): String = view(
     None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {

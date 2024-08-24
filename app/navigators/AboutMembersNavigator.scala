@@ -27,14 +27,14 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
                                       appConfig: FrontendAppConfig
                                      ) extends AbstractNavigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
         currentMembersNavigationRoutes(from.userAnswers)
       case MembershipPensionRegulatorId =>
         NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case _ =>
         None
     }
@@ -51,14 +51,14 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
         currentMembersNavigationEditRoutes(from.userAnswers)
       case MembershipPensionRegulatorId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case _ =>
         None
     }
@@ -67,7 +67,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case Some(_) =>
         NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode))
       case _ =>

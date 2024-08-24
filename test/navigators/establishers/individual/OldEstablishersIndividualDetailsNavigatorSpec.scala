@@ -59,7 +59,7 @@ class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(NormalMode, None)),
+        row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(NormalMode, srn)),
         row(EstablisherDOBId(index))(someDate, EstablisherHasNINOController.onPageLoad(NormalMode, index, None)),
         row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(NormalMode, index, None)),
         row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(NormalMode, index, None)),

@@ -91,7 +91,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
 
 object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index                                       = Index(0)
@@ -175,10 +175,10 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     Seq(
       AnswerSection(None,
         Seq(
-          addressAnswerRow(NormalMode, None),
-          addressYearsAnswerRow(NormalMode, None),
-          tradingTimeAnswerRow(NormalMode, None),
-          previousAddressAnswerRow(NormalMode, None)
+          addressAnswerRow(NormalMode, srn),
+          addressYearsAnswerRow(NormalMode, srn),
+          tradingTimeAnswerRow(NormalMode, srn),
+          previousAddressAnswerRow(NormalMode, srn)
         )))
 
   private def partnershipAddressUpdate: Seq[AnswerSection] =
@@ -204,7 +204,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       mockFeatureToggleService
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None,
+  private def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber,
                            postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(
       CYAViewModel(

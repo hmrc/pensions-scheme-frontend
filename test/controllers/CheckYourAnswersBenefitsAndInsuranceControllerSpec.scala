@@ -35,7 +35,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -66,7 +66,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
       }
 
       "display submit button with return to tasklist when in normal mode" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, srn)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }

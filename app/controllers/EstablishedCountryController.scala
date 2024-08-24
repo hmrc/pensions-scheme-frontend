@@ -71,7 +71,7 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
           },
         value =>
           dataCacheConnector.save(request.externalId, EstablishedCountryId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(EstablishedCountryId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(EstablishedCountryId, mode, UserAnswers(cacheMap), srn))
           )
       )
   }

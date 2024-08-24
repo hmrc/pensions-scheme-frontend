@@ -78,7 +78,7 @@ class SchemeNameController @Inject()(
               }
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
-                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap)))
+                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap), srn))
               }
             } recoverWith {
               case e: NotFoundException =>

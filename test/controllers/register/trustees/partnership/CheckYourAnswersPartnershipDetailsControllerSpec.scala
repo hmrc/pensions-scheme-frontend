@@ -53,7 +53,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -63,7 +63,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -286,7 +286,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: SchemeReferenceNumber = None, title:Message, h1:Message): String = {
+                   srn: SchemeReferenceNumber, title:Message, h1:Message): String = {
 
     val route = mode match {
       case NormalMode => onwardRoute(index)

@@ -76,8 +76,8 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
     view(
       form,
       AddressListViewModel(
-        routes.InsurerSelectAddressController.onSubmit(NormalMode, None),
-        routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
+        routes.InsurerSelectAddressController.onSubmit(NormalMode, srn),
+        routes.InsurerConfirmAddressController.onSubmit(NormalMode, srn),
         addresses,
         heading = Message("messages__dynamic_whatIsAddress", insurerCompanyName),
         title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany")),
@@ -101,7 +101,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
 
       val dataRetrieval = new FakeDataRetrievalAction(Some(addressObject))
 
-      val result = controller(dataRetrieval).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dataRetrieval).onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -111,22 +111,22 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       "no addresses are present after lookup" in {
         val dataRetrieval = new FakeDataRetrievalAction(Some(schemeNameJsValue))
 
-        val result = controller(dataRetrieval).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(dataRetrieval).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          controllers.routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, None).url)
+          controllers.routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, srn).url)
       }
 
       "no addresses are present after lookup (post)" in {
 
         val dataRetrieval = new FakeDataRetrievalAction(Some(schemeNameJsValue))
 
-        val result = controller(dataRetrieval).onSubmit(NormalMode, None)(fakeRequest)
+        val result = controller(dataRetrieval).onSubmit(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          controllers.routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, None).url)
+          controllers.routes.InsurerEnterPostcodeController.onPageLoad(NormalMode, srn).url)
       }
     }
 
@@ -136,7 +136,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "1"))
 
-      val result = controller(dataRetrieval).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dataRetrieval).onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -146,7 +146,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
       val result = controller(new FakeDataRetrievalAction(Some(addressObject)), FakeUserAnswersService)
-        .onSubmit(NormalMode, None)(postRequest)
+        .onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustEqual SEE_OTHER
       FakeUserAnswersService.userAnswer.get(InsurerSelectAddressId).value mustEqual (addresses.head.copy(countryOpt = Some("GB")))
@@ -159,7 +159,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(dataRetrieval).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dataRetrieval).onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -168,7 +168,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, srn)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -176,14 +176,14 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
 
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "1"))
-          val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, srn)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
       }
       "scheme name is not present" in {
-        val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(dontGetAnyData).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

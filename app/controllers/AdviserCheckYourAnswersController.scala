@@ -61,7 +61,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
       val vm = CYAViewModel(
         answerSections = seqAnswerSection,
-        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,

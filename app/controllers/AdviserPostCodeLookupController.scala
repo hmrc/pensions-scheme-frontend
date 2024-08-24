@@ -65,7 +65,7 @@ class AdviserPostCodeLookupController @Inject()(
     (authenticate() andThen getData(srn=srn) andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
-          post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName), mode)
+          post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName, srn), mode)
         }
     }
 
@@ -75,6 +75,7 @@ class AdviserPostCodeLookupController @Inject()(
       routes.AdviserAddressController.onPageLoad(mode, srn),
       title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
-      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
+      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+      srn = srn
     )
 }

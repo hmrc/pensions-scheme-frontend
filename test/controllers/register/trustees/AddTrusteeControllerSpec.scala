@@ -136,7 +136,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, srn)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -156,7 +156,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, srn)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -176,7 +176,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, srn)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -186,7 +186,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -196,7 +196,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -208,14 +208,14 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, srn)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm, allTrustees)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -223,7 +223,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

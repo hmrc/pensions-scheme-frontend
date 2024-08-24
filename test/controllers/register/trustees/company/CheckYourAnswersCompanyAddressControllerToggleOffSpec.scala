@@ -100,7 +100,7 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
 
 object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -131,7 +131,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
     trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -175,8 +175,8 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    tradingTimeAnswerRow(NormalMode, None), previousAddressAnswerRow(NormalMode, None)
+    addressAnswerRow(NormalMode, srn), addressYearsAnswerRow(NormalMode, srn),
+    tradingTimeAnswerRow(NormalMode, srn), previousAddressAnswerRow(NormalMode, srn)
   )))
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
@@ -193,7 +193,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,

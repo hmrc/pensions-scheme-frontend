@@ -27,7 +27,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn)
 
   private val trusteeIndex = Index(0)
 

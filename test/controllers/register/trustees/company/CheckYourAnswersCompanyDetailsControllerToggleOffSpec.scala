@@ -53,7 +53,7 @@ class CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSp
 
         status(result) mustBe OK
 
-        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(companyDetailsAllValues(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -63,7 +63,7 @@ class CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSp
         val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -116,7 +116,7 @@ class CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSp
 
 object CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -183,7 +183,7 @@ object CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerS
             _.set(HasCompanyPAYEId(0))(false)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -310,7 +310,7 @@ object CheckYourAnswersCompanyDetailsControllerToggleOffSpec extends ControllerS
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: SchemeReferenceNumber = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+                   srn: SchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

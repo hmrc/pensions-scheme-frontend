@@ -24,16 +24,16 @@ import utils.annotations.Racdac
 
 class RACDACNavigator @Inject()(@Racdac val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = from.id match {
     case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode))
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, srn))
     case DeclarationId => NavigateTo.dontSave(controllers.racdac.routes.SchemeSuccessController.onPageLoad())
     case _ => None
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = from.id match {
+    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, srn))
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, srn))
     case _ => None
   }
 
