@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{AddressYears, Index, Mode}
+import models.{AddressYears, Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

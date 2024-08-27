@@ -70,7 +70,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                   case Some(true) =>
                     Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(mode, srn))
                   case _ =>
-                    Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
+                    Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(srn))
                 }
               }
 

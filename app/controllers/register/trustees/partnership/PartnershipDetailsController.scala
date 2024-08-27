@@ -37,6 +37,7 @@ import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.partnership.partnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PartnershipDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,

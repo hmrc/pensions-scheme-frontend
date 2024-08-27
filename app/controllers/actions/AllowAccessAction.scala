@@ -131,7 +131,7 @@ class AllowAccessActionMain(
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
       destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, (srn)))),
+      (srn))),
       checkForSuspended = true
     )
   }
@@ -169,8 +169,7 @@ class AllowAccessActionNoSuspendedCheck(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, (srn)))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))),
       checkForSuspended = false
     )
   }

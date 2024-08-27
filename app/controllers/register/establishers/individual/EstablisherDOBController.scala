@@ -73,5 +73,5 @@ class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  private def postCall: (Mode, Index, Option[String]) => Call = routes.EstablisherDOBController.onSubmit
+  private def postCall: (Mode, Index, SchemeReferenceNumber) => Call = routes.EstablisherDOBController.onSubmit
 }

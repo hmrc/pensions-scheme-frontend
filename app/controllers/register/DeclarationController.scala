@@ -97,7 +97,7 @@ class DeclarationController @Inject()(
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
           showPage(Ok.apply)
         } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)))
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
         }
       }
   }
@@ -170,7 +170,7 @@ class DeclarationController @Inject()(
         Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), srn))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, srn)))
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(srn)))
         case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }

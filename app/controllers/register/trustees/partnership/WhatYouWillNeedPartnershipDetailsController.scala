@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedPartnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipDetailsController @Inject()(
                                                              val appConfig: FrontendAppConfig,

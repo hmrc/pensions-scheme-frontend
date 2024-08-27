@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,

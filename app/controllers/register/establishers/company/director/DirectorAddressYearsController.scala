@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipEmailController @Inject()(val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,

@@ -22,6 +22,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
 import models.{CheckMode, Members, NormalMode}
 import utils.{Enumerable, UserAnswers}
+import models.SchemeReferenceNumber
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       appConfig: FrontendAppConfig

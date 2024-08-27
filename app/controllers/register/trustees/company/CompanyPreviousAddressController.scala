@@ -39,6 +39,7 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,

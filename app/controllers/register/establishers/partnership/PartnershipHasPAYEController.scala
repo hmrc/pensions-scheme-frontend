@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipHasPAYEId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

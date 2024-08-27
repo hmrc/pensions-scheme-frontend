@@ -22,9 +22,10 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

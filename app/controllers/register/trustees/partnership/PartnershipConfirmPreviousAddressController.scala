@@ -34,6 +34,7 @@ import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,

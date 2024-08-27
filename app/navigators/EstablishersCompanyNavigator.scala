@@ -182,7 +182,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckMode, srn)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 

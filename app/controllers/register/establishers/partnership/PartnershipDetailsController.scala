@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

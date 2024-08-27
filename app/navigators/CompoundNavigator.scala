@@ -26,6 +26,7 @@ import utils.UserAnswers
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends Navigator {
 

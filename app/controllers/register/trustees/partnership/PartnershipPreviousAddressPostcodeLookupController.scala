@@ -34,6 +34,7 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                     override val appConfig: FrontendAppConfig,

@@ -40,6 +40,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
@@ -69,7 +70,8 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
   private def viewmodel(mode: Mode, index: Index, srn: SchemeReferenceNumber) = CommonFormWithHintViewModel(
     TrusteeNameController.onSubmit(mode, index, srn),
     Message("messages__trusteeName__title"),
-    Message("messages__trusteeName__heading")
+    Message("messages__trusteeName__heading"),
+    srn = srn
   )
 
 

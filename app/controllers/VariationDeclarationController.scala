@@ -21,7 +21,7 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
-import models.{SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
+import models.{Mode, SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -58,7 +58,7 @@ class VariationDeclarationController @Inject()(
     with I18nSupport
     with Enumerable.Implicits {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
             updateSchemeCacheConnector.fetch(srn).map {
@@ -69,7 +69,7 @@ class VariationDeclarationController @Inject()(
                   href = VariationDeclarationController.onClickAgree(srn)
                 ))
               case _ =>
-                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
+                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
             }
     }
 
@@ -96,7 +96,7 @@ class VariationDeclarationController @Inject()(
               } yield Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
             } recoverWith {
               case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-                Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(UpdateMode, srn)))
+                Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(srn)))
               case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
           case _ =>

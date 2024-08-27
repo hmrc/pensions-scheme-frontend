@@ -36,7 +36,7 @@ import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-
+import models.SchemeReferenceNumber
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
@@ -78,9 +78,9 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
         val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
           (isEnabled, mode) match {
             case (true, NormalMode) =>
-              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(srn)
           }
         }
 

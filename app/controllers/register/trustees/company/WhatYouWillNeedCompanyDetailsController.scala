@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 
 import scala.concurrent.Future
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,

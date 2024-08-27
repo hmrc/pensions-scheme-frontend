@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
-import models.{FeatureToggleName, Mode, NormalMode}
+import models.{FeatureToggleName, Mode, NormalMode, SchemeReferenceNumber}
 import models.register.Trustee
 import models.requests.DataRequest
 import navigators.Navigator

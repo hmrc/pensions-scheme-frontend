@@ -24,6 +24,7 @@ import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
 import utils.UserAnswers
+import models.SchemeReferenceNumber
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                         frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {

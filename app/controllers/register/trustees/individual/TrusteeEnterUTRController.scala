@@ -32,6 +32,7 @@ import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,

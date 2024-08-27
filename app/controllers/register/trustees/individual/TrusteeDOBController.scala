@@ -35,6 +35,7 @@ import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -66,7 +67,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  private def postCall: (Mode, Index, Option[String]) => Call = routes.TrusteeDOBController.onSubmit
+  private def postCall: (Mode, Index, SchemeReferenceNumber) => Call = routes.TrusteeDOBController.onSubmit
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {

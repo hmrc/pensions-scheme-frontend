@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.register.establishers.partnership.routes._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipHasVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

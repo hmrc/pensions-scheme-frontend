@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.company.director._
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -23,10 +23,11 @@ import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostcodeLookupId}
+
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerHasNINOId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

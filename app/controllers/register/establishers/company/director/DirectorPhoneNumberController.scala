@@ -21,8 +21,9 @@ import controllers.PhoneNumberController
 import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorPhoneNumberId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

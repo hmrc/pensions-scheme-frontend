@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNoUTRReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

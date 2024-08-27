@@ -29,6 +29,7 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,

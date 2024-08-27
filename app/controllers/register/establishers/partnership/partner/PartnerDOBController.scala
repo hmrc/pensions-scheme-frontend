@@ -17,15 +17,15 @@
 package controllers.register.establishers.partnership.partner
 
 import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -84,5 +84,5 @@ class PartnerDOBController @Inject()(
     )
   }
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
+  private def postCall: (Mode, Index, Index, SchemeReferenceNumber) => Call = routes.PartnerDOBController.onSubmit
 }

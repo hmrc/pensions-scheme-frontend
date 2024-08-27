@@ -32,6 +32,7 @@ import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TrusteeEnterNINOController @Inject()(
                                             val appConfig: FrontendAppConfig,

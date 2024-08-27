@@ -34,6 +34,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,

@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions._
 import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoCRNReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -25,7 +25,7 @@ import identifiers.register.trustees.company._
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,6 +38,7 @@ import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class CheckYourAnswersCompanyDetailsController @Inject()(
                                                           appConfig: FrontendAppConfig,
@@ -93,7 +94,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
         val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
           (isEnabled, mode) match {
             case (true, NormalMode) =>
-              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
             case _ =>
               controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
           }

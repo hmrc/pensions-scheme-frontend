@@ -48,12 +48,12 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
     implicit request =>
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
       (srn, request.userAnswers, schemeNameOpt) match {
-        case (None, Some(userAnswers), Some(schemeName)) =>
+        case (_, Some(userAnswers), Some(schemeName)) =>
           Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id),
             schemeName,
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url
           )))
-        case (Some(_), _, _) =>
+        case (_, _, _) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
         case _ =>
           Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))

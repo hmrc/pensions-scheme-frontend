@@ -51,7 +51,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
       val bankAccountSection = AnswerSection(
         None,
         UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode, srn).url) ++
-          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
+          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode, srn).url)
       )
 
       val vm = CYAViewModel(

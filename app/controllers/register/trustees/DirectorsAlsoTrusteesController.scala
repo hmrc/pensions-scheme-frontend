@@ -83,8 +83,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       Right(formRadio)
     }
 
-  def onPageLoad(index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map { schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -92,7 +92,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
               val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
               if (candidateDirectors.isEmpty) {
                 Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                  .onPageLoad(NormalMode, index, None)))
+                  .onPageLoad(NormalMode, index, srn)))
               } else {
                 renderView(Ok,
                   candidateDirectors,
@@ -103,7 +103,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
               }
             case _ =>
               Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                .onPageLoad(NormalMode, index, None)))
+                .onPageLoad(NormalMode, index, srn)))
           }.flatten
         }
     }
@@ -121,8 +121,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIdentifier)
   }
 
-  def onSubmit(index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(None) andThen requireData).async {
+  def onSubmit(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.map { schemeName =>
@@ -136,7 +136,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(value, candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
-                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy, index)
+                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy, index, srn)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -156,7 +156,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   appendSelectedDirectors(List(0), candidateDirectors)
                 }
                 userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
-                  nav(value < 0, uaAfterCopy, index)
+                  nav(value < 0, uaAfterCopy, index, srn)
                 }
               case _ =>
                 renderView(BadRequest,
@@ -170,9 +170,9 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         }
     }
 
-  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers, index:Index): Result = {
+  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers, index:Index, srn: SchemeReferenceNumber): Result = {
     if (noneSelected) {
-      Redirect(TrusteeNameController.onPageLoad(NormalMode, index, None))
+      Redirect(TrusteeNameController.onPageLoad(NormalMode, index, srn))
     } else {
       Redirect(AddTrusteeController.onPageLoad(NormalMode, srn))
     }

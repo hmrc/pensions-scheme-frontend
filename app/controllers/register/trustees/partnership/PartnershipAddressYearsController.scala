@@ -35,6 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipAddressYearsController @Inject()(
                                                    override val appConfig: FrontendAppConfig,

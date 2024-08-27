@@ -34,6 +34,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,

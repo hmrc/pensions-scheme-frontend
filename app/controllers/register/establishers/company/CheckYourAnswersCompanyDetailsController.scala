@@ -85,7 +85,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
         val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
           (isEnabled, mode) match {
             case (true, NormalMode) =>
-              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
             case _ =>
               controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
           }

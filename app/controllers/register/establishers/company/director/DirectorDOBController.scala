@@ -74,7 +74,7 @@ class DirectorDOBController @Inject()(
     )
   }
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
+  private def postCall: (Mode, Index, Index, SchemeReferenceNumber) => Call = routes.DirectorDOBController.onSubmit
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {

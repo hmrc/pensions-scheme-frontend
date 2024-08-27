@@ -34,6 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 @Singleton
 class TrusteeAddressYearsController @Inject()(

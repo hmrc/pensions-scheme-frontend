@@ -38,7 +38,7 @@ import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
-
+import models.SchemeReferenceNumber
 class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               appConfig: FrontendAppConfig,
                                                               override val messagesApi: MessagesApi,
@@ -87,9 +87,9 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
           (isEnabled, mode) match {
             case (true, NormalMode) =>
-              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(srn)
           }
         }
 

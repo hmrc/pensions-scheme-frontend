@@ -29,6 +29,7 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipContactDetailsController @Inject()(
                                                                     val appConfig: FrontendAppConfig,

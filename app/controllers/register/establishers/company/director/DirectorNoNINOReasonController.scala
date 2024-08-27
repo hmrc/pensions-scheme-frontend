@@ -21,9 +21,10 @@ import controllers.actions._
 import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNoNINOReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

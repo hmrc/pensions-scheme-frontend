@@ -11,7 +11,7 @@ GET         /scheme-detail/:srn                                     controllers.
 
 GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: SchemeReferenceNumber)
 
-GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: SchemeReferenceNumber)
+GET         /:mode/scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 

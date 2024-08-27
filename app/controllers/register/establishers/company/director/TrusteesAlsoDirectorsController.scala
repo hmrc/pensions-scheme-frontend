@@ -62,19 +62,20 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                          eitherForm: Either[Form[List[Int]], Form[Int]],
                          establisherIndex: Int,
                          companyName: CompanyDetails,
-                         schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+                         schemeName: String,
+                         srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__directors__prefill__title")
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
         val options = DataPrefillCheckbox.checkboxes(seqTrustee)
-        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex, srn)
         Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__directors__prefill__title")
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
         val options = DataPrefillRadio.radios(seqTrustee)
-        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+        val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex, srn)
         Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
     }
   }
@@ -103,12 +104,13 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   getFormAsEither(seqTrustee, establisherIndex),
                   establisherIndex,
                   companyName,
-                  schemeName
+                  schemeName,
+                  srn
                 )
               }
             case _ =>
               Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
+                .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
           }.flatten
         }
     }
@@ -138,7 +140,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   Left(boundForm),
                   establisherIndex,
                   companyName,
-                  schemeName
+                  schemeName,
+                  srn
                 )
             }
           } else {
@@ -160,7 +163,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   Right(boundForm),
                   establisherIndex,
                   companyName,
-                  schemeName
+                  schemeName,
+                  srn
                 )
             }
           }

@@ -46,7 +46,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
       implicit request =>
         val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
         val futureURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-          case true => TrusteesAlsoDirectorsController.onPageLoad(establisherIndex)
+          case true => TrusteesAlsoDirectorsController.onPageLoad(establisherIndex, srn)
           case _ => DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
         }
 

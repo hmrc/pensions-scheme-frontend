@@ -116,7 +116,7 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId, name: Strin
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index, srn).url)
       case _ => None
     }
   }
@@ -142,7 +142,7 @@ case class EstablisherIndividualEntity(id: EstablisherNameId, name: String, isDe
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index, srn).url)
       case _ => None
     }
   }
@@ -169,7 +169,7 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId, name: String, 
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(id.index, srn).url)
       case _ => None
     }
   }
@@ -212,7 +212,7 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId, name: String, isDel
 
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = mode match {
     case NormalMode | CheckMode =>
-      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index, srn).url)
     case _ => None
   }
 
@@ -243,7 +243,7 @@ case class TrusteeIndividualEntity(id: TrusteeNameId, name: String, isDeleted: B
 
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = mode match {
     case NormalMode | CheckMode =>
-      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.trusteeIndex).url)
+      Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.trusteeIndex, srn).url)
     case _ => None
   }
 
@@ -261,7 +261,7 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId, name: Strin
   override def editLink(mode: Mode, srn: SchemeReferenceNumber): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index).url)
+        Some(PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(id.index, srn).url)
       case _ => None
     }
   }

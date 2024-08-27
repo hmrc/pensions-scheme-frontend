@@ -33,6 +33,7 @@ import viewmodels.{Message, PayeViewModel}
 import views.html.paye
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipEnterPAYEController @Inject()(
                                                 val appConfig: FrontendAppConfig,

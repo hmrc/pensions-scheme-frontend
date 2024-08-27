@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
-import models.{Index, Mode, PartnershipDetails}
+import models.{Index, Mode, PartnershipDetails, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

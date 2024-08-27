@@ -33,6 +33,7 @@ import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
