@@ -36,15 +36,15 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
   val form: Form[MoneyPurchaseBenefits] = formProvider()
   val schemeName = "Test Scheme Name"
-  val postCall: (mode, SchemeReferenceNumber) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
+  val postCall: (Mode, SchemeReferenceNumber) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
 
   private val view = injector.instanceOf[moneyPurchaseBenefits]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): MoneyPurchaseBenefitsController =
     new MoneyPurchaseBenefitsController(messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(srn), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, srn), None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, srn), srn)(fakeRequest, messages).toString
 
   private val validData = Json.obj(
     SchemeNameId.toString -> schemeName,

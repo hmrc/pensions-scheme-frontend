@@ -43,16 +43,16 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       controllerComponents,
       view,
       mockFeatureToggleService
     )
 
-  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(0)
+  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(0, srn)
 
-  private def viewAsString(): String = view(None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, srn, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
@@ -80,16 +80,16 @@ class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase 
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       controllerComponents,
       view,
       mockFeatureToggleService
     )
 
-  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, srn)
 
-  private def viewAsString(): String = view(None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, srn, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 

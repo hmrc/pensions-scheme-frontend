@@ -63,7 +63,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       formProvider,
       mockPensionAdministratorConnector,
       controllerComponents,

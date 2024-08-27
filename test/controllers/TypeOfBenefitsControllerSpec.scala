@@ -44,7 +44,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
 
 
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, postCall, Some("Test Scheme Name"))(fakeRequest, messages).toString()
+    view(form, postCall, Some("Test Scheme Name"), srn)(fakeRequest, messages).toString()
 
   private def controller(
                           dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -58,7 +58,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,

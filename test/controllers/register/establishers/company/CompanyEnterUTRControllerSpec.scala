@@ -65,7 +65,6 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   private val view = injector.instanceOf[utr]
 

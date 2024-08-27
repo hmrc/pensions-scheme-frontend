@@ -21,6 +21,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
+import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
@@ -83,11 +84,12 @@ object PostcodeLookupControllerSpec {
 
 }
 
-class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSugar with ScalaFutures with OptionValues {
+class PostcodeLookupControllerSpec extends ControllerSpecBase with Matchers with MockitoSugar with ScalaFutures with OptionValues {
 
   val viewmodel: PostcodeLookupViewModel = PostcodeLookupViewModel(
     Call("GET", "www.example.com"),
-    Call("POST", "www.example.com")
+    Call("POST", "www.example.com"),
+    srn = srn
   )
 
   private val view = injector.instanceOf[postcodeLookup]
@@ -129,7 +131,7 @@ class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSu
         Seq(address)
       }
 
-      when(userAnswersService.save(eqTo(NormalMode), eqTo(None), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any()))
+      when(userAnswersService.save(eqTo(NormalMode), eqTo(srn), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any()))
       .thenReturn (Future.successful(Json.obj()))
 
       running(_.overrides(

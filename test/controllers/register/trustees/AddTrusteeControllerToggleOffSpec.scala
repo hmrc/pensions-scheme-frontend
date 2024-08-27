@@ -66,10 +66,10 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
   }
 
   def editTrusteeCompanyRoute(id: Int): String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, srn).url
 
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, srn).url
 
   private val view = injector.instanceOf[addTrustee]
   private val oldView = injector.instanceOf[addTrusteeOld]
@@ -81,7 +81,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       mockFeatureToggleService,
@@ -94,7 +94,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    oldView(form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
+    oldView(form, NormalMode, trustees, None, srn)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(

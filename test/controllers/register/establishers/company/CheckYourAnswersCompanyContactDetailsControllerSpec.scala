@@ -45,11 +45,10 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val name = "test company"
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   private def submitUrlUpdateMode(mode: Mode, srn: SchemeReferenceNumber): Call =
     PsaSchemeTaskListController.onPageLoad(mode, srn)
@@ -78,7 +77,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
@@ -88,7 +87,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn),
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -123,7 +122,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn), srn,
             title = Message("checkYourAnswers.hs.heading"),
             h1 = Message("checkYourAnswers.hs.heading"))
         }

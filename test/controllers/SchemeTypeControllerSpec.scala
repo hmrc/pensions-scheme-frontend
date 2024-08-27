@@ -64,12 +64,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, schemeName, srn)(fakeRequest, messages).toString
 
   "SchemeType Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -79,7 +79,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
       val validData = UserAnswers().schemeName(schemeName).schemeType(SchemeType.SingleTrust).json
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, srn)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(SchemeType.SingleTrust))
     }
@@ -87,7 +87,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeType.type", "single"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -98,7 +98,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)
@@ -108,7 +108,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "My PSA"))
         val boundForm = form.bind(Map("value" -> "My PSA"))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -51,7 +51,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -72,7 +72,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
     behave like dateOfBirthController(
       get = data => controller(data).onPageLoad(NormalMode, 0, None),
       post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual").resolve),
+      viewModel = viewModel(NormalMode, index, srn, Message("messages__theIndividual").resolve),
       mode = NormalMode,
       requiredData = getMandatoryTrustee,
       validData = validData,

@@ -60,7 +60,7 @@ trait SpecBase
 
   def modules(dataRetrievalAction: DataRetrievalAction): Seq[GuiceableModule] = Seq(
     bind[AuthAction].toInstance(FakeAuthAction),
-    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
     bind[DataRetrievalAction].toInstance(dataRetrievalAction)
   )
 

@@ -42,7 +42,7 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
       "return OK and the correct view" in {
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
-          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
           bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipAddressController]

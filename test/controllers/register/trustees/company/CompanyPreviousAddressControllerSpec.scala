@@ -82,14 +82,15 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           val controller = app.injector.instanceOf[CompanyPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex, None),
+            controller.postCall(NormalMode, firstIndex, srn),
             countryOptions.options,
             Message(controller.title, Message("messages__theCompany")),
-            Message(controller.heading, companyDetails.companyName)
+            Message(controller.heading, companyDetails.companyName),
+            srn = srn
           )
 
           val request = addCSRFToken(
-            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
+            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex, srn))
               .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -142,7 +143,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
                 "country" -> address.country))
 
             val controller = app.injector.instanceOf[CompanyPreviousAddressController]
-            val result = controller.onSubmit(NormalMode, Index(0), None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, Index(0), srn)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
@@ -184,7 +185,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           fakeAuditService.reset()
 
           val controller = app.injector.instanceOf[CompanyPreviousAddressController]
-          val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
           whenReady(result) {
             _ =>

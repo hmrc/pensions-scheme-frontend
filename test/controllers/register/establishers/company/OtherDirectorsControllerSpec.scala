@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
-import models.{CompanyDetails, Index, Mode, NormalMode}
+import models.{CompanyDetails, Index, Mode, NormalMode, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -65,7 +65,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -79,7 +79,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       index,
       None,
       postCall(NormalMode, srn, index),
-      None
+      srn
     )(fakeRequest, messages).toString
 
   "OtherDirectors Controller" must {

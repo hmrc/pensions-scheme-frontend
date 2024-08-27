@@ -43,13 +43,12 @@ import scala.concurrent.Future
 
 class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val trusteeName = "test name"
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(mode: Mode): Call = mode match {
-      case NormalMode => controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+      case NormalMode => controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
       case _ => controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
     }
 
@@ -101,13 +100,14 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"), postUrl = submitUrl(NormalMode))
+            h1 = Message("checkYourAnswers.hs.heading"), postUrl = submitUrl(NormalMode),
+            srn = srn)
           app.stop()
         }
 
@@ -116,10 +116,10 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>

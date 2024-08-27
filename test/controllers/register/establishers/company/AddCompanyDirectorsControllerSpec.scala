@@ -80,7 +80,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       postCall(NormalMode, srn, establisherIndex),
       false,
       NormalMode,
-      None
+      srn
     )(fakeRequest, messages).toString
 
   private val establisherIndex = 0

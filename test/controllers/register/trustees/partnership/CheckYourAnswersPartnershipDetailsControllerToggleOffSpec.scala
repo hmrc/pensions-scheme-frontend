@@ -50,22 +50,24 @@ class CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Controll
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes())
-        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -129,7 +131,6 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: SchemeReferenceNumber = Some("S123")
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -270,10 +271,10 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute()),
+      new FakeNavigator(onwardRoute(NormalMode, srn)),
       FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,

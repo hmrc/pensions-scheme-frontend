@@ -22,7 +22,7 @@ import connectors.PensionsSchemeConnector
 import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
-import models.{PSAMinimalFlags, UpdateMode}
+import models.{PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -128,11 +128,11 @@ class AllowAccessActionSpec
       super.filter(request)
   }
 
-  private val generateTestHarnessForAllowAccessMain: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessMain: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessAction(_, _)
-  private val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessTaskList: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionTaskList(_, _)
-  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
   private val srn = Some("S123")

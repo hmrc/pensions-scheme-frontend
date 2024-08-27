@@ -53,7 +53,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is None and there is user answers with toggle off" must {
       "return OK and the old view" in {
-        when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
+        when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, srn)(fakeRequest)
 
@@ -112,7 +112,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           .onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe psaTaskListRegistrationView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
+        contentAsString(result) mustBe psaTaskListRegistrationView(schemeDetailsTL, schemeName, srn)(fakeRequest, messages).toString()
       }
     }
 
@@ -171,7 +171,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val srnValue = "S1000000456"
-  private val srn = Some(srnValue)
   private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =
@@ -180,7 +179,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       controllerComponents,
       mockFeatureToggleService,
       oldView,
@@ -194,8 +193,8 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
-  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
+    controllers.routes.SchemeNameController.onPageLoad(srn).url), Some(false)))
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad(srn).url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
   private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
@@ -203,7 +202,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
-    schemeName, None,
+    schemeName, srn,
     beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
     about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
     workingKnowledge = None,

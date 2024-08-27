@@ -33,22 +33,22 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       controllerComponents,
       view
     )
 
-  private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, None)
+  private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, srn)
 
   private def viewAsString(): String =
-    view(None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
+    view(None, href, srn, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, index = 0, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index = 0, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

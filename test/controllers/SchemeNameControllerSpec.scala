@@ -69,7 +69,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
@@ -79,12 +79,12 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme, srn)(fakeRequest, messages).toString
 
   "SchemeName Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -94,7 +94,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       val validData = Json.obj(SchemeNameId.toString -> "value 1")
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, srn)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill("value 1"))
     }
@@ -102,7 +102,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -113,7 +113,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)
@@ -129,7 +129,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
 
-        val result = controller(nameMatchingFactory = FakeNameMatchingFactoryWithMatch).onSubmit(NormalMode)(postRequest)
+        val result = controller(nameMatchingFactory = FakeNameMatchingFactoryWithMatch).onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

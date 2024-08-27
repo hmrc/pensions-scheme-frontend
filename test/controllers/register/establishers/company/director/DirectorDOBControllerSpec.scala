@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, Mode, NormalMode}
+import models.{CompanyDetails, Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -52,7 +52,7 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -70,9 +70,9 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
   "DirectorDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector")),
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex,srn),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex,srn),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex,srn, Message("messages__theDirector")),
       mode = NormalMode,
       requiredData = getMandatoryEstablisherCompanyDirectorWithDirectorName,
       validData = validData,

@@ -42,7 +42,6 @@ import scala.concurrent.Future
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val establisherName = PersonName("test", "name")
   private val email = "test@test.com"
   private val phone = "1234"
@@ -51,7 +50,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   private def answerSection(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
@@ -75,7 +74,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(
@@ -113,12 +112,13 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
                 title = Message("checkYourAnswers.hs.heading"),
-                h1 = Message("checkYourAnswers.hs.heading"))
+                h1 = Message("checkYourAnswers.hs.heading"),
+                srn = srn)
           }
         }
 
@@ -127,7 +127,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           val ftBinding: Seq[GuiceableModule] = Seq(
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
           running(_.overrides(ftBinding: _*)) {

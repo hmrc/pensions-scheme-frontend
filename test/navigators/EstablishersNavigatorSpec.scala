@@ -22,6 +22,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
 import models.{Mode, NormalMode, UpdateMode}
+import navigators.AboutBenefitsAndInsuranceNavigatorSpec.srn
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
@@ -50,7 +51,7 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
 
           rowNoValue(ConfirmDeleteEstablisherId)(addEstablisher(NormalMode))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -64,9 +65,9 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
           row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(UpdateMode)),
           row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(UpdateMode)),
 
-          rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(None))
+          rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
     }
   }
 }
@@ -77,15 +78,15 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
-  private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, None, 0)
+  private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, srn, 0)
 
   private def individualName(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, 0, None)
 
   private def partnershipDetails(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, None)
 
-  private def establisherKind(mode: Mode) = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, 0, None)
+  private def establisherKind(mode: Mode) = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, 0, srn)
 
-  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
+  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
 
-  private def taskList(mode: Mode) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, None)
+  private def taskList(mode: Mode) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 }

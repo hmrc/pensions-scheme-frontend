@@ -29,7 +29,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.{AdviserNameId, SchemeNameId}
 import models.person.PersonName
-import models.{CompanyDetails, PartnershipDetails, person}
+import models.{CompanyDetails, PartnershipDetails, SchemeReferenceNumber, person}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.json.{JsObject, Json}
@@ -45,6 +45,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     def removeAllNonces(): String = s.replaceAll("""nonce="[^"]*"""", "")
   }
 
+  val srn = SchemeReferenceNumber("S123456L")
   val cacheMapId = "id"
 
   def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))

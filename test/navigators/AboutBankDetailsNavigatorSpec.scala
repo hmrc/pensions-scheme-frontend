@@ -17,16 +17,17 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.{BankAccountDetailsId, Identifier, UKBankAccountId}
 import models.register.SortCode
-import models.{BankAccountDetails, CheckMode, NormalMode}
+import models.{BankAccountDetails, CheckMode, NormalMode, SchemeReferenceNumber}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class AboutBankDetailsNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import AboutBankDetailsNavigatorSpec._
 
@@ -42,7 +43,7 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(UKBankAccountId)(false, checkYourAnswersPage),
           row(BankAccountDetailsId)(bankDetails, checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
@@ -53,15 +54,16 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(UKBankAccountId)(false, checkYourAnswersPage),
           row(BankAccountDetailsId)(bankDetails, checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
   }
 
 }
 object AboutBankDetailsNavigatorSpec {
   private val bankDetails = BankAccountDetails(SortCode("34", "45", "67"), "1234567890")
+  val srn = SchemeReferenceNumber("S123456L")
 
-  private val ukBankDetailsPage: Call    = controllers.routes.BankAccountDetailsController.onPageLoad(NormalMode)
-  private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad()
+  private val ukBankDetailsPage: Call    = controllers.routes.BankAccountDetailsController.onPageLoad(NormalMode, srn)
+  private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad(srn)
 
 }

@@ -18,7 +18,8 @@ package navigators
 
 import identifiers.Identifier
 import models.requests.{AuthenticatedRequest, IdentifiedRequest}
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, SchemeReferenceNumber}
+import navigators.AboutBenefitsAndInsuranceNavigatorSpec.srn
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
@@ -59,7 +60,7 @@ class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 
       val compoundNavigator = new CompoundNavigator(navigators.asJava)
 
-      val result = compoundNavigator.nextPage(TestIdentifier, NormalMode, UserAnswers(), None)
+      val result = compoundNavigator.nextPage(TestIdentifier, NormalMode, UserAnswers(), srn)
 
       result mustEqual Call("GET", "www.example.com/1")
     }

@@ -29,7 +29,6 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
 
   private val trusteeName = person.PersonName("Test", "Name")
   private val index = 0
-  private val srn = Some("srn")
 
   private def onwardRoute(mode: Mode, srn: SchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, index, srn)
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
@@ -43,10 +42,10 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
           modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString()
+          contentAsString(result) mustBe viewAsString(NormalMode, srn)
         }
       }
     }

@@ -54,7 +54,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("paye", "123456789"))
-          val result = controller.onSubmit(CheckUpdateMode, index = 0, None)(postRequest)
+          val result = controller.onSubmit(CheckUpdateMode, index = 0, srn)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -68,7 +68,6 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   val partnershipName = "test partnership name"
   val form = new PayeFormProvider()(partnershipName)
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

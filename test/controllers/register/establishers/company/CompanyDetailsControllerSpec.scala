@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
-  def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex)
+  def onwardRoute: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(firstIndex, srn)
   def onwardRouteToggleOff: Call = controllers.routes.IndexController.onPageLoad
 
   private val formProvider = new CompanyDetailsFormProvider()
@@ -54,10 +54,10 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(srn), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
-    postCall(NormalMode, srn, 0), None)(fakeRequest, messages).toString
+    postCall(NormalMode, srn, 0), srn)(fakeRequest, messages).toString
 
   private val validData = Json.obj(
     EstablishersId.toString -> Json.arr(

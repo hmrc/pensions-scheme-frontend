@@ -44,7 +44,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListEstablishers)
@@ -55,7 +55,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+        .onPageLoad(NormalMode, 0, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -63,7 +63,6 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
 }
 
 object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeTaskListRegistrationEstablisherControllerSpec with MockitoSugar {
-  private val srn = None
   private val h1 = "h1"
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
@@ -103,7 +102,7 @@ object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeT
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       controllerComponents,
       view,
       mockHsTaskListHelperRegistration

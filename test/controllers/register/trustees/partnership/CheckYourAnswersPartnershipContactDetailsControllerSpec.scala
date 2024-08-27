@@ -51,7 +51,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   }
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
@@ -61,7 +60,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(index: Int): Call =
-    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   private def updateModeUrl(mode: Mode, srn: SchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
@@ -109,12 +108,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
             Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
                 title = Message("checkYourAnswers.hs.heading"),
-                h1 = Message("checkYourAnswers.hs.heading"))
+                h1 = Message("checkYourAnswers.hs.heading"),
+                srn = srn)
           }
         }
 
@@ -122,7 +122,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           val ftBinding: Seq[GuiceableModule] = Seq(
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))
           running(_.overrides(ftBinding: _*)) {
             app =>

@@ -49,7 +49,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
           options,
           Message("messages__insurer_confirm_address__title"),
           Message("messages__common__confirmAddress__h1", insuranceCompanyName),
-          None
+          srn
         ),
         Some(schemeName)
       )(fakeRequest, messages).toString()
@@ -67,7 +67,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       countryOptions,

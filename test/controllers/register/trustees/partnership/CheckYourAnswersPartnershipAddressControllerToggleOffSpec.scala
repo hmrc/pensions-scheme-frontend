@@ -50,17 +50,18 @@ class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Controll
     "on Page load in Normal Mode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressNormal,
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+          .onPageLoad(NormalMode, index, srn)(FakeDataRequest(fullAnswers))
       )
 
     }
@@ -97,7 +98,6 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index                                       = Index(0)
   private val partnershipName                             = "Test partnership Name"
-  private val srn                                         = Some("S123")
 
   private val address                = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -197,7 +197,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,

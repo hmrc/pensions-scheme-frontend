@@ -58,12 +58,13 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
             bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"))
+            h1 = Message("checkYourAnswers.hs.heading"),
+            srn = srn)
           app.stop()
         }
 
@@ -73,10 +74,10 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>
@@ -103,7 +104,6 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
   val trusteeName = "First Last"
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
@@ -159,7 +159,7 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
   private val view = injector.instanceOf[checkYourAnswers]
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber,
-                   postUrl: Call = submitUrl(), hideButton: Boolean = false,
+                   postUrl: Call = submitUrl(NormalMode, srn), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

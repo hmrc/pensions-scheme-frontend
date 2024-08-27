@@ -31,7 +31,7 @@ class CannotStartRegistrationControllerSpec extends ControllerSpecBase {
 
   "CannotStartRegistrationController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+      val result = controller().onPageLoad()(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }

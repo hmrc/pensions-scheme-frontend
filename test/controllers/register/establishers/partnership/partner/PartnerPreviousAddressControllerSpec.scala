@@ -49,8 +49,8 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
   val partnerDetails = PersonName("first", "last")
 
-  private val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
-  private val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
+  private val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)
+  private val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
   )
@@ -71,7 +71,8 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     postCall,
     countryOptions.options,
     Message("messages__common__confirmPreviousAddress__h1", Message("messages__thePartner")),
-    Message("messages__common__confirmPreviousAddress__h1", partnerDetails.fullName)
+    Message("messages__common__confirmPreviousAddress__h1", partnerDetails.fullName),
+    srn = srn
   )
 
   val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
@@ -81,13 +82,13 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
   "PreviousAddress Controller" must {
 
     "render manualAddress from GET request" in {
-      val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
+      val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
       running(_.overrides(modules(retrieval) ++
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -103,7 +104,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves partner address" in {
 
-        val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+        val onwardCall = routes.PartnerEmailController.onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
@@ -118,7 +119,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardCall.url
@@ -143,7 +144,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
         val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
-        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
         fakeAuditService.reset()
 

@@ -20,7 +20,7 @@ import audit.{AddressAction, AddressEvent, AuditService}
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +73,7 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(request)
+          val result = controller.onPageLoad(NormalMode, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
       }
@@ -91,9 +91,9 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(request)
+          val result = controller.onPageLoad(NormalMode, srn)(request)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
+          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn).url)
       }
     }
 
@@ -110,7 +110,7 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onPageLoad(NormalMode)(request)
+          val result = controller.onPageLoad(NormalMode, srn)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
@@ -130,7 +130,7 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
           val argCaptor = ArgumentCaptor.forClass(classOf[AddressEvent])
 
           val auditEvent = AddressEvent(
@@ -164,7 +164,7 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
       }
@@ -182,17 +182,18 @@ class AdviserAddressListControllerSpec
         implicit app =>
           val fakeRequest = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
           val controller = app.injector.instanceOf[AdviserAddressListController]
-          val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
+          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn).url)
       }
     }
   }
 }
 
 object AdviserAddressListControllerSpec {
+  val srn = SchemeReferenceNumber("S123456L")
 
-  lazy val onwardRoute: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
+  lazy val onwardRoute: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn)
   private val adviserName = "the Adviser"
   private val addresses = Seq(
     TolerantAddress(
@@ -222,11 +223,11 @@ object AdviserAddressListControllerSpec {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.AdviserAddressListController.onSubmit(NormalMode),
-      routes.AdviserAddressController.onPageLoad(NormalMode),
+      routes.AdviserAddressListController.onSubmit(NormalMode, srn),
+      routes.AdviserAddressController.onPageLoad(NormalMode, srn),
       addresses,
       heading = Message("messages__dynamic_whatIsAddress", adviserName),
-      title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
+      title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")), srn = srn,
       entityName = adviserName
     )
   }

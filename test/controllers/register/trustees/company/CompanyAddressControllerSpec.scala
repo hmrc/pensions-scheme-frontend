@@ -67,15 +67,16 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
   val viewmodel: ManualAddressViewModel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex, None),
+    controller.postCall(NormalMode, firstIndex, srn),
     countryOptions.options,
     Message(controller.title,Message("messages__theCompany")),
-    Message(controller.heading, companyDetails.companyName)
+    Message(controller.heading, companyDetails.companyName),
+    srn = srn
   )
 
   behave like manualAddress(
-    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, None),
-    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None),
+    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, srn),
+    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, srn),
     CompanyAddressId(firstIndex),
     viewmodel
   )
@@ -103,7 +104,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
             "country" -> address.country))
 
         val controller = app.injector.instanceOf[CompanyAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
         status(result) must be(SEE_OTHER)
         redirectLocation(result).value mustEqual onwardCall.url
@@ -144,7 +145,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
         fakeAuditService.reset()
 
         val controller = app.injector.instanceOf[CompanyAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
         whenReady(result) {
           _ =>

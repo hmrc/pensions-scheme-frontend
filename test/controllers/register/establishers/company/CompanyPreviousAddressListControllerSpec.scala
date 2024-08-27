@@ -75,7 +75,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, fakeAuditService,
+      dataRetrievalAction, FakeAllowAccessProvider(srn), new DataRequiredActionImpl, fakeAuditService,
       view,
       controllerComponents
     )
@@ -89,7 +89,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         addresses,
         title = Message("messages__common__selectPreviousAddress__h1", Message("messages__theEstablisher")),
         heading = Message("messages__common__selectPreviousAddress__h1", companyName),
-        entityName = companyName
+        entityName = companyName,
+        srn =  srn
       ),
       None
     )(fakeRequest, messages).toString

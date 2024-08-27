@@ -47,7 +47,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -88,7 +88,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -106,7 +106,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -125,13 +125,13 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", "test trustee name")
   private val index = Index(0)
-  private val srn = None
   private val postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__theIndividual")),
     heading = Message("messages__hasNINO", "Test Name"),
-    hint = None
+    hint = None,
+    srn = srn
   )
 
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]

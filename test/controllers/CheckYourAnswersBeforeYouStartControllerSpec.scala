@@ -48,7 +48,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
-        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(UpdateMode, srn)(fakeRequest)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -75,7 +75,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       getEmptyDataPsp,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
@@ -97,7 +97,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(srn).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       )))
 
@@ -108,28 +108,28 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.SchemeNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.SchemeNameController.onPageLoad(srn).url,
           Some(messages("messages__visuallyhidden__schemeName"))))
       ),
       AnswerRow(
         messages("schemeType.checkYourAnswersLabel", "Test Scheme"),
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.SchemeTypeController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.SchemeTypeController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__schemeType", "Test Scheme"))))
       ),
       AnswerRow(
         messages("schemeEstablishedCountry.checkYourAnswersLabel", "Test Scheme"),
         Seq("Country of GB"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.EstablishedCountryController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.EstablishedCountryController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__schemeEstablishedCountry", "Test Scheme"))))
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.WorkingKnowledgeController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.WorkingKnowledgeController.onPageLoad(CheckMode, srn).url,
           Some("messages__visuallyhidden__declarationDuties")))
       )
     )
@@ -141,7 +141,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     schemeName = Some("Test Scheme"),
     returnOverview = returnOverview,
     hideEditLinks = false,
-    srn = None,
+    srn = srn,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 =  Message("checkYourAnswers.hs.title")

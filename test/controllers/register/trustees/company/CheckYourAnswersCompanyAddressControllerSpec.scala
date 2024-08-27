@@ -53,13 +53,14 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
       "return OK and the correct view with full answers" in {
 
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(companyAddressNormal,
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -92,7 +93,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+          .onPageLoad(NormalMode, index, srn)(FakeDataRequest(fullAnswers))
       )
     }
   }
@@ -105,7 +106,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val companyName = "Test company Name"
-  val srn: SchemeReferenceNumber = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -131,7 +131,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
     trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def postUrl: Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -190,7 +190,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
+      dataRetrievalAction, FakeAllowAccessProvider(srn), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =

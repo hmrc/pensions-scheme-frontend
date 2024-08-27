@@ -48,7 +48,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
 
   private val view = injector.instanceOf[insuranceCompanyName]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages).toString()
+    view(form, NormalMode, Some(schemeName), postCall, srn)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -63,7 +63,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,

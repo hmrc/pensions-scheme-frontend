@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
 import models._
+import navigators.AboutBenefitsAndInsuranceNavigatorSpec.srn
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.{JsString, Json, Writes}
 import play.api.mvc.Call
@@ -45,7 +46,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(futureMembers(NormalMode)),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
   }
 
   "in CheckMode" must {
@@ -61,13 +62,13 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(cya),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
   }
 }
 
 object AboutMembersNavigatorSpec {
   private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
-  private def futureMembers(mode: Mode): Call              = controllers.routes.FutureMembersController.onPageLoad(mode)
-  private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
+  private def futureMembers(mode: Mode): Call              = controllers.routes.FutureMembersController.onPageLoad(mode, srn)
+  private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode, srn)
   private def cya: Call                                    = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn)
 }

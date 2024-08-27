@@ -44,7 +44,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
 
   private val view = injector.instanceOf[benefitsSecuredByInsurance]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, Some("Test Scheme Name"), postCall, None)(fakeRequest, messages).toString()
+    view(form, NormalMode, Some("Test Scheme Name"), postCall, srn)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -59,7 +59,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,

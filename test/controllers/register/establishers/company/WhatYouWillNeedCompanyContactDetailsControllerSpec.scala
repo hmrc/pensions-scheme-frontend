@@ -31,7 +31,6 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   private val establisherName = CompanyDetails("Test Company")
   private val index = 0
-  private val srn = Some("srn")
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
@@ -50,7 +49,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
           val result = controller.onPageLoad(NormalMode, srn, index)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString()
+          contentAsString(result) mustBe viewAsString(NormalMode, srn)
         }
       }
     }

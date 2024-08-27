@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -49,7 +49,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       view,
@@ -68,9 +68,9 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
   "EstablisherDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, 0, None),
-      post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual")),
+      get = data => controller(data).onPageLoad(NormalMode, 0, srn),
+      post = data => controller(data).onSubmit(NormalMode, 0, srn),
+      viewModel = viewModel(NormalMode, index, srn, Message("messages__theIndividual")),
       mode = NormalMode,
       requiredData = getMandatoryEstablisher,
       validData = validData,

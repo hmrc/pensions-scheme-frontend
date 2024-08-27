@@ -41,7 +41,7 @@ import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
+class UTRControllerSpec extends ControllerSpecBase with Matchers with OptionValues with ScalaFutures {
 
   import UTRControllerSpec._
 
@@ -50,7 +50,8 @@ class UTRControllerSpec extends SpecBase with Matchers with OptionValues with Sc
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    hint = "legend"
+    hint = "legend",
+    srn = srn
   )
 
   "get" must {

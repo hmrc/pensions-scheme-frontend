@@ -38,7 +38,7 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
   "TrusteeAddressYearsController" must {
 
     "return OK and the correct view on a GET request" in {
-      val result = controller(trusteeData).onPageLoad(mode, index, None)(fakeRequest)
+      val result = controller(trusteeData).onPageLoad(mode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -49,14 +49,14 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val filledForm = form.fill(answer)
       assume(filledForm.errors.isEmpty)
 
-      val result = controller(trusteeAndAnswerData(answer)).onPageLoad(mode, index, None)(fakeRequest)
+      val result = controller(trusteeAndAnswerData(answer)).onPageLoad(mode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to Session Expired on a GET request if no cached data exists" in {
-      val result = controller(dontGetAnyData).onPageLoad(mode, index, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(mode, index, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -66,7 +66,7 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val answer = AddressYears.values.head
       val request = fakeRequest.withFormUrlEncodedBody(("value", answer.toString))
 
-      val result = controller(trusteeData).onSubmit(mode, index, None)(request)
+      val result = controller(trusteeData).onSubmit(mode, index, srn)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -76,7 +76,7 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val answer = AddressYears.values.head
       val request = fakeRequest.withFormUrlEncodedBody(("value", answer.toString))
 
-      val result = controller(trusteeData).onSubmit(mode, index, None)(request)
+      val result = controller(trusteeData).onSubmit(mode, index, srn)(request)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(TrusteeAddressYearsId(index), answer)
@@ -86,14 +86,14 @@ class TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       val filledForm = form.bind(Map.empty[String, String])
       assume(filledForm.errors.nonEmpty)
 
-      val result = controller(trusteeData).onSubmit(mode, index, None)(fakeRequest)
+      val result = controller(trusteeData).onSubmit(mode, index, srn)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to Session Expired on a POST request if no cached data exists" in {
-      val result = controller(dontGetAnyData).onSubmit(mode, index, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(mode, index, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -128,7 +128,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       controllerComponents,
       view
@@ -136,11 +136,12 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val viewModel =
     AddressYearsViewModel(
-      postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, None),
+      postCall = controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onSubmit(mode, index, srn),
       title = Message("messages__trusteeAddressYears__title", Message("messages__common__address_years__trustee").resolve),
       heading = Message("messages__trusteeAddressYears__heading", trustee.fullName),
       legend = Message("messages__trusteeAddressYears__title", trustee.fullName),
-      subHeading = Some(Message(trustee.fullName))
+      subHeading = Some(Message(trustee.fullName)),
+      srn = srn
     )
 
   private def viewAsString(form: Form[AddressYears] = form) =

@@ -38,13 +38,13 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   private val formProvider = new HasBeenTradingFormProvider()
   private val form = formProvider("messages__tradingAtLeastOneYear__error","test partnership name")
   private val index = Index(0)
-  private val srn = None
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, srn),
     title = Message("messages__partnership_trading_time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test partnership name"),
-    hint = None
+    hint = None,
+    srn = srn
   )
   val tolerantAddress = TolerantAddress(None, None, None, None, None, None)
   val address = Address("line 1", "line 2", None, None, None, "GB")
@@ -72,7 +72,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
@@ -86,7 +86,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   "PartnershipHasBeenTradingController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -95,7 +95,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -106,7 +106,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -115,7 +115,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     "clean up previous address, if user changes answer from yes to no" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -127,7 +127,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
 
     "not clean up for previous address, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

@@ -91,7 +91,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       view,
@@ -106,7 +106,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         routes.CompanyPreviousAddressController.onPageLoad(NormalMode, srn, index),
         Message("messages__establisherPreviousPostCode__title"),
         Message("messages__establisherPreviousPostCode__h1", companyName),
-        Some(companyName)
+        Some(companyName), srn = srn
       ),
       None
     )(fakeRequest, messages).toString

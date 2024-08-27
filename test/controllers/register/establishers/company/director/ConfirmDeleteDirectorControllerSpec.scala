@@ -51,7 +51,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val result = controller(data).onPageLoad(establisherIndex, directorIndex, NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, None).url)
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn).url)
     }
 
     "return a Bad Request on POST and errors when invalid data is submitted" in {
@@ -85,7 +85,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     "never delete the director on a POST if selected No in UpdateMode" in {
       FakeUserAnswersService.reset()
       val data   = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(establisherIndex, directorIndex, UpdateMode, Some("S123"))(postRequestForCancel)
+      val result = controller(data).onSubmit(establisherIndex, directorIndex, UpdateMode, srn)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(DirectorNameId(establisherIndex, directorIndex))
@@ -160,7 +160,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -171,8 +171,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     view(
       form,
       directorName,
-      postCall,
-      None
+      postCall,None,
+      srn
     )(fakeRequest, messages).toString
 
 }

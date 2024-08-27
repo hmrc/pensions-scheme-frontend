@@ -40,13 +40,13 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   val formProvider = new HasReferenceNumberFormProvider()
   val form = formProvider("messages__hasCompanyVat__error__required", "test company name")
   val index = Index(0)
-  val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index)
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
-    heading = Message("messages__hasVAT", "test company name")
+    heading = Message("messages__hasVAT", "test company name"),
+    srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -58,7 +58,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,

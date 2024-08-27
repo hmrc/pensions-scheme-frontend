@@ -33,7 +33,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       view,
       controllerComponents
@@ -41,7 +41,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
   val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, srn, index = Index(0))
 
-  def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, srn, "test company name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 

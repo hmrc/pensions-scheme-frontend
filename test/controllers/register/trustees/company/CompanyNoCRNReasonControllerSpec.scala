@@ -50,7 +50,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
 
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
@@ -67,7 +67,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))
         val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+        val result = controller.onSubmit(NormalMode, firstIndex, srn)(request)
 
         status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,10 +86,10 @@ object CompanyNoCRNReasonControllerSpec extends CompanyNoCRNReasonControllerSpec
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: ReasonViewModel = ReasonViewModel(
-    postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, None),
+    postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, srn),
     title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoCRN", "test company name"),
-    srn = None
+    srn = srn
   )
 
 }

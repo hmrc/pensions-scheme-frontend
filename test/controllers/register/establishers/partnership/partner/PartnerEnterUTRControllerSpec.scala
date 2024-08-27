@@ -53,7 +53,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -66,7 +66,6 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
   val partnerIndex = Index(0)
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = None
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

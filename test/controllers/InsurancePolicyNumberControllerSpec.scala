@@ -23,7 +23,7 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
 import forms.mappings.Transforms
 import identifiers.InsurancePolicyNumberId
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
@@ -65,6 +65,7 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
   }
 }
 object InsurancePolicyNumberControllerSpec {
+  val srn = SchemeReferenceNumber("S123456L")
 
   val policyNumber = "test policy number"
   val companyName = "test company name"
@@ -80,7 +81,7 @@ object InsurancePolicyNumberControllerSpec {
 
   private def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String = form => {
     val view = base.injector.instanceOf[insurancePolicyNumber]
-    view(form, NormalMode, Some(companyName), None, postUrl, None)(base.fakeRequest, base.messages).toString()
+    view(form, NormalMode, Some(companyName), None, postUrl, srn)(base.fakeRequest, base.messages).toString()
   }
 
   private def controller(base: ControllerSpecBase)(
@@ -97,7 +98,7 @@ object InsurancePolicyNumberControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,

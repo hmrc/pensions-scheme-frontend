@@ -35,7 +35,6 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   def date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
-  val srn = Some("123")
 
   def dateToCompleteDeclaration: String = LocalDate.now().plusDays(28).
     format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
@@ -47,7 +46,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       messagesApi,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,

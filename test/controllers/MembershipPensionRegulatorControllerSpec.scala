@@ -45,13 +45,13 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
       view
     )
 
-  def viewAsString(): String = view(NormalMode, srn)(fakeRequest, messages).toString
+  def viewAsString(): String = view(NormalMode, None, srn)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -60,7 +60,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
 
     "on a POST" must {
       "redirect to session redirect page" in {
-        val result = controller().onSubmit(NormalMode)(fakeRequest)
+        val result = controller().onSubmit(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

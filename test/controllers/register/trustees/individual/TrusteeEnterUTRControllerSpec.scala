@@ -46,7 +46,7 @@ class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrustee),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
         val request = addCSRFToken(FakeRequest())
@@ -63,7 +63,7 @@ class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrustee),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("utr", "1234567890")))
@@ -80,7 +80,6 @@ object TrusteeEnterUTRControllerSpec extends TrusteeEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex: Index = Index(0)
-  val srn: SchemeReferenceNumber = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
 import identifiers._
@@ -25,13 +26,14 @@ import models.Mode.checkMode
 import models._
 import models.address.Address
 import models.person.PersonName
+import navigators.AboutBenefitsAndInsuranceNavigatorSpec.srn
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.{JsString, Json, Writes}
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class EstablishersCompanyDirectorNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import EstablishersCompanyDirectorNavigatorSpec._
 
@@ -73,41 +75,41 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
           rowNoValue(DirectorEmailId(0, 0))(directorPhone(NormalMode, srn)),
           rowNoValueNewDirector(DirectorEmailId(0, 0))(directorPhone(NormalMode, srn))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          rowNoValue(DirectorNameId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorDOBId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckMode, None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckMode, None)),
-          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckMode, None)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = None)),
-          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = None)),
+          rowNoValue(DirectorNameId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNoValue(DirectorDOBId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckMode, srn)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckMode, srn)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckMode, srn)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckMode, srn)),
+          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckMode, srn)),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = srn)),
           row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear,
-                                            addressYearsLessThanTwelveEdit(NormalMode, addressYearsUnderAYear, srn = None)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(None)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckMode, None)),
-          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckMode, None)),
-          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorEmailId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(NormalMode, newDirector, srn = None))
+                                            addressYearsLessThanTwelveEdit(NormalMode, addressYearsUnderAYear, srn = srn)),
+          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(srn)),
+          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckMode, srn)),
+          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckMode, srn)),
+          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn)),
+          rowNoValue(DirectorEmailId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = srn)),
+          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(NormalMode, newDirector, srn = srn))
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {

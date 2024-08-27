@@ -47,7 +47,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -86,7 +86,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
+      val result = controller.onSubmit(NormalMode, index, srn)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
 
       status(result) mustBe SEE_OTHER
 
@@ -102,7 +102,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
+      val result = controller.onSubmit(NormalMode, index, srn)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
 
       status(result) mustBe BAD_REQUEST
 
@@ -118,7 +118,6 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
   private val partnershipName = "test partnership name"
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("error", partnershipName)
-  private val srn = None
   private val index = Index(0)
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad

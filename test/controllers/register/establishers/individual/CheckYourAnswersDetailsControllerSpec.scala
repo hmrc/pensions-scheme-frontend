@@ -52,22 +52,24 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -102,7 +104,6 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
   def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private val index = Index(0)
-  private val srn = Some("S123")
   private val name = "test name"
   private val establisherName = PersonName("test", "name")
   private val establisherDob: LocalDate = LocalDate.now()
@@ -151,7 +152,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
             _.set(EstablisherNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -276,7 +277,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       allowChangeHelper,
       new DataRequiredActionImpl,
       new FakeCountryOptions,

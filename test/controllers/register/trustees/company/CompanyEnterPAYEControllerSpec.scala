@@ -46,7 +46,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) {
         implicit app =>
@@ -64,7 +64,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) {
         implicit app =>
@@ -85,7 +85,6 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
   val form = new PayeFormProvider()("test company name")
   val firstIndex: Index = Index(0)
-  val srn: SchemeReferenceNumber = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

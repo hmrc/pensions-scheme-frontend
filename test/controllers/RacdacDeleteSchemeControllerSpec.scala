@@ -49,7 +49,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
     new RacdacDeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
       dataRetrievalAction, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey, srn)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)
@@ -68,7 +68,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
     "return OK and the correct view for a GET" in {
       when(fakeCacheConnector.fetch(eqTo("id"))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
         "schemeName" -> schemeName))))
-      val result = controller().onPageLoad(fakeRequest)
+      val result = controller().onPageLoad(srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
@@ -79,7 +79,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       when(fakeCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
 
-      val result = controller().onSubmit(postRequest)
+      val result = controller().onSubmit(srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -91,7 +91,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
         "schemeName" -> schemeName))))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller().onSubmit(postRequest)
+      val result = controller().onSubmit(srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -102,7 +102,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
         "schemeName" -> schemeName))))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(postRequest)
+      val result = controller().onSubmit(srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -110,7 +110,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
 
     "redirect to Session Expired for a GET if no existing data is found" in {
       when(fakeCacheConnector.fetch(eqTo("id"))(any(), any())).thenReturn(Future.successful(None))
-      val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -119,7 +119,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
     "redirect to Session Expired for a POST if no existing data is found" in {
       when(fakeCacheConnector.fetch(eqTo("id"))(any(), any())).thenReturn(Future.successful(None))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

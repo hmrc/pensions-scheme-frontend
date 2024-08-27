@@ -161,7 +161,8 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
       addresses,
       title = Message("messages__establisherSelectAddress__h1",Message("messages__theEstablisher")),
       heading = Message("messages__establisherSelectAddress__h1", companyDetails.companyName),
-      entityName = companyDetails.companyName
+      entityName = companyDetails.companyName,
+      srn = srn
     )
   }
 }

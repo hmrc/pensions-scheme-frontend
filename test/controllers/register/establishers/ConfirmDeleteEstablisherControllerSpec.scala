@@ -44,8 +44,8 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET for individual" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val establisherIndex = Index(4)
-      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Indivdual, srn)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(postCall = postCall)
@@ -54,9 +54,9 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET when establisher kind is company" in {
       val establisherName = "Test Ltd"
       val establisherIndex = Index(1)
-      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Company, None)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Company, srn)
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(
@@ -68,9 +68,9 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET when establisher kind is partnership" in {
       val establisherName = "Test Partnership Ltd"
       val establisherIndex = Index(2)
-      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Partnership, None)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Partnership, srn)
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(
@@ -90,22 +90,22 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       )
       val data = new FakeDataRetrievalAction(Some(deletedData))
 
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, establisherKind, None).url)
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, establisherKind, srn).url)
     }
 
 
     "redirect to Session Expired for a GET if a deletable establisher cannot be found in UserAnswers" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a GET if no cached data exists" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, EstablisherKind.Company, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -113,7 +113,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(4), establisherKind, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(4), establisherKind, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(EstablisherNameId(4), personName.copy(isDeleted = true))
@@ -122,7 +122,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher individual on a POST if selcted NO" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequestForCancel)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, srn)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(EstablisherNameId(establisherIndex))
@@ -130,7 +130,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher company on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
@@ -139,7 +139,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher company on a POST if selected NO" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequestForCancel)
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, srn)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(CompanyDetailsId(Index(1)))
@@ -147,7 +147,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher partnership on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
@@ -156,7 +156,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher partnership on a POST if selected No" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, None)(postRequestForCancel)
+      val result = controller(data).onSubmit(NormalMode, Index(2), EstablisherKind.Partnership, srn)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnershipDetailsId(Index(2)))
@@ -164,7 +164,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, establisherKind, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -173,11 +173,11 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, 1, EstablisherKind.Company, None)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, 1, EstablisherKind.Company, srn)
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, Index(1), EstablisherKind.Company, srn)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(
         hintText = Some(messages("messages__confirmDeleteEstablisher__companyHint")),
@@ -186,7 +186,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, establisherKind, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, establisherKind, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -247,7 +247,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -262,7 +262,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     hintText,
     postCall,
     None,
-    None
+    srn
   )(fakeRequest, messages).toString
 
 }

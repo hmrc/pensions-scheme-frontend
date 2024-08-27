@@ -23,7 +23,7 @@ import models.Mode.checkMode
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.IdentifiedRequest
-import models.{CompanyDetails, Mode, NormalMode, ReferenceValue}
+import models.{CompanyDetails, Mode, NormalMode, ReferenceValue, SchemeReferenceNumber}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.{TableFor3, TableFor6}

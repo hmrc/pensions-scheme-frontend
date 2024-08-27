@@ -36,21 +36,21 @@ class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with Mocki
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       controllerComponents,
       view
     )
 
-  private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
+  private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)
 
-  private def viewAsString(): String = view(None, None, partnershipName, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, srn, partnershipName, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnerControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

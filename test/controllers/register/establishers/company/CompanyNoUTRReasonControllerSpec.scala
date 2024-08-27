@@ -42,8 +42,6 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private val srn = Some("S123")
-
   val viewmodel = ReasonViewModel(
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, srn, index = 0),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),

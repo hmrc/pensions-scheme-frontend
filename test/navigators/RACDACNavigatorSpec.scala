@@ -17,16 +17,17 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SchemeReferenceNumber}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class RACDACNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import RACDACNavigatorSpec._
 
@@ -43,7 +44,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(ContractOrPolicyNumberId)(someStringValue, cyaPage),
           row(DeclarationId)(true, successPage)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
@@ -53,13 +54,15 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(RACDACNameId)(someStringValue, cyaPage),
           row(ContractOrPolicyNumberId)(someStringValue, cyaPage)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
   }
 }
 
 object RACDACNavigatorSpec {
-  private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode)
+  val srn = SchemeReferenceNumber("S123456L")
+
+  private val contractOrPolicyNumberPage: Call      = controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode, srn)
   private val cyaPage: Call      = controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, srn)
-  private val successPage: Call      = controllers.racdac.routes.SchemeSuccessController.onPageLoad()
+  private val successPage: Call      = controllers.racdac.routes.SchemeSuccessController.onPageLoad(srn)
 }

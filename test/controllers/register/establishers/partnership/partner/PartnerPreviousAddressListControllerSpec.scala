@@ -67,7 +67,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
-  private val onwardRoute = routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), None)
+  private val onwardRoute = routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), srn)
 
   "Partnership Partners Previous Address List Controller" must {
 
@@ -75,7 +75,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
         val view = app.injector.instanceOf[addressList]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe OK
 
@@ -89,18 +89,18 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
     "redirect to Partner Address Post Code Lookup if no address data on a GET request" in {
       running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None).url)
+          routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn).url)
       }
     }
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
       running(_.overrides(modules(dontGetAnyData): _*)) { app =>
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -114,7 +114,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe onwardRoute.url
@@ -128,7 +128,7 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -142,23 +142,24 @@ class PartnerPreviousAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None).url)
+          routes.PartnerPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn).url)
       }
     }
   }
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.PartnerPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
-      routes.PartnerPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
+      routes.PartnerPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0), srn),
+      routes.PartnerPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0), srn),
       addresses,
       title = previousAddressTitle,
       heading = previousAddressHeading,
-      entityName = partnerDetails.fullName
+      entityName = partnerDetails.fullName,
+      srn = srn
     )
   }
 }

@@ -54,7 +54,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
         val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, srn, index)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(companyAddressNormal,
+        contentAsString(result) mustBe viewAsString(companyAddressNormal, srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -103,7 +103,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
   val companyName = "Test company Name"
-  val srn: SchemeReferenceNumber = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -127,7 +126,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
     establisherCompanyDetails(0, CompanyDetails(companyName)).
     establishersCompanyAddress(0, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -190,7 +189,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       new FakeNavigator(onwardRoute),

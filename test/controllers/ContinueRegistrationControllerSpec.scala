@@ -19,7 +19,6 @@ package controllers
 import controllers.actions.{DataRetrievalAction, FakeAuthAction}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 
 class ContinueRegistrationControllerSpec extends ControllerSpecBase {
@@ -28,7 +27,7 @@ class ContinueRegistrationControllerSpec extends ControllerSpecBase {
   "ContinueRegistrationController" when {
     "asked to continue" must {
       "redirect to the next page" in {
-        val result = controller(getEmptyData).continue()(fakeRequest)
+        val result = controller(getEmptyData).continue(srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(nextPage.url)

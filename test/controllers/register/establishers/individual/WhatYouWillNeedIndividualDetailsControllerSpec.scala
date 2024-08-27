@@ -44,22 +44,22 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       view,
       controllerComponents
     )
 
   def viewAsString(mode: Mode): String = {
-    val href = EstablisherDOBController.onPageLoad(mode, 0, None)
-    view(None, href, None, establisherName)(fakeRequest, messages).toString
+    val href = EstablisherDOBController.onPageLoad(mode, 0, srn)
+    view(None, href, srn, establisherName)(fakeRequest, messages).toString
   }
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {
 
     "in Subscription journey" must {
       "on a GET it must return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode)
@@ -68,7 +68,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
 
     "in Variations journey" must {
       "on a GET it must return OK and the correct view" in {
-        val result = controller().onPageLoad(UpdateMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode)

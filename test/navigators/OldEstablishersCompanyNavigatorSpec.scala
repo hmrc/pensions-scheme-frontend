@@ -27,6 +27,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import navigators.AboutBenefitsAndInsuranceNavigatorSpec.srn
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -107,7 +108,7 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
             ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector))
         )
 
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
@@ -149,7 +150,7 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
           rowNoValueNewEstablisher(CompanyAddressListId(0))(getCya(NormalMode, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))))
         )
 
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -196,7 +197,7 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
           rowNoValueNewEstablisher(CompanyAddressListId(0))(companyAddressYears(UpdateMode))
         )
 
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
     }
 
     "in CheckUpdateMode" must {
@@ -239,7 +240,7 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
           rowNoValueNewEstablisher(CompanyAddressListId(0))(exitJourney(UpdateMode, newEstablisher, 0, cyaCompanyAddressDetails(UpdateMode)))
         )
 
-      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, srn)
     }
   }
 }
@@ -281,67 +282,67 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
 
   private def startDirectorJourney(mode: Mode, index: Index) = directorName(mode, index)
 
-  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
+  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, srn)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
 
   private def whatIsPAYE(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)
+    controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, srn)
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, srn, 0)
 
   private def noCompanyRegistrationNumber(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyNoCRNReasonController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyNoCRNReasonController.onPageLoad(mode, srn, 0)
 
   private def hasCompanyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasCompanyUTRController.onPageLoad(mode, srn, 0)
 
   private def companyUTRNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterUTRController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyEnterUTRController.onPageLoad(mode, srn, 0)
 
   private def noCompanyUTR(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyNoUTRReasonController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyNoUTRReasonController.onPageLoad(mode, srn, 0)
 
   private def companyHasPaye(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, 0)
 
   private def companyVatNew(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
 
   private def hasCompanyVat(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, srn, 0)
 
   private def hasCompanyPaye(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, 0)
 
   private def hasBeenTrading(mode: Mode): Call =
-    controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, 0)
 
-  private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, None, 0)
+  private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode, srn, 0)
 
-  private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, None, 0)
+  private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode, srn, 0)
 
   private def prevAddPostCodeLookup(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, srn, 0)
 
   private def companyPaList(mode: Mode) =
-    controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, srn, 0)
 
-  private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, None, 0)
+  private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode, srn, 0)
 
-  private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, None, 0)
+  private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, srn, 0)
 
   private def cyaCompanyDetails(mode: Mode) =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, 0)
 
   private def cyaCompanyContactDetails(mode: Mode) =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, 0)
 
   private def cyaCompanyAddressDetails(mode: Mode) =
-    controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, 0)
 
-  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
   private def exitJourney(mode: Mode, answers: UserAnswers, index: Int, cyaPage: Call) = {
     if (mode == NormalMode)
@@ -371,11 +372,11 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
     }
 
 
-  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, None, index)
+  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
 
-  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, None, 0)
+  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, srn, 0)
 
-  private def taskList(mode: Mode): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, None)
+  private def taskList(mode: Mode): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value

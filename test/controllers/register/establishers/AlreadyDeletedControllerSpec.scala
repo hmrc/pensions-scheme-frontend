@@ -36,7 +36,7 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   def viewmodel(establisherName: String): AlreadyDeletedViewModel = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
-    returnCall = onwardRoute
+    returnCall = onwardRoute, srn
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction): AlreadyDeletedController =
@@ -57,28 +57,28 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   "AlreadyDeleted Establisher Controller" must {
 
     "return OK and the correct view for a GET for an individual" in {
-      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("Test Name")
     }
 
     "return OK and the correct view for a GET for a company" in {
-      val result = controller(getMandatoryEstablisherCompany).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisherCompany).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test company name")
     }
 
     "return OK and the correct view for a GET for a partnership" in {
-      val result = controller(getMandatoryEstablisherPartnership).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisherPartnership).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test partnership name")
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

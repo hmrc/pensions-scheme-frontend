@@ -44,22 +44,24 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -102,7 +104,6 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
 
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: SchemeReferenceNumber = Some("S123")
   val name = "test name"
   val trusteeName: PersonName = PersonName("test", "name")
   val trusteeDob: LocalDate = LocalDate.now()
@@ -145,7 +146,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
             _.set(TrusteeNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def postUrl: Call = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -244,7 +245,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       allowChangeHelper,
   new DataRequiredActionImpl,
       new FakeCountryOptions,

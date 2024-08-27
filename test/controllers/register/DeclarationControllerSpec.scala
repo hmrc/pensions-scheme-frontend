@@ -63,21 +63,21 @@ class DeclarationControllerSpec
 
     "redirect to task list page when user answers are not complete" in {
       when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(false)
-      val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
+      val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn).url
     }
 
     "redirect to you must contact HMRC page when deceased flag is true" in {
-      val result = controller(dataRetrievalAction = individualEst, isDeceased = true).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction = individualEst, isDeceased = true).onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
     }
 
     "redirect to you must update your address page when rls flag is true" in {
-      val result = controller(dataRetrievalAction = individualEst, rlsFlag = true).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction = individualEst, rlsFlag = true).onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
@@ -86,7 +86,7 @@ class DeclarationControllerSpec
     "return OK and don't save the DeclarationDormant " when {
 
       "the establisher is an individual" in {
-        val result = controller(individualEst).onPageLoad()(fakeRequest)
+        val result = controller(individualEst).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
@@ -97,7 +97,7 @@ class DeclarationControllerSpec
     "return OK, the correct view and save the DeclarationDormant" when {
 
       "the establisher is a dormant company" in {
-        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
+        val result = controller(dormantCompany).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
@@ -105,7 +105,7 @@ class DeclarationControllerSpec
       }
 
       "the establisher is non dormant company" in {
-        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
+        val result = controller(nonDormantCompany).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
@@ -116,7 +116,7 @@ class DeclarationControllerSpec
     "return OK and the correct view " when {
       "master trust and all the answers is complete" in {
 
-        val result = controller(dataWithMasterTrust).onPageLoad()(fakeRequest)
+        val result = controller(dataWithMasterTrust).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
@@ -125,7 +125,7 @@ class DeclarationControllerSpec
 
     "redirect to the next page on clicking agree and continue and ensure racdac declaration ID removed and register declaration ID present" in {
       when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
-      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
+      val result = controller(nonDormantCompany).onClickAgree(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -139,10 +139,10 @@ class DeclarationControllerSpec
       when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
-      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
+      val result = controller(nonDormantCompany).onClickAgree(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, srn).url)
+      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(srn).url)
     }
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
@@ -150,7 +150,7 @@ class DeclarationControllerSpec
       when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
-      val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
+      val result = controller(nonDormantCompany).onClickAgree(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -160,7 +160,7 @@ class DeclarationControllerSpec
       reset(mockAuditService)
       reset(mockPensionSchemeConnector)
       when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
-      val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree(NormalMode, srn)(fakeRequest)
 
       val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
 
@@ -206,7 +206,7 @@ class DeclarationControllerSpec
         when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any(),any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
-        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree(NormalMode, srn)(fakeRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("test@test.com"),
@@ -222,13 +222,13 @@ class DeclarationControllerSpec
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, srn)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
-          val result = controller(dontGetAnyData).onClickAgree()(fakeRequest)
+          val result = controller(dontGetAnyData).onClickAgree(NormalMode, srn)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -245,7 +245,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
-  private val href = controllers.register.routes.DeclarationController.onClickAgree
+  private val href = controllers.register.routes.DeclarationController.onClickAgree(NormalMode, srn)
   val psaId: PsaId = PsaId("A0000000")
 
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
@@ -300,7 +300,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       showMasterTrustDeclaration,
       hasWorkingKnowledge,
       Some("Test Scheme"),
-      href
+      href, srn
     )(fakeRequest, messages).toString
 
   private def individualEst: DataRetrievalAction = {

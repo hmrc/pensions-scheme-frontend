@@ -52,11 +52,11 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),
+        routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, srn),
         Message("messages__enterEmail", Message("messages__thePartnership").resolve),
         Message("messages__enterEmail", trusteePartnershipDetails.name),
         Some(Message("messages__contact_email__hint", trusteePartnershipDetails.name, schemeName)),
-        None
+        srn
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString
@@ -68,7 +68,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
           val controller = app.injector.instanceOf[PartnershipEmailController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()
@@ -86,7 +86,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
           app =>
           val controller = app.injector.instanceOf[PartnershipEmailController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("email", email))
-          val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)

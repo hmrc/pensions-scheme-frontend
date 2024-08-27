@@ -162,7 +162,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       mockPensionAdministratorConnector,
       mockPensionsSchemeConnector,
       mockEmailConnector,

@@ -46,9 +46,9 @@ import scala.concurrent.Future
 
 class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.AdviserAddressListController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.AdviserAddressListController.onPageLoad(NormalMode, srn)
 
-  def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
+  def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode, srn)
 
   private def fakeAddress(postCode: String) = TolerantAddress(
     Some("Address Line 1"),
@@ -69,11 +69,12 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
   private val view = injector.instanceOf[postcodeLookup]
 
   lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
-    postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
+    postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode, srn),
     manualInputCall = manualInputCall,
     title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser").resolve),
     heading = Message("messages__adviserPostCodeLookup__heading", "name"),
-    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
+    subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+    srn = srn
   )
 
   "Adviser Postcode Controller" must {
@@ -92,7 +93,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-          val request = addCSRFToken(FakeRequest(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
+          val request = addCSRFToken(FakeRequest(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -134,7 +135,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
           val fakeRequest = addCSRFToken(FakeRequest()
             .withFormUrlEncodedBody("postcode" -> validPostcode))
           val controller = app.injector.instanceOf[AdviserPostCodeLookupController]
-          val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardRoute.url

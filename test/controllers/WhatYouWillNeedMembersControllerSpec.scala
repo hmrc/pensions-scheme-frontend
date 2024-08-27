@@ -45,7 +45,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(fakeRequest)
+        val result = controller().onPageLoad(srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -54,7 +54,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
 
     "on a POST" must {
       "redirect to session redirect page" in {
-        val result = controller().onSubmit()(fakeRequest)
+        val result = controller().onSubmit(srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

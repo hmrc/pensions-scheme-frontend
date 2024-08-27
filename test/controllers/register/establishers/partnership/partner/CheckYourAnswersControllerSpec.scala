@@ -49,7 +49,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute),
@@ -78,20 +78,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request: FakeDataRequest = FakeDataRequest(partnerAnswersYes)
-        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, srn), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, srn), srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(partnerAnswersNo)
-        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, srn), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, srn), srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -123,16 +123,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     behave like changeableController(
       controller(partnerAnswersNo.dataRetrievalAction, _: AllowChangeHelper)
-        .onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        .onPageLoad(NormalMode, firstIndex, firstIndex, srn)(fakeRequest)
     )
   }
 
 }
 
-object CheckYourAnswersControllerSpec extends SpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private val firstIndex = Index(0)
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
-  private val srn = Some("srn")
   private val personName = PersonName("first name", "last name")
   private val address = Address("Address 1", "Address 2", None, None, None, "GB")
   private val desiredRoute = controllers.routes.IndexController.onPageLoad
@@ -163,12 +162,12 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   private def answerRowWithAddNino: AnswerRow = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
-      routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+      routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, srn).url,
       Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName)))))
 
   private def answerRowWithAddUtr: AnswerRow = AnswerRow(Message("messages__enterUTR", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
-      routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some("srn")).url,
+      routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, srn).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName)))))
 
   private def answerRowsYes(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(

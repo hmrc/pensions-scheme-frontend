@@ -35,7 +35,7 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(schemeInfo).onPageLoad(fakeRequest)
+        val result = controller(schemeInfo).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -79,7 +79,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         messages("uKBankAccount.checkYourAnswersLabel", "Test Scheme Name"),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.UKBankAccountController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.UKBankAccountController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__uKBankAccount", "Test Scheme Name"))))
       ),
       AnswerRow(
@@ -88,7 +88,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
           bankDetails.accountNumber),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.BankAccountDetailsController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.BankAccountDetailsController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__uKBankDetails", "Test Scheme Name"))))
       )
     )
@@ -100,7 +100,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     schemeName = Some("Test Scheme Name"),
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = srn,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

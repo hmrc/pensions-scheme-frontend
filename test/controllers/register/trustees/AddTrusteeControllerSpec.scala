@@ -66,10 +66,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   }
 
   def editTrusteeCompanyRoute(id: Int): String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, srn).url
 
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, srn).url
 
   private val view = injector.instanceOf[addTrustee]
   private val oldView = injector.instanceOf[addTrusteeOld]
@@ -81,7 +81,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       mockFeatureToggleService,
@@ -96,7 +96,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String = {
     val completeTrustees = trustees.filter(_.isCompleted)
     val inCompleteTrustees = trustees.filterNot(_.isCompleted)
-    view(form, NormalMode, completeTrustees, inCompleteTrustees, None, None)(fakeRequest, messages).toString
+    view(form, NormalMode, completeTrustees, inCompleteTrustees, None, srn)(fakeRequest, messages).toString
   }
 
   private def validData = {

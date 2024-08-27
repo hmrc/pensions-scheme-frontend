@@ -41,14 +41,14 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
 
     "return OK and the correct view for a GET" in {
 
-      val result = controller(dataRetrievalAction = getMandatoryAdviser).onPageLoad(fakeRequest)
+      val result = controller(dataRetrievalAction = getMandatoryAdviser).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -64,9 +64,9 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
 
   private val psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")
 
-  lazy val adviserNameRoute: String = controllers.routes.AdviserNameController.onPageLoad(CheckMode).url
-  lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode).url
-  lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode).url
+  lazy val adviserNameRoute: String = controllers.routes.AdviserNameController.onPageLoad(CheckMode, srn).url
+  lazy val adviserEmailRoute: String = controllers.routes.AdviserEmailAddressController.onPageLoad(CheckMode, srn).url
+  lazy val adviserPhoneRoute: String = controllers.routes.AdviserPhoneController.onPageLoad(CheckMode, srn).url
   lazy val postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   val adviserName = "Xyx"
@@ -91,13 +91,13 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   val adviserSection = AnswerSection(None,
     Seq(
       AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
-        Some(Link("site.change", routes.AdviserNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.AdviserNameController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__adviserName", adviserName))))),
       AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
-        Some(Link("site.change", routes.AdviserEmailAddressController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.AdviserEmailAddressController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__adviserEmail", adviserName))))),
       AnswerRow(Messages("adviserPhone.checkYourAnswersLabel", adviserName), Seq(adviserPhone), answerIsMessageKey = false,
-        Some(Link("site.change", routes.AdviserPhoneController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.AdviserPhoneController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__adviserPhone", adviserName))))),
       AnswerRow(Messages("adviserAddress.checkYourAnswersLabel", adviserName),
         Seq(
@@ -108,7 +108,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
           adviserAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", routes.AdviserAddressController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__adviser__address", adviserName)))))
     )
   )
@@ -119,7 +119,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     schemeName = None,
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = srn,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

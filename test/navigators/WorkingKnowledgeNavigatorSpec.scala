@@ -17,15 +17,16 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{CheckMode, Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class WorkingKnowledgeNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import WorkingKnowledgeNavigatorSpec._
 
@@ -46,7 +47,7 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
           rowNoValue(AdviserAddressId)(checkYourAnswersPage),
           rowNoValue(AdviserCheckYourAnswersId)(taskList)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
@@ -60,22 +61,24 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
           rowNoValue(AdviserAddressId)(checkYourAnswersPage),
           rowNoValue(AdviserPhoneId)(adviserCYA)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
   }
 }
 
 object WorkingKnowledgeNavigatorSpec {
+  val srn = SchemeReferenceNumber("S123456L")
+
   private def taskList: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
-  private def adviserAddressList(mode: Mode) = controllers.routes.AdviserAddressListController.onPageLoad(mode)
+  private def adviserAddressList(mode: Mode) = controllers.routes.AdviserAddressListController.onPageLoad(mode, srn)
 
-  private def adviserPostCodeLookup(mode: Mode) = controllers.routes.AdviserPostCodeLookupController.onPageLoad(mode)
+  private def adviserPostCodeLookup(mode: Mode) = controllers.routes.AdviserPostCodeLookupController.onPageLoad(mode, srn)
 
-  private def checkYourAnswersPage = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
+  private def checkYourAnswersPage = controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn)
 
-  private def adviserEmail(mode: Mode): Call = controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode)
-  private def adviserPhone(mode: Mode): Call = controllers.routes.AdviserPhoneController.onPageLoad(NormalMode)
+  private def adviserEmail(mode: Mode): Call = controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode, srn)
+  private def adviserPhone(mode: Mode): Call = controllers.routes.AdviserPhoneController.onPageLoad(NormalMode, srn)
 
-  private def adviserCYA: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
+  private def adviserCYA: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn)
 }

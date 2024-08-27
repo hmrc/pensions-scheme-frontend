@@ -65,7 +65,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeAuditService,
       controllerComponents,
@@ -81,6 +81,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
         addresses,
         heading = Message("messages__dynamic_whatIsAddress", insurerCompanyName),
         title = Message("messages__dynamic_whatIsAddress", Message("messages__theInsuranceCompany")),
+        srn = srn,
         entityName = insurerCompanyName
       ),
       None

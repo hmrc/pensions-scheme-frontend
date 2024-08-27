@@ -64,7 +64,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       countryOptions,
@@ -80,7 +80,8 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
         routes.CompanyAddressController.onSubmit(NormalMode, srn, firstIndex),
         options,
         Message("messages__common__confirmAddress__h1", Message("messages__theEstablisher")),
-        Message("messages__common__confirmAddress__h1", companyName)
+        Message("messages__common__confirmAddress__h1", companyName),
+        srn
       ),
       None
     )(fakeRequest, messages).toString

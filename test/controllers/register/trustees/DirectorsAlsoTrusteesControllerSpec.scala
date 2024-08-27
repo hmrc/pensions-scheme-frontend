@@ -59,7 +59,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
   private val pageHeading = Messages("messages__trustees__prefill__title")
   private val titleMessage = Messages("messages__trustees__prefill__heading", companyDetails.companyName)
-  private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(0)
+  private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(0, srn)
 
   private val seqOneEstablisherDirector = Seq(
     DataPrefillIndividualDetails(
@@ -102,7 +102,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(index)(fakeRequest)
+        val result = controller.onPageLoad(index, srn)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -110,7 +110,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneEstablisherDirector), postCall)(fakeRequest, messages).toString
+          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneEstablisherDirector), postCall, srn)(fakeRequest, messages).toString
       }
     }
 
@@ -122,11 +122,11 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onPageLoad(index)(fakeRequest)
+        val result = controller.onPageLoad(index, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, srn).url)
       }
     }
 
@@ -136,11 +136,11 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onPageLoad(index)(fakeRequest)
+        val result = controller.onPageLoad(index, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, srn).url)
       }
     }
   }
@@ -163,7 +163,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
           "value[0]" -> "0",
           "value[1]" -> "2"
         )
-        val result = controller.onSubmit(index)(request)
+        val result = controller.onSubmit(index, srn)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url)
         val expectedDirectors = Seq(
@@ -191,9 +191,9 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
         )
-        val result = controller.onSubmit(index)(request)
+        val result = controller.onSubmit(index, srn)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, srn).url)
 
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
@@ -216,7 +216,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "0"
         )
-        val result = controller.onSubmit(index)(request)
+        val result = controller.onSubmit(index, srn)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url)
         val expectedDirectors = Seq(
@@ -243,9 +243,9 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "-1"
         )
-        val result = controller.onSubmit(index)(request)
+        val result = controller.onSubmit(index, srn)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, srn).url)
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
       }
@@ -257,7 +257,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
-        val result = controller.onSubmit(index)(fakeRequest)
+        val result = controller.onSubmit(index, srn)(fakeRequest)
         status(result) mustBe BAD_REQUEST
       }
     }

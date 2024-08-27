@@ -18,6 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
+import models.SchemeReferenceNumber
 import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -26,6 +27,7 @@ import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import org.scalatestplus.mockito.MockitoSugar
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

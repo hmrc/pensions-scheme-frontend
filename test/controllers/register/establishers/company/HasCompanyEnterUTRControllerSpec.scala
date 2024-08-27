@@ -34,13 +34,12 @@ class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
   val formProvider = new HasUTRFormProvider()
   val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   val index = Index(0)
-  val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, srn, index)
   val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__hasUTR", "test company name"),
-    hint = Some(Message("messages__hasUtr__p1"))
+    hint = Some(Message("messages__hasUtr__p1")), srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -52,7 +51,7 @@ class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,

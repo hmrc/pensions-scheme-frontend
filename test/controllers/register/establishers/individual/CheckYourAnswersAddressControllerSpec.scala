@@ -60,12 +60,13 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"))
+            h1 = Message("checkYourAnswers.hs.heading"),
+            srn = srn)
           app.stop()
         }
 
@@ -75,10 +76,10 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>
@@ -105,7 +106,6 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
   val establisherName = "First Last"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
@@ -128,7 +128,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     establishersIndividualPreviousAddress(index, previousAddress)
 
   def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   def addressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
@@ -160,7 +160,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
 
   private val view = injector.instanceOf[checkYourAnswers]
   private val mockFeatureToggleService = mock[FeatureToggleService]
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

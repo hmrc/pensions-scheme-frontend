@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register._
 import identifiers.{Identifier, VariationDeclarationId}
@@ -30,7 +31,7 @@ import play.api.mvc.Call
 import utils.UserAnswers
 
 //scalastyle:off line.size.limit
-class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
+class RegisterNavigatorSpec extends ControllerSpecBase with Matchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
 
@@ -48,7 +49,7 @@ class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
           rowNoValue(ContinueRegistrationId)(beforeYouStart, ua = Some(beforeYouStartInProgress)),
           rowNoValue(ContinueRegistrationId)(beforeYouStart)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -57,24 +58,25 @@ class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
           ("Id", "UserAnswers", "Next Page"),
           rowNoValue(VariationDeclarationId)(variationSucess)
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, Some("srn"))
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
     }
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object RegisterNavigatorSpec extends OptionValues{
+  val srn = SchemeReferenceNumber("S123456L")
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name"))
   private val hasEstablishers = hasCompanies.schemeName("test-scheme-name").schemeType(SchemeType.GroupLifeDeath)
   private val beforeYouStartInProgress = UserAnswers().schemeName("Test Scheme")
   private val beforeYouStartCompleted = beforeYouStartInProgress.schemeType(SchemeType.SingleTrust).
     establishedCountry(country = "GB").declarationDuties(haveWorkingKnowledge = true)
 
-  private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
+  private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad(srn)
 
   private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
-  private def declaration = controllers.register.routes.DeclarationController.onPageLoad
+  private def declaration = controllers.register.routes.DeclarationController.onPageLoad(NormalMode, srn)
 
   private def taskList: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
   private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")

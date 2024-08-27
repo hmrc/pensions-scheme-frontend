@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -32,7 +33,7 @@ import utils.{Enumerable, UserAnswers}
 
 //scalastyle:off magic.number
 
-class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class TrusteesNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
@@ -60,7 +61,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(HaveAnyTrusteesId)(false, taskList(NormalMode, srn)),
           rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, srn))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -127,7 +128,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
     controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, srn)
 
   private def directorsAlsoTrustees =
-    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
+    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index, srn)
 
   private def trusteeKind(index: Int, mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)

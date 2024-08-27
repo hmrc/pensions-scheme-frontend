@@ -41,7 +41,7 @@ class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
 
   private val view = injector.instanceOf[uKBankAccount]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
+    view(form, NormalMode, schemeName, srn)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -63,14 +63,14 @@ class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
 
   "UKBankAccount Controller" must {

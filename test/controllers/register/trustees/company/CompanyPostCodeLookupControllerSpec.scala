@@ -48,7 +48,7 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), srn)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form: Form[String] = formProvider()
@@ -87,14 +87,15 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
           val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
 
           lazy val viewModel = PostcodeLookupViewModel(
-            postCall = controller.postCall(NormalMode, firstIndex, None),
-            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
+            postCall = controller.postCall(NormalMode, firstIndex, srn),
+            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, srn),
             title = Message(controller.title),
             heading = Message(controller.heading, companyName),
-            subHeading = Some(company.companyName)
+            subHeading = Some(company.companyName),
+            srn = srn
           )
 
-          val request = addCSRFToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex, None))
+          val request = addCSRFToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex, srn))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -138,7 +139,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
               .withHeaders("Csrf-Token" -> "nocheck"))
 
             val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardRoute.url

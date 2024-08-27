@@ -34,7 +34,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
 
   "DirectorHasUTRController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex,srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -44,7 +44,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
       val validData = validCompanyDirectorData("hasUtr" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex,srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -52,7 +52,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex,srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -63,7 +63,7 @@ class DirectorHasUTRControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex,srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -81,13 +81,13 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
   private val form = formProvider("error", "test company name")
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
-  private val srn = None
   private val postCall = routes.DirectorHasUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__theDirector")),
     heading = Message("messages__hasUTR", "first last"),
-    hint = Some(Message("messages__hasUtr__p1"))
+    hint = Some(Message("messages__hasUtr__p1")),
+    srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -99,7 +99,7 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,

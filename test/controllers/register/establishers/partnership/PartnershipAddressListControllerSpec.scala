@@ -74,7 +74,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[PartnershipAddressListController]
         val view = app.injector.instanceOf[addressList]
-        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
         status(result) mustBe OK
 
         val viewModel: AddressListViewModel = addressListViewModel(addresses)
@@ -88,17 +88,17 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
     "redirect to Post Code Lookup if no address data on a GET request" in {
       running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
     }
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
       running(_.overrides(modules(dontGetAnyData): _*)) { app =>
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -112,7 +112,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe onwardRoute.url
@@ -126,7 +126,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -140,22 +140,23 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
     }
   }
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
+      routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), srn),
+      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), srn),
       addresses,
       title = Message("messages__establisherSelectAddress__h1", Message("messages__thePartnership").resolve),
       heading = Message("messages__establisherSelectAddress__h1", partnershipDetails.name),
-      entityName = partnershipDetails.name
+      entityName = partnershipDetails.name,
+      srn = srn
     )
   }
 }

@@ -42,7 +42,6 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
@@ -77,7 +76,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
@@ -93,7 +92,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(), title: Message, h1: Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -117,13 +116,14 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"))
+            h1 = Message("checkYourAnswers.hs.heading"),
+            srn = srn)
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)

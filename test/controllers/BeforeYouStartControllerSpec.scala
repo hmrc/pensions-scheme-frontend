@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
   val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
-  def onwardRoute: Call = controllers.routes.SchemeNameController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.SchemeNameController.onPageLoad(srn)
 
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
   private val psaName = "Psa Name"
@@ -43,7 +43,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
     new BeforeYouStartController(
       messagesApi,
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       pensionAdministratorConnector,
       controllerComponents,

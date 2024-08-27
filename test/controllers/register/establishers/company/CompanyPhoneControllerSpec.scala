@@ -64,7 +64,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       FakeUserAnswersService,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
@@ -80,7 +80,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
         Message("messages__enterPhoneNumber", Message("messages__theCompany").resolve),
         Message("messages__enterPhoneNumber", "test company name"),
         Some(Message("messages__contact_phone__hint", "test company name", schemeName)),
-        None
+        srn
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString

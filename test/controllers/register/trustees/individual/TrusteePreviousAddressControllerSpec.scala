@@ -81,14 +81,15 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
             val controller = app.injector.instanceOf[TrusteePreviousAddressController]
 
             val viewmodel = ManualAddressViewModel(
-              controller.postCall(NormalMode, firstIndex, None),
+              controller.postCall(NormalMode, firstIndex, srn),
               countryOptions.options,
               Message("messages__common__confirmPreviousAddress__h1",Message("messages__theIndividual")),
-              Message("messages__common__confirmPreviousAddress__h1", trusteeDetails.fullName)
+              Message("messages__common__confirmPreviousAddress__h1", trusteeDetails.fullName),
+              srn = srn
             )
 
             val request = addCSRFToken(
-              FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
+              FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, srn))
                 .withHeaders("Csrf-Token" -> "nocheck")
             )
 
@@ -138,7 +139,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
                   "country" -> address.country))
 
               val controller = app.injector.instanceOf[TrusteePreviousAddressController]
-              val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+              val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
               status(result) must be(SEE_OTHER)
               redirectLocation(result).value mustEqual onwardRoute.url
@@ -179,7 +180,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
             fakeAuditService.reset()
 
             val controller = app.injector.instanceOf[TrusteePreviousAddressController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
             whenReady(result) {
               _ =>

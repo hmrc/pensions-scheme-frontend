@@ -38,7 +38,7 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): CannotMakeChangesController =
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
-      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view, FakeAllowAccessProvider())
+      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view, FakeAllowAccessProvider(srn))
 
   def viewAsString(): String = view(srn, Some(schemeName))(fakeRequest, messages).toString
 

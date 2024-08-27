@@ -64,7 +64,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, srn, firstIndex),
     manualInputCall = manualInputCall,
     title = Message("messages__establisherPostCode__title"),
-    heading = Message("messages__establisherPostCode__h1", companyName)
+    heading = Message("messages__establisherPostCode__h1", companyName),
+    srn = srn
   )
 
   "render the view correctly on a GET request" in {

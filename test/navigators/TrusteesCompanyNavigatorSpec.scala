@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.trustees.company.routes._
 import controllers.register.trustees.routes._
@@ -32,7 +33,7 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
+class TrusteesCompanyNavigatorSpec extends ControllerSpecBase with Matchers with NavigatorBehaviour {
 
   import TrusteesCompanyNavigatorSpec._
 
@@ -74,7 +75,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, phonePage(NormalMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(NormalMode))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in CheckMode" must {
@@ -106,7 +107,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(CheckMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(CheckMode))
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -141,7 +142,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, phonePage(UpdateMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(UpdateMode))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
     }
 
     "in CheckUpdateMode" must {
@@ -172,23 +173,25 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           rowNewTrustee(CompanyPreviousAddressId(0))(someAddress, cyaAddressPage(CheckUpdateMode)),
           rowNewTrustee(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(CheckUpdateMode)),
           rowNewTrustee(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(CheckUpdateMode)),
-          row(CompanyEnterCRNId(0))(someRefValue, anyMoreChangesPage()),
-          row(CompanyEnterUTRId(0))(someRefValue, anyMoreChangesPage()),
-          row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage()),
-          row(CompanyEnterPAYEId(0))(someRefValue, anyMoreChangesPage()),
+          row(CompanyEnterCRNId(0))(someRefValue, anyMoreChangesPage(srn)),
+          row(CompanyEnterUTRId(0))(someRefValue, anyMoreChangesPage(srn)),
+          row(CompanyEnterVATId(0))(someRefValue, anyMoreChangesPage(srn)),
+          row(CompanyEnterPAYEId(0))(someRefValue, anyMoreChangesPage(srn)),
           row(CompanyAddressId(0))(someAddress, isThisPreviousAddressPage),
-          row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage()),
+          row(CompanyConfirmPreviousAddressId(0))(true, anyMoreChangesPage(srn)),
           row(CompanyConfirmPreviousAddressId(0))(false, previousAddressLookupPage(CheckUpdateMode)),
-          row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage()),
-          row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage()),
-          row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage())
+          row(CompanyPreviousAddressId(0))(someAddress, anyMoreChangesPage(srn)),
+          row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage(srn)),
+          row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage(srn))
         )
-      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, srn)
     }
   }
 }
 
 object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
+  val srn = SchemeReferenceNumber("S123456L")
+
   private def rowNewTrustee(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call)(
       implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
     val userAnswers = newTrustee.set(id)(value).asOpt.value
@@ -204,11 +207,11 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
     UserAnswers(uaToggle)
   }
 
-  private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, None)
+  private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, srn)
 
-  private def trusteeTaskListPage(index: Int): Call =  PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  private def trusteeTaskListPage(index: Int): Call =  PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
-  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, None, 0)
+  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, srn, 0)
 
   private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, None)
 
@@ -218,7 +221,7 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, None)
 
-  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, None, 0)
+  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, srn, 0)
 
   private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
 

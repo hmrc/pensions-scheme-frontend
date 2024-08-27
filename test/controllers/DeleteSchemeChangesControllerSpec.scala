@@ -36,7 +36,6 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
 
   val formProvider = new DeleteSchemeChangesFormProvider()
   val form: Form[Boolean] = formProvider()
-  val srn = "S123"
   val schemeName = "Test Scheme Name"
   val psaName = "Test Psa Name"
   val fakeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]
@@ -61,7 +60,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName, srn)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)

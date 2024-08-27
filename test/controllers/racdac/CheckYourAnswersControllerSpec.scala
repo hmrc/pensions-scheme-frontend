@@ -65,7 +65,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       dataRetrievalAction,
       getEmptyDataPsp,
       new DataRequiredActionImpl,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new FakeCountryOptions,
       controllerComponents,
       mockPensionAdministratorConnector,

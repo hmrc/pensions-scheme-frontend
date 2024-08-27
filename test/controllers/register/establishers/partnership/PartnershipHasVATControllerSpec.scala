@@ -39,7 +39,6 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
   private val formProvider = new HasReferenceNumberFormProvider()
   private val form = formProvider("messages__vat__formError", partnershipDetails.name)
   private val index = Index(0)
-  private val srn = None
   private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasVATController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
@@ -59,7 +58,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -70,7 +69,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasVATId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -88,7 +87,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -105,7 +104,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasVATController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
             val boundForm = form.bind(Map("value" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

@@ -35,7 +35,6 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     val name = "Test Name"
     val form = formProvider("messages__reason__error_ninoRequired", name)
     val index = Index(0)
-    val srn = None
     val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, index, srn)
 
   val viewmodel = ReasonViewModel(
@@ -54,7 +53,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         new FakeNavigator(desiredRoute = onwardRoute),
         FakeAuthAction,
         dataRetrievalAction,
-        FakeAllowAccessProvider(),
+        FakeAllowAccessProvider(srn),
         new DataRequiredActionImpl,
         formProvider,
         controllerComponents,
@@ -66,7 +65,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     "TrusteeNoNinoReasonController" must {
 
       "return OK and the correct view for a GET" in {
-        val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -75,7 +74,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
       "redirect to the next page when valid data is submitted for true" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,7 +85,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

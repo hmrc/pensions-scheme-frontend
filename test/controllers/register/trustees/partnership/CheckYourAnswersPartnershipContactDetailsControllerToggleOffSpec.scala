@@ -50,7 +50,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
   }
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
@@ -80,7 +79,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn),
                    hideButton: Boolean = false, title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -105,12 +104,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
             Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
                 title = Message("checkYourAnswers.hs.heading"),
-                h1 = Message("checkYourAnswers.hs.heading"))
+                h1 = Message("checkYourAnswers.hs.heading"),
+                srn = srn)
           }
         }
 
@@ -118,7 +118,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
           val ftBinding: Seq[GuiceableModule] = Seq(
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))
           running(_.overrides(ftBinding: _*)) {
             app =>

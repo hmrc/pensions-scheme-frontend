@@ -62,7 +62,6 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)
   val index = 0
-  val srn = Some("srn")
 
   private val view = injector.instanceOf[confirmPreviousAddress]
 
@@ -73,7 +72,7 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       countryOptions,

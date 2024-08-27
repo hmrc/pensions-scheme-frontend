@@ -17,9 +17,10 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{TypeOfBenefits, UpdateMode}
+import models.{NormalMode, TypeOfBenefits, UpdateMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -27,17 +28,16 @@ import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
 class VariationsNavigatorSpec
-  extends SpecBase
+  extends ControllerSpecBase
     with NavigatorBehaviour
     with OptionValues
     with Enumerable.Implicits {
 
   private val srnValue = "S123"
-  private val srn      = Some(srnValue)
 
   private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
   private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
-  private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(srn)
+  private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(NormalMode, srn)
 
   private val complete = UserAnswers()
     .set(BenefitsSecuredByInsuranceId)(false)

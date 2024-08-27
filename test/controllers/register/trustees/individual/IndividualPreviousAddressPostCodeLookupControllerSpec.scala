@@ -64,7 +64,7 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
       }
@@ -84,7 +84,7 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
           implicit app =>
             val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
             val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+            val result = controller.onSubmit(NormalMode, firstIndex, srn)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -106,11 +106,12 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   val address: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
-    postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
-    manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
+    postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex, srn),
+    manualInputCall = routes.TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, srn),
     title = Message("messages__trustee_individual_previous_address__heading", Message("messages__theIndividual")),
     heading = Message("messages__trustee_individual_previous_address__heading", personDetails.fullName),
-    subHeading = Some(personDetails.fullName)
+    subHeading = Some(personDetails.fullName),
+    srn = srn
   )
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(

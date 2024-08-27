@@ -44,7 +44,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .thenReturn(schemeDetailsTaskListTrustees)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListTrustees)
@@ -55,7 +55,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .thenReturn(schemeDetailsTaskListTrustees)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+        .onPageLoad(NormalMode, 0, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -63,7 +63,6 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 }
 
 object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskListRegistrationTrusteeControllerSpec with MockitoSugar {
-  private val srn = None
   private val h1 = "h1"
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
@@ -103,7 +102,7 @@ object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskL
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       controllerComponents,
       view,
       mockHsTaskListHelperRegistration
@@ -114,7 +113,8 @@ object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskL
     view(
       taskSections,
       schemeName,
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url,
+      srn
     )(fakeRequest, messages).toString
 }
 

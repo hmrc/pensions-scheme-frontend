@@ -38,11 +38,11 @@ class StillNeedDetailsControllerSpec extends ControllerSpecBase {
     new StillNeedDetailsController(messagesApi,
       FakeAuthAction, dataRetrievalAction, controllerComponents, view)
 
-  def viewAsString(): String = view(Some(srn), Some(schemeName))(fakeRequest, messages).toString
+  def viewAsString(): String = view((srn), Some(schemeName))(fakeRequest, messages).toString
 
   "StillNeedDetails Controller" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(Some(srn))(fakeRequest)
+      val result = controller().onPageLoad((srn))(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }

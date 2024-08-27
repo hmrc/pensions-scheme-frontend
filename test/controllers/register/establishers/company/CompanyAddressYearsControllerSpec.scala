@@ -54,7 +54,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       view,
       controllerComponents
@@ -68,7 +68,8 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
         Message("messages__company_address_years__title"),
         Message("messages__company_address_years__h1", companyName),
         Message("messages__company_address_years__title"),
-        Some(companyName)
+        Some(companyName),
+        srn = srn
       ),
       None
     )(fakeRequest, messages).toString

@@ -21,6 +21,7 @@ import audit.{AddressAction, AddressEvent, AuditService}
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.ControllerSpecBase
 import controllers.address.ManualAddressControllerSpec._
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
@@ -44,7 +45,7 @@ import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddressListControllerSpec extends SpecBase with OptionValues {
+class AddressListControllerSpec extends ControllerSpecBase with OptionValues {
 
   def viewAsString(viewModel: AddressListViewModel, value: Option[Int]): String = {
 
@@ -224,7 +225,7 @@ object AddressListControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val controllerComponents: MessagesControllerComponents,
                                   override val view: addressList
-                                )(implicit val ec: ExecutionContext) extends AddressListController {
+                                )(implicit val ec: ExecutionContext) extends AddressListController with ControllerSpecBase {
 
     override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 
@@ -239,6 +240,7 @@ object AddressListControllerSpec {
       )(DataRequest(FakeRequest(), "cacheId", UserAnswers(), Some(PsaId("A0000000"))))
 
     }
+    override val srn = SchemeReferenceNumber("S123456L")
 
     def onSubmit(viewModel: AddressListViewModel, value: Int, addressSeq: Seq[TolerantAddress] = addresses): Future[Result] = {
 
@@ -311,7 +313,7 @@ object AddressListControllerSpec {
     )
   )
 
-  def addressListViewModel(addresses: Seq[TolerantAddress] = addresses): AddressListViewModel =
+  def addressListViewModel(addresses: Seq[TolerantAddress] = addresses, srn: SchemeReferenceNumber = SchemeReferenceNumber("S123456L")): AddressListViewModel =
     AddressListViewModel(
       postCall = postCall,
       manualInputCall = manualInputCall,
@@ -320,7 +322,8 @@ object AddressListControllerSpec {
       heading = Message("heading text"),
       selectAddress = Message("select an address text"),
       selectAddressLink = Message("select an address link text"),
-      entityName = "test name"
+      entityName = "test name",
+      srn = srn
     )
 
 }

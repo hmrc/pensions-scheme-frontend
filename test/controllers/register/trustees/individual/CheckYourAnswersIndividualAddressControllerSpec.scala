@@ -59,12 +59,13 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"))
+            h1 = Message("checkYourAnswers.hs.heading"),
+            srn = srn)
           app.stop()
         }
 
@@ -74,10 +75,10 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>
@@ -105,7 +106,6 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
   val trusteeName = "First Last"
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
@@ -128,7 +128,7 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   def submitUrlUpdateMode(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 

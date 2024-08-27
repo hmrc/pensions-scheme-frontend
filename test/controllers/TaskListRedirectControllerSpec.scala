@@ -82,15 +82,16 @@ object TaskListRedirectControllerSpec extends ControllerSpecBase with MockitoSug
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
 
-  private val srn = Some("srn")
 
   private def controller: TaskListRedirectController =
     new TaskListRedirectController(
       frontendAppConfig,
       mockSchemeDetailsConnector,
       mockMinimalPsaConnector,
+      allowAccess
       messagesApi,
       FakeAuthAction,
+      getEmptyData,
       controllerComponents
     )
 }
