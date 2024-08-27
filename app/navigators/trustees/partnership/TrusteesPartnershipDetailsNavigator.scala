@@ -44,7 +44,7 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
                                        srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(index) => // TODO: Remove Json code below when SchemeRegistration toggle is removed
       (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-        case Some(true) => trusteeTaskList(index)
+        case Some(true) => trusteeTaskList(index, srn)
         case _ => AddTrusteeController.onPageLoad(mode, srn)
       }
     case id@PartnershipHasUTRId(index) =>
@@ -65,7 +65,7 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
   }
 
   override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
@@ -103,12 +103,16 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipEnterPAYEId(index) if isNewTrustee(index, ua) => cyaPage(mode, index, srn)
     case PartnershipEnterPAYEId(_) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
+
 }
 
 object TrusteesPartnershipDetailsNavigator {
 
-  private def trusteeTaskList(index: Int): Call =
-    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  private def trusteeTaskList(index: Int, srn: SchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   private def isNewTrustee(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsTrusteeNewId(index)).getOrElse(false)

@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
-import models.UpdateMode
+import models.{SchemeReferenceNumber, UpdateMode}
 import utils.Enumerable
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
@@ -27,8 +27,6 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
     with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
@@ -46,4 +44,5 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 }

@@ -20,7 +20,7 @@ import controllers.register.trustees.company.{routes => trusteeCompanyRoutes}
 import controllers.register.trustees.individual.{routes => trusteeIndividualRoutes}
 import controllers.register.trustees.partnership.{routes => trusteePartnershipRoutes}
 import models.Index.indexToInt
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import play.api.mvc.Call
 import utils.UserAnswers
 

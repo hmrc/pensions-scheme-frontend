@@ -5,8 +5,8 @@ POST        /scheme-establishers/:srn                                     contro
 GET         /:mode/scheme-establishers/:srn                          controllers.register.establishers.AddEstablisherController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 POST        /:mode/scheme-establishers/:srn                          controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
 
-GET         /:index/company/delete-establisher                       controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
-POST        /:index/company/delete-establisher                       controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
+GET         /:index/company/delete-establisher/:srn                  controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
+POST        /:index/company/delete-establisher/:srn                  controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
 GET         /:index/company/:mode/delete-establisher/:srn            controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
 POST        /:index/company/:mode/delete-establisher/:srn            controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: SchemeReferenceNumber)
 
@@ -18,8 +18,8 @@ POST        /:index/individual/delete-establisher/:srn                    contro
 GET         /:index/individual/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: SchemeReferenceNumber)
 POST        /:index/individual/:mode/delete-establisher/:srn         controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode, index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual, srn: SchemeReferenceNumber)
 
-GET         /:index/partnership/delete-establisher                   controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
-POST        /:index/partnership/delete-establisher                   controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
+GET         /:index/partnership/delete-establisher/:srn                   controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
+POST        /:index/partnership/delete-establisher/:srn                   controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
 GET         /:index/partnership/:mode/delete-establisher/:srn        controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
 POST        /:index/partnership/:mode/delete-establisher/:srn        controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Partnership, srn: SchemeReferenceNumber)
 

@@ -34,7 +34,7 @@ class CannotStartRegistrationController @Inject()(appConfig: FrontendAppConfig,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: cannotStartRegistration)(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
+  def onPageLoad(): Action[AnyContent] = authenticate() {
     implicit request =>
       Ok(view())
   }

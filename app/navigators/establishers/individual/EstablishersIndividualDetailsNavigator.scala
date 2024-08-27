@@ -41,7 +41,7 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherNameId(index) =>
-      PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+      PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
     case EstablisherDOBId(index) if mode == NormalMode => EstablisherHasNINOController.onPageLoad(mode, index, srn)
     case EstablisherDOBId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case id@EstablisherHasNINOId(index) => booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode,
@@ -56,9 +56,6 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
     case EstablisherNoUTRReasonId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case EstablisherUTRId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
   }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
@@ -96,6 +93,9 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
       CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case EstablisherUTRId(_) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 }
 
 object EstablishersIndividualDetailsNavigator {

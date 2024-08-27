@@ -173,7 +173,7 @@ class SpokeCreationService extends Enumerable.Implicits {
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), None)
         )
-      case (false, false) if srn.isDefined =>
+      case (false, false) if srn.id.nonEmpty =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
@@ -204,7 +204,7 @@ class SpokeCreationService extends Enumerable.Implicits {
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), Some(false))
         )
-      case (false, false) if srn.isDefined =>
+      case (false, false) if srn.id.nonEmpty =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
@@ -230,7 +230,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
 
     (answers.get(HaveAnyTrusteesId), trustees.isEmpty, viewOnly) match {
-      case (None | Some(true), false, false) if srn.isDefined =>
+      case (None | Some(true), false, false) if srn.id.nonEmpty =>
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
@@ -260,7 +260,7 @@ class SpokeCreationService extends Enumerable.Implicits {
   def getAddTrusteeHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
-      case (None | Some(true), false, false) if srn.isDefined =>
+      case (None | Some(true), false, false) if srn.id.nonEmpty =>
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)

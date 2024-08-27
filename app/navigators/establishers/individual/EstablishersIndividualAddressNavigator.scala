@@ -38,20 +38,17 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
-
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
-    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, None)
-    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, srn)
+    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, srn)
+    case AddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
+    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, srn)
+    case AddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
     case AddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, srn)
-    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, None)
-    case PreviousAddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, srn)
+    case PreviousAddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
+    case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
@@ -74,6 +71,9 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
     (mode, index, srn))
     case PreviousAddressId(index) => cyaOrMoreChanges(ua, journeyMode(mode), index, srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 }
 
 object EstablishersIndividualAddressNavigator {

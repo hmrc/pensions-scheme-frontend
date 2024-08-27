@@ -28,37 +28,19 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case AdviserNameId =>
-        NavigateTo.dontSave(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode, srn))
       case AdviserEmailId =>
-        NavigateTo.dontSave(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode, srn))
       case AdviserPhoneId =>
-        NavigateTo.dontSave(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn))
       case AdviserAddressPostCodeLookupId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode, srn))
       case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserAddressId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserCheckYourAnswersId =>
         NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))
-      case _ => None
-    }
-  }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
-    from.id match {
-      case AdviserNameId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
-      case AdviserEmailId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
-      case AdviserPhoneId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
-      case AdviserAddressPostCodeLookupId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode))
-      case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
-      case AdviserAddressId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case _ => None
     }
   }
@@ -66,4 +48,22 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
+    from.id match {
+      case AdviserNameId =>
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
+      case AdviserEmailId =>
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
+      case AdviserPhoneId =>
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
+      case AdviserAddressPostCodeLookupId =>
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode, srn))
+      case AdviserAddressListId =>
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
+      case AdviserAddressId =>
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
+      case _ => None
+    }
+  }
 }

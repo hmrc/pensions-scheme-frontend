@@ -262,7 +262,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
             mode match {
               case NormalMode | CheckMode =>
                 controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
-                  .onPageLoad(index)
+                  .onPageLoad(index, srn)
               case _ => controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             }
@@ -270,7 +270,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
             if (mode == CheckMode || mode == NormalMode) { // TODO: Remove Json code below when SchemeRegistration toggle is removed
               (answers.json \ SchemeRegistration.asString).asOpt[Boolean] match {
                 case Some(true) =>
-                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
                 case _ =>
                   PsaSchemeTaskListController.onPageLoad(mode, srn)
               }
@@ -378,4 +378,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
     }
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    editRoutes(from, CheckMode, srn)
 }

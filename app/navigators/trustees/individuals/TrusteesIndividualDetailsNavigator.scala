@@ -39,32 +39,29 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
-
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case TrusteeNameId(index) =>
       // TODO: Remove Json code below when SchemeRegistration toggle is removed
       (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-        case Some(true) => trusteeTaskList(index)
+        case Some(true) => trusteeTaskList(index, srn)
         case _ => AddTrusteeController.onPageLoad(mode, srn)
       }
     case TrusteeDOBId(index) if mode == NormalMode =>
       hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case id@TrusteeHasNINOId(index) =>
       booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case TrusteeEnterNINOId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeEnterNINOId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case TrusteeNoNINOReasonId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case id@TrusteeHasUTRId(index) =>
       booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index) =>
@@ -109,14 +106,18 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
       cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeUTRId(index) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
+
 }
 
 object TrusteesIndividualDetailsNavigator {
   private def hasNinoPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     TrusteeHasNINOController.onPageLoad(mode, index, srn)
 
-  private def trusteeTaskList(index: Int): Call =
-    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  private def trusteeTaskList(index: Int, srn: SchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   private def ninoPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     TrusteeEnterNINOController.onPageLoad(mode, index, srn)

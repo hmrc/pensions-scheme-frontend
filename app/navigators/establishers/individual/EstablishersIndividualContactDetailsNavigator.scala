@@ -36,9 +36,6 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
-
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) if mode == NormalMode => phonePage(mode, index, srn)
@@ -67,6 +64,10 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
       cyaIndividualContactDetailsPage(mode, index, srn)
     case EstablisherPhoneId(_) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
+
 }
 
 object EstablishersIndividualContactDetailsNavigator {

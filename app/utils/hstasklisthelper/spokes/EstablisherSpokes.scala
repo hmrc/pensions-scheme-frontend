@@ -22,7 +22,7 @@ import controllers.register.establishers.individual.{routes => establisherIndivi
 import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import models.Index.indexToInt
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, SchemeReferenceNumber, TaskListLink}
 import play.api.mvc.Call
 import utils.UserAnswers
 import viewmodels.Message

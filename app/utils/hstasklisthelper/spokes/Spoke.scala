@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, SchemeReferenceNumber, TaskListLink}
 import play.api.mvc.Call
 import utils.UserAnswers
 import viewmodels.Message
@@ -33,7 +33,7 @@ trait Spoke {
 
   protected def dynamicLinkText(name: String, srn: SchemeReferenceNumber, registrationLinkText: => String,
                                 variationsLinkText: => String): Message =
-    Message(if (srn.isDefined) variationsLinkText else registrationLinkText, name)
+    Message(if (srn.id.nonEmpty) variationsLinkText else registrationLinkText, name)
 }
 
 trait DetailsSpoke extends Spoke {

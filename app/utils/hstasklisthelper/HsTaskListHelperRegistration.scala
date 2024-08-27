@@ -59,7 +59,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       Nil,
       addTrusteeHeader(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
-      declarationSection(answers),
+      declarationSection(answers, srn),
       None,
       Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
@@ -78,7 +78,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       establishersSection(answers, NormalMode, srn),
       addTrusteeHeaderToggleOff(answers, NormalMode, srn),
       trusteesSection(answers, NormalMode, srn),
-      declarationSection(answers),
+      declarationSection(answers, srn),
       None,
       Some(StatsSection(completedSectionCount(answers), totalSections(answers), expiryDate))
     )
@@ -230,9 +230,9 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
         None
     }
 
-  private[utils] def declarationSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def declarationSection(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[SchemeDetailsTaskListEntitySection] = {
     val declarationSpoke = if (declarationEnabled(userAnswers)) {
-      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad)
+      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad(srn))
     } else {
       Nil
     }

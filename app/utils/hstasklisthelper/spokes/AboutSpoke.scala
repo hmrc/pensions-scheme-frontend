@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink, UpdateMode}
+import models.{Index, Mode, SchemeReferenceNumber, TaskListLink, UpdateMode}
 import utils.UserAnswers
 import viewmodels.Message
 
@@ -57,7 +57,7 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationAddLinkText, variationsViewLinkText),
-      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url
+      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad(srn).url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
@@ -72,7 +72,7 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
       if (mode == UpdateMode)
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn).url
       else
-        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad(srn).url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -83,19 +83,19 @@ case object AboutBankDetailsSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text_add", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
+      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad(srn).url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text", name),
-      controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url
+      controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad(srn).url
     )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text_continue", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
+      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad(srn).url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =

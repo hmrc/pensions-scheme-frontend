@@ -97,12 +97,12 @@ trait UserAnswersService {
                                                                              hc: HeaderCarrier,
                                                                              request: DataRequest[AnyContent]
   ): Future[JsValue] = (srn, request.psaId) match {
-    case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
+    case (srnId, Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
       case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
       case _ => Future(Json.obj())
     }
 
-    case (None, _) => Future.failed(MissingSrnNumber)
+    case (_, _) => Future.failed(MissingSrnNumber)
     case _ => Future.failed(MissingPsaId)
   }
 

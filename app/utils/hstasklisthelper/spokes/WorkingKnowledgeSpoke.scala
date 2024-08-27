@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, SchemeReferenceNumber, TaskListLink}
 import utils.UserAnswers
 import viewmodels.Message
 
@@ -24,19 +24,19 @@ case object WorkingKnowledgeSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__add_details_wk"), controllers.routes
-        .WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url
+        .WhatYouWillNeedWorkingKnowledgeController.onPageLoad(srn).url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__change_details", name), controllers.routes.AdviserCheckYourAnswersController
-        .onPageLoad().url
+        .onPageLoad(srn).url
     )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__continue_details", name), controllers.routes
-        .WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url
+        .WhatYouWillNeedWorkingKnowledgeController.onPageLoad(srn).url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = answers

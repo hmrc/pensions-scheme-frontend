@@ -36,7 +36,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
   import TrusteesCompanyNavigator._
 
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navigateTo(normalAndUpdateModeRoutes
-  (NormalMode, from.userAnswers, None), from.id)
+  (NormalMode, from.userAnswers, srn), from.id)
 
   private def normalAndUpdateModeRoutes(mode: Mode,
                                         ua: UserAnswers,
@@ -45,7 +45,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
       // TODO: Remove Json code below when SchemeRegistration toggle is removed
       mode match {
         case NormalMode => (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-          case Some(true) => trusteeTaskList(index)
+          case Some(true) => trusteeTaskList(index, srn)
           case _ => addTrusteePage(mode, srn)
       }
         case _ => addTrusteePage(mode, srn)
@@ -74,9 +74,6 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyEmailId(index) => phonePage(mode, index, srn)
     case CompanyPhoneId(index) => cyaContactDetailsPage(mode, index, srn)
   }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   private def checkModeRoutes(mode: Mode, ua: UserAnswers, srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case id@HasCompanyCRNId(index) =>
@@ -145,6 +142,10 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyPhoneId(index) if isNewTrustee(ua, index) => cyaContactDetailsPage(mode, index, srn)
     case CompanyPhoneId(_) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, srn), from.id)
+
 }
 
 object TrusteesCompanyNavigator {
@@ -201,8 +202,8 @@ object TrusteesCompanyNavigator {
   private def addTrusteePage(mode: Mode, srn: SchemeReferenceNumber): Call =
     AddTrusteeController.onPageLoad(mode, srn)
 
-  private def trusteeTaskList(index: Int): Call =
-    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+  private def trusteeTaskList(index: Int, srn: SchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   private def selectAddressPage(mode: Mode, index: Int, srn: SchemeReferenceNumber): Call =
     CompanyAddressListController.onPageLoad(mode, index, srn)

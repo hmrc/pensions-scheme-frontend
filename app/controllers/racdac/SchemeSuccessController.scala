@@ -61,7 +61,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
+  def onSubmit: Action[AnyContent] = authenticate() {
     Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 }

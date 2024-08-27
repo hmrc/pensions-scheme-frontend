@@ -39,7 +39,7 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(index) => psaRegistrationEstablisherTaskList(index)
+    case PartnershipDetailsId(index) => psaRegistrationEstablisherTaskList(index, srn)
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
       srn))
     case PartnershipEnterUTRId(index) if mode == NormalMode => hasVat(mode, index, srn)
@@ -54,9 +54,6 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
     case id@PartnershipHasPAYEId(index) => booleanNav(id, ua, payePage(mode, index, srn), cyaPage(mode, index, srn))
     case PartnershipEnterPAYEId(index) => cyaPage(mode, index, srn)
   }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
@@ -92,14 +89,17 @@ class EstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector: U
     case PartnershipEnterPAYEId(index) if isNewEstablisher(index, ua) => cyaPage(mode, index, srn)
     case PartnershipEnterPAYEId(_) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 }
 
 object EstablisherPartnershipDetailsNavigator {
   private def isNewEstablisher(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsEstablisherNewId(index)).getOrElse(false)
 
-  private def psaRegistrationEstablisherTaskList(index: Int): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  private def psaRegistrationEstablisherTaskList(index: Int, srn: SchemeReferenceNumber): Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   private def addEstablisherPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)

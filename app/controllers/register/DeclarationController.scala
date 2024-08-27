@@ -30,7 +30,7 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
+import models.{Mode, NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -89,24 +89,24 @@ class DeclarationController @Inject()(
   }
 
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
         case _ =>
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
-          showPage(Ok.apply)
+          showPage(Ok.apply, mode, srn)
         } else {
           Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
         }
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result)
+  private def showPage(status: HtmlFormat.Appendable => Result, mode: Mode, srn: SchemeReferenceNumber)
                       (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
-    val href = DeclarationController.onClickAgree
+    val href = DeclarationController.onClickAgree(mode, srn)
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head
     else DeclarationDormant.values(1)
@@ -153,7 +153,7 @@ class DeclarationController @Inject()(
       case _ => false
     }
 
-  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onClickAgree(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       val updatedUA = request.userAnswers.remove(identifiers.racdac.DeclarationId).asOpt

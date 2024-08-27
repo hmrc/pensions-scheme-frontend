@@ -37,7 +37,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   protected def routes(from: NavigateFrom, mode: Mode, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case HaveAnyTrusteesId =>
-        haveAnyTrusteesRoutes(from.userAnswers)
+        haveAnyTrusteesRoutes(from.userAnswers, srn)
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers, mode, srn)
       case MoreThanTenTrusteesId =>
@@ -57,12 +57,12 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
+  private def haveAnyTrusteesRoutes(answers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
 
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
         if (answers.allTrusteesAfterDelete.isEmpty) {
-          NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, None))
+          NavigateTo.dontSave(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size, srn))
         } else {
           NavigateTo.dontSave(AddTrusteeController.onPageLoad(NormalMode, srn))
         }
@@ -99,7 +99,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
         mode match {
-          case NormalMode => NavigateTo.dontSave(DirectorsAlsoTrusteesController.onPageLoad(index))
+          case NormalMode => NavigateTo.dontSave(DirectorsAlsoTrusteesController.onPageLoad(index, srn))
           case _ => NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
         }
 
@@ -111,10 +111,10 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
-
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
   protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 }

@@ -47,23 +47,23 @@ class TrusteesIndividualAddressNavigator @Inject()(
                                        ua: UserAnswers,
                                        srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index) =>
-      IndividualAddressListController.onPageLoad(mode, index, None)
+      IndividualAddressListController.onPageLoad(mode, index, srn)
     case IndividualAddressListId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, srn)
     case IndividualAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
     case TrusteeAddressId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, srn)
     case TrusteeAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
     case TrusteeAddressYearsId(index) =>
       trusteeAddressYearsRoutes(mode, ua, index, srn)
     case IndividualPreviousAddressPostCodeLookupId(index) =>
-      TrusteePreviousAddressListController.onPageLoad(mode, index, None)
+      TrusteePreviousAddressListController.onPageLoad(mode, index, srn)
     case TrusteePreviousAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
     case TrusteePreviousAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =

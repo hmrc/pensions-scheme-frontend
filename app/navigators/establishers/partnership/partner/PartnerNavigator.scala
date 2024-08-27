@@ -38,7 +38,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
   import PartnerNavigator._
 
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
   private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
@@ -75,7 +75,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
       case (NormalMode, Some(false)) => (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
           case Some(true) =>
-            controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(estIndex)
+            controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(estIndex, srn)
           case _ => controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
         }
       case _ if ua.allPartnersAfterDelete(estIndex).lengthCompare(appConfig.maxPartners) >= 0 =>
@@ -85,9 +85,6 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
           mode, estIndex, ua.allPartners(estIndex).size, srn)
     }
   }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
@@ -156,6 +153,9 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerPhoneId(_, _) => anyMoreChangesPage(srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 }
 
 object PartnerNavigator {

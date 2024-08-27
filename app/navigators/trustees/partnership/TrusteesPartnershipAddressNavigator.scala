@@ -41,24 +41,21 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: SchemeReferenceNumber): PartialFunction[Identifier, Call] = {
-    case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, None)
+    case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, srn)
     case PartnershipAddressListId(index) if mode == NormalMode =>
-      PartnershipAddressYearsController.onPageLoad(mode, index, None)
-    case PartnershipAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
+      PartnershipAddressYearsController.onPageLoad(mode, index, srn)
+    case PartnershipAddressListId(index) => cyaAddress(journeyMode(mode), index, srn)
     case PartnershipAddressId(index) if mode == NormalMode =>
-      PartnershipAddressYearsController.onPageLoad(mode, index, None)
-    case PartnershipAddressId(index) => cyaAddress(journeyMode(mode), index, None)
-    case PartnershipAddressYearsId(index) => trusteeAddressYearsRoutes(mode, ua, index, None)
+      PartnershipAddressYearsController.onPageLoad(mode, index, srn)
+    case PartnershipAddressId(index) => cyaAddress(journeyMode(mode), index, srn)
+    case PartnershipAddressYearsId(index) => trusteeAddressYearsRoutes(mode, ua, index, srn)
     case id@PartnershipHasBeenTradingId(index) =>
-      booleanNav(id, ua, previousAddressLookup(mode, index, None), cyaAddress(journeyMode(mode), index, None))
+      booleanNav(id, ua, previousAddressLookup(mode, index, srn), cyaAddress(journeyMode(mode), index, srn))
     case PartnershipPreviousAddressPostcodeLookupId(index) =>
-      PartnershipPreviousAddressListController.onPageLoad(mode, index, None)
-    case PartnershipPreviousAddressListId(index) => cyaAddress(journeyMode(mode), index, None)
-    case PartnershipPreviousAddressId(index) => cyaAddress(journeyMode(mode), index, None)
+      PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
+    case PartnershipPreviousAddressListId(index) => cyaAddress(journeyMode(mode), index, srn)
+    case PartnershipPreviousAddressId(index) => cyaAddress(journeyMode(mode), index, srn)
   }
-
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
@@ -88,6 +85,10 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
+
 }
 
 object TrusteesPartnershipAddressNavigator {
