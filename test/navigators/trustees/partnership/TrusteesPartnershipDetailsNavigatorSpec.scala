@@ -48,38 +48,38 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
           ("Id", "UserAnswers", "Next Page"),
           row(PartnershipDetailsId(index))(partnershipDetails, addTrusteesPage(NormalMode, srn)),
           row(PartnershipDetailsId(index))(partnershipDetails, TrusteesTaskListPage(index), Some(uaFeatureToggleOn)),
-          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(NormalMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, None))
+          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, srn)),
+          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(NormalMode, index, srn)),
+          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(NormalMode, index, srn)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, srn))
         )
 
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForTrusteePartnership, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForTrusteePartnership, srn)
     }
 
     "CheckMode" must {
       val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Expected next page"),
-          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None))
+          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasVATId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn))
         )
 
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
     }
 
     "in UpdateMode" must {
@@ -129,7 +129,7 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
 
 object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
   private lazy val index = 0
-  private val srn = Some("srn")
+  private val srn = SchemeReferenceNumber("srn")
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
@@ -144,7 +144,7 @@ object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
     AddTrusteeController.onPageLoad(Mode.journeyMode(mode), srn)
 
   private def TrusteesTaskListPage(index: Int): Call =
-    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
   private def hasVatPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)

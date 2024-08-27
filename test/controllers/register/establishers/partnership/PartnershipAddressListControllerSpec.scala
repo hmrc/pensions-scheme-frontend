@@ -36,7 +36,7 @@ import views.html.address.addressList
 
 class PartnershipAddressListControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = routes.PartnershipAddressYearsController.onPageLoad(NormalMode, 0, None)
+  def onwardRoute: Call = routes.PartnershipAddressYearsController.onPageLoad(NormalMode, 0, srn)
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
 

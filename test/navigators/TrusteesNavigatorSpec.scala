@@ -89,7 +89,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private val emptyAnswers = UserAnswers()
   private val srnValue     = "123"
-  private val srn          = Some(srnValue)
+  private val srn          = SchemeReferenceNumber(srnValue)
   private val index = 0
 
   private def establishersOrTrusteesChanged = emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value

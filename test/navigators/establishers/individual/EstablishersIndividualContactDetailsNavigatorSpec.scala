@@ -17,6 +17,7 @@
 package navigators.establishers.individual
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.individual.routes.{CheckYourAnswersContactDetailsController, EstablisherPhoneController}
 import generators.Generators
@@ -31,7 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
 
   import EstablishersIndividualContactDetailsNavigatorSpec._
 
@@ -42,22 +43,22 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
     def navigationForNewEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad(NormalMode, index, None)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad(NormalMode, index, srn)),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherIndividual, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherIndividual, srn)
   }
 
   "CheckMode" must {
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn)),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -89,7 +90,6 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
 object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
-  private val srn = Some("srn")
 
   private def cyaContactDetailsPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)

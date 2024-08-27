@@ -45,7 +45,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
           val controller = app.injector.instanceOf[CompanyEnterPAYEController]
           val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
           status(result) mustBe OK
-          contentAsString(result) mustBe view(form, viewModel, srn)(fakeRequest, messages).toString()
+          contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString()
       }
     }
 

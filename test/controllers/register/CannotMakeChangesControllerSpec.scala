@@ -19,9 +19,9 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
+import models.SchemeReferenceNumber
 import play.api.libs.json._
 import play.api.test.Helpers._
-
 import views.html.register.cannotMakeChanges
 
 
@@ -29,7 +29,6 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
   appRunning()
 
   val schemeName = "Test Scheme Name"
-  val srn = Some("A2343243")
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )

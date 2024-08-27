@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures with JsonMatchers with BeforeAndAfterEach {
 
   private val srn = "123"
-  private val srnOpt = Some(srn)
+  private val srnOpt = SchemeReferenceNumber(srn)
   private val psa = "A0000000"
   private val externalId = "id"
   private val authRequest: AuthenticatedRequest[AnyContent] = AuthenticatedRequest(fakeRequest, externalId, Some(PsaId(psa)))

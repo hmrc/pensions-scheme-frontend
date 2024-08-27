@@ -188,7 +188,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
       addresses,
       title = messages("messages__trustee__individual__previous__address__heading",Message("messages__theIndividual").resolve),
       heading = messages("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName),
-      entityName = trusteeDetails.fullName
+      entityName = trusteeDetails.fullName,
+      srn = srn
     )
   }
 }

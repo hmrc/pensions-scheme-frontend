@@ -308,7 +308,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
     controllers.register.establishers.company.routes.HasCompanyPAYEController.onPageLoad(mode, srn, 0)
 
   private def companyVatNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, None)
+    controllers.register.establishers.company.routes.CompanyEnterVATController.onPageLoad(mode, 0, srn)
 
   private def hasCompanyVat(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasCompanyVATController.onPageLoad(mode, srn, 0)
@@ -353,7 +353,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
       anyMoreChanges
   }
 
-  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, srn)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode,
                                              userAnswers: UserAnswers) =

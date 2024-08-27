@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
           modules(UserAnswers().trusteesCompanyDetails(index, trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(NormalMode, srn)

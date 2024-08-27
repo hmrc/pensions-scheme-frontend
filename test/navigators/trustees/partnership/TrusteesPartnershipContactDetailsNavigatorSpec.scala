@@ -42,22 +42,22 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def navigationForNewTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, None)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, srn)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteePartnership, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteePartnership, srn)
   }
 
   "CheckMode" must {
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(NormalMode, index, None)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage(NormalMode, index, srn)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -89,7 +89,7 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
 object TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
-  private val srn                   = Some("srn")
+  private val srn                   = SchemeReferenceNumber("srn")
 
   private def cyaPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)

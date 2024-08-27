@@ -86,7 +86,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
       when(mockPensionAdminstratorConnector.getPSAEmail(any(), any())).thenReturn(Future.successful(email))
 
-      val result = controller().onPageLoad(fakeRequest)
+      val result = controller().onPageLoad(srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
 
@@ -101,7 +101,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

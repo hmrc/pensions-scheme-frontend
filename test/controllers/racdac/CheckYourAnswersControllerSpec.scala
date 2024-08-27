@@ -72,7 +72,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       view
     )
 
-  private val postUrl = controllers.racdac.routes.DeclarationController.onPageLoad()
+  private val postUrl = controllers.racdac.routes.DeclarationController.onPageLoad(srn)
 
   private val racdacInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -91,7 +91,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
         messages("messages__racdac_name__title"),
         Seq(racDACName),
         answerIsMessageKey = false,
-        Some(Link("site.change", controllers.racdac.routes.RACDACNameController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", controllers.racdac.routes.RACDACNameController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__racdac_name"))))
       )
     )
@@ -104,7 +104,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
         messages("messages__racdac_contract_or_policy_number__title", racDACName),
         Seq(racDACContractNo),
         answerIsMessageKey = false,
-        Some(Link("site.change", controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__racdac_contract_or_policy_number", racDACName))))
       )
     )
@@ -116,7 +116,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     schemeName = None,
     returnOverview = true,
     hideEditLinks = false,
-    srn = None,
+    srn = srn,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

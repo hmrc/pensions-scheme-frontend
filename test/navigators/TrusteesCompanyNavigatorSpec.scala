@@ -213,42 +213,42 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, srn, 0)
 
-  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, None)
+  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, srn)
 
-  private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, None)
+  private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, srn)
 
-  private def hasCompanyVatPage(mode: Mode): Call = HasCompanyVATController.onPageLoad(mode, 0, None)
+  private def hasCompanyVatPage(mode: Mode): Call = HasCompanyVATController.onPageLoad(mode, 0, srn)
 
-  private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, None)
+  private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, srn)
 
   private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, srn, 0)
 
-  private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
+  private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, srn)
 
-  private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, None)
+  private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, srn)
 
-  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, None)
+  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, srn)
 
-  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, None)
+  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, srn)
 
-  private def cyaAddressPage(mode: Mode): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), 0, None)
+  private def cyaAddressPage(mode: Mode): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), 0, srn)
 
   private def cyaContactDetailsPage(mode: Mode): Call =
-    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, None)
+    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, srn)
 
-  private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, None)
+  private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, srn)
 
-  private def addressYearsPage(mode: Mode): Call = CompanyAddressYearsController.onPageLoad(mode, 0, None)
+  private def addressYearsPage(mode: Mode): Call = CompanyAddressYearsController.onPageLoad(mode, 0, srn)
 
-  private def hasBeenTradingPage(mode: Mode): Call = HasBeenTradingCompanyController.onPageLoad(mode, 0, None)
+  private def hasBeenTradingPage(mode: Mode): Call = HasBeenTradingCompanyController.onPageLoad(mode, 0, srn)
 
-  private def previousAddressLookupPage(mode: Mode): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, None)
+  private def previousAddressLookupPage(mode: Mode): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, srn)
 
-  private def selectPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressListController.onPageLoad(mode, 0, None)
+  private def selectPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressListController.onPageLoad(mode, 0, srn)
 
-  private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, None)
+  private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, srn)
 
-  private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+  private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, srn)
 
   val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigator]
 }

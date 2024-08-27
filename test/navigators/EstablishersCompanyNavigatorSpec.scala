@@ -357,7 +357,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       anyMoreChanges
   }
 
-  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0, srn)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode,
                                              userAnswers: UserAnswers) =

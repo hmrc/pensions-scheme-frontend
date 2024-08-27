@@ -17,6 +17,7 @@
 package navigators.establishers.partnership
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.register.establishers.partnership.routes._
 import controllers.register.establishers.routes._
 import identifiers.Identifier
@@ -36,7 +37,7 @@ import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
+class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar with ControllerSpecBase {
 
   import EstablisherPartnershipDetailsNavigatorSpec._
 
@@ -57,38 +58,38 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
         Table(
           ("Id", "UserAnswers", "Next Page"),
           row(PartnershipDetailsId(index))(partnershipDetails, establisherTasklist(index)),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(NormalMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, None))
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, srn)),
+          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(NormalMode, index, srn)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(NormalMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(NormalMode, index, srn)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, srn))
         )
 
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForEstablisherPartnership, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForEstablisherPartnership, srn)
     }
 
     "CheckMode" must {
       val navigationForCheckModeEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Expected next page"),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None))
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, srn)),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, index, srn)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, srn))
         )
 
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigationForCheckModeEstablisherPartnership, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigationForCheckModeEstablisherPartnership, srn)
     }
 
     "in UpdateMode" must {
@@ -138,12 +139,12 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
 
 object EstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private lazy val index = 0
-  private val srn = Some("srn")
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
+  val srn = SchemeReferenceNumber("S123456L")
 
   private def establisherTasklist(index: Int): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
   private def addEstablisherPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), srn)

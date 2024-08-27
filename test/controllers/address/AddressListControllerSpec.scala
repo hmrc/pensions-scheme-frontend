@@ -225,7 +225,7 @@ object AddressListControllerSpec {
                                   override val messagesApi: MessagesApi,
                                   override val controllerComponents: MessagesControllerComponents,
                                   override val view: addressList
-                                )(implicit val ec: ExecutionContext) extends AddressListController with ControllerSpecBase {
+                                )(implicit val ec: ExecutionContext) extends AddressListController {
 
     override protected def userAnswersService: UserAnswersService = FakeUserAnswersService
 
@@ -240,7 +240,7 @@ object AddressListControllerSpec {
       )(DataRequest(FakeRequest(), "cacheId", UserAnswers(), Some(PsaId("A0000000"))))
 
     }
-    override val srn = SchemeReferenceNumber("S123456L")
+    val srn = SchemeReferenceNumber("S123456L")
 
     def onSubmit(viewModel: AddressListViewModel, value: Int, addressSeq: Seq[TolerantAddress] = addresses): Future[Result] = {
 

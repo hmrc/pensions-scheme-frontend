@@ -46,7 +46,7 @@ class AllowAccessActionSpec
     with MockitoSugar {
 
   def allowAccessWithRedirectBasedOnUserAnswers(
-                                                 testHarness: (Option[String], PensionsSchemeConnector) => TestHarness,
+                                                 testHarness: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness,
                                                  userAnswers: UserAnswers,
                                                  description: String,
                                                  expectedResult: => Option[String]
@@ -135,7 +135,7 @@ class AllowAccessActionSpec
   private val generateTestHarnessForAllowAccessNoSuspendedCheck: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  private val srn = Some("S123")
+  private val srn = SchemeReferenceNumber("S123")
 
   private val suspendedUserAnswers = UserAnswers(
     Json.obj(
@@ -246,7 +246,7 @@ class AllowAccessActionSpec
   }
 
   //scalastyle:off method.length
-  def allowAccessAction(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness): Unit = {
+  def allowAccessAction(testHarness: (SchemeReferenceNumber,  PensionsSchemeConnector) => TestHarness): Unit = {
     "allow access where association between psa id and srn and " +
       "user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]
@@ -288,14 +288,14 @@ class AllowAccessActionSpec
     }
 
     "allow access for user with no data" in {
-      val futureResult = testHarness(None, pensionsSchemeConnector)
+      val futureResult = testHarness(Option[UserAnswers], pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
     }
 
     "allow access to pages for user with no srn in Normal mode" in {
-      val futureResult = testHarness(None, pensionsSchemeConnector)
+      val futureResult = testHarness(Option[UserAnswers], pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
@@ -321,7 +321,7 @@ class AllowAccessActionSpec
         val psaId = if(isPsa) Some(PsaId("A0000000")) else None
         val pspId = if(!isPsa) Some(PspId("20000000")) else None
 
-        new TestAllowAccessActionTaskList(if(withSrn) srn else None, psc, allowPsa = allowPsa, allowPsp = allowPsp)
+        new TestAllowAccessActionTaskList(if(withSrn) srn else srn, psc, allowPsa = allowPsa, allowPsp = allowPsp)
           .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), psaId, pspId))
           .map { case Some(value) => false
           case None => true

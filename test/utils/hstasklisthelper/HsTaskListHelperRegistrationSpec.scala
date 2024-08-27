@@ -43,6 +43,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
   private val mockAppConfig = mock[FrontendAppConfig]
   private val helper = new HsTaskListHelperRegistration(mockSpokeCreationService, mockAppConfig)
 
+  val srn =  SchemeReferenceNumber("srn")
   override protected def beforeEach(): Unit = {
     reset(mockAppConfig)
     reset(mockSpokeCreationService)
@@ -54,7 +55,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
-      helper.taskList(userAnswers, None, None, None).h1 mustBe name
+      helper.taskList(userAnswers, None, srn, None).h1 mustBe name
     }
   }
 
@@ -174,7 +175,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val userAnswers = answersDataAllComplete()
       when(mockSpokeCreationService.getDeclarationSpoke(any())).thenReturn(testDeclarationEntitySpoke)
 
-      helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
+      helper.declarationSection(userAnswers, srn).value mustBe declarationSectionWithLink
     }
 
     "not be present when declaration is not enabled with trustees completed" in {
@@ -186,7 +187,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         )
       val userAnswers = answersDataAllComplete(isCompleteBeforeStart = false)
 
-      helper.declarationSection(userAnswers).value mustBe declarationSectionWithLink
+      helper.declarationSection(userAnswers, srn).value mustBe declarationSectionWithLink
     }
   }
 
@@ -205,11 +206,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
       when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
 
-      val result = helper.taskListEstablisher(userAnswers, None, None, 5)
+      val result = helper.taskListEstablisher(userAnswers, None, srn, 5)
 
       result mustBe SchemeDetailsTaskListEstablishers(
         h1 = "scheme",
-        srn = None,
+        srn = srn,
         establisher = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 4, None))
@@ -223,11 +224,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
 
-      val result = helper.taskListEstablisher(userAnswers, None, None, 1)
+      val result = helper.taskListEstablisher(userAnswers, None, srn, 1)
 
       result mustBe SchemeDetailsTaskListEstablishers(
         h1 = "scheme",
-        srn = None,
+        srn = srn,
         establisher = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 4, None))
@@ -249,10 +250,10 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       val lastUpdatedDate = Instant.now(Clock.fixed(Instant.parse("2022-09-05T00:00:00Z"), ZoneOffset.UTC)).toEpochMilli
-      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(lastUpdatedDate)))
+      val result = helper.taskListToggleOff(userAnswers, None, srn, Some(LastUpdated(lastUpdatedDate)), NormalMode)
 
       result mustBe SchemeDetailsTaskList(
-        schemeName, None,
+        schemeName, srn,
         beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
         about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
         workingKnowledge = None,
@@ -291,7 +292,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskListToggleOff(userAnswers, None, None, None)
+      val result = helper.taskListToggleOff(userAnswers, None, srn, None, NormalMode)
 
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
@@ -430,16 +431,17 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
 
+  val srn = SchemeReferenceNumber("srn")
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__before_you_start_link_text", schemeName)
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
   private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
-  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad(srn).url
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
   private val wkAddLinkText = Message("messages__schemeTaskList__add_details_wk")
-  private val wkWynPage = controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url
+  private val wkWynPage = controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad(srn).url
 
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(NormalMode).url), Some(false)))
+    controllers.routes.SchemeNameController.onPageLoad(srn).url), Some(false)))
 
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
   private val testCompanyEntitySpoke = Seq(EntitySpoke(TaskListLink(Message("test company link"),

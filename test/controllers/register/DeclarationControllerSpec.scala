@@ -188,7 +188,7 @@ class DeclarationControllerSpec
     "redirect to the next page on clicking agree and continue and not audit TCMP when TypeOfBenefit is Defined" in {
       reset(mockAuditService)
 
-      val result = controller(tcmpAuditDataUa(TypeOfBenefits.Defined).dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(tcmpAuditDataUa(TypeOfBenefits.Defined).dataRetrievalAction).onClickAgree(NormalMode, srn)(fakeRequest)
 
       whenReady(result) {
         response =>

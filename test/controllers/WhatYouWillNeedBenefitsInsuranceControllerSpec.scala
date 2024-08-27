@@ -26,7 +26,7 @@ import views.html.whatYouWillNeedBenefitsInsurance
 
 class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode, srn)
 
   private val view = injector.instanceOf[whatYouWillNeedBenefitsInsurance]
 

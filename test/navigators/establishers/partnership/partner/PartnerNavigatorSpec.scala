@@ -17,6 +17,7 @@
 package navigators.establishers.partnership.partner
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.register.establishers.partnership.partner.routes._
 import generators.Generators
 import identifiers.Identifier
@@ -35,7 +36,7 @@ import utils.UserAnswers
 
 import java.time.LocalDate
 
-class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
 
   import PartnerNavigatorSpec._
 
@@ -72,32 +73,32 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
         row(OtherPartnersId(index))(true, taskListPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, srn)
   }
 
   "CheckMode" must {
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckMode, None)),
-        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, None)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, None)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckMode, None)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckMode, None))
+        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckMode, srn)),
+        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, srn)),
+        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, srn)),
+        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, srn)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, srn)),
+        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, srn)),
+        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, srn)),
+        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckMode, srn)),
+        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckMode, srn)),
+        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckMode, srn)),
+        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -169,7 +170,6 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
 
 object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
-  private val srn = Some("srn")
   private val johnDoe = PersonName("first", "last")
   private def validData(partners: PersonName*) = {
     Json.obj(

@@ -70,13 +70,13 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName, racdacName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName, racdacName, srn)(fakeRequest, messages).toString
 
   "ContractOrPolicyNumber Controller" must {
 
     "return OK and the correct view for a GET" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -90,7 +90,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, srn)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill("value 1"))
     }
@@ -99,7 +99,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "value 1"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -111,7 +111,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
         val boundForm = form.bind(Map("value" -> ""))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)
@@ -122,7 +122,7 @@ class ContractOrPolicyNumberControllerSpec extends ControllerSpecBase with Mocki
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<p>Hello world!</p>"))
         val boundForm = form.bind(Map("value" -> "<p>Hello world!</p>"))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

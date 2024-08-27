@@ -101,8 +101,8 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     view(
       form,
       PostcodeLookupViewModel(
-        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),
-        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
+        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, srn),
+        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, srn),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Message("messages__partnershipPreviousAddressPostcodeLookup__heading", partnershipName),
         Some(partnershipName),

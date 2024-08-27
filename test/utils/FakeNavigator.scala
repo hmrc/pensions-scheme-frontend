@@ -18,7 +18,7 @@ package utils
 
 import identifiers.Identifier
 import models.requests.IdentifiedRequest
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier

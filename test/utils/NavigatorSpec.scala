@@ -37,13 +37,13 @@ class NavigatorSpec extends AnyWordSpec with Matchers {
     "in Normal mode" must {
       "go to the specified page for an identifier that does exist in the route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testExistId, NormalMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testExistId, NormalMode, UserAnswers(), srn)
         result mustBe testExistNormalModeCall
       }
 
       "go to Index from an identifier that doesn't exist in the route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testNotExistId, NormalMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testNotExistId, NormalMode, UserAnswers(), srn)
         result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
@@ -51,13 +51,13 @@ class NavigatorSpec extends AnyWordSpec with Matchers {
     "in Check mode" must {
       "go to the specified page for an identifier that does exist in the route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testExistId, CheckMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testExistId, CheckMode, UserAnswers(), srn)
         result mustBe testExistCheckModeCall
       }
 
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testNotExistId, CheckMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testNotExistId, CheckMode, UserAnswers(), srn)
         result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
@@ -65,13 +65,13 @@ class NavigatorSpec extends AnyWordSpec with Matchers {
     "in Update mode" must {
       "go to the specified page for an identifier that does exist in the route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testExistId, UpdateMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testExistId, UpdateMode, UserAnswers(), srn)
         result mustBe testExistUpdateModeCall
       }
 
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testNotExistId, UpdateMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testNotExistId, UpdateMode, UserAnswers(), srn)
         result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
@@ -79,13 +79,13 @@ class NavigatorSpec extends AnyWordSpec with Matchers {
     "in CheckUpdate mode" must {
       "go to the specified page for an identifier that does exist in the route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testExistId, CheckUpdateMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testExistId, CheckUpdateMode, UserAnswers(), srn)
         result mustBe testExistCheckUpdateModeCall
       }
 
       "go to Index from an identifier that doesn't exist in the edit route map" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testNotExistId, CheckUpdateMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testNotExistId, CheckUpdateMode, UserAnswers(), srn)
         result mustBe controllers.routes.IndexController.onPageLoad
       }
     }
@@ -94,14 +94,14 @@ class NavigatorSpec extends AnyWordSpec with Matchers {
       "not save the last page when configured not to" in {
         val fixture = testFixture()
         fixture.dataCacheConnector.reset()
-        val result = fixture.navigator.nextPage(testNotSaveId, NormalMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testNotSaveId, NormalMode, UserAnswers(), srn)
         result mustBe testNotSaveCall
         fixture.dataCacheConnector.verifyNot(LastPageId)
       }
 
       "save the last page when configured to do so" in {
         val fixture = testFixture()
-        val result = fixture.navigator.nextPage(testSaveId, NormalMode, UserAnswers())
+        val result = fixture.navigator.nextPage(testSaveId, NormalMode, UserAnswers(), srn)
         result mustBe testSaveCall
         fixture.dataCacheConnector.verify(LastPageId, LastPage(testSaveCall.method, testSaveCall.url))
       }
@@ -126,6 +126,7 @@ object NavigatorSpec {
   val testSaveId: TypedIdentifier[Nothing] = new TypedIdentifier[Nothing] {}
   val testNotSaveId: TypedIdentifier[Nothing] = new TypedIdentifier[Nothing] {}
 
+  val srn = SchemeReferenceNumber("srn")
   class TestNavigator(val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
     override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
@@ -136,7 +137,7 @@ object NavigatorSpec {
         case _ => None
       }
 
-    override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
       from.id match {
         case `testExistId` => NavigateTo.dontSave(testExistCheckModeCall)
         case _ => None

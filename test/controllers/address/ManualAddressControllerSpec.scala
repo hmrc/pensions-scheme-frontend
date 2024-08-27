@@ -49,6 +49,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object ManualAddressControllerSpec {
 
+  val srn = SchemeReferenceNumber("srn")
+
   val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address] {
     override def toString = "fakeAddressId"
   }
@@ -125,7 +127,7 @@ class ManualAddressControllerSpec extends SpecBase with Matchers with MockitoSug
     countryOptions,
     "title",
     "heading",
-    Some("secondary.header")
+    srn = srn
   )
 
   "get" must {

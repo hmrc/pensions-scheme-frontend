@@ -17,6 +17,7 @@
 package navigators.trustees.individuals
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.trustees.individual.routes._
 import generators.Generators
@@ -31,7 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
   import TrusteesIndividualContactDetailsNavigatorSpec._
 
   val navigator: Navigator =
@@ -41,22 +42,22 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
     def navigationForNewTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad(NormalMode, index, None)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad(NormalMode, index, srn)),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, srn)
   }
 
   "CheckMode" must {
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn)),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -88,7 +89,6 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
 object TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
-  private val srn                   = Some("srn")
 
   private def cyaContactDetailsPage(mode: Mode, index: Index, srn: SchemeReferenceNumber): Call =
     CheckYourAnswersIndividualContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)

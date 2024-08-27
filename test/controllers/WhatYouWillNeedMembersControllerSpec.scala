@@ -26,7 +26,7 @@ import views.html.whatYouWillNeedMembers
 
 class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.CurrentMembersController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.CurrentMembersController.onPageLoad(srn)
 
   private val view = injector.instanceOf[whatYouWillNeedMembers]
 
@@ -39,7 +39,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
       view
     )
 
-  def viewAsString(): String = view(None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(srn)(fakeRequest, messages).toString
 
   "WhatYouWillNeedMembersController" when {
 

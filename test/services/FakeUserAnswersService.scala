@@ -19,7 +19,7 @@ package services
 import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.address.Address
 import models.requests.DataRequest
 import org.scalatest.OptionValues

@@ -168,7 +168,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       allEstablishers.filter(_.isCompleted),
       allEstablishers.filterNot(_.isCompleted),
       None,
-      None
+      srn
     )(fakeRequest, messages).toString
 
   private val personDetails = PersonName("John", "Doe")
@@ -358,7 +358,7 @@ object AddEstablisherControllerOldSpec extends AddEstablisherControllerSpec {
       NormalMode,
       allEstablishers,
       None,
-      None
+      srn
     )(fakeRequest, messages).toString
 
   private val personDetails = PersonName("John", "Doe")

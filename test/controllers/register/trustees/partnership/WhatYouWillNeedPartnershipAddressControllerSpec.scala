@@ -31,10 +31,10 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
   private val index  = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
-  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, None)
+  private def href: Call = controllers.register.trustees.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, srn)
   private val view = injector.instanceOf[whatYouWillNeedAddress]
   private def viewAsString(): String =
-    view(None, href, None, trusteePartnership.name, Message("messages__thePartnership"))(fakeRequest, messages).toString
+    view(None, href, srn, trusteePartnership.name, Message("messages__thePartnership"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipAddressController" when {
 
@@ -46,7 +46,7 @@ class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase
           bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

@@ -40,16 +40,16 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       view
     )
 
-  lazy val postCall: Call = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), None)
+  lazy val postCall: Call = controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), srn)
 
-  def viewAsString(): String = view(None, postCall, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, postCall, srn, "test company name")(fakeRequest, messages).toString
 
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, index = Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, index = Index(0), srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

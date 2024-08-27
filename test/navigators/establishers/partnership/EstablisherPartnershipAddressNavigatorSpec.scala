@@ -17,6 +17,7 @@
 package navigators.establishers.partnership
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.register.establishers.partnership.routes._
 import controllers.routes.AnyMoreChangesController
 import generators.Generators
@@ -30,7 +31,7 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
 
   import EstablisherPartnershipAddressNavigatorSpec._
 
@@ -52,24 +53,24 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, srn)
   }
 
   "CheckMode" must {
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, None)),
+        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, srn)),
         row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
         row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn)),
-        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, None)),
+        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, srn)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, srn)),
-        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, None)),
+        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, srn)),
         row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -117,7 +118,6 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
 
 object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
-  private val srn = Some("srn")
   private val newEstablisherUserAnswers: UserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
 
   private def addressYearsPage(mode: Mode, srn: SchemeReferenceNumber): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)

@@ -59,7 +59,7 @@ class DeclarationControllerSpec
     "return OK and the correct view " in {
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
-      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -68,7 +68,7 @@ class DeclarationControllerSpec
     "redirect to you must contact HMRC page when deceased flag is true" in {
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false)))
-      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
@@ -76,7 +76,7 @@ class DeclarationControllerSpec
     "redirect to you must update your address page when rls flag is true" in {
       when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = true)))
-      val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
+      val result = controller(dataRetrievalAction).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe frontendAppConfig.psaUpdateContactDetailsUrl
@@ -93,7 +93,7 @@ class DeclarationControllerSpec
       when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
       doNothing.when(mockAuditService).sendEvent(any())(any(), any())
 
-      val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(dataRetrievalAction).onClickAgree(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -115,10 +115,10 @@ class DeclarationControllerSpec
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
 
-      val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(dataRetrievalAction).onClickAgree(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.racdac.routes.YourActionWasNotProcessedController.onPageLoad(srn).url)
     }
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
@@ -126,7 +126,7 @@ class DeclarationControllerSpec
       when(mockPensionsSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
-      val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)
+      val result = controller(dataRetrievalAction).onClickAgree(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -140,7 +140,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val schemeName = "scheme"
   private val minimalPsa = MinimalPSA(email = "a@a.c", isPsaSuspended = false, organisationName = Some("org"), individualDetails = None)
   private val emailParams = Map("psaName" -> minimalPsa.name, "schemeName" -> schemeName)
-  private val href = controllers.racdac.routes.DeclarationController.onClickAgree()
+  private val href = controllers.racdac.routes.DeclarationController.onClickAgree(srn)
   private val mockPensionAdministratorConnector = mock[PensionAdministratorConnector]
   private val mockEmailConnector = mock[EmailConnector]
   private val mockAuditService = mock[AuditService]
@@ -177,7 +177,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private def viewAsString(): String =
     view(
       psaName,
-      href
+      href,
+      srn
     )(fakeRequest, messages).toString
 
   private def dataRetrievalAction: DataRetrievalAction = {

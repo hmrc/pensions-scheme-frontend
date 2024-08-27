@@ -233,16 +233,16 @@ class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with Mock
 
 object HsTaskListHelperVariationsSpec extends SpecBase with Matchers with OptionValues with DataCompletionHelper with JsonFileReader {
   private val schemeName = "scheme"
-  private val srn = Some("test-srn")
+  private val srn = SchemeReferenceNumber("test-srn")
 
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__scheme_info_link_text", schemeName)
   private val expectedBeforeYouStartSpoke = Seq(EntitySpoke(TaskListLink(beforeYouStartLinkText,
-    controllers.routes.SchemeNameController.onPageLoad(UpdateMode).url), Some(false)))
+    controllers.routes.SchemeNameController.onPageLoad(srn).url), Some(false)))
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__scheme_information_link_text"))
 
   private val addMembersLinkText = Message("messages__schemeTaskList__about_members_link_text_add", schemeName)
-  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
+  private val whatYouWillNeedMemberPage = controllers.routes.WhatYouWillNeedMembersController.onPageLoad(srn).url
   private val aboutHeader = Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
   private val expectedAboutSpoke = Seq(EntitySpoke(TaskListLink(addMembersLinkText, whatYouWillNeedMemberPage), None))
 
