@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -29,11 +30,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__adviserName__title"))) {
 
-    @formHelper(action = AdviserNameController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = AdviserNameController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -48,7 +49,7 @@
         
         @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

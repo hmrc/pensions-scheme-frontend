@@ -51,7 +51,8 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
         case (_, Some(userAnswers), Some(schemeName)) =>
           Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id),
             schemeName,
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url,
+            srn
           )))
         case (_, _, _) =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

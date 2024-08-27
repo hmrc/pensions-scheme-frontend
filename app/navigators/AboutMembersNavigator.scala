@@ -31,9 +31,9 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
-        currentMembersNavigationRoutes(from.userAnswers)
+        currentMembersNavigationRoutes(from.userAnswers, srn)
       case MembershipPensionRegulatorId =>
-        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode, srn))
       case FutureMembersId =>
         NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case _ =>
@@ -41,21 +41,21 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  private def currentMembersNavigationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def currentMembersNavigationRoutes(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
-        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode, srn))
       case Some(_) =>
-        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(NormalMode, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
-        currentMembersNavigationEditRoutes(from.userAnswers)
+        currentMembersNavigationEditRoutes(from.userAnswers, srn)
       case MembershipPensionRegulatorId =>
         NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case FutureMembersId =>
@@ -65,12 +65,12 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
         NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case Some(_) =>
-        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }

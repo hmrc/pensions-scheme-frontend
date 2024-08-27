@@ -52,7 +52,7 @@ class PspSchemeTaskListController @Inject()(
         case Some(ua) =>
           (ua.get(IsRacDacId), ua.get(SchemeNameId)) match {
             case (Some(true), Some(_)) => Redirect(controllers.racdac.routes.CheckYourAnswersController.pspOnPageLoad(srn))
-            case (_, Some(schemeName)) => Ok(view.apply(hsTaskListHelperPsp.taskList(ua, srn), schemeName))
+            case (_, Some(schemeName)) => Ok(view.apply(hsTaskListHelperPsp.taskList(ua, srn), schemeName, srn))
             case _ => sessionExpired
           }
         case _ => sessionExpired

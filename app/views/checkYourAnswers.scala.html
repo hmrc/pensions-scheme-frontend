@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import viewmodels.{AnswerSection}
 @import viewmodels.CYAViewModel
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -45,7 +46,7 @@
     }
 
     @if(vm.returnOverview){
-        @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl), vm.srn)
     } else {
         @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
     }

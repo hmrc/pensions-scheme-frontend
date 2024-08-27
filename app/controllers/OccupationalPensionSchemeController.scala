@@ -55,7 +55,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, mode, existingSchemeName, srn)))
       }
   }
 
@@ -66,7 +66,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, srn))),
           value =>
             dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
               Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap), srn)))

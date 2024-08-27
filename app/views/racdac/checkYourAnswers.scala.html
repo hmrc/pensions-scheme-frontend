@@ -44,6 +44,6 @@
         @button_link("site.save_and_continue", vm.href.url, "submit")
     }
 
-    @components.return_link("messages__psaSchemeDetails__return_link", Some(returnToName))
+    @components.return_link("messages__psaSchemeDetails__return_link", Some(returnToName), None, vm.srn)
 
 }

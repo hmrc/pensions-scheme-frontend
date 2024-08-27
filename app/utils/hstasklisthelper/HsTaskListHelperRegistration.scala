@@ -66,7 +66,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   }
 
   def taskListToggleOff(answers: UserAnswers, viewOnly: Option[Boolean], srn: SchemeReferenceNumber,
-                        lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
+                        lastUpdatedDate: Option[LastUpdated], mode: Mode): SchemeDetailsTaskList = {
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
@@ -232,7 +232,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   private[utils] def declarationSection(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[SchemeDetailsTaskListEntitySection] = {
     val declarationSpoke = if (declarationEnabled(userAnswers)) {
-      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad(srn))
+      //TODO mode here
+      spokeCreationService.getDeclarationSpoke(controllers.register.routes.DeclarationController.onPageLoad(NormalMode, srn))
     } else {
       Nil
     }

@@ -80,7 +80,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
             case (true, NormalMode) =>
               controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(srn)
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
           }
         }
 

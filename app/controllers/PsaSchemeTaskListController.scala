@@ -77,10 +77,10 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
           case (_, Some(userAnswers), Some(schemeName)) =>
             featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
               case true =>
-                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
+                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName, srn))
               case _ =>
                 dataCacheConnector.save(request.externalId, UKBankAccountId, false)
-                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
+                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date, mode), schemeName))
             }
           case ((_), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))

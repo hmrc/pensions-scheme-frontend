@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
-import models.{SchemeReferenceNumber, UpdateMode}
+import models.{NormalMode, SchemeReferenceNumber, UpdateMode}
 import utils.Enumerable
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
@@ -33,9 +33,10 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
         case Some(true) => NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
         case Some(false) =>
-          if (from.userAnswers.areVariationChangesCompleted)
-            NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(srn))
-          else
+          if (from.userAnswers.areVariationChangesCompleted) {
+            //TODO mode here
+            NavigateTo.dontSave(controllers.routes.VariationDeclarationController.onPageLoad(NormalMode, srn))
+          } else
             NavigateTo.dontSave(controllers.register.routes.StillNeedDetailsController.onPageLoad(srn))
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
       }

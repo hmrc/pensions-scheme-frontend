@@ -38,7 +38,7 @@ class YouNeedToRegisterController @Inject()(appConfig: FrontendAppConfig,
                                            )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = Action {
+  def onPageLoad: Action[AnyContent] = Action {
     implicit request =>
       Ok(view())
   }

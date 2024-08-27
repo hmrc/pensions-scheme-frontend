@@ -59,20 +59,21 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                          candidateDirectors: Seq[IndividualDetails],
                          eitherForm: Either[Form[List[Int]], Form[Int]],
                          schemeName: String,
+                         srn: SchemeReferenceNumber,
                          index: Int)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
-        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index, srn)
+        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillRadio.radios(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
-        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index, srn)
+        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
     }
   }
 
@@ -98,6 +99,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   candidateDirectors,
                   getFormAsEither(candidateDirectors),
                   schemeName,
+                  srn,
                   index
                 )
               }
@@ -143,6 +145,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   candidateDirectors,
                   Left(boundForm),
                   schemeName,
+                  srn,
                   index
                 )
             }
@@ -163,6 +166,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                   candidateDirectors,
                   Right(boundForm),
                   schemeName,
+                  srn,
                   index
                 )
             }

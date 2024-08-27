@@ -18,6 +18,7 @@
 @import controllers.routes._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -27,11 +28,11 @@
     submit_button: components.submit_button
 )
 
-@(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__what_you_will_need_wk__title")) {
 
-    @formHelper(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = WhatYouWillNeedWorkingKnowledgeController.onSubmit(srn), Symbol("autoComplete") -> "off") {
 
         @components.heading(headingKey = messages("messages__what_you_will_need_wk__h1"))
 
@@ -46,7 +47,7 @@
 
         @submit_button("site.continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

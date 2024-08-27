@@ -56,7 +56,7 @@ class RACDACNameController @Inject()(
     implicit request => {
       val preparedForm = request.userAnswers.flatMap(_.get(RACDACNameId)).fold(form)(v => form.fill(v))
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(view(preparedForm, mode, psaName)))
+        Future.successful(Ok(view(preparedForm, mode, psaName, srn)))
       }
     }
 
@@ -67,7 +67,7 @@ class RACDACNameController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            BadRequest(view(formWithErrors, mode, psaName))
+            BadRequest(view(formWithErrors, mode, psaName, srn))
           }
         },
           value =>

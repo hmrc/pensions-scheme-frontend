@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import play.api.mvc.Call
 @import utils.ViewHelper.titleWithErrors
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -28,7 +29,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], partnerName: String, postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], partnerName: String, postCall: Call, schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__confirmDeletePartner__title"))) {
 
@@ -46,7 +47,7 @@
 
         @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

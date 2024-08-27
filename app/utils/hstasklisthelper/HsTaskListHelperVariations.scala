@@ -115,7 +115,8 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
     } else {
       val spoke = if (userAnswers.isUserAnswerUpdated) {
         val call = if (userAnswers.areVariationChangesCompleted) {
-          controllers.routes.VariationDeclarationController.onPageLoad(srn)
+          //TODO mode here
+          controllers.routes.VariationDeclarationController.onPageLoad(NormalMode, srn)
         } else {
           controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
         }

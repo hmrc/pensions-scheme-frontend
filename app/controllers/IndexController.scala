@@ -31,7 +31,7 @@ class IndexController @Inject()(val appConfig: FrontendAppConfig,
                                 val view: index
                                ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = Action { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view())
   }
 }

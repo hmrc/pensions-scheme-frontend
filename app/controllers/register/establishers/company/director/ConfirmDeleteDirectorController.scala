@@ -65,7 +65,8 @@ class ConfirmDeleteDirectorController @Inject()(
                   form(director.fullName),
                   director.fullName,
                   routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                  existingSchemeName
+                  existingSchemeName,
+                  srn
                 )
               )
             )
@@ -87,7 +88,8 @@ class ConfirmDeleteDirectorController @Inject()(
                 formWithErrors,
                 director.fullName,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                existingSchemeName
+                existingSchemeName,
+                srn
               ))),
             value => {
               if (value) {

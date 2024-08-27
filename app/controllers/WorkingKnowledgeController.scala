@@ -58,7 +58,7 @@ class WorkingKnowledgeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString, srn))
   }
 
   private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
@@ -68,7 +68,7 @@ class WorkingKnowledgeController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString, srn))),
         value => {
 
           dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>

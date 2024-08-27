@@ -89,7 +89,7 @@ class DeclarationController @Inject()(
   }
 
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
@@ -126,7 +126,7 @@ class DeclarationController @Inject()(
               showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
               hasWorkingKnowledge = hasWorkingKnowledge,
               schemeName = existingSchemeName,
-              href = href
+              href = href, srn
             )
           )
         )

@@ -39,7 +39,7 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
 
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
     implicit request =>
-      Future.successful(Ok(view(existingSchemeName)))
+      Future.successful(Ok(view(existingSchemeName, srn)))
   }
 
   def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {

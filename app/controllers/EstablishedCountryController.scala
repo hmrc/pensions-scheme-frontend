@@ -58,7 +58,7 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, countryOptions.options, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, countryOptions.options, schemeName, srn)))
       }
   }
 
@@ -67,7 +67,7 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options, schemeName, srn)))
           },
         value =>
           dataCacheConnector.save(request.externalId, EstablishedCountryId, value).map(cacheMap =>

@@ -70,13 +70,13 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
         val options = DataPrefillCheckbox.checkboxes(seqTrustee)
         val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex, srn)
-        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
       case Right(form) =>
         val pageHeading = Messages("messages__directors__prefill__title")
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
         val options = DataPrefillRadio.radios(seqTrustee)
         val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex, srn)
-        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
     }
   }
 
@@ -97,7 +97,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
               val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
               if (seqTrustee.isEmpty) {
                 Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                  .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
+                  .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
               } else {
                 renderView(Ok,
                   seqTrustee,

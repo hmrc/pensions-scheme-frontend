@@ -58,7 +58,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       retrieveCompanyName(index) {
         companyName =>
           val preparedForm = request.userAnswers.get(IsCompanyDormantId(index)).fold(form)(v => form.fill(v))
-          Future.successful(Ok(view(preparedForm, companyName, postCall(mode, srn, index), existingSchemeName)))
+          Future.successful(Ok(view(preparedForm, companyName, postCall(mode, srn, index), existingSchemeName, srn)))
       }
   }
 
@@ -69,7 +69,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, companyName, postCall(mode, srn, index),
-              existingSchemeName))),
+              existingSchemeName, srn))),
           {
             case Yes =>
               userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values.head).map {

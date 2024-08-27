@@ -72,7 +72,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                     LocalDate.now(),
                     submissionReferenceNumber.schemeReferenceNumber,
                     request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-                    email
+                    email, srn
                   )))
               case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }

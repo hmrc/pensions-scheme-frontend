@@ -68,7 +68,7 @@ class TypeOfBenefitsController @Inject()(
             Future.successful(Ok(view(
               form = preparedForm,
               postCall = routes.TypeOfBenefitsController.onSubmit(mode, srn),
-              schemeName = existingSchemeName
+              schemeName = existingSchemeName, srn
             )))
         }
     }
@@ -83,7 +83,7 @@ class TypeOfBenefitsController @Inject()(
                 Future.successful(BadRequest(view(
                   form = formWithErrors,
                   postCall = routes.TypeOfBenefitsController.onSubmit(mode, srn),
-                  schemeName = existingSchemeName
+                  schemeName = existingSchemeName, srn
                 ))),
               value =>
                 (if(value == TypeOfBenefits.Defined && request.userAnswers.get(MoneyPurchaseBenefitsId).isDefined)

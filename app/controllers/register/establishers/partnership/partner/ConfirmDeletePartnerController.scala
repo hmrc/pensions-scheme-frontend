@@ -67,7 +67,8 @@ class ConfirmDeletePartnerController @Inject()(
                     form(partner.fullName),
                     partner.fullName,
                     routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-                    existingSchemeName
+                    existingSchemeName,
+                    srn
                   )
                 )
               )
@@ -86,7 +87,8 @@ class ConfirmDeletePartnerController @Inject()(
                   formWithErrors,
                   partnerDetails.fullName,
                   routes.ConfirmDeletePartnerController.onSubmit(mode, establisherIndex, partnerIndex, srn),
-                  existingSchemeName
+                  existingSchemeName,
+                  srn
                 ))),
               value => {
                 val deletionResult = if (value) {

@@ -59,14 +59,14 @@ class SchemeNameController @Inject()(
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen allowAccess(srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))
+      Ok(view(preparedForm, mode, existingSchemeName.getOrElse(""), srn))
   }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse("")))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse(""), srn))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
@@ -74,7 +74,7 @@ class SchemeNameController @Inject()(
                 BadRequest(view(form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match", psaName
-                ), mode, existingSchemeName.getOrElse("")))
+                ), mode, existingSchemeName.getOrElse(""), srn))
               }
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>

@@ -56,7 +56,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, srn)))
       }
   }
 
@@ -65,7 +65,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, srn))),
           value =>
             dataCacheConnector.save(request.externalId, CurrentMembersId, value).map { cacheMap =>
               Redirect(navigator.nextPage(CurrentMembersId, mode, UserAnswers(cacheMap), srn))

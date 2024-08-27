@@ -15,13 +15,14 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig
 )
 
-@(schemeName: Option[String], returnUrl: Call)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], returnUrl: Call, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__yourActionWasNotProcessed__title")) {
 
@@ -34,7 +35,7 @@
     @components.paragraph_text(messages("messages__yourActionWasNotProcessed__p3"))
 
     @schemeName.map{ name =>
-        @components.return_link(messages("site.return_to", name), None, Some(returnUrl))
+        @components.return_link(messages("site.return_to", name), None, Some(returnUrl), srn)
     }
 
 }

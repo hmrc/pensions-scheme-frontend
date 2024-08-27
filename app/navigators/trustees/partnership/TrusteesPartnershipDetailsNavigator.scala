@@ -64,7 +64,7 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipEnterPAYEId(index) => cyaPage(mode, index, srn)
   }
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
@@ -103,9 +103,6 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
     case PartnershipEnterPAYEId(index) if isNewTrustee(index, ua) => cyaPage(mode, index, srn)
     case PartnershipEnterPAYEId(_) => anyMoreChangesPage(srn)
   }
-
-  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
 }
 

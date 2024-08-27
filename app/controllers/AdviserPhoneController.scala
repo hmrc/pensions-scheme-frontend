@@ -62,7 +62,7 @@ class AdviserPhoneController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName, srn)))
       }
   }
 
@@ -74,7 +74,7 @@ class AdviserPhoneController @Inject()(
             schemeName <- SchemeNameId.retrieve
             adviserName <- AdviserNameId.retrieve
           } yield {
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName, srn)))
           }
         },
         value =>

@@ -15,7 +15,7 @@
  *@
 
 @import controllers.routes._
-@import models.Mode
+@import models.{Mode, SchemeReferenceNumber}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 
@@ -26,12 +26,12 @@
     submit_button: components.submit_button
 )
 
-@(mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(mode: Mode, schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = messages("messages__membership_pension_regulator__title")) {
 
-    @formHelper(action = MembershipPensionRegulatorController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = MembershipPensionRegulatorController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @components.heading(headingKey = messages("messages__membership_pension_regulator__h1"))
 
@@ -41,7 +41,7 @@
 
         @submit_button("site.continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

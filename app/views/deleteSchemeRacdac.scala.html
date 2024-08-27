@@ -21,6 +21,7 @@
 @import controllers.routes._
 @import utils.ViewHelper.titleWithErrors
 @import config.FrontendAppConfig
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -31,11 +32,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__deleteScheme__title"))) {
 
-    @formHelper(action = RacdacDeleteSchemeController.onSubmit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = RacdacDeleteSchemeController.onSubmit(srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -43,14 +44,14 @@
 
         @input_yes_no(
             field = form("value"),
-            label = messages("messages__deleteScheme__heading", schemeName),
+            label = messages("messages__deleteScheme__heading", schemeName, srn),
             headingIsLegend = true,
             hint = Some(Messages(hintTextMessageKey))
         )
 
         @submit_button("site.continue")
 
-        @components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        @components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl), srn)
 
     }
 }

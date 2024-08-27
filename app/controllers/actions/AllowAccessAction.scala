@@ -22,7 +22,7 @@ import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.PsaMinimalFlagsId
 import PsaMinimalFlagsId._
 import config.FrontendAppConfig
-import models.{PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
+import models.{NormalMode, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import models.requests.OptionalDataRequest
 import play.api.Logging
 import play.api.http.Status._
@@ -130,8 +130,8 @@ class AllowAccessActionMain(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (srn))),
+      //TODO mode here
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))),
       checkForSuspended = true
     )
   }
@@ -169,7 +169,8 @@ class AllowAccessActionNoSuspendedCheck(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))),
+      //TODO mode here
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))),
       checkForSuspended = false
     )
   }

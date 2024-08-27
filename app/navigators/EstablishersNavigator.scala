@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
+import models.{CheckMode, Mode, NormalMode, SchemeReferenceNumber, UpdateMode}
 import utils.{Enumerable, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -84,7 +84,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
-
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 }

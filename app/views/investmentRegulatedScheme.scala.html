@@ -29,11 +29,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__investment_regulated_scheme__title"))){
 
-    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -49,7 +49,7 @@
 
         @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

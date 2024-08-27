@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import models.{Mode, SchemeReferenceNumber}
 
 @this(
     layout: templates.Layout,
@@ -29,11 +30,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, adviserName: String, schemeName: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
 
-    @formHelper(action = AdviserPhoneController.onSubmit(mode), Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
+    @formHelper(action = AdviserPhoneController.onSubmit(mode, srn), Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -44,12 +45,12 @@
             label = messages("messages__adviser__phone__heading", adviserName),
             headingIsLegend = true,
             typeValue = "tel",
-            hint = Some(messages("messages__adviser__phone__hint", adviserName, schemeName))
+            hint = Some(messages("messages__adviser__phone__hint", adviserName, schemeName, None, srn))
         )
 
         @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName),  None, srn)
 
     }
 }

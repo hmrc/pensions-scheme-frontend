@@ -46,7 +46,7 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
     implicit request =>
-      Ok(view(mode, existingSchemeName))
+      Ok(view(mode, existingSchemeName, srn))
   }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {

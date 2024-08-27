@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -32,11 +33,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__scheme_type__title"))) {
 
-    @formHelper(action = SchemeTypeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = SchemeTypeController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -44,7 +45,7 @@
 
         @input_radio(
             field = form("schemeType.type"),
-            legend = messages("messages__scheme_type__heading", schemeName),
+            legend = messages("messages__scheme_type__heading", schemeName, srn),
             legendAsHeading = true,
             inputs = SchemeType.options(appConfig),
             chtml_label = Some(messages("messages__scheme_details__type_other_more")),
@@ -54,7 +55,7 @@
 
         @submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components.return_link_before_you_start(mode, schemeName, appConfig, srn)
 
     }
 }

@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import controllers.routes._
-@import models.{Mode}
+@import models.SchemeReferenceNumber
 @import models.Members
 @import utils.ViewHelper.titleWithErrors
 
@@ -30,11 +30,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__current_members__title"))) {
 
-    @formHelper(action = CurrentMembersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = CurrentMembersController.onSubmit(srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -42,14 +42,14 @@
 
         @radio(
             field = form("value"),
-            legend = messages("messages__current_members__h1", schemeName),
+            legend = messages("messages__current_members__h1", schemeName, srn),
             inputs = Members.options,
             legendAsHeading = true
         )
 
         @submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName), None, srn)
 
     }
 }

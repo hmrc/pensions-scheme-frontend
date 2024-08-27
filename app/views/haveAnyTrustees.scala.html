@@ -31,11 +31,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName:String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__haveAnyTrustees__title"))){
 
-    @formHelper(action = HaveAnyTrusteesController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = HaveAnyTrusteesController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -43,13 +43,13 @@
 
         @input_yes_no(
             field = form("value"),
-            label = messages("messages__haveAnyTrustees__heading", schemeName),
+            label = messages("messages__haveAnyTrustees__heading", schemeName, srn),
             headingIsLegend = true
         )
 
         @submit_button()
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components.return_link_before_you_start(mode, schemeName, appConfig, srn)
 
     }
 }

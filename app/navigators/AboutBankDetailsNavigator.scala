@@ -28,28 +28,28 @@ import models.SchemeReferenceNumber
 class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from)
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from, srn)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from)
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = navRouteMap(from, srn)
 
-  private def navrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
+  private def navRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
-      case UKBankAccountId => ukBankAccountRoutes(from.userAnswers)
-      case BankAccountDetailsId => checkYourAnswers
+      case UKBankAccountId => ukBankAccountRoutes(from.userAnswers, srn)
+      case BankAccountDetailsId => checkYourAnswers(srn)
       case _ => None
     }
   }
 
-  private def ukBankAccountRoutes(answers: UserAnswers): Option[NavigateTo] = {
+  private def ukBankAccountRoutes(answers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     answers.get(UKBankAccountId) match {
-      case Some(true) => NavigateTo.dontSave(BankAccountDetailsController.onPageLoad(NormalMode))
-      case Some(false) => checkYourAnswers
+      case Some(true) => NavigateTo.dontSave(BankAccountDetailsController.onPageLoad(NormalMode, srn))
+      case Some(false) => checkYourAnswers(srn)
       case None => NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
-  private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
+  private def checkYourAnswers(srn: SchemeReferenceNumber): Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad(srn))
 
   protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 

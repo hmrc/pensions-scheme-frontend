@@ -20,6 +20,7 @@
 @import controllers.routes._
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -29,11 +30,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__scheme_uk_bank_account__title"))) {
 
-    @formHelper(action = UKBankAccountController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = UKBankAccountController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
@@ -41,13 +42,13 @@
 
         @input_yes_no(
             field = form("value"),
-            label = messages("messages__scheme_uk_bank_account__h1", schemeName),
+            label = messages("messages__scheme_uk_bank_account__h1", schemeName, srn),
             headingIsLegend = true
         )
 
         @submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+        @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName), None, srn)
 
     }
 }

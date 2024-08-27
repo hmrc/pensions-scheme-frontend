@@ -57,14 +57,14 @@ class AdviserNameController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode, existingSchemeName))
+      Ok(view(preparedForm, mode, existingSchemeName, srn))
   }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, srn))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
             Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap), srn))

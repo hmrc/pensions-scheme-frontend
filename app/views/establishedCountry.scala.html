@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import controllers.routes._
 @import models.Mode
+@import models.SchemeReferenceNumber
 @import utils.InputOption
 @import utils.ViewHelper.titleWithErrors
 
@@ -38,18 +39,19 @@
     form: Form[_],
     mode: Mode,
     options: Seq[InputOption],
-    schemeName: String
+    schemeName: String,
+    srn: SchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
 
-    @formHelper(action = routes.EstablishedCountryController.onSubmit(mode),  Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.EstablishedCountryController.onSubmit(mode, srn),  Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(messages("messages__established_country__h1", schemeName), true)
+        @components.heading(messages("messages__established_country__h1", schemeName, srn), true)
 
         <div class="govuk-!-width-two-thirds">
             @govukSelect(Select(
@@ -64,7 +66,7 @@
                     )
                 ),
                 label = Label(
-                    content = Text(messages("messages__established_country__h1", schemeName)),
+                    content = Text(messages("messages__established_country__h1", schemeName, srn)),
                     isPageHeading = false,
                     classes = "govuk-visually-hidden",
                     attributes = Map("aria-hidden" -> "true")
@@ -75,7 +77,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components.return_link_before_you_start(mode, schemeName, appConfig)
+        @components.return_link_before_you_start(mode, schemeName, appConfig, srn)
 
     }
 }

@@ -26,7 +26,7 @@ case object BeforeYouStartSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
-      controllers.routes.SchemeNameController.onPageLoad(mode, srn).url
+      controllers.routes.SchemeNameController.onPageLoad(srn).url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
@@ -38,7 +38,7 @@ case object BeforeYouStartSpoke extends Spoke {
   override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationLinkText, variationsLinkText),
-      controllers.routes.SchemeNameController.onPageLoad(mode, srn.id).url
+      controllers.routes.SchemeNameController.onPageLoad(srn).url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] = Some(answers

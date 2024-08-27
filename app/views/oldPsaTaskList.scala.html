@@ -46,7 +46,7 @@
 }
 
 @pageTitle = @{
-    if(taskSections.srn.isDefined) {
+    if(taskSections.srn.id.nonEmpty) {
         messages("messages__scheme_details__title")
     } else {
         messages("messages__schemeTaskList__title")
@@ -243,8 +243,8 @@
 
     <p class="govuk-body govuk-!-margin-top-7">
         <a id="save-and-return" class="govuk-link"
-        href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
-        @if(taskSections.srn.isDefined) {
+        href="@appConfig.managePensionsSchemeSummaryUrl.format(taskSections.srn)">
+        @if(taskSections.srn.id.nonEmpty) {
             @messages("messages__complete__returnToSchemeOverview", schemeName)
         } else {
             @messages("messages__complete__saveAndReturnToManagePensionSchemes")

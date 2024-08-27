@@ -59,7 +59,7 @@ class ContractOrPolicyNumberController @Inject()(
         val form = formProvider(racdacName)
         val preparedForm = request.userAnswers.get(ContractOrPolicyNumberId).fold(form)(v => form.fill(v))
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            Ok(view(preparedForm, mode, psaName, racdacName))
+            Ok(view(preparedForm, mode, psaName, racdacName, srn))
           }
       }
     }
@@ -72,7 +72,7 @@ class ContractOrPolicyNumberController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             pensionAdministratorConnector.getPSAName.map { psaName =>
-              BadRequest(view(formWithErrors, mode, psaName, racdacName))
+              BadRequest(view(formWithErrors, mode, psaName, racdacName, srn))
             }
           },
           value =>

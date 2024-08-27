@@ -62,7 +62,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
     implicit val userAnswers: UserAnswers = request.userAnswers
     val membersSection = AnswerSection(
       None,
-      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode, srn).url, mode) ++
+      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(srn).url, mode) ++
         FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode, srn).url, mode)
     )
 

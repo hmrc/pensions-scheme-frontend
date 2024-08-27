@@ -21,6 +21,7 @@
 @import viewmodels.Message
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -32,7 +33,7 @@
     submit_button: components.submit_button
 )
 
-@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @yourSchemesLink = {
     <a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>
@@ -54,7 +55,7 @@
 
 @layout(pageTitle = messages("messages__complete__title"), showBackLink = false) {
 
-    @formHelper(action = routes.SchemeSuccessController.onSubmit(), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit(srn), Symbol("autoComplete") -> "off") {
 
         @panel(
             panelTitle = messages("messages__complete__heading"),

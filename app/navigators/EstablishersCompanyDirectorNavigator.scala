@@ -166,8 +166,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
 
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = normalRoutes(from, NormalMode, srn)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckMode, None)
-
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = normalRoutes(from, UpdateMode, srn)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
@@ -239,4 +237,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
   private def previousAddressRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: SchemeReferenceNumber)(
       answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.dontSave(routes.DirectorEmailController.onPageLoad(mode, establisherIndex, directorIndex, srn))
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =  editRoutes(from, CheckMode, srn)
 }

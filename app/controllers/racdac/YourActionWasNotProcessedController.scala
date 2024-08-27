@@ -45,7 +45,7 @@ class YourActionWasNotProcessedController @Inject()(
       implicit request =>
         withRACDACName { schemeName =>
           val returnUrl = appConfig.managePensionsSchemeOverviewUrl
-          Future.successful(Ok(view(Some(schemeName), returnUrl)))
+          Future.successful(Ok(view(Some(schemeName), returnUrl, srn)))
         }
     }
   }

@@ -38,7 +38,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
                               mode: Mode,
                               srn: SchemeReferenceNumber,
                               answers: UserAnswers,
-                              cyaPage: (Int, mode, SchemeReferenceNumber) => Option[NavigateTo]): Option[NavigateTo] = {
+                              cyaPage: (Int, Mode, SchemeReferenceNumber) => Option[NavigateTo]): Option[NavigateTo] = {
     if (mode == CheckMode || mode == NormalMode)
       cyaPage(index, journeyMode(mode), srn)
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
@@ -65,7 +65,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.dontSave(
-          controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+          controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
         )
       case HasCompanyCRNId(index) =>
         confirmHasCompanyNumber(index, mode, srn)(from.userAnswers)
@@ -182,8 +182,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
-  override protected def editrouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckMode, srn)
-
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 
   private def addressYearsRoutes(index: Int, answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber): Option[NavigateTo] = {
@@ -262,7 +260,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
             mode match {
               case NormalMode | CheckMode =>
                 controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
-                  .onPageLoad(index)
+                  .onPageLoad(index, srn)
               case _ => controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             }
@@ -270,7 +268,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
             if (mode == CheckMode || mode == NormalMode) { // TODO: Remove Json code below when SchemeRegistration toggle is removed
               (answers.json \ SchemeRegistration.asString).asOpt[Boolean] match {
                 case Some(true) =>
-                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
                 case _ =>
                   PsaSchemeTaskListController.onPageLoad(mode, srn)
               }
@@ -378,4 +376,6 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index))
     }
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckMode, srn)
 }

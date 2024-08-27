@@ -39,8 +39,8 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
     implicit request =>
-      Future.successful(Ok(view(existingSchemeName)))
+      Future.successful(Ok(view(existingSchemeName, srn)))
   }
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() { Redirect(controllers.routes.CurrentMembersController.onPageLoad(NormalMode, srn)) }
+  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() { Redirect(controllers.routes.CurrentMembersController.onPageLoad(srn)) }
 }

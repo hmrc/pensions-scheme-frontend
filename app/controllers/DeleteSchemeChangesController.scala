@@ -55,7 +55,7 @@ class DeleteSchemeChangesController @Inject()(
       request.psaId match {
         case Some(psaId) =>
           getSchemeName(srn, psaId.id) { (psaName, schemeName) =>
-            Future.successful(Ok(view(form, schemeName, postCall(srn), psaName)))
+            Future.successful(Ok(view(form, schemeName, postCall(srn), psaName, srn)))
           }
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
@@ -85,7 +85,7 @@ class DeleteSchemeChangesController @Inject()(
             getSchemeName(srn, psaId.id) { (psaName, schemeName) =>
               form.bindFromRequest().fold(
                 (formWithErrors: Form[_]) =>
-                  Future.successful(BadRequest(view(formWithErrors, schemeName, postCall(srn), psaName))),
+                  Future.successful(BadRequest(view(formWithErrors, schemeName, postCall(srn), psaName, srn))),
                 {
                   case true =>
                     updateConnector.removeAll(srn).flatMap { _ =>

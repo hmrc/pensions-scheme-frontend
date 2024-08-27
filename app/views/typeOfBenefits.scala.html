@@ -20,6 +20,7 @@
 @import models.TypeOfBenefits
 @import utils.ViewHelper.titleWithErrors
 @import play.api.mvc.Call
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -29,7 +30,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], postCall: Call, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], postCall: Call, schemeName: Option[String], srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, messages("messages__type_of_benefits__title"))) {
 
@@ -50,7 +51,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

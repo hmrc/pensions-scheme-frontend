@@ -53,7 +53,7 @@ class DeleteSchemeController @Inject()(
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)).async {
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
-              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey)))
+              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey, srn)))
       }
   }
 
@@ -62,7 +62,7 @@ class DeleteSchemeController @Inject()(
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey))),
+            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey, srn))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {
               _ =>

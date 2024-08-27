@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -22,7 +23,7 @@
     button_link: components.button_link
 )
 
-@(psaName: String, href: Call)(implicit request: Request[_], messages: Messages)
+@(psaName: String, href: Call, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration_racdac__title")) {
 
@@ -38,6 +39,6 @@
 
     @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+    @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl), srn)
 
 }

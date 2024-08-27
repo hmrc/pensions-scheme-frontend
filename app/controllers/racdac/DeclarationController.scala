@@ -92,7 +92,7 @@ class DeclarationController @Inject()(
             Ok(
               view(
                 psaName = psaName,
-                href = DeclarationController.onClickAgree(srn))
+                href = DeclarationController.onClickAgree(srn), srn)
             )
           }
       }
