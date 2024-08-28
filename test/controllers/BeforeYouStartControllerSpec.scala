@@ -18,7 +18,6 @@ package controllers
 
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar

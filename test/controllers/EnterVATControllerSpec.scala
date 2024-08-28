@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import forms.EnterVATFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{NormalMode, ReferenceValue}
+import models.{NormalMode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.OptionValues
@@ -48,12 +48,13 @@ class EnterVATControllerSpec extends SpecBase with Matchers with OptionValues wi
 
   private val view = injector.instanceOf[enterVATView]
 
+  val srn = SchemeReferenceNumber("srn")
   val viewmodel: EnterVATViewModel = EnterVATViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
     hint = "legend",
-    subHeading = Some("sub-heading")
+    subHeading = Some("sub-heading"), srn = srn
   )
 
   "get" must {

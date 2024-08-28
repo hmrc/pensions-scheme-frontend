@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import forms.PayeFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{CheckUpdateMode, ReferenceValue}
+import models.{CheckUpdateMode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.OptionValues
@@ -46,11 +46,13 @@ class PayeControllerSpec extends SpecBase with Matchers with OptionValues with S
 
   import PayeControllerSpec._
 
+  val srn = SchemeReferenceNumber("srn")
   val viewmodel: PayeViewModel = PayeViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    hint = Some("legend")
+    hint = Some("legend"),
+    srn = srn
   )
 
   private val view = injector.instanceOf[paye]

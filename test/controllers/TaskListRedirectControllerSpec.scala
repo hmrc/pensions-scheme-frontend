@@ -17,6 +17,7 @@
 package controllers
 
 import base.JsonFileReader
+import base.SpecBase.messagesApi
 import connectors.{MinimalPsaConnector, SchemeDetailsConnector}
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
@@ -25,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{redirectLocation, status, _}
 import services.FakeUserAnswersService.appConfig
 import utils.UserAnswers
@@ -81,14 +83,14 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
 object TaskListRedirectControllerSpec extends ControllerSpecBase with MockitoSugar with JsonFileReader {
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
-
+  override val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   private def controller: TaskListRedirectController =
     new TaskListRedirectController(
       frontendAppConfig,
       mockSchemeDetailsConnector,
       mockMinimalPsaConnector,
-      allowAccess
+      FakeAllowAccessProvider(srn),
       messagesApi,
       FakeAuthAction,
       getEmptyData,

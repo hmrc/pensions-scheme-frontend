@@ -69,8 +69,8 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
             routes.InsurerEnterPostcodeController.onSubmit(NormalMode, srn),
             routes.InsurerConfirmAddressController.onPageLoad(NormalMode, srn),
             Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
-            Messages("messages__insurer_enter_postcode__h1",insurerName),
-            None
+            Messages("messages__insurer_enter_postcode__h1",insurerName), None,
+            srn = srn
           )
 
           status(result) mustBe OK

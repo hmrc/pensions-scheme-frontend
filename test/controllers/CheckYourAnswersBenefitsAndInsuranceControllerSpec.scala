@@ -191,7 +191,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url,
+        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(srn).url,
           Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
       )
     )

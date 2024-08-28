@@ -61,7 +61,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
                 minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: SchemeReferenceNumber,
+                srn: SchemeReferenceNumber = SchemeReferenceNumber("srn"),
                 refreshData: Boolean = false
                ) extends
     DataRetrievalImpl(
@@ -468,7 +468,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     }
 
     s"when refreshData is $refreshData and there is no srn in UpdateMode set userAnswers to 'None' in the request" in {
-      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = None, refreshData = refreshData)
+      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, refreshData = refreshData)
 
       val futureResult = action.callTransform(authRequest)
 

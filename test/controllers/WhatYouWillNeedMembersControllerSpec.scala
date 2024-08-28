@@ -39,7 +39,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
       view
     )
 
-  def viewAsString(): String = view(srn)(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, srn)(fakeRequest, messages).toString
 
   "WhatYouWillNeedMembersController" when {
 

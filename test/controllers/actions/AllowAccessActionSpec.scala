@@ -288,14 +288,14 @@ class AllowAccessActionSpec
     }
 
     "allow access for user with no data" in {
-      val futureResult = testHarness(Option[UserAnswers], pensionsSchemeConnector)
+      val futureResult = testHarness(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
     }
 
     "allow access to pages for user with no srn in Normal mode" in {
-      val futureResult = testHarness(Option[UserAnswers], pensionsSchemeConnector)
+      val futureResult = testHarness(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)

@@ -65,7 +65,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends ControllerSpecBase with Nav
           ("Id", "UserAnswers", "Next Page"),
           row(InvestmentRegulatedSchemeId)(false, checkYouAnswers()),
           row(OccupationalPensionSchemeId)(false, checkYouAnswers()),
-          row(TypeOfBenefitsId)(Defined, checkYouAnswers()),
+          row(TypeOfBenefitsId)(Defined, checkYouAnswers(NormalMode)),
           row(TypeOfBenefitsId)(MoneyPurchase, moneyPurchaseBenefits(CheckMode)),
           row(MoneyPurchaseBenefitsId)(CashBalance, checkYouAnswers()),
           row(BenefitsSecuredByInsuranceId)(false, checkYouAnswers()),

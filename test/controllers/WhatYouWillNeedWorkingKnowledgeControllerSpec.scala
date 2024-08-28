@@ -26,7 +26,7 @@ import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.AdviserNameController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.AdviserNameController.onPageLoad(NormalMode, srn)
 
   private val view = injector.instanceOf[whatYouWillNeedWorkingKnowledge]
 

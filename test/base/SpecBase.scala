@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.SchemeReferenceNumber
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
@@ -58,9 +59,10 @@ trait SpecBase
   def assertRenderedById(doc: Document, id: String): Assertion =
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
 
+
   def modules(dataRetrievalAction: DataRetrievalAction): Seq[GuiceableModule] = Seq(
     bind[AuthAction].toInstance(FakeAuthAction),
-    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(SchemeReferenceNumber("srn"))),
     bind[DataRetrievalAction].toInstance(dataRetrievalAction)
   )
 
