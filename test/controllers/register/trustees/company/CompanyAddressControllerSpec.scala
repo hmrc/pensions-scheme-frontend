@@ -61,8 +61,10 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
-      bind[CountryOptions].to(countryOptions)
-    )
+      bind[CountryOptions].to(countryOptions),
+      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
+  )
 
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 

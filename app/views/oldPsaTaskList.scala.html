@@ -45,15 +45,8 @@
     }
 }
 
-@pageTitle = @{
-    if(taskSections.srn.id.nonEmpty) {
-        messages("messages__scheme_details__title")
-    } else {
-        messages("messages__schemeTaskList__title")
-    }
-}
 
-@layout(pageTitle = pageTitle) {
+@layout(pageTitle = messages("messages__scheme_details__title")) {
 
     @taskSections.isAllSectionsComplete.map { isComplete =>
         @if(!isComplete) {

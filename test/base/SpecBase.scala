@@ -28,6 +28,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
@@ -42,7 +43,7 @@ trait SpecBase
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/foo")
+  def fakeRequest = FakeRequest().withFormUrlEncodedBody(("value", "0"))
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 

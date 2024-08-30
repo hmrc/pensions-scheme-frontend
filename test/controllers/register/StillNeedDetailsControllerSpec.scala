@@ -28,7 +28,6 @@ class StillNeedDetailsControllerSpec extends ControllerSpecBase {
   appRunning()
 
   val schemeName = "Test Scheme Name"
-  val srn = "A2343243"
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )

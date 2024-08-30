@@ -65,6 +65,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(srn = srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
+
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {
         case NormalMode | CheckMode => dataCacheConnector.lastUpdated(request.externalId)
           .map(parseDateElseException)

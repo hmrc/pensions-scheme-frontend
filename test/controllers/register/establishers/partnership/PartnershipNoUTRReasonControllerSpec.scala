@@ -40,7 +40,6 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val formProvider = new ReasonFormProvider()
   private val form = formProvider("messages__reason__error_utrRequired", partnershipDetails.name)
   private val index = Index(0)
-  private val srn = SchemeReferenceNumber("srn")
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
 
   private val viewModel = ReasonViewModel(

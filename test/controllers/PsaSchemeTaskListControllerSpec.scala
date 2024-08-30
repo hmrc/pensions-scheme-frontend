@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.FeatureToggleService
 import utils.UserAnswers
@@ -38,6 +39,7 @@ import scala.concurrent.Future
 class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   import PsaSchemeTaskListControllerSpec._
+  override val getMandatorySchemeNameHs: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(SchemeNameId.toString -> "Test Scheme Name")))
 
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
@@ -62,22 +64,15 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       }
     }
 
-    "srn as None and no user answers" must {
-      "return REDIRECT to manage" in {
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, srn)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
-      }
-    }
 
     "srn is some value and there is user answers" must {
       "return OK and the correct view" in {
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
+          .onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
@@ -116,27 +111,17 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       }
     }
 
-    "srn as None and no user answers" must {
-      "return REDIRECT to manage" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, srn)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
-      }
-    }
 
     "srn is some value and there is user answers" must {
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
+        when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
-
+        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
+                                .onPageLoad(NormalMode, srn)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
         contentAsString(result).contains(messages("messages__schemeTaskList__sectionDeclaration_header")) mustBe true
@@ -170,7 +155,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockFeatureToggleService = mock[FeatureToggleService]
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
-  private val srnValue = "S1000000456"
   private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =

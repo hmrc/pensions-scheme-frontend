@@ -86,8 +86,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             CompanyDetails("test company name")
         )
       )
-    ))
-  )
+    )))
 
   def getMandatoryEstablisherCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(

@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
@@ -45,7 +45,9 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) {
         implicit app =>
         val request = addCSRFToken(FakeRequest())

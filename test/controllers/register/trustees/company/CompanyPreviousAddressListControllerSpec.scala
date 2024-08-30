@@ -77,10 +77,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -97,10 +101,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
@@ -113,10 +121,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -129,7 +141,9 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
         val request =
           addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))

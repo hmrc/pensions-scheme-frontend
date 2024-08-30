@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
@@ -80,10 +80,13 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
           bind[AuthAction].to(FakeAuthAction),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[DataRetrievalAction].toInstance(retrieval),
-          bind(classOf[Navigator]).toInstance(fakeNavigator)
-        )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+          bind(classOf[Navigator]).toInstance(fakeNavigator),
+          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
+      )) { implicit app =>
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[IndividualAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -120,10 +123,13 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-      val result = route(app, request).value
+      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+      val controller = app.injector.instanceOf[IndividualAddressListController]
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
@@ -138,10 +144,13 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-      val result = route(app, request).value
+      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+      val controller = app.injector.instanceOf[IndividualAddressListController]
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
