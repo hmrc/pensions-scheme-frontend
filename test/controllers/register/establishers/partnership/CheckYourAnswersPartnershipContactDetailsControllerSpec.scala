@@ -104,10 +104,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
           val bindings = modules(fullAnswers.dataRetrievalAction)
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AuthAction].toInstance(FakeAuthAction),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
 
-          running(_.overrides((bindings ++ ftBinding): _*)) {
+          running(_.overrides((ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
@@ -117,6 +120,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
                 title = Message("checkYourAnswers.hs.heading"),
                 h1 = Message("checkYourAnswers.hs.heading"),
                 srn = srn)
+              app.stop()
           }
         }
 
