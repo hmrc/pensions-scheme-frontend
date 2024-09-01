@@ -58,7 +58,7 @@ class ConfirmDeleteEstablisherController @Inject()(
   FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         getDeletableEstablisher(index, establisherKind, request.userAnswers) map {
           establisher =>
@@ -95,7 +95,7 @@ class ConfirmDeleteEstablisherController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, establisherKind: EstablisherKind, srn: SchemeReferenceNumber)
   : Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
 
         establisherKind match {

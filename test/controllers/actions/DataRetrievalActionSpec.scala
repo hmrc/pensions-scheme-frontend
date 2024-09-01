@@ -72,7 +72,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       schemeDetailsConnector = schemeDetailsConnector,
       minimalPsaConnector = minimalPsaConnector,
       mode = mode,
-      srn = srn,
+      srn = Some(srn),
       refreshData = refreshData
     ) {
     def callTransform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = transform(request)

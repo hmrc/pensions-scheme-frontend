@@ -63,7 +63,7 @@ class PartnerNoNINOReasonController @Inject()(
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>
           get(PartnerNoNINOReasonId(establisherIndex, partnerIndex),
@@ -72,7 +72,7 @@ class PartnerNoNINOReasonController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>
           post(PartnerNoNINOReasonId(establisherIndex, partnerIndex), mode,

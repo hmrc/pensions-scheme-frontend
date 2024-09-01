@@ -42,7 +42,7 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
   Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       TrusteeNameId(index).retrieve.map {
         details =>

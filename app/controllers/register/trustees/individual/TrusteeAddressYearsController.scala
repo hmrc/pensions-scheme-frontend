@@ -57,7 +57,7 @@ class TrusteeAddressYearsController @Inject()(
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.map { name =>
           get(TrusteeAddressYearsId(index), form(name), viewModel(mode, index, name, srn))
@@ -65,7 +65,7 @@ class TrusteeAddressYearsController @Inject()(
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.map { name =>
         post(TrusteeAddressYearsId(index), mode, form(name), viewModel(mode, index, name, srn))

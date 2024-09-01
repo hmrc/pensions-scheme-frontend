@@ -76,14 +76,14 @@ class AddTrusteeController @Inject()(
   }
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val trustees = request.userAnswers.allTrusteesAfterDelete
         renderPage(trustees, mode, srn, form, Ok)
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
 
         val trustees = request.userAnswers.allTrusteesAfterDelete

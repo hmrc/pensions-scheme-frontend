@@ -43,7 +43,7 @@ trait SpecBase
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  def fakeRequest = FakeRequest().withFormUrlEncodedBody(("value", "0"))
+  def fakeRequest = FakeRequest()
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 

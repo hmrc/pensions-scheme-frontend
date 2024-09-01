@@ -52,7 +52,7 @@ class RACDACNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)).async {
     implicit request => {
       val preparedForm = request.userAnswers.flatMap(_.get(RACDACNameId)).fold(form)(v => form.fill(v))
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
@@ -62,7 +62,7 @@ class RACDACNameController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen allowAccess(srn)).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {

@@ -51,7 +51,7 @@ class AddressYearsController @Inject()(
   Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { establisherName =>
           get(AddressYearsId(index), form(establisherName.fullName), viewModel(mode, index, establisherName.fullName,
@@ -72,7 +72,7 @@ class AddressYearsController @Inject()(
   )
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map { establisherName =>
         post(AddressYearsId(index), mode, form(establisherName.fullName), viewModel(mode, index, establisherName

@@ -56,7 +56,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(srn=srn) andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData() andThen allowAccess(srn)).async {
     implicit request =>
 
       redirects.flatMap {

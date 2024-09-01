@@ -37,7 +37,7 @@ class YourActionWasNotProcessedController @Inject()(
   extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = {
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         val returnUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
         Future.successful(Ok(view(existingSchemeName, returnUrl, srn)))

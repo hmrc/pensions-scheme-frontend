@@ -57,7 +57,7 @@ class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: F
   with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
         val notNewTrustee = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)

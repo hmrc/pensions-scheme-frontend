@@ -105,7 +105,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     )
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
         val answers = seqAnswerSection(mode, establisherIndex, partnerIndex, srn)
 

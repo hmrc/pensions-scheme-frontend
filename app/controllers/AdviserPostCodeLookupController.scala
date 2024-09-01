@@ -54,7 +54,7 @@ class AdviserPostCodeLookupController @Inject()(
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(srn=srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
           get(viewmodel(mode, adviserName, srn))
@@ -62,7 +62,7 @@ class AdviserPostCodeLookupController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(srn=srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
           post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName, srn), mode)

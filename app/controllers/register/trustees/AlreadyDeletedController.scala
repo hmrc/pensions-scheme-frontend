@@ -50,7 +50,7 @@ class AlreadyDeletedController @Inject()(
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         trusteeName(index, trusteeKind, srn) match {
           case Right(trusteeName) =>

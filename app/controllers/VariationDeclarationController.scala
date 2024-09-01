@@ -59,7 +59,7 @@ class VariationDeclarationController @Inject()(
     with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
             updateSchemeCacheConnector.fetch(srn).map {
               case Some(_) =>
@@ -74,7 +74,7 @@ class VariationDeclarationController @Inject()(
     }
 
   def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(UpdateMode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         (srn, request.userAnswers.get(PstrId)) match {

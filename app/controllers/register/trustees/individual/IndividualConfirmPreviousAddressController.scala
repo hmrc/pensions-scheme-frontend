@@ -59,7 +59,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>
           viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>
@@ -86,7 +86,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>
           viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>

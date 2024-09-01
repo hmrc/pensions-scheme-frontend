@@ -52,7 +52,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
           vm =>
@@ -79,7 +79,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
           vm =>

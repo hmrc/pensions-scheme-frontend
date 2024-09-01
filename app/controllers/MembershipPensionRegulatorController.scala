@@ -44,12 +44,12 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
     implicit request =>
       Ok(view(mode, existingSchemeName, srn))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData) {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
     implicit request =>
       Redirect(navigator.nextPage(MembershipPensionRegulatorId, mode, request.userAnswers, srn))
   }

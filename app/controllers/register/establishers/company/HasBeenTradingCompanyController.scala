@@ -50,7 +50,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>
@@ -60,7 +60,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>

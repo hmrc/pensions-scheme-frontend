@@ -37,7 +37,7 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
                                                 )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       Future.successful(Ok(view(existingSchemeName, srn)))
   }

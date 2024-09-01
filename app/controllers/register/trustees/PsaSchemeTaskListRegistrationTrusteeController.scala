@@ -43,7 +43,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false)
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData()
     andThen allowAccess(srn)).async {
     implicit request =>
       val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))

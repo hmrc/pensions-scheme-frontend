@@ -89,7 +89,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     }
 
   def onPageLoad(establisherIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -117,7 +117,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
 
   //scalastyle:off method.length
   def onSubmit(establisherIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>

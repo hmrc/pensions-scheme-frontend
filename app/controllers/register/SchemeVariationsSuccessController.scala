@@ -41,7 +41,7 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController
   with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, (srn))).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       val schemeName = existingSchemeName
       cacheConnector.removeAll(srn).map { _ =>

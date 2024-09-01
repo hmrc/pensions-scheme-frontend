@@ -50,7 +50,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
   with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
@@ -73,7 +73,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
     )
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map {
           vm =>

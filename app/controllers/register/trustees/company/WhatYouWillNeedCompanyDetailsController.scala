@@ -43,7 +43,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
   Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           case CompanyDetails(companyName, _) =>

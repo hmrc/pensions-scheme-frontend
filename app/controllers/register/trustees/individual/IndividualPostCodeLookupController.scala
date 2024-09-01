@@ -59,7 +59,7 @@ class IndividualPostCodeLookupController @Inject()(
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         postCodeViewmodel(index, mode, srn).retrieve map get
     }
@@ -81,7 +81,7 @@ class IndividualPostCodeLookupController @Inject()(
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       postCodeViewmodel(index, mode, srn).retrieve.map { vm =>
         post(IndividualPostCodeLookupId(index), vm, mode)

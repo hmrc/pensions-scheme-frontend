@@ -59,7 +59,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasCompanyVat__error__required", companyName)
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>
@@ -68,7 +68,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>

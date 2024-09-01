@@ -56,13 +56,13 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn) andThen allowAccess(srn)) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(view(preparedForm, mode, existingSchemeName.getOrElse(""), srn))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

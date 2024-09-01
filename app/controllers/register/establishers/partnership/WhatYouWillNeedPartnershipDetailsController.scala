@@ -42,7 +42,7 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
   Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = controllers.register.establishers.partnership.routes.PartnershipHasUTRController.onSubmit(mode,
         index, srn)

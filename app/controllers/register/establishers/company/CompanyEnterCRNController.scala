@@ -52,7 +52,7 @@ class CompanyEnterCRNController @Inject()(
   def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
@@ -69,7 +69,7 @@ class CompanyEnterCRNController @Inject()(
   }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName

@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppCo
   Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(mode, srn, index)
       CompanyDetailsId(index).retrieve.map { details =>

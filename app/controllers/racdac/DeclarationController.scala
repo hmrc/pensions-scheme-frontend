@@ -83,7 +83,7 @@ class DeclarationController @Inject()(
     }
   }
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
@@ -98,7 +98,7 @@ class DeclarationController @Inject()(
       }
   }
 
-  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn) andThen requireData).async {
+  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       withRACDACName { schemeName =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)

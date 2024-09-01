@@ -49,7 +49,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
                                        ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits
   with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(FutureMembersId) match {
@@ -62,7 +62,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
 
   private def form(schemeName: String)(implicit messages: Messages): Form[Members] = formProvider(schemeName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(

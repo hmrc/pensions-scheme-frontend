@@ -58,7 +58,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val updatedForm = request.userAnswers.get(TrusteeNameId(index)).fold(form)(form.fill)
         Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
@@ -76,7 +76,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
 
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

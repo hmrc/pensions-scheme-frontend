@@ -41,7 +41,7 @@ class DataRetrievalImpl(
                          schemeDetailsConnector: SchemeDetailsConnector,
                          minimalPsaConnector: MinimalPsaConnector,
                          mode: Mode,
-                         srn: SchemeReferenceNumber,
+                         srn: Option[SchemeReferenceNumber],
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
@@ -53,7 +53,7 @@ class DataRetrievalImpl(
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
         (srn, request.psaId) match {
-          case ((extractedSrn), Some(psaId)) =>
+          case (Some(extractedSrn), Some(psaId)) =>
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
           case _ => Future(OptionalDataRequest(
@@ -227,7 +227,7 @@ class RacdacDataRetrievalImpl(
                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
-                               srnOpt: SchemeReferenceNumber)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                               srnOpt: Option[SchemeReferenceNumber])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
   private val logger = Logger(classOf[RacdacDataRetrievalImpl])
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -238,7 +238,7 @@ class RacdacDataRetrievalImpl(
 
       case UpdateMode | CheckUpdateMode =>
         (srnOpt, request.psaId) match {
-          case ((srn), Some(psaId)) =>
+          case (Some(srn), Some(psaId)) =>
             getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc), viewOnly = true)(request)
           case _ => Future(OptionalDataRequest(
             request = request.request,
@@ -329,7 +329,7 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         schemeDetailsConnector: SchemeDetailsConnector,
                                         minimalPsaConnector: MinimalPsaConnector
                                        )(implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: SchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
+  override def apply(mode: Mode, srn: Option[SchemeReferenceNumber], refreshData: Boolean): DataRetrieval = {
     new DataRetrievalImpl(dataConnector,
       viewConnector,
       updateConnector,
@@ -347,12 +347,12 @@ class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswers
                                               schemeDetailsConnector: SchemeDetailsConnector,
                                               minimalPsaConnector: MinimalPsaConnector)
                                              (implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: SchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
-    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: SchemeReferenceNumber)
+  override def apply(mode: Mode, srn: Option[SchemeReferenceNumber], refreshData: Boolean): DataRetrieval = {
+    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: Option[SchemeReferenceNumber])
   }
 }
 
 
 trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: SchemeReferenceNumber, refreshData: Boolean = false): DataRetrieval
+  def apply(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None, refreshData: Boolean = false): DataRetrieval
 }

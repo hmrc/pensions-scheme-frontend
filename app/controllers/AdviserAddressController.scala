@@ -62,7 +62,7 @@ class AdviserAddressController @Inject()(
   private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
   private[controllers] val hint = None
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.map { adviserName =>
         get(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName, srn))
@@ -81,7 +81,7 @@ class AdviserAddressController @Inject()(
   private[controllers] def heading(adviserName: String): Message =
     Message("messages__common__confirmAddress__h1", adviserName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.map { adviserName =>
         post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName, srn), mode, "Adviser Address",

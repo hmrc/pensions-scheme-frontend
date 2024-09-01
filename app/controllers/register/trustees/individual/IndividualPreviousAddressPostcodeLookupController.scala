@@ -58,7 +58,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
   }
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve map get
     }
@@ -81,7 +81,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)

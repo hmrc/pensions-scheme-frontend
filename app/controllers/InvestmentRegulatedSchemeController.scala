@@ -48,7 +48,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
                                                    )(implicit val executionContext: ExecutionContext
                                                    ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(InvestmentRegulatedSchemeId) match {
@@ -61,7 +61,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
 
   private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(

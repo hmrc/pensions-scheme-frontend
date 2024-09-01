@@ -50,13 +50,13 @@ class PartnerAddressListController @Inject()(override val appConfig: FrontendApp
   Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, partnerIndex, srn).map(get)
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, partnerIndex, srn).map {
           vm =>

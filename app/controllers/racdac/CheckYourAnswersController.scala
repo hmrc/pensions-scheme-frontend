@@ -51,12 +51,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
-          case (UpdateMode, (srnNo)) =>
+          case (UpdateMode, _) =>
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo), schemeName))
+            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srn), schemeName))
           case _ =>
             pensionAdministratorConnector.getPSAName.map { psaName =>
               (appConfig.managePensionsSchemeOverviewUrl.url, psaName)

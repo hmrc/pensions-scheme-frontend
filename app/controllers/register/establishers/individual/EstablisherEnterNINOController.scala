@@ -54,7 +54,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
     .EstablisherEnterNINOController.onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
           details =>
@@ -73,7 +73,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
     )
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {
         details =>

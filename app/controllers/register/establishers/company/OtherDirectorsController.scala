@@ -54,7 +54,7 @@ class OtherDirectorsController @Inject()(
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
           case None => Ok(view(form, mode, establisherIndex, existingSchemeName, postCall(mode, srn,
@@ -67,7 +67,7 @@ class OtherDirectorsController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

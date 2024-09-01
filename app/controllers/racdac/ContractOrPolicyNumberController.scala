@@ -53,7 +53,7 @@ class ContractOrPolicyNumberController @Inject()(
     with controllers.Retrievals
 {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request => {
       withRACDACName{ racdacName =>
         val form = formProvider(racdacName)
@@ -65,7 +65,7 @@ class ContractOrPolicyNumberController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         val form = formProvider(racdacName)

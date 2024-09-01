@@ -43,11 +43,10 @@ class VariationDeclarationControllerSpec
     with BeforeAndAfterEach {
 
   private val schemeName = "Test Scheme Name"
-  private val srnNumber = "S12345"
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 
-  def onwardRoute: Call = register.routes.SchemeVariationsSuccessController.onPageLoad(srnNumber)
+  def onwardRoute: Call = register.routes.SchemeVariationsSuccessController.onPageLoad(srn)
 
   def validData(extraData: JsObject = Json.obj()): FakeDataRetrievalAction =
     new FakeDataRetrievalAction(
@@ -82,7 +81,7 @@ class VariationDeclarationControllerSpec
   "VariationDeclarationController" must {
 
     "return OK and the correct view for a GET when update cache has srn" in {
-      when(updateSchemeCacheConnector.fetch(eqTo(srnNumber))(any(), any()))
+      when(updateSchemeCacheConnector.fetch(eqTo(srn))(any(), any()))
         .thenReturn(Future.successful(Some(JsString("srn"))))
 
       val app = applicationBuilder(

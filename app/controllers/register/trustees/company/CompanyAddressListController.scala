@@ -51,7 +51,7 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
   Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
@@ -75,7 +75,7 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
   }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map {
           vm =>

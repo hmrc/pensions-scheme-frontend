@@ -49,7 +49,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         Future.successful(Ok(view(vm(mode, srn))))

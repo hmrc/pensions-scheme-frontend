@@ -53,7 +53,7 @@ class PartnerPhoneController @Inject()(
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.map {
           vm =>
@@ -62,7 +62,7 @@ class PartnerPhoneController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, partnerIndex).retrieve.map {
           vm =>

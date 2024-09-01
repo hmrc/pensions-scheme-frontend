@@ -64,7 +64,7 @@ class CompanyAddressController @Inject()(
   private[controllers] val hint: Message = "messages__establisherConfirmAddress__lede"
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>
@@ -73,7 +73,7 @@ class CompanyAddressController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map {
         details =>

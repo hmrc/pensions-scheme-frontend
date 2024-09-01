@@ -56,7 +56,7 @@ class EstablisherNameController @Inject()(
   FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](EstablisherNameId(index)) match {
           case None => form
@@ -66,7 +66,7 @@ class EstablisherNameController @Inject()(
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

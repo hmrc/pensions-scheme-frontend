@@ -50,7 +50,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           trusteeName =>
@@ -71,7 +71,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
     formProvider("messages__genericHasNino__error__required", personName)
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           trusteeName =>

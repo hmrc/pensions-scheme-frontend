@@ -56,7 +56,7 @@ class MoneyPurchaseBenefitsController @Inject()(
 
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(
           view(
@@ -70,7 +70,7 @@ class MoneyPurchaseBenefitsController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

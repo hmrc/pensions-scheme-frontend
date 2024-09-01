@@ -51,14 +51,14 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
   Retrievals {
 
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()
     andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).map(get)
   }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn).map {
           vm =>

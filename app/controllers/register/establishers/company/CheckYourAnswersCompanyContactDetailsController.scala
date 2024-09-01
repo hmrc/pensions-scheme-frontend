@@ -54,7 +54,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
   extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
         val notNewEstablisher = !userAnswers.get(IsEstablisherNewId(index)).getOrElse(true)

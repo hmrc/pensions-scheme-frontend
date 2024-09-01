@@ -52,7 +52,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
           get(TrusteeNoNINOReasonId(index),
@@ -61,7 +61,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
           post(TrusteeNoNINOReasonId(index), mode,

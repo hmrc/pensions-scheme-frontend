@@ -52,7 +52,7 @@ class TrusteeEnterNINOController @Inject()(
     .onSubmit _
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val fullNameOption: Either[Future[Result], String] =
           TrusteeNameId(index).retrieve.map(_.fullName)
@@ -64,7 +64,7 @@ class TrusteeEnterNINOController @Inject()(
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       val fullNameOption: Either[Future[Result], String] =
         TrusteeNameId(index).retrieve.map(_.fullName)

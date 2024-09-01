@@ -54,7 +54,7 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val answerSections = Seq(AnswerSection(
           None,

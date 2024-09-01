@@ -53,7 +53,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
   val form: Form[LocalDate] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")
         ), mode)
@@ -70,7 +70,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
   private def postCall: (Mode, Index, SchemeReferenceNumber) => Call = routes.TrusteeDOBController.onSubmit
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message
         ("messages__theIndividual")), mode)

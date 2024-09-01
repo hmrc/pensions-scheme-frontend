@@ -49,7 +49,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
   HasReferenceNumberController {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
           details =>
@@ -58,7 +58,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
           details =>

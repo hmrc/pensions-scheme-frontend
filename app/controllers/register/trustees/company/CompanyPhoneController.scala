@@ -52,7 +52,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
           vm =>
@@ -61,7 +61,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
           vm =>

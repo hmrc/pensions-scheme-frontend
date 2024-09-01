@@ -59,7 +59,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
   private val heading: Message = "messages__establisherPreviousPostCode__h1"
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve map get
     }
@@ -80,7 +80,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
     }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve.map {
           vm =>

@@ -50,7 +50,7 @@ class DeleteSchemeChangesController @Inject()(
   private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit(_: SchemeReferenceNumber)
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       request.psaId match {
         case Some(psaId) =>
@@ -79,7 +79,7 @@ class DeleteSchemeChangesController @Inject()(
           }
         }
 
-      def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn = srn)).async {
+      def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
         implicit request =>
           request.psaId.map { psaId =>
             getSchemeName(srn, psaId.id) { (psaName, schemeName) =>

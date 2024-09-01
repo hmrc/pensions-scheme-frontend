@@ -53,7 +53,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
   private val form: Form[DeclarationDormant] = formProvider()
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
@@ -62,8 +62,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
-    srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(

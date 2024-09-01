@@ -85,7 +85,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     }
 
   def onPageLoad(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map { schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -124,7 +124,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
   }
 
   def onSubmit(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.map { schemeName =>

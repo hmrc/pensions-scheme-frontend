@@ -42,7 +42,7 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
   Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map { details =>
         val href = controllers.register.establishers.company.routes.CompanyPostCodeLookupController

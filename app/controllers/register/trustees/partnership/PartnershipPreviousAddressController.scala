@@ -62,7 +62,7 @@ class PartnershipPreviousAddressController @Inject()(
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
           details =>
@@ -82,8 +82,7 @@ class PartnershipPreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.map {
         details =>

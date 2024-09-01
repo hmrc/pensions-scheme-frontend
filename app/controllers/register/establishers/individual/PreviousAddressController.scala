@@ -60,7 +60,7 @@ class PreviousAddressController @Inject()(
   private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
           details =>
@@ -83,7 +83,7 @@ class PreviousAddressController @Inject()(
     )
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  () andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {
         details =>

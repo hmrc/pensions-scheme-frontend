@@ -52,7 +52,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         val companyName = request.userAnswers.get(InsuranceCompanyNameId)
@@ -64,7 +64,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, routes.InsurancePolicyNumberController.onSubmit(mode, srn), srn)))
     }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

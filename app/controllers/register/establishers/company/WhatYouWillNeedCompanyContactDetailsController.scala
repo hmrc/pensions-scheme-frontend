@@ -44,7 +44,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
   Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val href = CompanyEmailController.onSubmit(mode, srn, index)
         CompanyDetailsId(index).retrieve.map { details =>

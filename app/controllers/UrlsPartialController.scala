@@ -36,7 +36,7 @@ class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
                                      val controllerComponents: MessagesControllerComponents
                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def retrieveUrlsPartial(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
+  def retrieveUrlsPartial(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
 
     implicit request =>
       request.psaId.map { psaId =>
@@ -47,7 +47,7 @@ class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
 
   object PsaIdMissingException extends Exception("PSA ID cannot be retrieved from request")
 
-  def checkIfSchemeCanBeRegistered(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn)).async {
+  def checkIfSchemeCanBeRegistered(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       request.psaId.map { psaId =>
         urlsPartialService.checkIfSchemeCanBeRegistered(psaId.id)

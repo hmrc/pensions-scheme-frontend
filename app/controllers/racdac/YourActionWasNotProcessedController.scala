@@ -41,7 +41,7 @@ class YourActionWasNotProcessedController @Inject()(
   extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = {
-    (authenticate() andThen getData(NormalMode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         withRACDACName { schemeName =>
           val returnUrl = appConfig.managePensionsSchemeOverviewUrl

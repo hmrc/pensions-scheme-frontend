@@ -40,7 +40,7 @@ class WhatIsRACDACController @Inject()(override val messagesApi: MessagesApi,
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(srn=srn) andThen allowAccess(srn)).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
         Future.successful(Ok(view(psaName, srn)))

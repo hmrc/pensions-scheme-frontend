@@ -56,7 +56,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
           vm =>
@@ -65,7 +65,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
     }
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
           vm =>
