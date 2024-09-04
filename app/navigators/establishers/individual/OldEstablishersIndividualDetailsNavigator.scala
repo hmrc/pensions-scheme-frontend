@@ -34,10 +34,9 @@ import utils.UserAnswers
 class OldEstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
   extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
+  import OldEstablishersIndividualDetailsNavigator._
 
-  protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, srn), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: SchemeReferenceNumber)
@@ -57,6 +56,9 @@ class OldEstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector
     case EstablisherNoUTRReasonId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case EstablisherUTRId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
   }
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, srn), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)

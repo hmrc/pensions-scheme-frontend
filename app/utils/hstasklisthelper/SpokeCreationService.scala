@@ -178,13 +178,6 @@ class SpokeCreationService extends Enumerable.Implicits {
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
         )
-      case (false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link_toggleOff"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
-          None
-        ))
     }
   }
 
@@ -214,13 +207,6 @@ class SpokeCreationService extends Enumerable.Implicits {
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
         )
-
-      case (false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link",schemeName),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
-        )
     }
   }
 
@@ -241,11 +227,7 @@ class SpokeCreationService extends Enumerable.Implicits {
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
         )
-      case (None | Some(true), false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete)
-        )
+
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(

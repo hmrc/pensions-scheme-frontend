@@ -52,13 +52,11 @@ class DataRetrievalImpl(
       case NormalMode | CheckMode =>
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
-        (request.srn, request.psaId) match {
+        (srn, request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
-            println(s"***********In Some   ${request.srn} ... ${request.psaId}")
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
           case _ =>
-            println(s"***********In _ case...  $srn ... ${request.psaId}")
             Future(OptionalDataRequest(
             request = request.request,
             externalId = request.externalId,
@@ -146,7 +144,7 @@ class DataRetrievalImpl(
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
-          case Some(foundSrn) if foundSrn == srn =>
+          case Some(foundSrn) if foundSrn == srn.id =>
             OptionalDataRequest(
               request = request.request,
               externalId = request.externalId,
@@ -186,7 +184,7 @@ class DataRetrievalImpl(
       case Some(answersJsValue) =>
         val ua: UserAnswers = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
-          case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+          case (Some(foundSrn), Some(status)) if foundSrn == srn.id =>
             val viewOnlyStatus = if (ua.get(IsRacDacId).contains(true)) true else status != "Open"
             OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = viewOnlyStatus,
               request.administratorOrPractitioner)
@@ -291,7 +289,7 @@ class RacdacDataRetrievalImpl(
         case None => refreshSchemeDetails
         case Some(jsonValue) => (jsonValue \ SchemeSrnId.toString).validate[String] match {
           case JsSuccess(value, _) =>
-            if (value eq srn) {
+            if (value eq srn.id) {
               Future.successful(Some(jsonValue))
             } else {
               refreshSchemeDetails
