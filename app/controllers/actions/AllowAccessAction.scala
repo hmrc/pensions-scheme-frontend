@@ -53,13 +53,14 @@ abstract class AllowAccessAction(srn: SchemeReferenceNumber,
 
     val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
 
-    (optionUA, optionPsaMinimalFlagsId, srn) match {
-      case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
+    (optionUA, optionPsaMinimalFlagsId) match {
+
+      case (Some(_), Some(PSAMinimalFlags(true, false, _))) if checkForSuspended =>
         Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad((srn)))))
-      case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>
+      case (Some(_), Some(PSAMinimalFlags(_, true, _))) =>
         Future.successful(Some(Redirect(config.youMustContactHMRCUrl)))
-      case (Some(_), _, (extractedSRN)) => checkForAssociation(request, extractedSRN)
-      case (None, _, (extractedSRN)) => checkForAssociation(request, extractedSRN).map {
+      case (Some(_), _) => checkForAssociation(request, srn)
+      case (None, _) => checkForAssociation(request, srn).map {
         case None => destinationForNoUserAnswersAndSRN
         case notAssociatedResult@Some(_) => notAssociatedResult
       }
@@ -130,8 +131,7 @@ class AllowAccessActionMain(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      //TODO mode here
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))),
       checkForSuspended = true
     )
   }
@@ -150,7 +150,8 @@ class AllowAccessActionTaskList(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = None,
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
+      (UpdateMode, srn))),
       checkForSuspended = false
     )
   }
@@ -169,8 +170,7 @@ class AllowAccessActionNoSuspendedCheck(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      //TODO mode here
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))),
       checkForSuspended = false
     )
   }

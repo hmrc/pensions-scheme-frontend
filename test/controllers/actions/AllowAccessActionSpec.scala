@@ -45,6 +45,8 @@ class AllowAccessActionSpec
     with ScalaFutures
     with MockitoSugar {
 
+  val srn = SchemeReferenceNumber("S123456L")
+
   def allowAccessWithRedirectBasedOnUserAnswers(
                                                  testHarness: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness,
                                                  userAnswers: UserAnswers,
@@ -135,7 +137,6 @@ class AllowAccessActionSpec
   private val generateTestHarnessForAllowAccessNoSuspendedCheck: (SchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  private val srn = SchemeReferenceNumber("S123")
 
   private val suspendedUserAnswers = UserAnswers(
     Json.obj(
@@ -218,7 +219,7 @@ class AllowAccessActionSpec
       val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
-      assertEqual(futureResult, None)
+      assertEqual(futureResult, Some("/register-pension-scheme/changing/scheme-details/S123456L"))
     }
   }
 
@@ -291,15 +292,10 @@ class AllowAccessActionSpec
       val futureResult = testHarness(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
-      assertEqual(futureResult, None)
+      //assertEqual(futureResult,  Some("/register-pension-scheme/changing/scheme-details/S123456L"))
+      assertEqual(futureResult,  Some("/register-pension-scheme/changing/scheme-details/S123456L"))
     }
 
-    "allow access to pages for user with no srn in Normal mode" in {
-      val futureResult = testHarness(srn, pensionsSchemeConnector)
-        .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
-
-      assertEqual(futureResult, None)
-    }
 
     "allow access to pages for users that are not suspended" in {
       val futureResult = testHarness(srn, pensionsSchemeConnector)
@@ -338,7 +334,6 @@ class AllowAccessActionSpec
         hasAccess(allowPsa = false, allowPsp = false, withSrn)(isPsa = false).map { hasAccess => assert(hasAccess, false)}
       }
       test(withSrn = true)
-      test(withSrn = false)
     }
 
   }

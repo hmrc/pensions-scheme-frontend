@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.register.NoCompanyNumberFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
@@ -45,10 +45,11 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
-          val request = addCSRFToken(FakeRequest())
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))
           val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
           val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
 
@@ -62,7 +63,8 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))

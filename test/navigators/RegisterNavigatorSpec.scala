@@ -79,5 +79,5 @@ object RegisterNavigatorSpec extends OptionValues{
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad(NormalMode, srn)
 
   private def taskList: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
-  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
+  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(srn)
 }

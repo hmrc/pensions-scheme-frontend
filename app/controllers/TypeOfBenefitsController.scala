@@ -53,8 +53,9 @@ class TypeOfBenefitsController @Inject()(
   private def form(schemeName: String)
                   (implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = {
+    println(s"************ $mode $srn")
+    (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
           schemeName =>
@@ -72,9 +73,10 @@ class TypeOfBenefitsController @Inject()(
             )))
         }
     }
+  }
 
   def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData() andThen requireData).async {
+    (authenticate() andThen getData(mode, Some(srn)) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
           schemeName =>

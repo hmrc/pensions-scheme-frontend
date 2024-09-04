@@ -20,6 +20,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors._
+import controllers.ControllerSpecBase
 import identifiers.TypedIdentifier
 import identifiers.register.trustees
 import identifiers.register.trustees.individual.TrusteeAddressId
@@ -30,6 +31,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfter
+import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.{JsValue, Json}
@@ -40,7 +42,7 @@ import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
-class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfter {
+class UserAnswersServiceSpec extends ControllerSpecBase with Matchers with MockitoSugar with BeforeAndAfter {
 
   import UserAnswersServiceSpec._
 
@@ -291,7 +293,6 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
-  private val srn = "S1234567890"
 
   val json: JsValue = Json.obj(
     FakeIdentifier.toString -> "fake value",

@@ -96,7 +96,8 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           val app = applicationBuilder(fullAnswers.dataRetrievalAction).overrides(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]

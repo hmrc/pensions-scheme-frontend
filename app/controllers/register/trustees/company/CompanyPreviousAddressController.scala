@@ -65,7 +65,7 @@ class CompanyPreviousAddressController @Inject()(
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>

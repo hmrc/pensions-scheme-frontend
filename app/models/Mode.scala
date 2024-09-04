@@ -35,10 +35,13 @@ case object CheckUpdateMode extends WithName("update") with VarianceMode
 
 object Mode {
 
-  def checkMode(mode: Mode): Mode = mode match {
+  def checkMode(mode: Mode): Mode = {
+    println(s"<<<<<<<<<<<< $mode")
+    mode match {
     case NormalMode => CheckMode
     case UpdateMode => CheckUpdateMode
     case _ => throw UnknownModeException()
+  }
   }
 
   implicit def modePathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Mode] = new

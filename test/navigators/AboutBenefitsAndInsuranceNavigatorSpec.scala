@@ -117,7 +117,7 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private def typesofBenefits: Call                                   = TypeOfBenefitsController.onPageLoad(NormalMode, srn)
   private def moneyPurchaseBenefits(mode: Mode = NormalMode): Call    = MoneyPurchaseBenefitsController.onPageLoad(mode, srn)
   private def benefitsSecured: Call                                   = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, srn)
-  private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(srn)
+  private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(mode, srn)
   private def policyNumber(mode: Mode = NormalMode): Call             = InsurancePolicyNumberController.onPageLoad(mode, srn)
   private def insurerPostcode(mode: Mode = NormalMode): Call          = InsurerEnterPostcodeController.onPageLoad(mode, srn)
   private def insurerAddressList(mode: Mode = NormalMode): Call       = InsurerSelectAddressController.onPageLoad(mode, srn)

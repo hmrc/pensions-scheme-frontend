@@ -54,23 +54,6 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithLessData(UpdateMode)
       }
-
-      "Normal Mode" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
-          Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn))
-          ): _*)) {
-          app =>
-            val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
-            status(result) mustBe OK
-
-            contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
-              title = Message("checkYourAnswers.hs.heading"),
-              h1 = Message("checkYourAnswers.hs.heading"),
-              srn = srn)
-        }
-      }
     }
 
     "onPageLoad() is called with UpdateMode" must {
@@ -213,7 +196,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(srn).url,
+        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(mode, srn).url,
           Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
       )
     )

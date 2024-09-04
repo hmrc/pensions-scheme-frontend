@@ -61,7 +61,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
 
   private def benefitsSecuredRoutes(userAnswers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(srn))
+      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, srn))
       case Some(false) => checkYourAnswers(mode, srn)
       case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
@@ -84,7 +84,7 @@ class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserA
                                         mode: Mode,
                                         srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(BenefitsSecuredByInsuranceId) match {
-      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(srn))
+      case Some(true) => NavigateTo.dontSave(InsuranceCompanyNameController.onPageLoad(mode, srn))
       case Some(false) => if (mode == CheckMode) {
         checkYourAnswers(NormalMode, srn)
       } else {

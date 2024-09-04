@@ -49,7 +49,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData) {
+    (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         Ok(view(vm(mode, srn)))
     }
@@ -70,7 +70,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
           TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
           MoneyPurchaseBenefitsId.row(routes.MoneyPurchaseBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(srn).url, mode) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(mode, srn).url, mode) ++
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )

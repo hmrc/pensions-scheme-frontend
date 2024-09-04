@@ -72,10 +72,12 @@ POST        /:mode/country-established-in/:srn                            contro
 GET         /insurance-company-name/:srn                                  controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
 POST        /change/insurance-company-name/:srn                           controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
 POST        /:mode/insurance-company-name/:srn                       controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
+GET        /:mode/insurance-company-name/:srn                       controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 
 GET         /insurance-policy-number/:srn                                 controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
 GET         /change/insurance-policy-number/:srn                          controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
 POST         /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
+GET         /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 
 GET         /:mode/uk-bank-account/:srn                                         controllers.UKBankAccountController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 POST         /:mode/uk-bank-account/:srn                                   controllers.UKBankAccountController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
@@ -98,6 +100,8 @@ POST        /:mode/occupational-pension-scheme/:srn                             
 
 GET         /type-of-benefits/:srn                                   controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)
 GET         /change/type-of-benefits/:srn                            controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: SchemeReferenceNumber)
+POST        /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
+GET         /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onPageLoad(mode: Mode, srn: SchemeReferenceNumber)
 POST        /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: SchemeReferenceNumber)
 
 GET         /money-purchase-benefits/:srn                                 controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber)

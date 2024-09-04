@@ -57,7 +57,8 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
         bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
 
