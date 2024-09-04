@@ -105,7 +105,9 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
-            Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
+            Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+              bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn))
+            ): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)

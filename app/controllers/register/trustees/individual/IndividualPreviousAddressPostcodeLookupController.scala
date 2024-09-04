@@ -81,7 +81,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
     }
 
   def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  () andThen requireData).async {
+  () andThen allowAccess(srn)  andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.map { vm =>
         post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)

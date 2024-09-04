@@ -40,6 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
+import utils.annotations.NoSuspendedCheck
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -80,11 +81,14 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval)
+        bind[DataRetrievalAction].to(retrieval),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) {
         implicit app =>
 
           val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
+          val validPostcode = "ZZ1 1ZZ"
 
           lazy val viewModel = PostcodeLookupViewModel(
             postCall = controller.postCall(NormalMode, firstIndex, srn),
@@ -95,10 +99,11 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             srn = srn
           )
 
-          val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, srn))
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody("postcode" -> validPostcode)
             .withHeaders("Csrf-Token" -> "nocheck"))
 
-          val result = route(app, request).value
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -106,7 +111,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             form,
             viewModel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
       }
     }
 

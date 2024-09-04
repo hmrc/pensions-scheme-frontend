@@ -20,19 +20,24 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
+import controllers.register.trustees.partnership.PartnershipEnterVATController
+import controllers.register.trustees.partnership.PartnershipEnterVATControllerSpec.{firstIndex, onwardRoute}
 import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
+import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
+import play.api.test.CSRFTokenHelper.addCSRFToken
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.FeatureToggleService
-import utils.UserAnswers
+import services.{FakeUserAnswersService, FeatureToggleService, UserAnswersService}
+import utils.{FakeNavigator, UserAnswers}
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -106,13 +111,17 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
           val bindings = modules(fullAnswers.dataRetrievalAction)
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn))
           )
 
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
+
+              val request = addCSRFToken(FakeRequest()
+                .withFormUrlEncodedBody(("vat", "123456789")))
+              val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),

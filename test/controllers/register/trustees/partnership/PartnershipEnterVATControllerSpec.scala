@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
@@ -45,11 +45,13 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
-          val request = addCSRFToken(FakeRequest())
+          val request = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody(("vat", "123456789")))
           val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(request, messages).toString()

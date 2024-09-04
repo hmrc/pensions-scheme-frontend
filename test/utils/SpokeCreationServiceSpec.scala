@@ -38,6 +38,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import utils.hstasklisthelper.SpokeCreationService
 import viewmodels.Message
 
+import scala.collection.mutable
+
 class SpokeCreationServiceSpec
   extends AnyWordSpec
     with Matchers
@@ -746,8 +748,8 @@ class SpokeCreationServiceSpec
         .trusteeName(0, personName)
       val expectedSpoke =
         Seq(
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", "scheme"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), Some(false))
         )
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
@@ -762,8 +764,8 @@ class SpokeCreationServiceSpec
         .haveAnyTrustees(true)
       val expectedSpoke =
         Seq(
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), None)
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", "scheme"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn).url), Some(false))
         )
 
       val result = spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, UpdateMode, srn, viewOnly = false)
@@ -871,7 +873,7 @@ class SpokeCreationServiceSpec
         .trusteeName(0, personName)
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url),
           None
         ))
@@ -888,7 +890,7 @@ class SpokeCreationServiceSpec
         .haveAnyTrustees(true)
       val expectedSpoke =
         Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
+          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, srn).url),
           None
         ))
@@ -937,7 +939,7 @@ class SpokeCreationServiceSpec
 object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
 
   private val personName = PersonName("First", "Last")
-  private val srn = SchemeReferenceNumber("S123")
+  private val srn = SchemeReferenceNumber("S123456L")
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val address = Address("line1", "line2", None, None, None, "GB")

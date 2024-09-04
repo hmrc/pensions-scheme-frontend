@@ -54,10 +54,11 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
       when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
         .thenReturn(schemeDetailsTaskListEstablishers)
 
-      val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
+      val result = controller(new FakeDataRetrievalAction(None))
         .onPageLoad(NormalMode, 0, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
+
     }
   }
 }

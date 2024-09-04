@@ -204,16 +204,17 @@ class SpokeCreationService extends Enumerable.Implicits {
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), Some(false))
         )
-      case (false, false) if srn.id.nonEmpty =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
-        )
       case (false, false) if !establishers.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link", schemeName),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
         )
+      case (false, false) if srn.id.nonEmpty =>
+        Seq(EntitySpoke(
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
+        )
+
       case (false, false) =>
         Seq(EntitySpoke(
           TaskListLink(
@@ -230,16 +231,16 @@ class SpokeCreationService extends Enumerable.Implicits {
     val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
 
     (answers.get(HaveAnyTrusteesId), trustees.isEmpty, viewOnly) match {
-      case (None | Some(true), false, false) if srn.id.nonEmpty =>
-        Seq(
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
-        )
       case (None | Some(true), false, false) if !trustees.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete
         ))
+      case (None | Some(true), false, false) if srn.id.nonEmpty =>
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
+        )
       case (None | Some(true), false, false) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
@@ -265,12 +266,6 @@ class SpokeCreationService extends Enumerable.Implicits {
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
         )
-      case (None | Some(true), false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-          None
-        ))
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(

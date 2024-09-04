@@ -41,7 +41,6 @@ import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Us
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-
 class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
@@ -74,10 +73,18 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].toInstance(retrieval),
-          bind[CountryOptions].to(countryOptions)
+          bind[CountryOptions].to(countryOptions),
+          bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
         )) {
           implicit app =>
 
+            val address = Address(
+              addressLine1 = "value 1",
+              addressLine2 = "value 2",
+              None, None,
+              postcode = Some("AB1 1AB"),
+              country = "GB"
+            )
             val controller = app.injector.instanceOf[TrusteePreviousAddressController]
 
             val viewmodel = ManualAddressViewModel(
@@ -88,12 +95,16 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
               srn = srn
             )
 
-            val request = addCSRFToken(
-              FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, srn))
-                .withHeaders("Csrf-Token" -> "nocheck")
-            )
 
-            val result = route(app, request).value
+            val fakeRequest = addCSRFToken(FakeRequest()
+              .withHeaders("Csrf-Token" -> "nocheck")
+              .withFormUrlEncodedBody(
+                ("addressLine1", address.addressLine1),
+                ("addressLine2", address.addressLine2),
+                ("postCode", address.postcode.get),
+                "country" -> address.country))
+
+            val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
             status(result) must be(OK)
 
@@ -101,7 +112,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
               form,
               viewmodel,
               None
-            )(request, messages).toString
+            )(fakeRequest, messages).toString
 
         }
 

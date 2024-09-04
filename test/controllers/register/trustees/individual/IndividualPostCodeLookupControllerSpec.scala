@@ -38,6 +38,7 @@ import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
+import utils.annotations.NoSuspendedCheck
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -59,7 +60,9 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Sca
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())

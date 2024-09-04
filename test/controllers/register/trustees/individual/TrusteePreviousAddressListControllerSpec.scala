@@ -77,10 +77,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -98,10 +101,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
@@ -115,10 +121,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

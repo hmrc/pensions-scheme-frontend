@@ -16,13 +16,18 @@
 
 package controllers
 
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
+import controllers.register.trustees.partnership.CheckYourAnswersPartnershipContactDetailsController
 import models.Mode._
 import models._
 import models.address.Address
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.test.Helpers._
+import services.FeatureToggleService
+import utils.annotations.NoSuspendedCheck
 import utils.{FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -48,6 +53,23 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithLessData(UpdateMode)
+      }
+
+      "Normal Mode" in {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
+          Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn))
+          ): _*)) {
+          app =>
+            val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
+            status(result) mustBe OK
+
+            contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
+              title = Message("checkYourAnswers.hs.heading"),
+              h1 = Message("checkYourAnswers.hs.heading"),
+              srn = srn)
+        }
       }
     }
 

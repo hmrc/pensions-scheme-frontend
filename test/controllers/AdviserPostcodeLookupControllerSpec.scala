@@ -92,11 +92,12 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[Navigator].toInstance(new FakeNavigator(onwardRoute))
       )) {
         implicit app =>
+          val validPostcode = "ZZ1 1ZZ"
 
-          val request = addCSRFToken(FakeRequest(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn))
-            .withHeaders("Csrf-Token" -> "nocheck"))
-
-          val result = route(app, request).value
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody("postcode" -> validPostcode))
+          val controller = app.injector.instanceOf[AdviserPostCodeLookupController]
+          val result = controller.onPageLoad(NormalMode, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -104,7 +105,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
             form,
             viewModel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
       }
     }
 

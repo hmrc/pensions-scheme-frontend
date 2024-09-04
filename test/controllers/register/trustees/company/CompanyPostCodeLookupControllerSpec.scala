@@ -80,9 +80,11 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval)
+        bind[DataRetrievalAction].to(retrieval),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
+          val validPostcode = "ZZ1 1ZZ"
 
           val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
 
@@ -95,10 +97,11 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
             srn = srn
           )
 
-          val request = addCSRFToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex, srn))
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody("postcode" -> validPostcode)
             .withHeaders("Csrf-Token" -> "nocheck"))
 
-          val result = route(app, request).value
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -106,7 +109,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
             form,
             viewModel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
       }
     }
 

@@ -59,10 +59,11 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn)),
       )) {
         implicit app =>
-          val request = addCSRFToken(FakeRequest())
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
           val controller = app.injector.instanceOf[IndividualPreviousAddressPostcodeLookupController]
           val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
@@ -79,7 +80,8 @@ class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSp
           bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
           bind(classOf[Navigator]).toInstance(fakeNavigator),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
-          bind[PostCodeLookupFormProvider].to(formProvider)
+          bind[PostCodeLookupFormProvider].to(formProvider),
+          bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn)),
         )) {
           implicit app =>
             val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))

@@ -35,7 +35,7 @@ trait ControllerWithQuestionPageBehaviours extends ControllerSpecBase with Scala
   val navigator = new FakeNavigator(onwardRoute)
   val requiredDataAction = new DataRequiredActionImpl
 
-  def onwardRoute: Call = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "")
 
   def controllerWithOnPageLoadMethod[T](onPageLoadAction: (DataRetrievalAction, AuthAction) => Action[AnyContent],
                                         emptyData: DataRetrievalAction,

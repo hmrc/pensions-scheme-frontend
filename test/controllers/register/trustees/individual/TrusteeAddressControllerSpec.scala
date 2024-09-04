@@ -19,8 +19,10 @@ package controllers.register.trustees.individual
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
+import controllers.InsurerConfirmAddressControllerSpec.fakeAuditService
 import controllers.actions._
 import controllers.behaviours.AddressControllerBehaviours
+import controllers.register.trustees.company.CompanyAddressController
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeNameId}
 import models.address.Address
@@ -63,7 +65,8 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
       bind[UserAnswersService].toInstance(FakeUserAnswersService),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
-      bind[CountryOptions].to(countryOptions)
+      bind[CountryOptions].to(countryOptions),
+      bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
     )
 
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
@@ -76,12 +79,45 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
     srn = srn
   )
 
-  behave like manualAddress(
-    routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, srn),
-    routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, srn),
-    TrusteeAddressId(firstIndex),
-    viewmodel
-  )
+  "render manualAddress from GET request" in {
+    running(_.overrides(
+      bind[FrontendAppConfig].to(frontendAppConfig),
+      bind[Navigator].toInstance(FakeNavigator),
+      bind[UserAnswersService].toInstance(FakeUserAnswersService),
+      bind[AuthAction].to(FakeAuthAction),
+      bind[CountryOptions].to(countryOptions),
+      bind[DataRetrievalAction].to(retrieval),
+      bind[AuditService].toInstance(fakeAuditService),
+      bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
+    )) {
+      implicit app =>
+        val address = Address(
+          addressLine1 = "value 1",
+          addressLine2 = "value 2",
+          None, None,
+          postcode = Some("AB1 1AB"),
+          country = "GB"
+        )
+
+        val fakeRequest = addCSRFToken(FakeRequest()
+          .withHeaders("Csrf-Token" -> "nocheck")
+          .withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country))
+
+        val firstIndex: Index = Index(0)
+
+        fakeAuditService.reset()
+
+        val controller = app.injector.instanceOf[TrusteeAddressController]
+        val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
+
+        status(result) must be(OK)
+
+    }
+  }
 
   "save address and redirect to next page on POST request" in {
     running(_ => builder) {

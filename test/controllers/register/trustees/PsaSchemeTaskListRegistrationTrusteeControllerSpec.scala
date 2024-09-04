@@ -50,11 +50,11 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListTrustees)
     }
 
-    "redirect to Session Expired for a GET if srn specified" in {
+    "redirect to Session Expired for a GET if userAnswers not specified" in {
       when(mockHsTaskListHelperRegistration.taskListTrustee(any(), any(), any(), any()))
         .thenReturn(schemeDetailsTaskListTrustees)
 
-      val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
+      val result = controller(new FakeDataRetrievalAction(None))
         .onPageLoad(NormalMode, 0, srn)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

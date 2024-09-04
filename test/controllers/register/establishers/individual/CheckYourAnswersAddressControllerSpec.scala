@@ -56,7 +56,9 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
         "Normal MOde" in {
           val app = applicationBuilder(
             fullAnswers.dataRetrievalAction,
-            extraModules = Seq(bind[FeatureToggleService].toInstance(mockFeatureToggleService))
+            extraModules = Seq(bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+              bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
+            )
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]

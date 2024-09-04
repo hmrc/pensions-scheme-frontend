@@ -41,7 +41,7 @@ class DataRetrievalImpl(
                          schemeDetailsConnector: SchemeDetailsConnector,
                          minimalPsaConnector: MinimalPsaConnector,
                          mode: Mode,
-                         srn: Option[SchemeReferenceNumber],
+                         srn: Option[SchemeReferenceNumber] = None,
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
@@ -52,11 +52,14 @@ class DataRetrievalImpl(
       case NormalMode | CheckMode =>
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
-        (srn, request.psaId) match {
+        (request.srn, request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
+            println(s"***********In Some   ${request.srn} ... ${request.psaId}")
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
-          case _ => Future(OptionalDataRequest(
+          case _ =>
+            println(s"***********In _ case...  $srn ... ${request.psaId}")
+            Future(OptionalDataRequest(
             request = request.request,
             externalId = request.externalId,
             userAnswers = None,

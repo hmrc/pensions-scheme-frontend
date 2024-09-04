@@ -19,6 +19,7 @@ package controllers.register.trustees.partnership
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.trustees.partnership.PartnershipEnterVATControllerSpec.firstIndex
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
@@ -58,11 +59,14 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
-          val request = addCSRFToken(FakeRequest())
+          val firstIndex: Index = Index(0)
           val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
+          val request = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody( ("postCode", address.postcode.get)))
           val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()

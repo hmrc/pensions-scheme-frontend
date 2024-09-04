@@ -53,9 +53,11 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
       "return OK and the correct view with full answers" when {
-        "Normal MOde" in {
+        "Normal Mode" in {
           val app = applicationBuilder(fullAnswers.dataRetrievalAction).overrides(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
+          ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
           val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
@@ -67,6 +69,10 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
             srn = srn)
           app.stop()
         }
+
+
+
+
 
         "Update Mode" in {
 
