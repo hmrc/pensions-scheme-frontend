@@ -84,7 +84,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[IndividualAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -127,7 +127,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+      val request = addCSRFToken(FakeRequest())
       val controller = app.injector.instanceOf[IndividualAddressListController]
       val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -148,8 +148,9 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+      val request = addCSRFToken(FakeRequest())
       val controller = app.injector.instanceOf[IndividualAddressListController]
+      println(s"${request.body.toString}")
       val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
       status(result) mustBe SEE_OTHER

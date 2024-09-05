@@ -81,7 +81,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -105,7 +105,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -125,7 +125,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+        val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 

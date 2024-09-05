@@ -82,7 +82,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
 
       )) { implicit app =>
         val request =
-          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -106,7 +106,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
 
       )) { implicit app =>
         val request =
-          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
@@ -126,7 +126,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
 
       )) { implicit app =>
         val request =
-          addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
+          addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
         val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
