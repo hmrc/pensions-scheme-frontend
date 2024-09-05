@@ -36,7 +36,6 @@ case object CheckUpdateMode extends WithName("update") with VarianceMode
 object Mode {
 
   def checkMode(mode: Mode): Mode = {
-    println(s"<<<<<<<<<<<< $mode")
     mode match {
     case NormalMode => CheckMode
     case UpdateMode => CheckUpdateMode

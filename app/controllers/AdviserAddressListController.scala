@@ -65,7 +65,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
           heading = Message("messages__dynamic_whatIsAddress", name),
           title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
           srn = srn,
-          entityName = name,
+          entityName = name
         )
     }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode, srn))))
   }

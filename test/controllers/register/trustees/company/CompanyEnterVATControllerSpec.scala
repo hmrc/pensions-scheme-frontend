@@ -46,7 +46,7 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) {
         implicit app =>

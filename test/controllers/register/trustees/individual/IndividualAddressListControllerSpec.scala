@@ -81,7 +81,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[DataRetrievalAction].toInstance(retrieval),
           bind(classOf[Navigator]).toInstance(fakeNavigator),
-          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
@@ -124,7 +124,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
@@ -145,7 +145,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))

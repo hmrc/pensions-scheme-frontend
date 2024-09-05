@@ -78,7 +78,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
         val request =
@@ -102,7 +102,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
         val request =
@@ -122,7 +122,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
         val request =
@@ -142,7 +142,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) { implicit app =>
         val request =

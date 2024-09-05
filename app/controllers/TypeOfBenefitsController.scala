@@ -54,7 +54,6 @@ class TypeOfBenefitsController @Inject()(
                   (implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
 
   def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = {
-    println(s"************ $mode $srn")
     (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {

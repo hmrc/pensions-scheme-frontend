@@ -51,7 +51,6 @@ class CompanyPreviousAddressListController @Inject()(override val appConfig: Fro
   AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = {
-    println(s"**********************************************")
     (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)

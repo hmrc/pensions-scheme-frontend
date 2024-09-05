@@ -62,7 +62,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
       bind[CountryOptions].to(countryOptions),
-      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
+      bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
   )
 
