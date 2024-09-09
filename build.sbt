@@ -51,6 +51,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting := true
   )
   .settings(
+    libraryDependencies ++= AppDependencies(),
     scalacOptions ++= Seq("-feature"),
     scalacOptions ++= Seq("-Xmaxerrs", "10000"),
     scalacOptions ++= Seq("-Xmaxwarns", "1"),

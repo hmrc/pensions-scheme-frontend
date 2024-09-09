@@ -143,7 +143,7 @@ class DataRetrievalImpl(
     refreshBasedJsFetch(refresh, srn, psaId).map {
       case Some(data) =>
         UserAnswers(data).get(SchemeSrnId) match {
-          case Some(foundSrn) if foundSrn == srn =>
+          case Some(foundSrn) if foundSrn == srn.id =>
             OptionalDataRequest(
               request = request.request,
               externalId = request.externalId,
@@ -183,7 +183,7 @@ class DataRetrievalImpl(
       case Some(answersJsValue) =>
         val ua: UserAnswers = UserAnswers(answersJsValue)
         (ua.get(SchemeSrnId), ua.get(SchemeStatusId)) match {
-          case (Some(foundSrn), Some(status)) if foundSrn == srn =>
+          case (Some(foundSrn), Some(status)) if foundSrn == srn.id =>
             val viewOnlyStatus = if (ua.get(IsRacDacId).contains(true)) true else status != "Open"
             OptionalDataRequest(request.request, request.externalId, Some(ua), request.psaId, request.pspId, viewOnly = viewOnlyStatus,
               request.administratorOrPractitioner)
