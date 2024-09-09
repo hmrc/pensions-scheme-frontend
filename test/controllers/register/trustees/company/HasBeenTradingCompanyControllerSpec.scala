@@ -22,7 +22,7 @@ import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
 import models.address.{Address, TolerantAddress}
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -38,7 +38,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   val formProvider = new HasBeenTradingFormProvider()
   val form: Form[Boolean] = formProvider("messages__tradingAtLeastOneYear__error","test company name")
   val index: Index = Index(0)
-  val srn: Option[String] = None
+  val srn: Option[SchemeReferenceNumber] = None
   val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn)
 
   val viewModel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(

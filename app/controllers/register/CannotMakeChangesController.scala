@@ -29,6 +29,7 @@ import utils.annotations.TaskList
 import views.html.register.cannotMakeChanges
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class CannotMakeChangesController @Inject()(
                                              appConfig: FrontendAppConfig,
@@ -43,7 +44,7 @@ class CannotMakeChangesController @Inject()(
   FrontendBaseController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen allowAccessAction(srn)).async {
+  def onPageLoad(srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen allowAccessAction(srn)).async {
     implicit request =>
       Future.successful(Ok(view(srn, existingSchemeName)))
   }

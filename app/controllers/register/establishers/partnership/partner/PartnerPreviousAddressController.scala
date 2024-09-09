@@ -38,6 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnerPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
@@ -60,7 +61,7 @@ class PartnerPreviousAddressController @Inject()(
   private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit _
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -71,7 +72,7 @@ class PartnerPreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], name: String)
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber], name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, establisherIndex, partnerIndex, srn),
@@ -81,7 +82,7 @@ class PartnerPreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {

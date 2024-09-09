@@ -35,6 +35,7 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 trait ManualAddressController extends FrontendBaseController with Retrievals with I18nSupport {
 
@@ -102,7 +103,7 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
     )
   }
 
-  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String],
+  private def removePostCodeLookupAddress(mode: Mode, srn: Option[SchemeReferenceNumber],
                                           postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
     if (request.userAnswers.get(postCodeLookupId).nonEmpty) {

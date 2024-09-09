@@ -103,18 +103,18 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
   val companyName = "Test company Name"
-  val srn: Option[String] = Some("S123")
+  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
-  private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, srn, Index(index)).url
-  private def companyAddressYearsRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
-  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def companyAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String = routes.CompanyAddressController.onPageLoad(mode, srn, Index(index)).url
+  private def companyAddressYearsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String = routes.CompanyAddressYearsController.onPageLoad(mode, srn, Index(index)).url
+  private def companyPreviousAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
     routes.CompanyPreviousAddressController.onPageLoad(mode, srn, Index(index)).url
-  private def companyTradingTimeRoute(mode: Mode, srn: Option[String]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index).url
+  private def companyTradingTimeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, srn, index).url
 
   private val fullAnswers = emptyAnswers.
     establisherCompanyDetails(0, CompanyDetails(companyName)).
@@ -131,14 +131,14 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__address__cya", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", companyAddressRoute(checkMode(mode), srn),
       Some(messages("messages__visuallyhidden__dynamic_address", companyName))))
   )
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__company_address_years__h1", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -146,7 +146,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some(messages("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
-  def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def tradingTimeAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__hasBeenTrading__h1", companyName),
     Seq("site.yes"),
     answerIsMessageKey = true,
@@ -154,7 +154,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", companyName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__previousAddress__cya", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -162,7 +162,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       Some(messages("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
-  def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
+  def previousAddressAddLink(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow =
     AnswerRow(Message("messages__previousAddress__cya", companyName),
     Seq("site.not_entered"),
     answerIsMessageKey = true,
@@ -201,7 +201,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(

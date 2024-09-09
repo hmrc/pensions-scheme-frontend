@@ -22,8 +22,9 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -56,13 +57,13 @@ class CompanyPostCodeLookupController @Inject()(
   private val title: Message = "messages__establisherPostCode__title"
   private val heading: Message = "messages__establisherPostCode__h1"
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve map get
     }
 
-  private def viewmodel(index: Int, srn: Option[String], mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, srn: Option[SchemeReferenceNumber], mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -77,7 +78,7 @@ class CompanyPostCodeLookupController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, srn, mode).retrieve.map {

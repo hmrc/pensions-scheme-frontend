@@ -34,6 +34,7 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PartnershipAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
@@ -49,13 +50,13 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
                                                 )(implicit val ec: ExecutionContext) extends AddressListController
   with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String])
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
     (PartnershipDetailsId(index) and PartnershipPostcodeLookupId(index)).retrieve.map {
       case partnershipDetails ~ addresses =>
@@ -72,7 +73,7 @@ class PartnershipAddressListController @Inject()(override val appConfig: Fronten
       Future.successful(Redirect(routes.PartnershipPostcodeLookupController.onPageLoad(mode, index, srn)))
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map {

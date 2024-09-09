@@ -17,9 +17,10 @@
 package viewmodels.dateOfBirth
 
 import play.api.mvc.Call
+import models.SchemeReferenceNumber
 
 case class DateOfBirthViewModel(
                                  postCall: Call,
-                                 srn: Option[String] = None,
+                                 srn: Option[SchemeReferenceNumber] = None,
                                  token: String
                                )

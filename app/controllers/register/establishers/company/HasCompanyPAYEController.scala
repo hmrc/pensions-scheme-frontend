@@ -34,6 +34,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -49,7 +50,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -58,7 +59,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -68,7 +69,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__hasPAYE", Message("messages__theCompany")),

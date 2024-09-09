@@ -33,6 +33,7 @@ import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
@@ -63,9 +64,9 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
     }
 
-  def postCall: (Mode, Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
+  def postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurancePolicyNumberController.onSubmit
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

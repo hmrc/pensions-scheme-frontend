@@ -105,20 +105,20 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
+  val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   val establisherName = "First Last"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def establisherAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def establisherAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
     routes.AddressController.onPageLoad(mode, index, srn).url
 
-  private def establisherAddressYearsRoute(mode: Mode, srn: Option[String]): String =
+  private def establisherAddressYearsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
     routes.AddressYearsController.onPageLoad(mode, index, srn).url
 
-  private def establisherPreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def establisherPreviousAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
     routes.PreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = UserAnswers().
@@ -127,10 +127,10 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     establishersIndividualAddressYears(index, addressYearsUnderAYear).
     establishersIndividualPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -138,7 +138,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_address", establisherName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__addressYears", establisherName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -146,7 +146,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_addressYears", establisherName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
     Message("messages__previousAddressFor", establisherName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -154,13 +154,13 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
+  def answerSection(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
   private val mockFeatureToggleService = mock[FeatureToggleService]
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

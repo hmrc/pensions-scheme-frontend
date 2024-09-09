@@ -33,6 +33,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
@@ -48,7 +49,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends ReasonController with
   I18nSupport {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -57,7 +58,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -68,7 +69,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider(name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.CompanyNoCRNReasonController.onSubmit(mode, srn, index),
       title = Message("messages__whyNoCRN", Message("messages__theCompany")),

@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
+  private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   private val establisherName = PersonName("test", "name")
   private val email = "test@test.com"
   private val phone = "1234"
@@ -50,10 +50,10 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val fullAnswers = UserAnswers().establishersIndividualName(index, establisherName).
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
       messages("messages__enterEmail", establisherName.fullName),
       Seq(email),
@@ -75,7 +75,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(

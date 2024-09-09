@@ -89,9 +89,9 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
 object TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
-  private val srn                   = Some("srn")
+  private val srn                   = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

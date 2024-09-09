@@ -34,6 +34,7 @@ import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.trusteeKind
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -52,7 +53,7 @@ class TrusteeKindController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
@@ -63,7 +64,7 @@ class TrusteeKindController @Inject()(
         Future.successful(Ok(view(preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

@@ -16,7 +16,7 @@
 
 @this(layout: templates.Layout)
 
-@(srn:Option[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn: Option[SchemeReferenceNumber], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__cannot_Make_Changes__title")) {
 

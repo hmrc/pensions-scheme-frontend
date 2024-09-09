@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures with JsonMatchers with BeforeAndAfterEach {
 
-  private val srn = "123"
+  private val srn = SchemeReferenceNumber("123")
   private val srnOpt = Some(srn)
   private val psa = "A0000000"
   private val externalId = "id"
@@ -61,7 +61,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
                 minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: Option[String] = None,
+                srn: Option[SchemeReferenceNumber] = None,
                 refreshData: Boolean = false
                ) extends
     DataRetrievalImpl(
@@ -86,7 +86,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val answersFromDESWithSuspensionFlag = answersFromDES
     .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
 
-  private def userAnswersDummy(status: String, srn: String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
+  private def userAnswersDummy(status: String, srn: SchemeReferenceNumber) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
     .set(SchemeSrnId)(srn).asOpt.value
 
   override def beforeEach(): Unit = {
@@ -385,7 +385,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is different from cached srn then no user answers is added to the request and view only is true" in {
-      val differentSrn = "different-srn"
+      val differentSrn = SchemeReferenceNumber("different-srn")
       val answersFromDES = userAnswersDummy(statusOpen, srn = differentSrn)
       val answersFromDESWithSuspensionFlag = answersFromDES
         .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
@@ -425,7 +425,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(eqTo(psa), eqTo(srn))(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(eqTo(externalId))(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, "different-srn").json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, SchemeReferenceNumber("different-srn")).json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,

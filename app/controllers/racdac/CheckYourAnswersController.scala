@@ -35,6 +35,7 @@ import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
@@ -68,7 +69,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         }
     }
 
-  def pspOnPageLoad(srn: String): Action[AnyContent] =
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
       implicit request =>
         lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)

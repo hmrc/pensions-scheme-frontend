@@ -231,7 +231,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
   val timestamp: Long = System.currentTimeMillis
   private val psaId = "A0000000"
-  private val srn = "srn"
+  private val srn = SchemeReferenceNumber("srn")
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
   private val deleteDate = LocalDate.now(ZoneOffset.UTC).plusDays(frontendAppConfig.daysDataSaved).format(formatter)

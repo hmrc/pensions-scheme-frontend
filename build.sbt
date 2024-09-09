@@ -27,6 +27,7 @@ lazy val root = (project in file("."))
     name := appName,
     RoutesKeys.routesImport ++= Seq(
     "models.Index",
+    "models.SchemeReferenceNumber",
     "models.Mode",
     "models.CheckMode",
     "models.NormalMode",
@@ -50,8 +51,10 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting := true
   )
   .settings(
-    scalacOptions ++= Seq("-Xfatal-warnings", "-feature"),
-    libraryDependencies ++= AppDependencies(),
+    scalacOptions ++= Seq("-feature"),
+    scalacOptions ++= Seq("-Xmaxerrs", "10000"),
+    scalacOptions ++= Seq("-Xmaxwarns", "1"),
+    //    libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )

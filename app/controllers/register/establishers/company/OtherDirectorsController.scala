@@ -34,6 +34,7 @@ import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.otherDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class OtherDirectorsController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -52,7 +53,7 @@ class OtherDirectorsController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
@@ -65,7 +66,7 @@ class OtherDirectorsController @Inject()(
 
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
@@ -79,5 +80,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.OtherDirectorsController.onSubmit _
 }

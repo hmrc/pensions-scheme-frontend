@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipHasBeenTradingController @Inject()(override val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
@@ -48,7 +49,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
                                                      implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -57,7 +58,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.partnership.routes.PartnershipHasBeenTradingController.onSubmit(mode,
         index, srn),
@@ -70,7 +71,7 @@ class PartnershipHasBeenTradingController @Inject()(override val appConfig: Fron
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__tradingAtLeastOneYear__error", partnershipName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {

@@ -37,7 +37,7 @@
     completeEstablishers: Seq[Establisher[_]],
     incompleteEstablishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String],
+    srn: Option[SchemeReferenceNumber],
 )(implicit request: Request[_], messages: Messages)
 
 @allEstablishers = @{ completeEstablishers ++ incompleteEstablishers }

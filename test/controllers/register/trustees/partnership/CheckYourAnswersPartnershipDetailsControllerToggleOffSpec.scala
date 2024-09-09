@@ -123,13 +123,13 @@ class CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Controll
 object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  def onwardRoute(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[String] = Some("S123")
+  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -140,25 +140,25 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def partnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def noPartnershipUTRRoute(mode: Mode, srn: Option[String]) =
+  private def noPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipVatRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipVatRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipEnterVATRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipEnterVATRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[String]) =
+  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[String]) =
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
@@ -191,7 +191,7 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -221,7 +221,7 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -282,7 +282,7 @@ object CheckYourAnswersPartnershipDetailsControllerToggleOffSpec extends Control
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, title:Message, h1:Message): String =
+                   srn: Option[SchemeReferenceNumber] = None, title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

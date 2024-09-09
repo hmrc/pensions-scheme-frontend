@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers._
 import models.{CheckMode, NormalMode}
+import models.SchemeReferenceNumber
 
 class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {
@@ -63,7 +64,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 }

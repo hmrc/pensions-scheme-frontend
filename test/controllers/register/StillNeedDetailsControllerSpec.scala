@@ -19,16 +19,16 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
+import models.SchemeReferenceNumber
 import play.api.libs.json._
 import play.api.test.Helpers._
-
 import views.html.register.stillNeedDetails
 
 class StillNeedDetailsControllerSpec extends ControllerSpecBase {
   appRunning()
 
   val schemeName = "Test Scheme Name"
-  val srn = "A2343243"
+  val srn = SchemeReferenceNumber("A2343243")
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )

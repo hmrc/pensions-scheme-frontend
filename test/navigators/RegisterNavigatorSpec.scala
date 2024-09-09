@@ -57,7 +57,7 @@ class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
           ("Id", "UserAnswers", "Next Page"),
           rowNoValue(VariationDeclarationId)(variationSucess)
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, Some("srn"))
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, Some(SchemeReferenceNumber("srn")))
     }
   }
 }
@@ -77,5 +77,5 @@ object RegisterNavigatorSpec extends OptionValues{
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad
 
   private def taskList: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
-  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad("srn")
+  private def variationSucess: Call = controllers.register.routes.SchemeVariationsSuccessController.onPageLoad(SchemeReferenceNumber("srn"))
 }

@@ -18,6 +18,7 @@ package connectors
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.SchemeReferenceNumber
 import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
 import org.scalatest.OptionValues
@@ -341,10 +342,10 @@ object PensionsSchemeConnectorSpec extends OptionValues {
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   private val userAnswers = UserAnswers()
-  private val schemeId = "test-scheme-id"
+  private val schemeId = SchemeReferenceNumber("test-scheme-id")
   private val psaId = "test-psa-id"
   private val pspId = "test-psp-id"
-  private val pstr = "test-pstr"
+  private val pstr = SchemeReferenceNumber("test-pstr")
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeId)
 
   private val validResponse =

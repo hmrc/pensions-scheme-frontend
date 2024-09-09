@@ -140,17 +140,17 @@ class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Naviga
 
 object OldEstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private lazy val index = 0
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
 
-  private def addEstablisherPage(mode: Mode, srn: Option[String]): Call =
+  private def addEstablisherPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), srn)
 
-  private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def hasVatPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
-  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 }
 

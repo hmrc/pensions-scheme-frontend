@@ -106,7 +106,7 @@ class HsTaskListHelperPspSpec extends AnyWordSpec with Matchers with MockitoSuga
 
 object HsTaskListHelperPspSpec extends SpecBase with Matchers with OptionValues with DataCompletionHelper with JsonFileReader {
   private val schemeName = "Test Scheme Name"
-  private val srn = "test-srn"
+  private val srn = SchemeReferenceNumber("test-srn")
 
   private val userAnswersJson: UserAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 

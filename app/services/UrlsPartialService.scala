@@ -37,6 +37,7 @@ import viewmodels.Message
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class UrlsPartialService @Inject()(
                                     override val messagesApi: MessagesApi,
@@ -266,7 +267,7 @@ class UrlsPartialService @Inject()(
     }
   }
 
-  private def variationsDeleteDate(srn: String)
+  private def variationsDeleteDate(srn: SchemeReferenceNumber)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] =
     updateConnector.lastUpdated(srn).map { dateOpt =>
       s"${createFormattedDate(parseDateElseException(dateOpt), appConfig.daysDataSaved)}"

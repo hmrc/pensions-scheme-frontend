@@ -21,6 +21,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
 import models.NormalMode
 import utils.annotations.Racdac
+import models.SchemeReferenceNumber
 
 class RACDACNavigator @Inject()(@Racdac val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
@@ -37,7 +38,7 @@ class RACDACNavigator @Inject()(@Racdac val dataCacheConnector: UserAnswersCache
     case _ => None
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 }

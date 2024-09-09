@@ -51,6 +51,7 @@ import uk.gov.hmrc.http.HttpErrorFunctions._
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import models.SchemeReferenceNumber
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -182,7 +183,7 @@ class DeclarationController @Inject()(
   }
 
 
-  private def sendEmail(srn: String, psaId: PsaId)
+  private def sendEmail(srn: SchemeReferenceNumber, psaId: PsaId)
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
 
@@ -200,9 +201,9 @@ class DeclarationController @Inject()(
   }
 
   //scalastyle:off magic.number
-  private def formatSrnForEmail(srn: String): String = {
+  private def formatSrnForEmail(srn: SchemeReferenceNumber): String = {
     //noinspection ScalaStyle
-    val (start, end) = srn.splitAt(6)
+    val (start, end) = srn.id.splitAt(6)
     start + ' ' + end
   }
 

@@ -19,6 +19,7 @@ package controllers
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
+import models.SchemeReferenceNumber
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -36,7 +37,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
 
   val formProvider = new DeleteSchemeChangesFormProvider()
   val form: Form[Boolean] = formProvider()
-  val srn = "S123"
+  val srn = SchemeReferenceNumber("S123")
   val schemeName = "Test Scheme Name"
   val psaName = "Test Psa Name"
   val fakeCacheConnector: UpdateSchemeCacheConnector = mock[UpdateSchemeCacheConnector]

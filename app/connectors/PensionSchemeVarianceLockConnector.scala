@@ -29,23 +29,24 @@ import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
+import models.SchemeReferenceNumber
 
 @ImplementedBy(classOf[PensionSchemeVarianceLockConnectorImpl])
 trait PensionSchemeVarianceLockConnector {
 
-  def lock(psaId: String, srn: String)
+  def lock(psaId: String, srn: SchemeReferenceNumber)
           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock]
 
-  def getLock(psaId: String, srn: String)
+  def getLock(psaId: String, srn: SchemeReferenceNumber)
              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
 
   def getLockByPsa(psaId: String)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]]
 
-  def isLockByPsaIdOrSchemeId(psaId: String, srn: String)
+  def isLockByPsaIdOrSchemeId(psaId: String, srn: SchemeReferenceNumber)
                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]]
 
-  def releaseLock(psaId: String, srn: String)
+  def releaseLock(psaId: String, srn: SchemeReferenceNumber)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
 }
@@ -56,10 +57,10 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
 
   private val logger  = Logger(classOf[PensionSchemeVarianceLockConnectorImpl])
 
-  override def lock(psaId: String, srn: String)
+  override def lock(psaId: String, srn: SchemeReferenceNumber)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn.id)
 
     val url = s"${config.updateSchemeDetailsUrl}/lock"
 
@@ -77,10 +78,10 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     } andThen logExceptions("Unable to get the lock")
   }
 
-  override def getLock(psaId: String, srn: String)
+  override def getLock(psaId: String, srn: SchemeReferenceNumber)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn.id)
 
     val url = s"${config.updateSchemeDetailsUrl}/getLock"
 
@@ -124,10 +125,10 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   }
 
 
-  override def isLockByPsaIdOrSchemeId(psaId: String, srn: String)
+  override def isLockByPsaIdOrSchemeId(psaId: String, srn: SchemeReferenceNumber)
                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn.id)
 
     val url = s"${config.updateSchemeDetailsUrl}/isLockByPsaOrScheme"
 
@@ -151,10 +152,10 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
     case Failure(t: Throwable) => logger.error(msg, t)
   }
 
-  override def releaseLock(psaId: String, srn: String)
+  override def releaseLock(psaId: String, srn: SchemeReferenceNumber)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn.id)
 
     val url = s"${config.updateSchemeDetailsUrl}/release-lock"
 

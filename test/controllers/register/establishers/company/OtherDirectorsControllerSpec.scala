@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
-import models.{CompanyDetails, Index, Mode, NormalMode}
+import models.{CompanyDetails, Index, Mode, NormalMode, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -44,7 +44,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val formProvider = new OtherDirectorsFormProvider()
   val form = formProvider()
   val companyName = "test company name"
-  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.OtherDirectorsController.onSubmit _
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(

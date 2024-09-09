@@ -34,6 +34,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyNoUTRReasonController @Inject()(
                                               override val appConfig: FrontendAppConfig,
@@ -50,7 +51,7 @@ class CompanyNoUTRReasonController @Inject()(
                                             )(implicit val ec: ExecutionContext) extends ReasonController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -59,7 +60,7 @@ class CompanyNoUTRReasonController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -71,7 +72,7 @@ class CompanyNoUTRReasonController @Inject()(
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.CompanyNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theCompany")),

@@ -32,6 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class HasBeenTradingCompanyController @Inject()(override val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
@@ -47,7 +48,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
                                                  implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -57,7 +58,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(mode, index,
         srn),
@@ -70,7 +71,7 @@ class HasBeenTradingCompanyController @Inject()(override val appConfig: Frontend
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__tradingAtLeastOneYear__error", companyName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
