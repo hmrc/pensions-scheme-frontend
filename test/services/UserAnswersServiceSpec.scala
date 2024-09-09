@@ -20,6 +20,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors._
+import controllers.ControllerSpecBase
 import identifiers.TypedIdentifier
 import identifiers.register.trustees
 import identifiers.register.trustees.individual.TrusteeAddressId
@@ -30,6 +31,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfter
+import org.scalatest.RecoverMethods.recoverToSucceededIf
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.{JsValue, Json}
@@ -40,7 +42,7 @@ import utils.{FakeDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
-class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfter {
+class UserAnswersServiceSpec extends ControllerSpecBase with Matchers with MockitoSugar with BeforeAndAfter {
 
   import UserAnswersServiceSpec._
 
@@ -53,7 +55,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.save(NormalMode, None, FakeIdentifier, "foobar") map {
+      testServiceEstAndTrustees.save(NormalMode, srn, FakeIdentifier, "foobar") map {
         _ mustEqual json
       }
     }
@@ -69,7 +71,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceInsurance.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceInsurance.save(UpdateMode, srn, FakeIdentifier, "foobar") map { result =>
         result mustEqual json
       }
     }
@@ -79,7 +81,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceEstAndTrustees.save(UpdateMode, srn, FakeIdentifier, "foobar") map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -91,7 +93,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
 
 
       recoverToSucceededIf[testServiceEstAndTrustees.MissingSrnNumber.type] {
-        testServiceEstAndTrustees.save(UpdateMode, None, FakeIdentifier, "foobar")
+        testServiceEstAndTrustees.save(UpdateMode, srn, FakeIdentifier, "foobar")
       }
 
     }
@@ -105,7 +107,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.save(NormalMode, None, FakeIdentifier, "foobar") map {
+      testServiceNotAnnotated.save(NormalMode, srn, FakeIdentifier, "foobar") map {
         _ mustEqual json
       }
     }
@@ -118,7 +120,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceNotAnnotated.save(UpdateMode, (srn), FakeIdentifier, "foobar") map { result =>
         result mustEqual json
       }
     }
@@ -132,7 +134,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.upsert(CheckMode, None, json) map {
+      testServiceNotAnnotated.upsert(CheckMode, srn, json) map {
         _ mustEqual json
       }
     }
@@ -145,7 +147,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, srn, json) map { result =>
         result mustEqual json
       }
     }
@@ -155,7 +157,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, srn, json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -169,7 +171,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.upsert(CheckMode, None, json) map {
+      testServiceEstAndTrustees.upsert(CheckMode, srn, json) map {
         _ mustEqual json
       }
     }
@@ -185,7 +187,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceInsurance.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceInsurance.upsert(UpdateMode, srn, json) map { result =>
         result mustEqual json
       }
     }
@@ -195,7 +197,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceEstAndTrustees.upsert(UpdateMode, srn, json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -208,7 +210,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(subscriptionConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceEstAndTrustees.remove(NormalMode, None, FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(NormalMode, srn, FakeIdentifier) map {
         _ mustEqual json
       }
     }
@@ -228,7 +230,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
 
-      testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(UpdateMode, srn, FakeIdentifier) map {
         _ mustEqual updatedJson
       }
     }
@@ -237,7 +239,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(UpdateMode, srn, FakeIdentifier) map {
         _ mustEqual Json.obj()
       }
     }
@@ -291,7 +293,6 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
-  private val srn = "S1234567890"
 
   val json: JsValue = Json.obj(
     FakeIdentifier.toString -> "fake value",

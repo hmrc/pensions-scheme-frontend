@@ -65,20 +65,20 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
-  private val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+  private val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex, srn)
 
   private val seqOneTrustee = Seq(
     DataPrefillIndividualDetails(
-      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino =None, dob = None, isComplete = true
     )
   )
 
   private val seqTwoTrustees = Seq(
     DataPrefillIndividualDetails(
-      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "John", lastName = "Smith", index = 3, isDeleted = false, nino =None, dob =None, isComplete = true
     ),
     DataPrefillIndividualDetails(
-      firstName = "Jane", lastName = "Anderson", index = 4, isDeleted = false, nino = None, dob = None, isComplete = true
+      firstName = "Jane", lastName = "Anderson", index = 4, isDeleted = false, nino =None, dob =None, isComplete = true
     )
   )
 
@@ -107,7 +107,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(establisherIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -115,7 +115,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall)(fakeRequest, messages).toString
+          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall, srn)(fakeRequest, messages).toString
       }
     }
 
@@ -127,11 +127,11 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(establisherIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(NormalMode, establisherIndex, 0, None).url)
+          .onPageLoad(NormalMode, establisherIndex, 0,srn).url)
       }
     }
 
@@ -141,17 +141,17 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(establisherIndex = 0, srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(NormalMode, establisherIndex, 0, None).url)
+          .onPageLoad(NormalMode, establisherIndex, 0, srn).url)
       }
     }
   }
 
   "onSubmit when two trustees" must {
-    "behave correctly item other than None is chosen" in {
+    "behave correctly item other than ,srn is chosen" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqTwoTrustees)
       val emptyUA = UserAnswers()
@@ -166,14 +166,14 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
           "value[0]" -> "1",
           "value[1]" -> "2"
         )
-        val result = controller.onSubmit(establisherIndex = 0)(request)
+        val result = controller.onSubmit(establisherIndex = 0, srn)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
         verify(mockDataPrefillService, atLeastOnce).copyAllTrusteesToDirectors(any(), any(), any())
       }
     }
 
-    "behave correctly item None is chosen" in {
+    "behave correctly item ,srn is chosen" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqTwoTrustees)
       val emptyUA = UserAnswers()
@@ -187,7 +187,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
         )
-        val result = controller.onSubmit(establisherIndex = 0)(request)
+        val result = controller.onSubmit(establisherIndex = 0, srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -206,7 +206,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onSubmit(establisherIndex = 0)(fakeRequest)
+        val result = controller.onSubmit(establisherIndex = 0, srn)(fakeRequest)
         status(result) mustBe BAD_REQUEST
       }
     }

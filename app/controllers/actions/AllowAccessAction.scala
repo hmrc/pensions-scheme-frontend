@@ -22,7 +22,7 @@ import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.PsaMinimalFlagsId
 import PsaMinimalFlagsId._
 import config.FrontendAppConfig
-import models.{PSAMinimalFlags, UpdateMode}
+import models.{NormalMode, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import models.requests.OptionalDataRequest
 import play.api.Logging
 import play.api.http.Status._
@@ -34,7 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class AllowAccessAction(srn: Option[String],
+abstract class AllowAccessAction(srn: SchemeReferenceNumber,
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  config: FrontendAppConfig,
                                  errorHandler: FrontendErrorHandler,
@@ -53,13 +53,14 @@ abstract class AllowAccessAction(srn: Option[String],
 
     val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
 
-    (optionUA, optionPsaMinimalFlagsId, srn) match {
-      case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
-        Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
-      case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>
+    (optionUA, optionPsaMinimalFlagsId) match {
+
+      case (Some(_), Some(PSAMinimalFlags(true, false, _))) if checkForSuspended =>
+        Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad((srn)))))
+      case (Some(_), Some(PSAMinimalFlags(_, true, _))) =>
         Future.successful(Some(Redirect(config.youMustContactHMRCUrl)))
-      case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
-      case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {
+      case (Some(_), _) => checkForAssociation(request, srn)
+      case (None, _) => checkForAssociation(request, srn).map {
         case None => destinationForNoUserAnswersAndSRN
         case notAssociatedResult@Some(_) => notAssociatedResult
       }
@@ -75,7 +76,7 @@ abstract class AllowAccessAction(srn: Option[String],
   }
 
   private def checkForAssociation[A](request: OptionalDataRequest[A],
-                                     extractedSRN: String)(implicit hc: HeaderCarrier): Future[Option[Result]] = {
+                                     extractedsrn: SchemeReferenceNumber)(implicit hc: HeaderCarrier): Future[Option[Result]] = {
 
     def isAllowed(req: Future[Either[HttpResponse, Boolean]]) = req.map {
       case Right(true) => true
@@ -89,11 +90,11 @@ abstract class AllowAccessAction(srn: Option[String],
       }
 
     val psaAllowedOpt = if(allowPsa) request.psaId.map { psaId =>
-      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedSRN, isPsa = true)(hc, implicitly, request))
+      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedsrn, isPsa = true)(hc, implicitly, request))
     } else None
 
     val pspAllowedOpt = if (allowPsp) request.pspId.map { pspId =>
-      isAllowed(pensionsSchemeConnector.checkForAssociation(pspId.id, extractedSRN, isPsa = false)(hc, implicitly, request))
+      isAllowed(pensionsSchemeConnector.checkForAssociation(pspId.id, extractedsrn, isPsa = false)(hc, implicitly, request))
     } else None
 
 
@@ -118,7 +119,7 @@ abstract class AllowAccessAction(srn: Option[String],
 }
 
 class AllowAccessActionMain(
-                             srn: Option[String],
+                             srn: SchemeReferenceNumber,
                              pensionsSchemeConnector: PensionsSchemeConnector,
                              config: FrontendAppConfig,
                              errorHandler: FrontendErrorHandler,
@@ -130,15 +131,14 @@ class AllowAccessActionMain(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))),
       checkForSuspended = true
     )
   }
 }
 
 class AllowAccessActionTaskList(
-                                 srn: Option[String],
+                                 srn: SchemeReferenceNumber,
                                  pensionsSchemeConnector: PensionsSchemeConnector,
                                  config: FrontendAppConfig,
                                  errorHandler: FrontendErrorHandler,
@@ -150,14 +150,15 @@ class AllowAccessActionTaskList(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = None,
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
+      (UpdateMode, srn))),
       checkForSuspended = false
     )
   }
 }
 
 class AllowAccessActionNoSuspendedCheck(
-                                         srn: Option[String],
+                                         srn: SchemeReferenceNumber,
                                          pensionsSchemeConnector: PensionsSchemeConnector,
                                          config: FrontendAppConfig,
                                          errorHandler: FrontendErrorHandler,
@@ -169,8 +170,7 @@ class AllowAccessActionNoSuspendedCheck(
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
     filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, srn))),
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))),
       checkForSuspended = false
     )
   }
@@ -182,7 +182,7 @@ class AllowAccessActionProviderMainImpl @Inject()(
                                                    errorHandler: ErrorHandlerWithReturnLinkToManage
                                                  )(implicit ec: ExecutionContext) extends AllowAccessActionProvider {
 
-  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+  def apply(srn: SchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionMain(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
@@ -194,7 +194,7 @@ class AllowAccessActionProviderTaskListImpl @Inject()(
                                                      )(implicit ec: ExecutionContext) extends
   AllowAccessActionProvider {
 
-  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+  def apply(srn: SchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
@@ -206,12 +206,12 @@ class AllowAccessActionProviderNoSuspendedCheckImpl @Inject()(
                                                              )(implicit ec: ExecutionContext) extends
   AllowAccessActionProvider {
 
-  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
+  def apply(srn: SchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
   }
 }
 
 
 trait AllowAccessActionProvider {
-  def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction
+  def apply(srn: SchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction
 }

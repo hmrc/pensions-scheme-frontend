@@ -36,7 +36,7 @@ import utils.checkyouranswers.Ops._
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-
+import models.SchemeReferenceNumber
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: FrontendAppConfig,
@@ -55,8 +55,8 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
                                                            )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -78,7 +78,7 @@ class CheckYourAnswersIndividualAddressController @Inject()(val appConfig: Front
         val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
           (isEnabled, mode) match {
             case (true, NormalMode) =>
-              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
             case _ =>
               controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
           }

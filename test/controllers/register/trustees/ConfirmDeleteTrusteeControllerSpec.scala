@@ -43,49 +43,49 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   "ConfirmDeleteTrustee Controller" must {
 
     "return OK and the correct view for a GET to confirm deletion of a company trustee" in {
-      val result = controller(testData(companyId)(companyTrustee)).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onPageLoad(NormalMode, 0, Company, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(companyTrustee.companyName, Company)
     }
 
     "return OK and the correct view for a GET to confirm deletion of an individual trustee" in {
-      val result = controller(testData(individualId)(individualTrustee)).onPageLoad(NormalMode, 0, Individual, None)(fakeRequest)
+      val result = controller(testData(individualId)(individualTrustee)).onPageLoad(NormalMode, 0, Individual, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
     }
 
     "return OK and the correct view for a GET to confirm deletion of a partnership trustee" in {
-      val result = controller(testData(partnershipId)(partnershipTrustee)).onPageLoad(NormalMode, 0, Partnership, None)(fakeRequest)
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onPageLoad(NormalMode, 0, Partnership, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(partnershipTrustee.name, Partnership)
     }
 
     "redirect to Session Expired for a GET if a deletable trustee cannot be found in UserAnswers" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode, 0, Company, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a GET if no cached data exists" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, Company, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, Company, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "remove the trustee in a POST request for a company trustee" in {
-      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, None)(postRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
-        val result = controller(testData(individualId)(individualTrustee)).onSubmit(NormalMode, 0, Individual, None)(postRequest)
+        val result = controller(testData(individualId)(individualTrustee)).onSubmit(NormalMode, 0, Individual, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         FakeUserAnswersService.verify(individualId, individualTrustee.copy(isDeleted = true))
@@ -93,7 +93,7 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
-      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequest)
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
@@ -101,14 +101,14 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page following a POST request when selected no" in {
       FakeUserAnswersService.reset()
-      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, None)(postRequestForCancel)
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(NormalMode, 0, Partnership, srn)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(partnershipId)
     }
 
     "redirect to the next page following a POST request" in {
-      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, None)(postRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -119,13 +119,13 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, None)(postRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(NormalMode, 0, Company, srn)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(companyTrustee.companyName, Company, boundForm)
     }
 
     "redirect to Session Expired following a POST if no cached data exists" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, Company, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, Company, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -174,7 +174,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       FakeUserAnswersService,
@@ -187,10 +187,10 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     view(
       form,
       trusteeName,
-      routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, trusteeKind, None),
+      routes.ConfirmDeleteTrusteeController.onSubmit(NormalMode, 0, trusteeKind, srn),
       None,
       NormalMode,
-      None
+      srn
     )(fakeRequest, messages).toString
 
   private def testData[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): DataRetrievalAction = {

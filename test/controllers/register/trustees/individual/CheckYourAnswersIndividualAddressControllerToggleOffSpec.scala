@@ -53,19 +53,26 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
       "return OK and the correct view with full answers" when {
-        "Normal MOde" in {
+        "Normal Mode" in {
           val app = applicationBuilder(fullAnswers.dataRetrievalAction).overrides(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
+          ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"))
+            h1 = Message("checkYourAnswers.hs.heading"),
+            srn = srn)
           app.stop()
         }
+
+
+
+
 
         "Update Mode" in {
 
@@ -73,10 +80,10 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>
@@ -99,11 +106,10 @@ class CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controlle
 
 object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
   val trusteeName = "First Last"
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
@@ -111,13 +117,13 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def trusteeAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteeAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteeAddressController.onPageLoad(mode, index, srn).url
 
-  private def trusteeAddressYearsRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteeAddressYearsRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteeAddressYearsController.onPageLoad(mode, index, srn).url
 
-  private def trusteePreviousAddressRoute(mode: Mode, srn: Option[String]): String =
+  private def trusteePreviousAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.TrusteePreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = UserAnswers().
@@ -126,9 +132,9 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
     trusteesIndividualAddressYears(index, addressYearsUnderAYear).
     trusteesPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", trusteeName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -136,7 +142,7 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
       Some(Message("messages__visuallyhidden__dynamic_address", trusteeName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", trusteeName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -144,7 +150,7 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
       Some(Message("messages__visuallyhidden__dynamic_addressYears", trusteeName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteePreviousAddress", trusteeName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -152,14 +158,14 @@ object CheckYourAnswersIndividualAddressControllerToggleOffSpec extends Controll
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", trusteeName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
+  def answerSection(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(None,
     if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None,
-                   postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber,
+                   postUrl: Call = submitUrl(NormalMode, srn), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

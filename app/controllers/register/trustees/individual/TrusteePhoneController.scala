@@ -32,6 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteePhoneController @Inject()(
                                         val appConfig: FrontendAppConfig,
@@ -51,8 +52,8 @@ class TrusteePhoneController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
           vm =>
@@ -60,8 +61,8 @@ class TrusteePhoneController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
           vm =>
@@ -69,7 +70,7 @@ class TrusteePhoneController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, srn: Option[String], index: Index): Retrieval[CommonFormWithHintViewModel] =
+  private def viewModel(mode: Mode, srn: SchemeReferenceNumber, index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         TrusteeNameId(index).retrieve.map {

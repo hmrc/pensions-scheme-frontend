@@ -62,7 +62,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeAuditService,
       view,
@@ -73,12 +73,13 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     view(
       form,
       AddressListViewModel(
-        routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex, None),
-        routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
+        routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex, srn),
+        routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, srn),
         previousAddresses,
         title = Message("messages__dynamic_whatWasPreviousAddress", Message("messages__theIndividual")),
         heading = Message("messages__dynamic_whatWasPreviousAddress", establisherName),
-        entityName = establisherName
+        entityName = establisherName,
+        srn = srn
       ),
       None
     )(fakeRequest, messages).toString
@@ -106,32 +107,32 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
   "PreviousAddressList Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
-      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(address = Seq(address("test post code 1"), address("test post code 2")))
     }
 
     "redirect to previous address lookup when no  previous addresses are present after lookup" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex, None).url)
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex, srn).url)
     }
 
     "redirect to Address look up page when no addresses are present after lookup (post)" in {
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex, None).url)
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex, srn).url)
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -141,7 +142,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
       val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeUserAnswersService)
-        .onSubmit(NormalMode, firstIndex, None)(postRequest)
+        .onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
       status(result) mustEqual SEE_OTHER
       FakeUserAnswersService.userAnswer.get(PreviousAddressListId(firstIndex)).value mustEqual (previousAddresses.head.copy(countryOpt = Some("GB")))
@@ -151,14 +152,14 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -166,7 +167,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

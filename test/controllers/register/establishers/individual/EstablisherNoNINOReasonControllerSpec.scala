@@ -47,12 +47,12 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  private val postCall = controllers.register.establishers.individual.routes.EstablisherNoNINOReasonController.onSubmit(NormalMode, Index(0), None)
+  private val postCall = controllers.register.establishers.individual.routes.EstablisherNoNINOReasonController.onSubmit(NormalMode, Index(0), srn)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
     title = Message("messages__whyNoNINO", Message("messages__theIndividual")),
     heading = Message("messages__whyNoNINO", name),
-    srn = None
+    srn = srn
   )
 
   private val view = injector.instanceOf[reason]
@@ -65,7 +65,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
       val controller = app.injector.instanceOf[EstablisherNoNINOReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -81,7 +81,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
       val controller = app.injector.instanceOf[EstablisherNoNINOReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -112,7 +112,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "blah"))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -130,7 +130,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
       val boundForm = form.bind(Map("noNinoReason" -> ""))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 

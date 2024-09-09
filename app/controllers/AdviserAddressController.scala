@@ -23,8 +23,9 @@ import controllers.address.ManualAddressController
 import controllers.routes._
 import forms.address.AddressFormProvider
 import identifiers.{AdviserAddressId, AdviserAddressListId, AdviserAddressPostCodeLookupId, AdviserNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.address.Address
 import navigators.Navigator
 import play.api.data.Form
@@ -73,7 +74,8 @@ class AdviserAddressController @Inject()(
       postCall(mode),
       countryOptions.options,
       title = title,
-      heading = heading(adviserName)
+      heading = heading(adviserName),
+      ""
     )
 
   private[controllers] def heading(adviserName: String): Message =

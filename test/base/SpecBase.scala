@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.SchemeReferenceNumber
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
@@ -27,6 +28,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
+import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
 import uk.gov.hmrc.crypto.ApplicationCrypto
 
@@ -41,7 +43,7 @@ trait SpecBase
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/foo")
+  def fakeRequest = FakeRequest()
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
@@ -58,9 +60,10 @@ trait SpecBase
   def assertRenderedById(doc: Document, id: String): Assertion =
     assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
 
+
   def modules(dataRetrievalAction: DataRetrievalAction): Seq[GuiceableModule] = Seq(
     bind[AuthAction].toInstance(FakeAuthAction),
-    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+    bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(SchemeReferenceNumber("srn"))),
     bind[DataRetrievalAction].toInstance(dataRetrievalAction)
   )
 

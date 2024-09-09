@@ -42,8 +42,6 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private val srn = Some("S123")
-
   val viewmodel = ReasonViewModel(
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, srn, index = 0),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
@@ -87,7 +85,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "123456789"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -101,7 +99,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
             status(result) mustBe BAD_REQUEST
         }
       }

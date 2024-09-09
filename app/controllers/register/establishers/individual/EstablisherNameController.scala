@@ -23,7 +23,7 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,8 +55,8 @@ class EstablisherNameController @Inject()(
                                          )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](EstablisherNameId(index)) match {
           case None => form
@@ -65,8 +65,8 @@ class EstablisherNameController @Inject()(
         Ok(view(preparedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
@@ -88,7 +88,7 @@ class EstablisherNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]): CommonFormWithHintViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: SchemeReferenceNumber): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
     title = Message("messages__individualName__title"),

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
-import models.{Mode, TypeOfBenefits}
+import models.{Mode, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -53,8 +53,8 @@ class TypeOfBenefitsController @Inject()(
   private def form(schemeName: String)
                   (implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = {
+    (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
           schemeName =>
@@ -68,13 +68,14 @@ class TypeOfBenefitsController @Inject()(
             Future.successful(Ok(view(
               form = preparedForm,
               postCall = routes.TypeOfBenefitsController.onSubmit(mode, srn),
-              schemeName = existingSchemeName
+              schemeName = existingSchemeName, srn
             )))
         }
     }
+  }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(mode, Some(srn)) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
           schemeName =>
@@ -83,7 +84,7 @@ class TypeOfBenefitsController @Inject()(
                 Future.successful(BadRequest(view(
                   form = formWithErrors,
                   postCall = routes.TypeOfBenefitsController.onSubmit(mode, srn),
-                  schemeName = existingSchemeName
+                  schemeName = existingSchemeName, srn
                 ))),
               value =>
                 (if(value == TypeOfBenefits.Defined && request.userAnswers.get(MoneyPurchaseBenefitsId).isDefined)

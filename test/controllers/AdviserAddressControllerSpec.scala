@@ -75,19 +75,30 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         implicit app =>
 
           val controller = app.injector.instanceOf[AdviserAddressController]
-
+          val address = Address(
+            addressLine1 = "value 1",
+            addressLine2 = "value 2",
+            None, None,
+            postcode = Some("AB1 1AB"),
+            country = "GB"
+          )
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode),
+            controller.postCall(NormalMode, srn),
             countryOptions.options,
             Message(controller.title),
-            Message(controller.heading("name")))
+            Message(controller.heading("name")), srn)
 
-          val request = addCSRFToken(
-            FakeRequest(AdviserAddressController.onPageLoad(NormalMode))
-              .withHeaders("Csrf-Token" -> "nocheck")
-          )
 
-          val result = route(app, request).value
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
+
+          val result = controller.onPageLoad(NormalMode, srn)(fakeRequest)
+
 
           status(result) must be(OK)
 
@@ -95,7 +106,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             form,
             viewmodel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
 
       }
 
@@ -132,7 +143,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
                 "country" -> address.country))
 
             val controller = app.injector.instanceOf[AdviserAddressController]
-            val result = controller.onSubmit(NormalMode)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
 
@@ -173,7 +184,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           fakeAuditService.reset()
 
           val controller = app.injector.instanceOf[AdviserAddressController]
-          val result = controller.onSubmit(NormalMode)(fakeRequest)
+          val result = controller.onSubmit(NormalMode, srn)(fakeRequest)
 
           whenReady(result) {
             _ =>

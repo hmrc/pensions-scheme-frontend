@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.EnterVATFormProvider
 import models.{Index, NormalMode}
 import navigators.Navigator
@@ -45,12 +45,14 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        bind[UserAnswersService].toInstance(FakeUserAnswersService),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
-          val request = addCSRFToken(FakeRequest())
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val request = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody(("vat", "123456789")))
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(request, messages).toString()
       }
@@ -67,7 +69,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
           val request = addCSRFToken(FakeRequest()
             .withFormUrlEncodedBody(("vat", "123456789")))
-          val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+          val result = controller.onSubmit(NormalMode, firstIndex, srn)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -83,11 +85,12 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: EnterVATViewModel = EnterVATViewModel(
-    routes.PartnershipEnterVATController.onSubmit(NormalMode, firstIndex, None),
+    routes.PartnershipEnterVATController.onSubmit(NormalMode, firstIndex, srn),
     title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterVAT", "test partnership name"),
     hint = Message("messages__enterVAT__hint", "test partnership name"),
-    subHeading = None
+    subHeading = None,
+    srn = srn
   )
 }
 

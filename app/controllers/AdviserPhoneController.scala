@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.adviser.AdviserPhoneFormProvider
 import identifiers.{AdviserNameId, AdviserPhoneId, SchemeNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -61,7 +62,7 @@ class AdviserPhoneController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName, "")))
       }
   }
 
@@ -73,13 +74,13 @@ class AdviserPhoneController @Inject()(
             schemeName <- SchemeNameId.retrieve
             adviserName <- AdviserNameId.retrieve
           } yield {
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName, "")))
           }
         },
         value =>
           dataCacheConnector.save(request.externalId, AdviserPhoneId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap), ""))
           }
       )
   }

@@ -48,7 +48,7 @@
 }
 
 @pageTitle = @{
-    if(taskSections.srn.isDefined){
+    if(taskSections.srn.id.nonEmpty) {
         messages("messages__scheme_details__title")
     } else  {
         messages("messages__schemeTaskList__sectionEstablishers_title")
@@ -93,6 +93,6 @@
         @button_link("site.save_and_continue", returnUrl, "submit")
     </p>
 
-    @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName))
+    @components.return_link("messages__schemeTaskList__returnlink", Some(schemeName), None,  taskSections.srn)
 
 }

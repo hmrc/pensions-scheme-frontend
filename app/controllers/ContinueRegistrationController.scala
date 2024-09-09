@@ -19,7 +19,7 @@ package controllers
 import com.google.inject.Inject
 import controllers.actions.{AuthAction, DataRetrievalAction}
 import identifiers.register.ContinueRegistrationId
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,7 +38,7 @@ class ContinueRegistrationController @Inject()(
 
   def continue(): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
-      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers())))
+      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers()), ""))
   }
 
 }

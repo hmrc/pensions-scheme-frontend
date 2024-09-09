@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import audit.{TcmpAuditEvent, AuditService}
+import audit.{AuditService, TcmpAuditEvent}
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
@@ -24,25 +24,25 @@ import controllers.actions._
 import controllers.register.routes.DeclarationController
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.{SchemeTypeId, TypeOfBenefitsId, MoneyPurchaseBenefitsId}
+import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
 import models.enumerations.SchemeJourneyType
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{TypeOfBenefits, PSAMinimalFlags, NormalMode}
+import models.{Mode, NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport}
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result, Call, Action}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{UserAnswers, Enumerable}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import javax.inject.Inject
@@ -89,20 +89,20 @@ class DeclarationController @Inject()(
   }
 
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
         case _ =>
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
-          showPage(Ok.apply)
+          showPage(Ok.apply, NormalMode, "")
         } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad("")))
         }
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result)
+  private def showPage(status: HtmlFormat.Appendable => Result, mode: Mode, srn: SchemeReferenceNumber)
                       (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
@@ -126,7 +126,7 @@ class DeclarationController @Inject()(
               showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
               hasWorkingKnowledge = hasWorkingKnowledge,
               schemeName = existingSchemeName,
-              href = href
+              href = href, srn
             )
           )
         )
@@ -153,7 +153,7 @@ class DeclarationController @Inject()(
       case _ => false
     }
 
-  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onClickAgree(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       val updatedUA = request.userAnswers.remove(identifiers.racdac.DeclarationId).asOpt
@@ -167,10 +167,10 @@ class DeclarationController @Inject()(
         _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
         _ <- auditTcmp(psaId.id, request.userAnswers)
       } yield {
-        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), submissionResponse.schemeReferenceNumber))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad("")))
         case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }

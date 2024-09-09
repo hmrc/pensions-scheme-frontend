@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
 import identifiers.DeclarationDutiesId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.requests.OptionalDataRequest
 import navigators.Navigator
 import play.api.data.Form
@@ -57,7 +58,7 @@ class WorkingKnowledgeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString, ""))
   }
 
   private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
@@ -67,11 +68,11 @@ class WorkingKnowledgeController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString, ""))),
         value => {
 
           dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap), ""))
           )
         }
       )

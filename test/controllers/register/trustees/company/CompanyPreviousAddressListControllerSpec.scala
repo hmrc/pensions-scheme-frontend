@@ -77,10 +77,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -97,13 +101,17 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -113,10 +121,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -129,16 +141,18 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
         val request =
           addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(routes.CheckYourAnswersCompanyAddressController.onPageLoad(NormalMode, Index(0), None).url)
+          Some(routes.CheckYourAnswersCompanyAddressController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -153,7 +167,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         val request =
           addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -171,10 +185,10 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         val request =
           addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[CompanyPreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -183,13 +197,14 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      postCall = routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0), None),
-      manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), None),
+      postCall = routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0), srn),
+      manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0), srn),
       addresses = addresses,
       title = previousAddressTitle,
       heading = previousAddressHeading,
       selectAddress = Message("messages__common__select_address"),
-      entityName = companyDetails.companyName
+      entityName = companyDetails.companyName,
+      srn = srn
     )
   }
 }

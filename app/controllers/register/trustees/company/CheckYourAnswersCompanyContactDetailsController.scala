@@ -25,7 +25,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, 
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FeatureToggleService, UserAnswersService}
@@ -56,8 +56,8 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
   with I18nSupport
   with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)
       val contactDetails = AnswerSection(
@@ -74,7 +74,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
       val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
         (isEnabled, mode) match {
           case (true, NormalMode) =>
-            controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+            controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
           case _ =>
             controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
         }

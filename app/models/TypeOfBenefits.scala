@@ -16,6 +16,7 @@
 
 package models
 
+import play.api.libs.json.{Json, Reads}
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait TypeOfBenefits

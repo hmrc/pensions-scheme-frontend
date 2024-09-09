@@ -21,6 +21,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import connectors.{SchemeDetailsConnector, SchemeDetailsReadOnlyCacheConnector}
 import identifiers.racdac.{IsRacDacId, RACDACNameId}
 import identifiers.{SchemeNameId, SchemeSrnId}
+import models.SchemeReferenceNumber
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.libs.json.JsValue
 import play.api.mvc.ActionTransformer
@@ -32,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PspDataRetrievalImpl @Inject()(val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                      schemeDetailsConnector: SchemeDetailsConnector,
-                                     srn: String
+                                     srn: SchemeReferenceNumber
                                     )(implicit val executionContext: ExecutionContext) extends PspDataRetrieval {
 
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
@@ -68,12 +69,12 @@ class PspDataRetrievalActionImpl @Inject()(
                                             viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                             schemeDetailsConnector: SchemeDetailsConnector
                                           )(implicit ec: ExecutionContext) extends PspDataRetrievalAction {
-  override def apply(srn: String): PspDataRetrieval = {
+  override def apply(srn: SchemeReferenceNumber): PspDataRetrieval = {
     new PspDataRetrievalImpl(viewConnector, schemeDetailsConnector, srn)
   }
 }
 
 @ImplementedBy(classOf[PspDataRetrievalActionImpl])
 trait PspDataRetrievalAction {
-  def apply(srn: String): PspDataRetrieval
+  def apply(srn: SchemeReferenceNumber): PspDataRetrieval
 }

@@ -34,6 +34,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -50,8 +51,8 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   Retrievals
   with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
           get(TrusteeNoNINOReasonId(index),
@@ -59,8 +60,8 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
           post(TrusteeNoNINOReasonId(index), mode,
@@ -72,7 +73,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider ("messages__reason__error_ninoRequired", name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], name: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoNINOReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoNINO", Message("messages__theIndividual")),

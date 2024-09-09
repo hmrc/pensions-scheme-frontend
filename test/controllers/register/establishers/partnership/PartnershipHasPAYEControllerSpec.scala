@@ -38,14 +38,14 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val formProvider = new HasPAYEFormProvider()
   private val form = formProvider("messages__partnershipHasPaye__error__required", partnershipDetails.name)
   private val index = Index(0)
-  private val srn = None
   private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasPAYE", Message("messages__thePartnership").resolve),
     heading = Message("messages__hasPAYE", "test partnership name"),
     hint = Some(Message("messages__hasPaye__p1")),
-    formFieldName = Some("hasPaye")
+    formFieldName = Some("hasPaye"),
+    srn = srn
   )
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -58,7 +58,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -69,7 +69,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasPAYEId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -87,7 +87,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -104,7 +104,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
             val boundForm = form.bind(Map("hasPaye" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

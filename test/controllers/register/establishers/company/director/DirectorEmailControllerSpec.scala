@@ -50,7 +50,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
       FakeAuthAction,
       dataRetrievalAction,
       FakeUserAnswersService,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
@@ -62,11 +62,11 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
+        routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex,srn),
         Message("messages__director_email__title"),
         Message("messages__enterEmail", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        srn
       ),
       None
     )(fakeRequest, messages).toString
@@ -75,7 +75,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex,srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -85,7 +85,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
-        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex,srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

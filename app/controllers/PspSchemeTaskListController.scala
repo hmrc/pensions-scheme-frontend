@@ -20,6 +20,7 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSP
+import models.SchemeReferenceNumber
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,15 +44,15 @@ class PspSchemeTaskListController @Inject()(
 
   private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
-    andThen allowAccessAction(Some(srn), allowPsa = true, allowPsp = true)) {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
+    andThen allowAccessAction((srn), allowPsa = true, allowPsp = true)) {
     implicit request =>
 
       request.userAnswers match {
         case Some(ua) =>
           (ua.get(IsRacDacId), ua.get(SchemeNameId)) match {
             case (Some(true), Some(_)) => Redirect(controllers.racdac.routes.CheckYourAnswersController.pspOnPageLoad(srn))
-            case (_, Some(schemeName)) => Ok(view.apply(hsTaskListHelperPsp.taskList(ua, srn), schemeName))
+            case (_, Some(schemeName)) => Ok(view.apply(hsTaskListHelperPsp.taskList(ua, srn), schemeName, srn))
             case _ => sessionExpired
           }
         case _ => sessionExpired

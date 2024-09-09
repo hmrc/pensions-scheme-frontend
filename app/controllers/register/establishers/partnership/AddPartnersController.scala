@@ -23,7 +23,7 @@ import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
 import models.FeatureToggleName.SchemeRegistration
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode}
+import models.{FeatureToggleName, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,8 +54,8 @@ class AddPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Int, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(index) { _ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
@@ -64,8 +64,7 @@ class AddPartnersController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode,
-    srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Int, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
@@ -109,7 +108,7 @@ class AddPartnersController @Inject()(
     }
   }
 
-  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
+  private def postUrl(index: Int, mode: Mode, srn: SchemeReferenceNumber): Call =
     routes.AddPartnersController.onSubmit(mode, index, srn)
 
 }

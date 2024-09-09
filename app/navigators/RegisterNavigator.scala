@@ -21,40 +21,41 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.VariationDeclarationId
 import identifiers.register._
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                   appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case ContinueRegistrationId =>
-        continueRegistration(from.userAnswers)
+        continueRegistration(from.userAnswers, srn)
       case DeclarationDormantId =>
-        NavigateTo.dontSave(controllers.register.routes.DeclarationController.onPageLoad)
+        //TODO mode here
+        NavigateTo.dontSave(controllers.register.routes.DeclarationController.onPageLoad(NormalMode, srn))
       case DeclarationId =>
-        NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
+        NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad(srn))
       case _ => None
     }
 
-  private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
+  private def continueRegistration(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] =
     if (userAnswers.isBeforeYouStartCompleted(NormalMode))
-      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))
     else
       NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    from.id match {
-      case _ => None
-    }
-
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = (from.id, srn) match {
-    case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes
+  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = (from.id, srn) match {
+    case (VariationDeclarationId, (validSrn)) => NavigateTo.dontSave(controllers.register.routes
       .SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None
   }
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] =
+    from.id match {
+      case _ => None
+    }
 }

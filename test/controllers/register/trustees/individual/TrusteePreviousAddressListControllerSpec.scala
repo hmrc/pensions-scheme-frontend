@@ -77,10 +77,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -98,13 +101,16 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -115,10 +121,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).toInstance(fakeNavigator),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request = addCSRFToken(FakeRequest())
+        val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -136,7 +145,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -153,7 +162,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -171,10 +180,10 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
         val controller = app.injector.instanceOf[TrusteePreviousAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -183,12 +192,13 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0), None),
+      routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0), srn),
+      routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0), srn),
       addresses,
       title = messages("messages__trustee__individual__previous__address__heading",Message("messages__theIndividual").resolve),
       heading = messages("messages__trustee__individual__previous__address__heading", trusteeDetails.fullName),
-      entityName = trusteeDetails.fullName
+      entityName = trusteeDetails.fullName,
+      srn = srn
     )
   }
 }

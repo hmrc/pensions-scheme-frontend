@@ -45,11 +45,11 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
     form =>
       view(
         form,ManualAddressViewModel(
-          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode, srn),
           options,
           Message("messages__insurer_confirm_address__title"),
           Message("messages__common__confirmAddress__h1", insuranceCompanyName),
-          None
+          srn
         ),
         Some(schemeName)
       )(fakeRequest, messages).toString()
@@ -67,7 +67,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       countryOptions,
@@ -77,13 +77,13 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
     )
 
   def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   def saveAction(cachex: UserAnswersService): Action[AnyContent] =
-    controller(cache = cachex).onSubmit(NormalMode, None)
+    controller(cache = cachex).onSubmit(NormalMode, srn)
 
   "InsurerConfirmAddressController" when {
 
@@ -118,7 +118,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       val validData: UserAnswers = UserAnswers().schemeName(schemeName)
         .insuranceCompanyName(insuranceCompanyName)
         .insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
-      val result = controller(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, srn)(postRequest)
 
       whenReady(result) {
         _ =>

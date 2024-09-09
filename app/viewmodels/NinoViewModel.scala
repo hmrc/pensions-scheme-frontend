@@ -16,6 +16,7 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class NinoViewModel(
@@ -23,5 +24,5 @@ case class NinoViewModel(
                           title: String,
                           heading: String,
                           hint: String,
-                          srn: Option[String] = None
+                          srn: SchemeReferenceNumber
                         )

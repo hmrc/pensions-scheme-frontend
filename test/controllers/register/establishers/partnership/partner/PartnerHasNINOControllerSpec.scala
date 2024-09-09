@@ -35,7 +35,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
 
   "PartnerHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -45,7 +45,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
       val validData = validPartnerData("hasNino" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -53,7 +53,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -64,7 +64,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -82,13 +82,13 @@ object PartnerHasNINOControllerSpec extends ControllerSpecBase {
   private val form = formProvider("error", "test company name")
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
-  private val srn = None
   private val postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__thePartner")),
     heading = Message("messages__hasNINO", "first last"),
-    hint = None
+    hint = None,
+    srn = srn
   )
   private val view = injector.instanceOf[hasReferenceNumber]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerHasNINOController =
@@ -98,7 +98,7 @@ object PartnerHasNINOControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,

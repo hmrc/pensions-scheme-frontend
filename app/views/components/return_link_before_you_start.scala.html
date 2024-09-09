@@ -16,14 +16,15 @@
 
 @import config.FrontendAppConfig
 @import models.Mode
+@import models.SchemeReferenceNumber
 
-@(mode: Mode, schemeName:String, appConfig: FrontendAppConfig)(implicit messages: Messages)
+@(mode: Mode, schemeName:String, appConfig: FrontendAppConfig, srn: SchemeReferenceNumber)(implicit messages: Messages)
 
 @{
     mode match {
         case CheckMode =>
-        components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName))
+        components.return_link(messages("messages__psaSchemeDetails__return_link"), Some(schemeName), None, srn)
         case _ =>
-        components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl))
+        components.return_link(messages("messages__complete__returnToManagePensionSchemes"), None, Some(appConfig.managePensionsSchemeOverviewUrl), srn)
     }
 }

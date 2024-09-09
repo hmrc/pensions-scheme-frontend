@@ -18,9 +18,10 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
+import models.SchemeReferenceNumber
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.HttpClient
 import utils.{HttpResponseHelper, UserAnswers}
@@ -33,7 +34,8 @@ trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean] = None)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 
-  def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean] = None)
+
+  def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean] = None)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
@@ -65,7 +67,7 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     }
   }
 
-  override def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean])
+  override def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean])
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
     val url = config.pspSchemeDetailsUrl

@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InvestmentRegulatedSchemeFormProvider
 import identifiers.{InvestmentRegulatedSchemeId, SchemeNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -54,7 +55,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, existingSchemeName)))
+        Future.successful(Ok(view(preparedForm, mode, existingSchemeName, "")))
       }
   }
 
@@ -65,10 +66,10 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+            Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName,""))),
           value =>
             dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(InvestmentRegulatedSchemeId, mode, UserAnswers(cacheMap), ""))
             }
         )
       }

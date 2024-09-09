@@ -105,7 +105,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       LocalDate.now(),
       submissionReferenceNumber,
       showMasterTrustContent = false,
-      "email@test.com"
+      "email@test.com",
+      srn
     )(fakeRequest, messages).toString
 
   appRunning()
@@ -118,7 +119,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
 
-      val result = controller(Some(schemeDataForNormalScheme())).onPageLoad(fakeRequest)
+      val result = controller(Some(schemeDataForNormalScheme())).onPageLoad(srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -137,7 +138,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
 
-      val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName)))).onPageLoad(fakeRequest)
+      val result = controller(Some(schemeDataForNormalScheme(racDACSchemeName = Some(racDACSchemeName)))).onPageLoad(srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -162,7 +163,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
           racDACSchemeName = Some(racDACSchemeName),
           racDACContract = Some(racDACContractNo)
         )
-    )).onPageLoad(fakeRequest)
+    )).onPageLoad(srn)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
       verify(mockUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
@@ -177,14 +178,14 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(None).onPageLoad(fakeRequest)
+      val result = controller(None).onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to the next page for a POST" in {
-      val result = controller(None).onSubmit(fakeRequest)
+      val result = controller(None).onSubmit(srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

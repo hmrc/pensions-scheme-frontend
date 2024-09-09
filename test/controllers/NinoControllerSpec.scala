@@ -41,14 +41,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NinoControllerSpec extends ControllerSpecBase {
 
-  override def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/")
-
   val viewmodel = NinoViewModel(
     postCall = Call("POST", "/"),
     title = Message("messages__enterNINO", Message("messages__thePerson").resolve),
     heading = Message("messages__enterNINO"),
     hint = Message("messages__common__nino_hint"),
-    srn = None
+    srn = srn
   )
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]

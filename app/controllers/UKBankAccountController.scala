@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.UKBankAccountFormProvider
 import identifiers.{SchemeNameId, UKBankAccountId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -54,7 +55,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
@@ -66,10 +67,10 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
 
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, ""))),
           value =>
             dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap), ""))
             }
         )
       }

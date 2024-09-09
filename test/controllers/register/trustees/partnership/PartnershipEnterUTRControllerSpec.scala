@@ -39,7 +39,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
   "PartnershipEnterUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,7 +48,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
     "redirect to the next page when valid data is submitted and clean up takes place" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", utrValue))
 
-      val result = controller(getDataWithNoUtrReason).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getDataWithNoUtrReason).onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -60,7 +60,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -75,7 +75,6 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   val formProvider = new UTRFormProvider()
   val form: Form[ReferenceValue] = formProvider()
   val index = Index(0)
-  val srn = None
   val utrValue = "9999999999"
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
@@ -113,7 +112,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,

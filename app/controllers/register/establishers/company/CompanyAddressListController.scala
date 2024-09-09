@@ -25,7 +25,7 @@ import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -52,14 +52,14 @@ class CompanyAddressListController @Inject()(
                                             )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).map(get)
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Index): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).map(
           vm =>
@@ -74,7 +74,7 @@ class CompanyAddressListController @Inject()(
         )
     }
 
-  private def viewModel(mode: Mode, srn: Option[String], index: Index)
+  private def viewModel(mode: Mode, srn: SchemeReferenceNumber, index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
     (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.map {
       case companyDetails ~ addresses =>

@@ -20,6 +20,7 @@ import audit.{AuditService, TcmpAuditEvent}
 import connectors._
 import controllers.actions._
 import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -42,12 +43,10 @@ class VariationDeclarationControllerSpec
     with BeforeAndAfterEach {
 
   private val schemeName = "Test Scheme Name"
-  private val srnNumber = "S12345"
-  private val srn: Option[String] = Some(srnNumber)
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 
-  def onwardRoute: Call = register.routes.SchemeVariationsSuccessController.onPageLoad(srnNumber)
+  def onwardRoute: Call = register.routes.SchemeVariationsSuccessController.onPageLoad(srn)
 
   def validData(extraData: JsObject = Json.obj()): FakeDataRetrievalAction =
     new FakeDataRetrievalAction(
@@ -82,7 +81,7 @@ class VariationDeclarationControllerSpec
   "VariationDeclarationController" must {
 
     "return OK and the correct view for a GET when update cache has srn" in {
-      when(updateSchemeCacheConnector.fetch(eqTo(srnNumber))(any(), any()))
+      when(updateSchemeCacheConnector.fetch(eqTo(srn))(any(), any()))
         .thenReturn(Future.successful(Some(JsString("srn"))))
 
       val app = applicationBuilder(
@@ -92,7 +91,7 @@ class VariationDeclarationControllerSpec
 
       val controller = app.injector.instanceOf[VariationDeclarationController]
 
-      val result = controller.onPageLoad(srn)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -109,7 +108,7 @@ class VariationDeclarationControllerSpec
 
       val controller = app.injector.instanceOf[VariationDeclarationController]
 
-      val result = controller.onPageLoad(srn)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode,srn)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
     }

@@ -26,7 +26,7 @@ class FakeDataRequest(request: Request[AnyContentAsEmpty.type], externalId: Stri
 
 object FakeDataRequest {
   def apply(answers: UserAnswers): FakeDataRequest = {
-    new FakeDataRequest(FakeRequest("", "/foo"), "test-external-id", answers, PsaId("A0000000"))
+    new FakeDataRequest(FakeRequest(), "test-external-id", answers, PsaId("A0000000"))
   }
 }
 

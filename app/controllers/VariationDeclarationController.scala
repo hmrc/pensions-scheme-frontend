@@ -21,7 +21,7 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
-import models.{TypeOfBenefits, UpdateMode}
+import models.{Mode, SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -58,12 +58,10 @@ class VariationDeclarationController @Inject()(
     with I18nSupport
     with Enumerable.Implicits {
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(UpdateMode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        srn.fold(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))) {
-          actualSrn =>
-            updateSchemeCacheConnector.fetch(actualSrn).map {
+            updateSchemeCacheConnector.fetch(srn).map {
               case Some(_) =>
                 Ok(view(
                   schemeName = request.userAnswers.get(SchemeNameId),
@@ -71,17 +69,16 @@ class VariationDeclarationController @Inject()(
                   href = VariationDeclarationController.onClickAgree(srn)
                 ))
               case _ =>
-                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
+                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(srn))
             }
-        }
     }
 
-  def onClickAgree(srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(UpdateMode, srn) andThen requireData).async {
+  def onClickAgree(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
         (srn, request.userAnswers.get(PstrId)) match {
-          case (Some(srnId), Some(pstr)) =>
+          case ((srnId), Some(pstr)) =>
             val ua =
               request
                 .userAnswers
@@ -99,7 +96,7 @@ class VariationDeclarationController @Inject()(
               } yield Redirect(navigator.nextPage(VariationDeclarationId, UpdateMode, UserAnswers(), srn))
             } recoverWith {
               case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-                Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(UpdateMode, srn)))
+                Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(srn)))
               case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
           case _ =>

@@ -33,20 +33,20 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode)
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
-        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(UpdateMode, srn)(fakeRequest)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
       "return OK and DO display submit button with return to tasklist when in normal mode" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, srn)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -57,7 +57,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]
@@ -67,7 +67,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       getEmptyDataPsp,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn, None),
       new DataRequiredActionImpl,
       controllerComponents,
       view
@@ -80,14 +80,14 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
         messages("messages__current_members_cya_label", schemeName),
         Seq(s"messages__members__${Members.One}"),
         answerIsMessageKey = true,
-        Some(Link("site.change", controllers.routes.CurrentMembersController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", controllers.routes.CurrentMembersController.onPageLoad(srn).url,
           Some(messages("messages__visuallyhidden__current_members_change", schemeName))))
       ),
       AnswerRow(
         messages("messages__future_members_cya_label", schemeName),
         Seq(s"messages__members__${Members.None}"),
         answerIsMessageKey = true,
-        Some(Link("site.change", controllers.routes.FutureMembersController.onPageLoad(CheckMode).url,
+        Some(Link("site.change", controllers.routes.FutureMembersController.onPageLoad(CheckMode, srn).url,
           Some(messages("messages__visuallyhidden__future_members_change", schemeName))))
       )
     )
@@ -102,7 +102,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     schemeName = Some(schemeName),
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = srn,
     hideSaveAndContinueButton = false,
     title = heading(Message("messages__theScheme").resolve, mode),
     h1 = heading(schemeName, mode)

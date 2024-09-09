@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.MoneyPurchaseBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, TcmpChangedId}
-import models.{Mode, MoneyPurchaseBenefits}
+import models.{Mode, MoneyPurchaseBenefits, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,14 +49,14 @@ class MoneyPurchaseBenefitsController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  val postCall: (Mode, Option[String]) => Call =
+  val postCall: (Mode, SchemeReferenceNumber) => Call =
     routes.MoneyPurchaseBenefitsController.onSubmit
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()
 
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(
           view(
@@ -69,8 +69,8 @@ class MoneyPurchaseBenefitsController @Inject()(
         ))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

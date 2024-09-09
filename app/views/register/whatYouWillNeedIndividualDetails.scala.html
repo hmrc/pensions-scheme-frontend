@@ -19,7 +19,7 @@
     button_link: components.button_link
 )
 
-@(schemeName: Option[String], href: Call, srn:Option[String], establisherName: String)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], href: Call, srn: SchemeReferenceNumber, establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__detailsFor", messages("messages__theIndividual")).capitalize) {
 

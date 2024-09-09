@@ -26,7 +26,7 @@ import views.html.whatYouWillNeedMembers
 
 class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.CurrentMembersController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.CurrentMembersController.onPageLoad(srn)
 
   private val view = injector.instanceOf[whatYouWillNeedMembers]
 
@@ -39,13 +39,13 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
       view
     )
 
-  def viewAsString(): String = view(None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, srn)(fakeRequest, messages).toString
 
   "WhatYouWillNeedMembersController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(fakeRequest)
+        val result = controller().onPageLoad(srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -54,7 +54,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
 
     "on a POST" must {
       "redirect to session redirect page" in {
-        val result = controller().onSubmit()(fakeRequest)
+        val result = controller().onSubmit(srn)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

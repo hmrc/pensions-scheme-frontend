@@ -51,7 +51,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   }
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
@@ -61,12 +60,12 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(index: Int): Call =
-    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+    PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
 
-  private def updateModeUrl(mode: Mode, srn: Option[String]): Call =
+  private def updateModeUrl(mode: Mode, srn: SchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -84,7 +83,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(index),
                    hideButton: Boolean = false, title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -106,15 +105,18 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
-            Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
+            Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+              bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn))
+            ): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
                 title = Message("checkYourAnswers.hs.heading"),
-                h1 = Message("checkYourAnswers.hs.heading"))
+                h1 = Message("checkYourAnswers.hs.heading"),
+                srn = srn)
           }
         }
 
@@ -122,7 +124,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           val ftBinding: Seq[GuiceableModule] = Seq(
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))
           running(_.overrides(ftBinding: _*)) {
             app =>

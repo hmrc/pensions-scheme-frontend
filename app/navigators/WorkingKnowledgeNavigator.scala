@@ -20,50 +20,50 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers._
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SchemeReferenceNumber}
 
 class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case AdviserNameId =>
-        NavigateTo.dontSave(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode, srn))
       case AdviserEmailId =>
-        NavigateTo.dontSave(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPhoneController.onPageLoad(NormalMode, srn))
       case AdviserPhoneId =>
-        NavigateTo.dontSave(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode, srn))
       case AdviserAddressPostCodeLookupId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(NormalMode, srn))
       case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserAddressId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserCheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn))
       case _ => None
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
+
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case AdviserNameId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserEmailId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserPhoneId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserAddressPostCodeLookupId =>
-        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.AdviserAddressListController.onPageLoad(CheckMode, srn))
       case AdviserAddressListId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case AdviserAddressId =>
-        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad(srn))
       case _ => None
     }
   }
-
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
-
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
 }

@@ -54,7 +54,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, srn)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -67,7 +67,6 @@ object DirectorEnterUTRControllerSpec extends DirectorEnterUTRControllerSpec {
   val directorIndex = Index(0)
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = None
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

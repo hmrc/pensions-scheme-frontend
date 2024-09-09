@@ -241,7 +241,7 @@ trait UaJsValueGenerators {
       "noCrnReason" -> "fsdfdsf",
       "companyContactDetails" -> Json.obj(
         "phoneNumber" -> "23234",
-        "emailAddress" -> "sdf@sdf",
+        "emailAddress" -> "sdf@sdf"
       )
     ) ++ address.as[JsObject] ++ Json.obj("director" -> directorDetails.as[JsObject])
   }
@@ -277,12 +277,12 @@ trait UaJsValueGenerators {
       "trusteeKind" -> "individual",
       "trusteeDetails" -> Json.obj(
         "firstName" -> "Test",
-        "lastName" -> s"User $index",
+        "lastName" -> s"User $index"
       ),
       "dateOfBirth" -> date,
       "trusteeContactDetails" -> Json.obj(
         "emailAddress" -> email,
-        "phoneNumber" -> phone,
+        "phoneNumber" -> phone
       ),
       "hasUtr" -> false,
       "noUtrReason" -> "no utr",

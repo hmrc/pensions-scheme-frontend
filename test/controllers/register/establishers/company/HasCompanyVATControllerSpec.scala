@@ -40,13 +40,13 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   val formProvider = new HasReferenceNumberFormProvider()
   val form = formProvider("messages__hasCompanyVat__error__required", "test company name")
   val index = Index(0)
-  val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index)
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasVAT", Message("messages__theCompany").resolve),
-    heading = Message("messages__hasVAT", "test company name")
+    heading = Message("messages__hasVAT", "test company name"),
+    srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -58,7 +58,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
@@ -71,7 +71,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   "HasCompanyVatController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -80,7 +80,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -91,7 +91,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

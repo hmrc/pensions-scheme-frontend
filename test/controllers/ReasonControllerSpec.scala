@@ -40,14 +40,15 @@ import views.html.reason
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
+class ReasonControllerSpec extends ControllerSpecBase with Matchers with OptionValues with ScalaFutures {
 
   import ReasonControllerSpec._
 
   val viewmodel: ReasonViewModel = ReasonViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
-    heading = "heading")
+    heading = "heading",
+    srn = srn)
 
   private val view = injector.instanceOf[reason]
 

@@ -50,7 +50,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       FakeUserAnswersService,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
@@ -62,11 +62,11 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.TrusteeEmailController.onSubmit(NormalMode, firstIndex, None),
+        routes.TrusteeEmailController.onSubmit(NormalMode, firstIndex, srn),
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        srn
       ),
       None
     )(fakeRequest, messages).toString
@@ -75,7 +75,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -85,7 +85,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -93,7 +93,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
       "yield a bad request response when invalid details are submitted" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", invalidValue))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, srn)(postRequest)
         val boundForm = form.bind(Map("email" -> invalidValue))
 
         status(result) mustBe BAD_REQUEST

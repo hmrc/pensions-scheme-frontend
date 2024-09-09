@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedIndividualDetails
 
 import scala.concurrent.Future
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
@@ -40,8 +41,8 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
                                                           ) extends FrontendBaseController with I18nSupport with
   Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate() andThen
-    getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
+    getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       TrusteeNameId(index).retrieve.map {
         details =>

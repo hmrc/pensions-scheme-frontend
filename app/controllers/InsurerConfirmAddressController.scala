@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers._
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.address.Address
 import navigators.Navigator
 import play.api.data.Form
@@ -59,8 +60,8 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
   private[controllers] val title: Message = "messages__insurer_confirm_address__title"
   private[controllers] val heading: String = "messages__common__confirmAddress__h1"
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         InsuranceCompanyNameId.retrieve.map { companyName =>
@@ -68,7 +69,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
         }
     }
 
-  private def viewmodel(mode: Mode, srn: Option[String], companyName: String): ManualAddressViewModel =
+  private def viewmodel(mode: Mode, srn: SchemeReferenceNumber, companyName: String): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, srn),
       countryOptions.options,
@@ -77,7 +78,7 @@ class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig
       srn = srn
     )
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()
     andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.map { companyName =>

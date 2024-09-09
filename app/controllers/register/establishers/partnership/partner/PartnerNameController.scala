@@ -21,10 +21,11 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
+
 import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,8 +53,8 @@ class PartnerNameController @Inject()(
                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](PartnerNameId(establisherIndex, partnerIndex)) match {
           case None => form
@@ -65,7 +66,7 @@ class PartnerNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber) =
     CommonFormWithHintViewModel(
     postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partnerName__title"),
@@ -73,8 +74,8 @@ class PartnerNameController @Inject()(
     srn = srn
   )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>

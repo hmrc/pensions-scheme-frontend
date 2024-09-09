@@ -32,10 +32,10 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
   private val trusteePartnership = PartnershipDetails("partnership Name")
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
 
-  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
+  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, srn)
 
   def viewAsString(): String = view(
-    None, onwardRoute, trusteePartnership.name, None)(fakeRequest, messages).toString
+    None, onwardRoute, trusteePartnership.name, srn)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipDetailsController" when {
 
@@ -43,11 +43,11 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
       "return OK and the correct view" in {
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
-          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
           bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

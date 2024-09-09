@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers._
+
 import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
@@ -48,12 +49,12 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode ): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       viewModel(mode).map(get)
   }
 
-  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+  private def viewModel(mode: Mode )(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
     (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.map {
       case addresses ~ name =>
@@ -63,6 +64,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
           addresses = addresses,
           heading = Message("messages__dynamic_whatIsAddress", name),
           title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
+          srn = "",
           entityName = name
         )
     }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))

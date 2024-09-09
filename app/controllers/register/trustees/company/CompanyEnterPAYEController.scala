@@ -23,7 +23,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.PayeFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterPAYEId}
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,8 +47,8 @@ class CompanyEnterPAYEController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             val view: paye
                                           )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
           details =>
@@ -56,8 +56,8 @@ class CompanyEnterPAYEController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
+  () andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map {
         details =>
@@ -69,7 +69,7 @@ class CompanyEnterPAYEController @Inject()(
   protected def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(companyName)
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String], companyName: String): PayeViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): PayeViewModel =
     PayeViewModel(
       postCall = routes.CompanyEnterPAYEController.onSubmit(mode, index, srn),
       title = Message("messages__enterPAYE", Message("messages__theCompany")),

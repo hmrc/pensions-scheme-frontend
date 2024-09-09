@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -48,8 +49,8 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           name =>
@@ -58,7 +59,7 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, trusteeName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__theIndividual")),
@@ -70,8 +71,8 @@ class TrusteeHasUTRController @Inject()(val appConfig: FrontendAppConfig,
   private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__hasUtr__error__required", trusteeName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           name =>

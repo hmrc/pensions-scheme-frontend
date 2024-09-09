@@ -22,8 +22,9 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -74,6 +75,7 @@ class AdviserPostCodeLookupController @Inject()(
       routes.AdviserAddressController.onPageLoad(mode),
       title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
-      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary"))
+      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+      srn = ""
     )
 }

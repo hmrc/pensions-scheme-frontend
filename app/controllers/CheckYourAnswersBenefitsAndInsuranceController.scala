@@ -22,7 +22,7 @@ import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.Mode._
 import models.requests.DataRequest
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models.{CheckUpdateMode, Mode, NormalMode, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,29 +48,29 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(mode, Some(srn)) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         Ok(view(vm(mode, srn)))
     }
 
-  def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData) {
       implicit request =>
-        Ok(view(vm(UpdateMode, Some(srn))))
+        Ok(view(vm(UpdateMode, (srn))))
     }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
 
       implicit val userAnswers: UserAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(
         None,
-        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
-          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode)).url, mode) ++
+        InvestmentRegulatedSchemeId.row(routes.InvestmentRegulatedSchemeController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(checkMode(mode), srn).url, mode) ++
           TypeOfBenefitsId.row(routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
           MoneyPurchaseBenefitsId.row(routes.MoneyPurchaseBenefitsController.onPageLoad(checkMode(mode), srn).url, mode) ++
           BenefitsSecuredByInsuranceId.row(routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), srn).url, mode) ++
-          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), srn).url, mode) ++
+          InsuranceCompanyNameId.row(routes.InsuranceCompanyNameController.onPageLoad(mode, srn).url, mode) ++
           InsurancePolicyNumberId.row(routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), srn).url, mode) ++
           InsurerConfirmAddressId.row(routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), srn).url, mode)
       )
@@ -79,7 +79,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
         Message("messages__benefitsAndInsuranceDetailsFor", name)
 
       val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-        case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+        case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
         case _ => None
       }
 

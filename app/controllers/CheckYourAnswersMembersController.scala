@@ -46,31 +46,31 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
   FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(view(vm(mode, srn))))
     }
 
-  def pspOnPageLoad(srn: String): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData).async {
       implicit request =>
-        Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+        Future.successful(Ok(view(vm(UpdateMode, (srn)))))
     }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
     val membersSection = AnswerSection(
       None,
-      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(CheckMode).url, mode) ++
-        FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode).url, mode)
+      CurrentMembersId.row(routes.CurrentMembersController.onPageLoad(srn).url, mode) ++
+        FutureMembersId.row(routes.FutureMembersController.onPageLoad(CheckMode, srn).url, mode)
     )
 
     val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
       Message("messages__membershipDetailsFor", name)
 
     val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }
 

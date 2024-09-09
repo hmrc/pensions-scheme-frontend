@@ -14,11 +14,13 @@
  * limitations under the License.
  *@
 
+@import models.SchemeReferenceNumber
+
 @(
     messageKey: String,
     schemename: Option[String] = None,
     anotherReturn: Option[Call] = None,
-    srn: Option[String] = None
+    srn: SchemeReferenceNumber
 )(implicit messages: Messages)
 
 @returnMessage = @{
@@ -27,12 +29,9 @@
     )
 }
 
-@correctMode = @{
-    srn.fold[Mode](NormalMode)(_ => UpdateMode)
-}
 
 <p class="govuk-margin-top-8 govuk-body">
-    <a id="return-link" class="govuk-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(correctMode, srn))(call => call)">
+    <a id="return-link" class="govuk-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(srn))(call => call)">
         @returnMessage
     </a>
 </p>

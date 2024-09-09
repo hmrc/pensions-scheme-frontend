@@ -30,14 +30,14 @@ import viewmodels.Message
 
 class SpokeCreationService extends Enumerable.Implicits {
 
-  def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                              index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, BeforeYouStartSpoke, mode, srn, name, index, None)
     )
   }
 
-  def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String, index: Option[Index])
+  def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String, index: Option[Index])
   : Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
@@ -45,14 +45,14 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
       createSpoke(answers, WorkingKnowledgeSpoke, mode, srn, name, index, None)
     )
   }
 
-  def  getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def  getEstablisherCompanySpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                   index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -65,7 +65,7 @@ class SpokeCreationService extends Enumerable.Implicits {
   }
 
   //scalastyle:off cyclomatic.complexity
-  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: Option[String], name: String, index: Option[Index]): EntitySpoke = {
+  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: SchemeReferenceNumber, name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
         case (NormalMode | UpdateMode, true) => Some(false)
@@ -89,7 +89,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getEstablisherIndividualSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                      index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -99,7 +99,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getEstablisherPartnershipSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                       index: Option[Index]): Seq[EntitySpoke] = {
     val isEstablisherNew = answers.get(IsEstablisherNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -111,7 +111,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getTrusteeCompanySpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                               index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -121,7 +121,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getTrusteeIndividualSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                  index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -131,7 +131,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     )
   }
 
-  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], name: String,
+  def getTrusteePartnershipSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, name: String,
                                   index: Option[Index]): Seq[EntitySpoke] = {
     val isTrusteeNew = answers.get(IsTrusteeNewId(indexToInt(index.getOrElse(Index(0))))).getOrElse(false)
     Seq(
@@ -143,7 +143,7 @@ class SpokeCreationService extends Enumerable.Implicits {
 
   def createSpoke(answers: UserAnswers,
                   spoke: Spoke,
-                  mode: Mode, srn: Option[String], name: String, index: Option[Index], isNew: Option[Boolean])
+                  mode: Mode, srn: SchemeReferenceNumber, name: String, index: Option[Index], isNew: Option[Boolean])
   : EntitySpoke = {
 
     val isChangeLink = spoke.completeFlag(answers, index, mode)
@@ -162,7 +162,7 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddEstablisherHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddEstablisherHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.allEstablishersAfterDelete(mode).isEmpty, viewOnly) match {
       case (_, true) =>
@@ -173,22 +173,15 @@ class SpokeCreationService extends Enumerable.Implicits {
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), None)
         )
-      case (false, false) if srn.isDefined =>
+      case (false, false) if srn.id.nonEmpty =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
         )
-      case (false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link_toggleOff"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url),
-          None
-        ))
     }
   }
 
-  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddEstablisherHeaderSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, viewOnly: Boolean)
   : Seq[EntitySpoke] = {
 
     val schemeName = answers.get(SchemeNameId).getOrElse("")
@@ -204,47 +197,37 @@ class SpokeCreationService extends Enumerable.Implicits {
             controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, answers
               .allEstablishers(mode).size, srn).url), Some(false))
         )
-      case (false, false) if srn.isDefined =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
-        )
       case (false, false) if !establishers.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_continue_link", schemeName),
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
         )
-      case (false, false) =>
+      case (false, false) if srn.id.nonEmpty =>
         Seq(EntitySpoke(
-          TaskListLink(
-            Message("messages__schemeTaskList__sectionEstablishers_change_link",schemeName),
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), isAllEstablishersComplete)
+          TaskListLink(Message("messages__schemeTaskList__sectionEstablishers_view_link"),
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url), None)
         )
     }
   }
 
-  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean): Seq[EntitySpoke] = {
+  def getAddTrusteeHeaderSpokes(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, viewOnly: Boolean): Seq[EntitySpoke] = {
 
     val schemeName = answers.get(SchemeNameId).getOrElse("")
     val trustees = answers.allTrusteesAfterDelete
     val isAllTrusteesComplete = if (trustees.isEmpty) None else Some(trustees.forall(_.isCompleted))
 
     (answers.get(HaveAnyTrusteesId), trustees.isEmpty, viewOnly) match {
-      case (None | Some(true), false, false) if srn.isDefined =>
-        Seq(
-          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
-        )
       case (None | Some(true), false, false) if !trustees.forall(_.isCompleted) =>
         Seq(EntitySpoke(
           TaskListLink(Message("messages__schemeTaskList__sectionTrustees_continue_link", schemeName),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete
         ))
-      case (None | Some(true), false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link", schemeName),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), isAllTrusteesComplete)
+      case (None | Some(true), false, false) if srn.id.nonEmpty =>
+        Seq(
+          EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
         )
+
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(
@@ -257,20 +240,14 @@ class SpokeCreationService extends Enumerable.Implicits {
     }
   }
 
-  def getAddTrusteeHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: Option[String], viewOnly: Boolean)
+  def getAddTrusteeHeaderSpokesToggleOff(answers: UserAnswers, mode: Mode, srn: SchemeReferenceNumber, viewOnly: Boolean)
   : Seq[EntitySpoke] = {
     (answers.get(HaveAnyTrusteesId), answers.allTrusteesAfterDelete.isEmpty, viewOnly) match {
-      case (None | Some(true), false, false) if srn.isDefined =>
+      case (None | Some(true), false, false) if srn.id.nonEmpty =>
         Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__sectionTrustees_view_link"),
             controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url), None)
         )
-      case (None | Some(true), false, false) =>
-        Seq(EntitySpoke(
-          TaskListLink(Message("messages__schemeTaskList__sectionTrustees_change_link_toggleOff"),
-            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url),
-          None
-        ))
       case (None | Some(true), true, false) =>
         Seq(EntitySpoke(
           TaskListLink(

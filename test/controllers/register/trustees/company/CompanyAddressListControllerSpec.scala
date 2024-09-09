@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.UserAnswers
+import utils.annotations.NoSuspendedCheck
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -73,10 +74,18 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(
+            FakeRequest()
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val controller = app.injector.instanceOf[CompanyAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe OK
 
@@ -93,13 +102,21 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(
+            FakeRequest()
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val controller = app.injector.instanceOf[CompanyAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -109,10 +126,18 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
-        val result = route(app, request).value
+        val request =
+          addCSRFToken(
+            FakeRequest()
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val controller = app.injector.instanceOf[CompanyAddressListController]
+        val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -134,10 +159,10 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, 0, srn).url)
       }
 
     }
@@ -156,7 +181,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -178,10 +203,10 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), srn).url)
       }
 
     }
@@ -190,12 +215,13 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
+      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), srn),
+      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), srn),
       addresses,
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theCompany")),
       heading = Message("messages__dynamic_whatIsAddress", companyDetails.companyName),
-      entityName = companyDetails.companyName
+      entityName = companyDetails.companyName,
+      srn = srn
     )
   }
 

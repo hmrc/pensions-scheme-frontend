@@ -31,12 +31,11 @@ import views.html.hasReferenceNumber
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEnterPAYEController.onPageLoad (NormalMode, index, None)
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEnterPAYEController.onPageLoad (NormalMode, index, srn)
 
   val formProvider = new HasPAYEFormProvider()
   val form = formProvider("messages__companyPayeRef__error__required","test company name")
   val index = Index(0)
-  val srn = None
   val postCall = controllers.register.trustees.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, index, srn)
 
   val viewModel = CommonFormWithHintViewModel(
@@ -44,7 +43,8 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     title = Message("messages__hasPAYE", Message("messages__theCompany").resolve),
     heading = Message("messages__hasPAYE", "test company name"),
     hint = Some(Message("messages__hasPaye__p1")),
-    formFieldName = Some("hasPaye")
+    formFieldName = Some("hasPaye"),
+    srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -56,7 +56,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
@@ -70,7 +70,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   "HasCompanyPAYEController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -79,7 +79,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -90,7 +90,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPAYE", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, index, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

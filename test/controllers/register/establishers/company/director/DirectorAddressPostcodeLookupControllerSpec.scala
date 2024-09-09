@@ -44,9 +44,9 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val estIndex = Index(0)
   val dirIndex = Index(0)
 
-  def onwardRoute: Call = routes.DirectorAddressListController.onPageLoad(NormalMode, estIndex, dirIndex, None)
-  def postCall: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex, None)
-  def manualInputCall: Call = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex, None)
+  def onwardRoute: Call = routes.DirectorAddressListController.onPageLoad(NormalMode, estIndex, dirIndex, srn)
+  def postCall: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex, srn)
+  def manualInputCall: Call = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex, srn)
 
   private val addressLookupConnector = mock[AddressLookupConnector]
   private val address = TolerantAddress(Some("value 1"), Some("value 2"), None, None, Some("AB1 1AB"), Some("GB"))
@@ -63,7 +63,8 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
     manualInputCall,
     Message("messages__directorCompanyAddressPostcodeLookup__title"),
     Message("messages__addressPostcodeLookup__heading", director.fullName),
-    Some(director.fullName)
+    Some(director.fullName),
+    srn = srn
   )
   private val view = injector.instanceOf[postcodeLookup]
 
@@ -71,7 +72,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
     running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
       app =>
         val controller = app.injector.instanceOf[DirectorAddressPostcodeLookupController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, srn)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe view(form, viewmodel, None)(fakeRequest, messages).toString
     }
@@ -88,7 +89,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[DirectorAddressPostcodeLookupController]
         val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, srn)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }

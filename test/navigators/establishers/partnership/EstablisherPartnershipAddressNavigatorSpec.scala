@@ -17,6 +17,7 @@
 package navigators.establishers.partnership
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.register.establishers.partnership.routes._
 import controllers.routes.AnyMoreChangesController
 import generators.Generators
@@ -30,7 +31,7 @@ import org.scalatest.prop._
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
 
   import EstablisherPartnershipAddressNavigatorSpec._
 
@@ -40,36 +41,36 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(NormalMode, None)),
-        row(PartnershipAddressId(index))(someAddress, addressYearsPage(NormalMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
-        row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(NormalMode, None)),
-        row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
+        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnershipAddressId(index))(someAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipHasBeenTradingId(index))(value = true, previousAddressPostcodeLookupPage(NormalMode, srn)),
+        row(PartnershipHasBeenTradingId(index))(value = false, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, srn)
   }
 
   "CheckMode" must {
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, None)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, None)),
-        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, None)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, None)),
-        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, None))
+        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, srn)),
+        row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, srn)),
+        row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -117,23 +118,22 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
 
 object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
-  private val srn = Some("srn")
   private val newEstablisherUserAnswers: UserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
 
-  private def addressYearsPage(mode: Mode, srn: Option[String]): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)
+  private def addressYearsPage(mode: Mode, srn: SchemeReferenceNumber): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)
 
-  private def addressListPage(mode: Mode, srn: Option[String]): Call = PartnershipAddressListController.onPageLoad(mode, index, srn)
+  private def addressListPage(mode: Mode, srn: SchemeReferenceNumber): Call = PartnershipAddressListController.onPageLoad(mode, index, srn)
 
-  private def previousAddressPostcodeLookupPage(mode: Mode, srn: Option[String]): Call =
+  private def previousAddressPostcodeLookupPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 
-  private def cyaAddressPage(mode: Mode, srn: Option[String]): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
+  private def cyaAddressPage(mode: Mode, srn: SchemeReferenceNumber): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
 
-  private def isThisPreviousAddressPage(srn: Option[String]): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, srn)
+  private def isThisPreviousAddressPage(srn: SchemeReferenceNumber): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, srn)
 
-  private def previousAddressListPage(mode: Mode, srn: Option[String]): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
+  private def previousAddressListPage(mode: Mode, srn: SchemeReferenceNumber): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
 
-  private def hasBeenTradingPage(mode: Mode, srn: Option[String]): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
+  private def hasBeenTradingPage(mode: Mode, srn: SchemeReferenceNumber): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
 }
 
 

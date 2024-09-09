@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import models.{FeatureToggleName, Index, Mode}
+import models.{FeatureToggleName, Index, Mode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FeatureToggleService
@@ -41,12 +41,12 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   featureToggleService: FeatureToggleService
                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String] = None, establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
         val futureURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-          case true => TrusteesAlsoDirectorsController.onPageLoad(establisherIndex)
+          case true => TrusteesAlsoDirectorsController.onPageLoad(establisherIndex, srn)
           case _ => DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
         }
 

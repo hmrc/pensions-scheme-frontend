@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.{PostcodeLookupController => GenericPostcodeLookupController}
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, PreviousPostCodeLookupId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -53,14 +54,14 @@ class PreviousAddressPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve map get
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {
           vm =>
@@ -68,7 +69,7 @@ class PreviousAddressPostCodeLookupController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: SchemeReferenceNumber): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         EstablisherNameId(index).retrieve.map {

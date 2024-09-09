@@ -46,12 +46,12 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
+  private val postCall = controllers.register.trustees.individual.routes.TrusteeNoUTRReasonController.onSubmit(NormalMode, Index(0), srn)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
     title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),
     heading = Message("messages__whyNoUTR", "Test Name"),
-    srn = None
+    srn = srn
   )
 
   private val view = injector.instanceOf[reason]
@@ -64,7 +64,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -80,7 +80,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -111,7 +111,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "blah"))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -129,7 +129,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       val boundForm = form.bind(Map("noUtrReason" -> ""))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 

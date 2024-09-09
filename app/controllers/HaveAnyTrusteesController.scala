@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.{HaveAnyTrusteesId, SchemeNameId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,7 +58,7 @@ class HaveAnyTrusteesController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
@@ -66,11 +67,11 @@ class HaveAnyTrusteesController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, "")))
           },
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap), "")))
       )
   }
 }

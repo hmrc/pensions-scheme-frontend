@@ -16,16 +16,17 @@
 
 package connectors
 
-import com.google.inject.{Inject, Singleton, ImplementedBy}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
+import models.SchemeReferenceNumber
 import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{HttpClient, HttpResponse, HeaderCarrier}
-import utils.{UserAnswers, HttpResponseHelper}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,7 +40,7 @@ trait PensionsSchemeConnector {
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean = true)
+  def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean = true)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]]
 }
@@ -84,7 +85,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
     }
   }
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean)
+  def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
     val headers: Seq[(String, String)] =

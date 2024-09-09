@@ -44,7 +44,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
@@ -52,10 +51,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
-    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+  private def submitUrl(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call =
+    controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
 
-  private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -73,7 +72,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = submitUrl(NormalMode, srn), hideButton: Boolean = false,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -105,18 +104,23 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
           val bindings = modules(fullAnswers.dataRetrievalAction)
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AuthAction].toInstance(FakeAuthAction),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
+            bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
 
-          running(_.overrides((bindings ++ ftBinding): _*)) {
+          running(_.overrides((ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+              contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
                 title = Message("checkYourAnswers.hs.heading"),
-                h1 = Message("checkYourAnswers.hs.heading"))
+                h1 = Message("checkYourAnswers.hs.heading"),
+                srn = srn)
+              app.stop()
           }
         }
 
@@ -124,7 +128,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           val ftBinding: Seq[GuiceableModule] = Seq(
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
+            bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
           running(_.overrides(ftBinding: _*)) {

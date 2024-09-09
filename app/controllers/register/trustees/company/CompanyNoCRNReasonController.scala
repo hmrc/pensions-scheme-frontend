@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions._
 import forms.register.NoCompanyNumberFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyNoCRNReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,8 +49,8 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends ReasonController with
   I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
@@ -59,7 +60,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] = formProvider(name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoCRN", Message("messages__theCompany")),
@@ -68,8 +69,8 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName

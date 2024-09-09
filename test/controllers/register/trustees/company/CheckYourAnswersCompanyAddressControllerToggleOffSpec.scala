@@ -52,13 +52,14 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
       "return OK and the correct view with full answers" in {
 
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
 
         contentAsString(result) mustBe viewAsString(companyAddressNormal,
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -91,7 +92,7 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+          .onPageLoad(NormalMode, index, srn)(FakeDataRequest(fullAnswers))
       )
     }
   }
@@ -100,12 +101,11 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
 
 object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val companyName = "Test company Name"
-  val srn: Option[String] = Some("S123")
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -113,12 +113,12 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
   private val emptyAnswers = UserAnswers()
   private val mockFeatureToggle = mock[FeatureToggleService]
 
-  private def companyAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressController.onPageLoad(mode, index, srn).url
+  private def companyAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, index, srn).url
 
-  private def companyAddressYearsRoute(mode: Mode, srn: Option[String]): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, srn).url
-  private def companyTradingTimeRoute(mode: Mode, srn: Option[String]): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, srn).url
+  private def companyAddressYearsRoute(mode: Mode, srn: SchemeReferenceNumber): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, srn).url
+  private def companyTradingTimeRoute(mode: Mode, srn: SchemeReferenceNumber): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, srn).url
 
-  private def companyPreviousAddressRoute(mode: Mode, srn: Option[String]): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn).url
+  private def companyPreviousAddressRoute(mode: Mode, srn: SchemeReferenceNumber): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, srn).url
 
   private val fullAnswers = emptyAnswers.
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
@@ -131,11 +131,11 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
     trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -143,7 +143,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_address", companyName))))
   )
 
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -151,7 +151,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
-  def tradingTimeAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def tradingTimeAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__hasBeenTrading__h1", companyName),
     Seq("site.yes"),
     answerIsMessageKey = true,
@@ -159,7 +159,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", companyName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: SchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteePreviousAddress", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -167,7 +167,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
-  def previousAddressAddLink(mode: Mode, srn: Option[String]): AnswerRow =
+  def previousAddressAddLink(mode: Mode, srn: SchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__trusteePreviousAddress", companyName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
@@ -175,8 +175,8 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    tradingTimeAnswerRow(NormalMode, None), previousAddressAnswerRow(NormalMode, None)
+    addressAnswerRow(NormalMode, srn), addressYearsAnswerRow(NormalMode, srn),
+    tradingTimeAnswerRow(NormalMode, srn), previousAddressAnswerRow(NormalMode, srn)
   )))
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
@@ -190,10 +190,10 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
+      dataRetrievalAction, FakeAllowAccessProvider(srn), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,

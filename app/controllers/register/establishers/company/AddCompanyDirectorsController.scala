@@ -25,7 +25,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.requests.DataRequest
 
 import javax.inject.Inject
-import models.{FeatureToggleName, Index, Mode}
+import models.{FeatureToggleName, Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,16 +55,15 @@ class AddCompanyDirectorsController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
+  () andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
       Future.successful(Ok(view(form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
         mode, srn)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
-    srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
 
@@ -105,6 +104,6 @@ class AddCompanyDirectorsController @Inject()(
     }
   }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
+  private def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
 }

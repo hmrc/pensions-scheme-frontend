@@ -16,11 +16,12 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
 import play.api.mvc.Call
 
 case class ReasonViewModel(
                             postCall: Call,
                             title: Message,
                             heading: Message,
-                            srn: Option[String] = None
+                            srn: SchemeReferenceNumber
                           )

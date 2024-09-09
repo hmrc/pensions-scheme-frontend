@@ -34,12 +34,12 @@ class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
 
   private val redirectUrl = frontendAppConfig.managePensionsSchemeOverviewUrl
 
-  private def viewAsString() = view(Some(racDacName), redirectUrl)(fakeRequest, messages).toString
+  private def viewAsString() = view(Some(racDacName), redirectUrl, srn)(fakeRequest, messages).toString
 
   "YourActionWasNotProcessed Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller.onPageLoad()(fakeRequest)
+      val result = controller.onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()

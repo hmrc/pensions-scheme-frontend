@@ -57,20 +57,21 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).qualifiedWith(classOf[AboutBenefitsAndInsurance]).toInstance(fakeNavigator),
         bind[UserAnswersService].qualifiedWith(classOf[InsuranceService]).toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
 
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
-          val result = controller.onPageLoad(NormalMode, None)(request)
+          val result = controller.onPageLoad(NormalMode, srn)(request)
 
           val viewModel = PostcodeLookupViewModel(
-            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
-            routes.InsurerConfirmAddressController.onPageLoad(NormalMode, None),
+            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, srn),
+            routes.InsurerConfirmAddressController.onPageLoad(NormalMode, srn),
             Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
-            Messages("messages__insurer_enter_postcode__h1",insurerName),
-            None
+            Messages("messages__insurer_enter_postcode__h1",insurerName), None,
+            srn = srn
           )
 
           status(result) mustBe OK
@@ -92,7 +93,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
           implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
           val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
-          val result = controller.onSubmit(NormalMode, None)(request)
+          val result = controller.onSubmit(NormalMode, srn)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
           }

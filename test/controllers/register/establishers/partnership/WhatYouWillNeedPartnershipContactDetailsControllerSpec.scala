@@ -30,12 +30,12 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
   private val index = 0
   private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, None, Index(0))
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEmailController.onPageLoad(NormalMode, srn, Index(0))
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
   def viewAsString(): String = view(
     None,
-    controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
-    None,
+    controllers.register.establishers.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, srn),
+    srn,
     establisherPartnership.name,
     Message("messages__thePartnership"))(fakeRequest, messages).toString
 
@@ -45,11 +45,11 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
       "return OK and the correct view" in {
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
-          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+          bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
           bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

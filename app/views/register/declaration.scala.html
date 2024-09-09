@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -28,7 +29,8 @@
     showMasterTrustDeclaration: Boolean,
     hasWorkingKnowledge: Boolean,
     schemeName: Option[String],
-    href: Call
+    href: Call,
+    srn: SchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration__title")) {
@@ -66,6 +68,6 @@
 
     @button_link("site.agree_and_continue", href.url, "submit")
 
-    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
 }

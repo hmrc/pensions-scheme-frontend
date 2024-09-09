@@ -21,9 +21,10 @@ import controllers.EnterVATController
 import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -48,8 +49,8 @@ class CompanyEnterVATController @Inject()(
                                            val view: enterVATView
                                          )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
@@ -57,8 +58,8 @@ class CompanyEnterVATController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
+  () andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map { details =>
         val companyName = details.companyName
@@ -69,7 +70,7 @@ class CompanyEnterVATController @Inject()(
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, companyName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.CompanyEnterVATController.onSubmit(mode, index, srn),
       title = Message("messages__enterVAT", Message("messages__theCompany")),

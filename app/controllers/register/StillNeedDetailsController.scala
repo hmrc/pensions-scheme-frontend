@@ -18,7 +18,7 @@ package controllers.register
 
 import controllers.Retrievals
 import controllers.actions._
-import models.UpdateMode
+import models.{SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,8 +39,8 @@ class StillNeedDetailsController @Inject()(
     with I18nSupport {
 
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(UpdateMode, srn)).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData()).async {
       implicit request =>
         Future.successful(Ok(view(srn, existingSchemeName)))
     }

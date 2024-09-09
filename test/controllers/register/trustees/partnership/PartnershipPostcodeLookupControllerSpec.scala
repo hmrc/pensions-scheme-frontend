@@ -19,6 +19,7 @@ package controllers.register.trustees.partnership
 import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.trustees.partnership.PartnershipEnterVATControllerSpec.firstIndex
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
@@ -58,12 +59,15 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind(classOf[Navigator]).toInstance(fakeNavigator),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind(classOf[AllowAccessActionProvider]).toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
-          val request = addCSRFToken(FakeRequest())
+          val firstIndex: Index = Index(0)
           val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val request = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody( ("postCode", address.postcode.get)))
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
       }
@@ -84,7 +88,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
             val request = addCSRFToken(FakeRequest()
               .withFormUrlEncodedBody("postcode" -> validPostcode))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
-            val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+            val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -107,11 +111,12 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   val address: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
-    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
-    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
+    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, srn),
+    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, srn),
     title = Message("messages__partnershipPostcodeLookup__title"),
     heading = Message("messages__partnershipPostcodeLookup__heading", partnershipDetails.name),
-    subHeading = Some(partnershipDetails.name)
+    subHeading = Some(partnershipDetails.name),
+    srn = srn
   )
 
   val retrieval = new FakeDataRetrievalAction(Some(

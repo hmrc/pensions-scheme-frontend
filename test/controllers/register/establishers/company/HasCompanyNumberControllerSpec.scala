@@ -37,14 +37,14 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
   val formProvider = new HasCRNFormProvider()
   val form = formProvider("messages__hasCompanyNumber__error__required", "test company name")
   val index = Index(0)
-  val srn = None
   val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
 
   val viewModel = CommonFormWithHintViewModel(
     controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index),
     title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
     heading = Message("messages__hasCRN", "test company name"),
-    hint = Some(Message("messages__hasCompanyNumber__p1"))
+    hint = Some(Message("messages__hasCompanyNumber__p1")),
+    srn = srn
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -56,7 +56,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
@@ -69,7 +69,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
   "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -78,7 +78,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -89,7 +89,7 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

@@ -59,20 +59,21 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                          candidateDirectors: Seq[IndividualDetails],
                          eitherForm: Either[Form[List[Int]], Form[Int]],
                          schemeName: String,
+                         srn: SchemeReferenceNumber,
                          index: Int)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillCheckbox.checkboxes(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
-        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index, srn)
+        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
       case Right(form) =>
         val pageHeading = Messages("messages__trustees__prefill__title")
         val titleMessage = Messages("messages__trustees__prefill__heading")
         val options = DataPrefillRadio.radios(candidateDirectors)
-        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index)
-        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(index, srn)
+        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall, srn)))
     }
   }
 
@@ -83,8 +84,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
       Right(formRadio)
     }
 
-  def onPageLoad(index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map { schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -92,18 +93,19 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
               val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
               if (candidateDirectors.isEmpty) {
                 Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                  .onPageLoad(NormalMode, index, None)))
+                  .onPageLoad(NormalMode, index, srn)))
               } else {
                 renderView(Ok,
                   candidateDirectors,
                   getFormAsEither(candidateDirectors),
                   schemeName,
+                  srn,
                   index
                 )
               }
             case _ =>
               Future.successful(Redirect(controllers.register.trustees.individual.routes.TrusteeNameController
-                .onPageLoad(NormalMode, index, None)))
+                .onPageLoad(NormalMode, index, srn)))
           }.flatten
         }
     }
@@ -121,8 +123,8 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
     dataPrefillService.copySelectedDirectorsToTrustees(request.userAnswers, seqDirectorIdentifier)
   }
 
-  def onSubmit(index: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
+  def onSubmit(index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val candidateDirectors: Seq[IndividualDetails] = dataPrefillService.getListOfDirectorsToBeCopied(request.userAnswers)
         SchemeNameId.retrieve.map { schemeName =>
@@ -135,14 +137,15 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 } else {
                   appendSelectedDirectors(value, candidateDirectors)
                 }
-                userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy, index)
+                userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
+                  nav(value.headOption.getOrElse(-1) < 0, uaAfterCopy, index, srn)
                 }
               case _ =>
                 renderView(BadRequest,
                   candidateDirectors,
                   Left(boundForm),
                   schemeName,
+                  srn,
                   index
                 )
             }
@@ -155,14 +158,15 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 } else {
                   appendSelectedDirectors(List(0), candidateDirectors)
                 }
-                userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  nav(value < 0, uaAfterCopy, index)
+                userAnswersService.upsert(NormalMode, srn, uaAfterCopy.json).map { _ =>
+                  nav(value < 0, uaAfterCopy, index, srn)
                 }
               case _ =>
                 renderView(BadRequest,
                   candidateDirectors,
                   Right(boundForm),
                   schemeName,
+                  srn,
                   index
                 )
             }
@@ -170,11 +174,11 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
         }
     }
 
-  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers, index:Index): Result = {
+  private def nav(noneSelected:Boolean, uaAfterCopy: UserAnswers, index:Index, srn: SchemeReferenceNumber): Result = {
     if (noneSelected) {
-      Redirect(TrusteeNameController.onPageLoad(NormalMode, index, None))
+      Redirect(TrusteeNameController.onPageLoad(NormalMode, index, srn))
     } else {
-      Redirect(AddTrusteeController.onPageLoad(NormalMode, None))
+      Redirect(AddTrusteeController.onPageLoad(NormalMode, srn))
     }
   }
 

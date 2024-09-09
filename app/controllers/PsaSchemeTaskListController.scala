@@ -62,9 +62,10 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   private val logger  = Logger(classOf[PsaSchemeTaskListController])
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
-    andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, None, refreshData = true)
+    ).async {
     implicit request =>
+
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {
         case NormalMode | CheckMode => dataCacheConnector.lastUpdated(request.externalId)
           .map(parseDateElseException)
@@ -73,18 +74,18 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       lastUpdatedDate.flatMap { date =>
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
-        (srn, request.userAnswers, schemeNameOpt) match {
-          case (None, Some(userAnswers), Some(schemeName)) =>
+        ("", request.userAnswers, schemeNameOpt) match {
+          case (_, Some(userAnswers), Some(schemeName)) =>
             featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
               case true =>
-                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
+                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName, srn))
               case _ =>
                 dataCacheConnector.save(request.externalId, UKBankAccountId, false)
-                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
+                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date, mode), schemeName))
             }
-          case (Some(_), Some(userAnswers), Some(schemeName)) =>
+          case ((_), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
-          case (Some(_), answers, sn) =>
+          case ((_), answers, sn) =>
             logger.warn(s"Loading PSA task list page: srn $srn found but user answers empty " +
               s"check is ${answers.isEmpty} and scheme name is $sn")
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

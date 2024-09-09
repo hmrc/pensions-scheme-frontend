@@ -48,27 +48,27 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
   FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         Future.successful(Ok(view(vm(mode, srn))))
     }
 
-    def pspOnPageLoad(srn: String): Action[AnyContent] =
-      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
+    def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess((srn), allowPsa = true, allowPsp = true) andThen requireData).async {
         implicit request =>
-          Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+          Future.successful(Ok(view(vm(UpdateMode, (srn)))))
       }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
 
     val beforeYouStart = AnswerSection(
       None,
-      SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url, mode) ++
-        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url, mode) ++
-        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url, mode) ++
+      SchemeNameId.row(routes.SchemeNameController.onPageLoad().url, mode) ++
+        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad().url, mode) ++
+        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode, srn).url, mode) ++
         EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
     )
@@ -77,7 +77,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
       if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
     val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
-      case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
+      case (Practitioner, (srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }
 

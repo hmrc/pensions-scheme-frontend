@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.racdac.RACDACNameFormProvider
 import identifiers.racdac.RACDACNameId
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,27 +52,27 @@ class RACDACNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)).async {
     implicit request => {
       val preparedForm = request.userAnswers.flatMap(_.get(RACDACNameId)).fold(form)(v => form.fill(v))
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
-        Future.successful(Ok(view(preparedForm, mode, psaName)))
+        Future.successful(Ok(view(preparedForm, mode, psaName, srn)))
       }
     }
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            BadRequest(view(formWithErrors, mode, psaName))
+            BadRequest(view(formWithErrors, mode, psaName, srn))
           }
         },
           value =>
             dataCacheConnector.save(request.externalId, RACDACNameId, value).map {
-              cacheMap => Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap)))
+              cacheMap => Redirect(navigator.nextPage(RACDACNameId, mode, UserAnswers(cacheMap), srn))
             }
       )
   }

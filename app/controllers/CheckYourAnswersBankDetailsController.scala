@@ -19,8 +19,9 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
+
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, Mode, NormalMode, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,7 +43,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
@@ -55,11 +56,11 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
 
       val vm = CYAViewModel(
         answerSections = Seq(bankAccountSection),
-        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(""),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,
-        srn = None,
+        srn = "",
         hideSaveAndContinueButton = request.viewOnly,
         title = Message("checkYourAnswers.hs.title"),
         h1 = Message("checkYourAnswers.hs.title")

@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerNoUTRReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,8 +47,8 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
                                              val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
@@ -56,8 +57,8 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
@@ -69,7 +70,7 @@ class PartnerNoUTRReasonController @Inject()(override val appConfig: FrontendApp
   private def form(partnerName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__reason__error_utrRequired", partnerName)
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber,
                         partnerName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.PartnerNoUTRReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),

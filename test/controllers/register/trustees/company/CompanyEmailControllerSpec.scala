@@ -63,7 +63,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       dataRetrievalAction,
       FakeUserAnswersService,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
@@ -75,11 +75,11 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.CompanyEmailController.onSubmit(NormalMode, firstIndex, None),
+        routes.CompanyEmailController.onSubmit(NormalMode, firstIndex, srn),
         Message("messages__trustee_email__title"),
         Message("messages__enterEmail", "test company name"),
         Some(Message("messages__contact_email__hint", "test company name", schemeName)),
-        None
+        srn
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString
@@ -88,7 +88,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -98,7 +98,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

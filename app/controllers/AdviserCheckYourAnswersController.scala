@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import identifiers._
+
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,7 +48,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                  )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
 
@@ -60,11 +61,11 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
       val vm = CYAViewModel(
         answerSections = seqAnswerSection,
-        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(""),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,
-        srn = None,
+        srn = "",
         hideSaveAndContinueButton = request.viewOnly,
         title = Message("checkYourAnswers.hs.title"),
         h1 = Message("checkYourAnswers.hs.title")

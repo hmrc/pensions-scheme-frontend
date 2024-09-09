@@ -48,7 +48,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       FakeUserAnswersService,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       new FakeNavigator(desiredRoute = onwardRoute),
       formProvider,
@@ -60,11 +60,11 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, None),
+        routes.TrusteePhoneController.onSubmit(NormalMode, firstIndex, srn),
         Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
         Message("messages__enterPhoneNumber", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        srn
       ),
       None
     )(fakeRequest, messages).toString
@@ -73,7 +73,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -83,7 +83,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, srn)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -91,7 +91,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
 
       "yield BAD REQUEST when invalid value submitted" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", invalidValue))
-        val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, srn)(postRequest)
         val boundForm = form.bind(Map("phone" -> invalidValue))
 
         status(result) mustBe BAD_REQUEST

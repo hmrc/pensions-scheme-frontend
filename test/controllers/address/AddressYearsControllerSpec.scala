@@ -20,6 +20,7 @@ import org.apache.pekko.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.ControllerSpecBase
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -73,7 +74,7 @@ object AddressYearsControllerSpec {
 
 }
 
-class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures with MockitoSugar {
+class AddressYearsControllerSpec extends ControllerSpecBase with Matchers with OptionValues with ScalaFutures with MockitoSugar {
 
   import AddressYearsControllerSpec._
 
@@ -83,7 +84,8 @@ class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValue
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    legend = "legend"
+    legend = "legend",
+    srn = srn
   )
 
   "get" must {
@@ -149,7 +151,7 @@ class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValue
         app =>
 
           when(userAnswersService.save[AddressYears, FakeIdentifier.type](
-            eqTo(NormalMode), eqTo(None),
+            eqTo(NormalMode), eqTo(srn),
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(UserAnswers().json)
 

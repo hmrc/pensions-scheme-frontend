@@ -42,19 +42,19 @@ class WhatIsRACDACControllerSpec extends ControllerSpecBase with MockitoSugar wi
       FakeAuthAction,
       pensionAdministratorConnector,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       controllerComponents,
       view
     )
 
-  def viewAsString(): String = view(psaName)(fakeRequest, messages).toString
+  def viewAsString(): String = view(psaName, srn)(fakeRequest, messages).toString
 
   "WhatIsRACDACController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
         when(pensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val result = controller().onPageLoad(fakeRequest)
+        val result = controller().onPageLoad(srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

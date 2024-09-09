@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.FutureMembersFormProvider
 import identifiers.{FutureMembersId, SchemeNameId}
+
 import javax.inject.Inject
-import models.{Members, Mode}
+import models.{Members, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -55,7 +56,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
@@ -66,10 +67,10 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, ""))),
           value =>
             dataCacheConnector.save(request.externalId, FutureMembersId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(FutureMembersId, mode, UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(FutureMembersId, mode, UserAnswers(cacheMap), "")))
         )
       }
   }

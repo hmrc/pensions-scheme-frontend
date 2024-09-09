@@ -22,60 +22,61 @@ import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
 import models.{CheckMode, Members, NormalMode}
 import utils.{Enumerable, UserAnswers}
+import models.SchemeReferenceNumber
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       appConfig: FrontendAppConfig
                                      ) extends AbstractNavigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
-        currentMembersNavigationRoutes(from.userAnswers)
+        currentMembersNavigationRoutes(from.userAnswers, srn)
       case MembershipPensionRegulatorId =>
-        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode, srn))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case _ =>
         None
     }
   }
 
-  private def currentMembersNavigationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def currentMembersNavigationRoutes(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
-        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.FutureMembersController.onPageLoad(NormalMode, srn))
       case Some(_) =>
-        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(NormalMode, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+  override protected def editRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     from.id match {
       case CurrentMembersId =>
-        currentMembersNavigationEditRoutes(from.userAnswers)
+        currentMembersNavigationEditRoutes(from.userAnswers, srn)
       case MembershipPensionRegulatorId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case FutureMembersId =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case _ =>
         None
     }
   }
 
-  private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def currentMembersNavigationEditRoutes(userAnswers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     userAnswers.get(CurrentMembersId) match {
       case Some(Members.None) | Some(Members.One) =>
-        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, srn))
       case Some(_) =>
-        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode))
+        NavigateTo.dontSave(controllers.routes.MembershipPensionRegulatorController.onPageLoad(CheckMode, srn))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad)
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = None
 }

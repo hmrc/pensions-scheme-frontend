@@ -46,7 +46,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
@@ -63,7 +63,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         implicit app =>
           val request = addCSRFToken(FakeRequest() .withFormUrlEncodedBody(("utr", "1234567890")))
@@ -84,7 +84,6 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

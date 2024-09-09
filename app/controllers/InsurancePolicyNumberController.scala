@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,8 +51,8 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         val companyName = request.userAnswers.get(InsuranceCompanyNameId)
@@ -60,19 +61,17 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
+        Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, routes.InsurancePolicyNumberController.onSubmit(mode, srn), srn)))
     }
 
-  def postCall: (Mode, Option[String]) => Call = routes.InsurancePolicyNumberController.onSubmit
-
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           val companyName = request.userAnswers.get(InsuranceCompanyNameId)
           Future.successful(BadRequest(view(formWithErrors,
-            mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
+            mode, companyName, existingSchemeName, routes.InsurancePolicyNumberController.onSubmit(mode, srn), srn)))
         },
         value =>
           userAnswersService.save(mode, srn, InsurancePolicyNumberId, value).map(cacheMap =>

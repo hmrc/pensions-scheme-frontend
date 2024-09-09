@@ -22,7 +22,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.establishers.company.IsCompanyDormantId
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
 import navigators.Navigator
@@ -52,24 +52,23 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[DeclarationDormant] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
+  () andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
           val preparedForm = request.userAnswers.get(IsCompanyDormantId(index)).fold(form)(v => form.fill(v))
-          Future.successful(Ok(view(preparedForm, companyName, postCall(mode, srn, index), existingSchemeName)))
+          Future.successful(Ok(view(preparedForm, companyName, postCall(mode, srn, index), existingSchemeName, srn)))
       }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
-    srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(view(formWithErrors, companyName, postCall(mode, srn, index),
-              existingSchemeName))),
+              existingSchemeName, srn))),
           {
             case Yes =>
               userAnswersService.save(mode, srn, IsCompanyDormantId(index), DeclarationDormant.values.head).map {
@@ -87,7 +86,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController
+  private def postCall(mode: Mode, srn: SchemeReferenceNumber, index: Int): Call = routes.IsCompanyDormantController
     .onSubmit(mode, srn, index)
 
 }

@@ -22,6 +22,7 @@
 @import play.api.mvc.Call
 @import utils.InputOption
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+@import models.SchemeReferenceNumber
 
 @this(
     layout: templates.Layout,
@@ -32,7 +33,7 @@
     govukCheckboxes : GovukCheckboxes
 )
 
-@(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, titleMessage)) {
 
@@ -61,7 +62,7 @@
 
         @submit_button("site.save_and_continue", true)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink", schemeName, None, srn)
 
     }
 }

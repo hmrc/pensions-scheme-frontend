@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import models.{CheckUpdateMode, Index, Mode}
+import models.{CheckUpdateMode, Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -49,7 +49,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         app =>
         val request = addCSRFToken(FakeRequest())
@@ -75,7 +75,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
       )) {
         app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "1234567")))
@@ -95,7 +95,6 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex: Index = Index(0)
-  val srn: Option[String] = Some("S123")
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
@@ -105,7 +104,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
     )
   }
 
-  val postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit _
+  val postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.CompanyEnterCRNController.onSubmit _
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

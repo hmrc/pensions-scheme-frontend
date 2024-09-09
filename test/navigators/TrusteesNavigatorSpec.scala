@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -32,7 +33,7 @@ import utils.{Enumerable, UserAnswers}
 
 //scalastyle:off magic.number
 
-class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class TrusteesNavigatorSpec extends ControllerSpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
@@ -45,22 +46,22 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(AddTrusteeId)(true, trusteeKind(0, NormalMode, None)),
-          row(AddTrusteeId)(true, trusteeKind(1, NormalMode, None), ua = Some(trustees(1))),
-          rowNoValue(AddTrusteeId)(trusteeKind(0, NormalMode, None)),
-          rowNoValue(AddTrusteeId)(moreThanTenTrustees(NormalMode, None), ua = Some(trustees(10))),
-          row(AddTrusteeId)(false, taskList(NormalMode, None), ua = Some(establishersOrTrusteesChanged)),
-          rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, None)),
-          row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, None)),
+          row(AddTrusteeId)(true, trusteeKind(0, NormalMode, srn)),
+          row(AddTrusteeId)(true, trusteeKind(1, NormalMode, srn), ua = Some(trustees(1))),
+          rowNoValue(AddTrusteeId)(trusteeKind(0, NormalMode, srn)),
+          rowNoValue(AddTrusteeId)(moreThanTenTrustees(NormalMode, srn), ua = Some(trustees(10))),
+          row(AddTrusteeId)(false, taskList(NormalMode, srn), ua = Some(establishersOrTrusteesChanged)),
+          rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, srn)),
+          row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, srn)),
           row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees),
-          row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, None)),
-          row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, None), ua = Some(trustees(0))),
-          row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, None), ua = Some(oneDeletedTrustee)),
-          row(HaveAnyTrusteesId)(true, addTrustee(NormalMode, None), ua = Some(oneTrustee)),
-          row(HaveAnyTrusteesId)(false, taskList(NormalMode, None)),
-          rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, None))
+          row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, srn)),
+          row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, srn), ua = Some(trustees(0))),
+          row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, srn), ua = Some(oneDeletedTrustee)),
+          row(HaveAnyTrusteesId)(true, addTrustee(NormalMode, srn), ua = Some(oneTrustee)),
+          row(HaveAnyTrusteesId)(false, taskList(NormalMode, srn)),
+          rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, srn))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, srn)
     }
 
     "in UpdateMode" must {
@@ -85,10 +86,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
-
+  val srn = SchemeReferenceNumber("S123456L")
   private val emptyAnswers = UserAnswers()
-  private val srnValue     = "123"
-  private val srn          = Some(srnValue)
   private val index = 0
 
   private def establishersOrTrusteesChanged = emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
@@ -112,27 +111,27 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
 
-  private def addTrustee(mode: Mode, srn: Option[String]) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
+  private def addTrustee(mode: Mode, srn: SchemeReferenceNumber) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn)
 
-  private def companyDetails(mode: Mode, srn: Option[String]) =
+  private def companyDetails(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, srn)
 
-  private def partnershipDetails(mode: Mode, srn: Option[String]) =
+  private def partnershipDetails(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, srn)
 
-  private def moreThanTenTrustees(mode: Mode, srn: Option[String]) =
+  private def moreThanTenTrustees(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, srn)
 
-  private def trusteeName(mode: Mode, srn: Option[String]) =
+  private def trusteeName(mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, srn)
 
   private def directorsAlsoTrustees =
-    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
+    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index, srn)
 
-  private def trusteeKind(index: Int, mode: Mode, srn: Option[String]) =
+  private def trusteeKind(index: Int, mode: Mode, srn: SchemeReferenceNumber) =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, srn)
 
-  private def taskList(mode: Mode, srn: Option[String]) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def taskList(mode: Mode, srn: SchemeReferenceNumber) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   implicit class TrusteeUserAnswersOps(answers: UserAnswers) {
 

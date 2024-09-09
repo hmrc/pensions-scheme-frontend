@@ -55,18 +55,18 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  class TestAllowAccessAction(srn: Option[String],
+  class TestAllowAccessAction(srn: SchemeReferenceNumber,
                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
 
   }
 
-  class TestAllowAccessActionTaskList(srn: Option[String],
+  class TestAllowAccessActionTaskList(srn: SchemeReferenceNumber,
                                       psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionTaskList(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
-  class TestAllowAccessActionNoSuspendedCheck(srn: Option[String],
+  class TestAllowAccessActionNoSuspendedCheck(srn: SchemeReferenceNumber,
                                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionNoSuspendedCheck(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }

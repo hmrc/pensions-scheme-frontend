@@ -52,8 +52,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
 
-  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
+  def onPageLoad(companyIndex: Index, directorIndex: Index, mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
 
         val directorAnswerSection = anwerSection(companyIndex, directorIndex, mode, srn)
@@ -79,7 +79,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(vm)))
     }
 
-  private def anwerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])(implicit request:DataRequest[AnyContent]) = {
+  private def anwerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: SchemeReferenceNumber)(implicit request:DataRequest[AnyContent]) = {
 
     AnswerSection(None,
       Seq(

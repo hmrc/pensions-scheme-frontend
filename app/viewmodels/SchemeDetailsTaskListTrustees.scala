@@ -16,9 +16,11 @@
 
 package viewmodels
 
+import models.SchemeReferenceNumber
+
 case class SchemeDetailsTaskListTrustees(
                                   h1: String,
-                                  srn: Option[String],
+                                  srn: SchemeReferenceNumber,
                                   trustee: SchemeDetailsTaskListEntitySection,
                                   allComplete: Boolean,
                                   statsSection: Option[StatsSection]

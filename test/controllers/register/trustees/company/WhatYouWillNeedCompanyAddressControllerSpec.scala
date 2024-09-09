@@ -35,21 +35,21 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       controllerComponents,
       view
     )
 
-  lazy val href: Call = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index = Index(0), None)
+  lazy val href: Call = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index = Index(0), srn)
 
-  def viewAsString(): String = view(None, href, None, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, srn, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, Index(0), srn)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

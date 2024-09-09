@@ -18,6 +18,7 @@ package services
 
 import base.SpecBase
 import connectors._
+import controllers.ControllerSpecBase
 import identifiers.racdac.RACDACNameId
 import models._
 import models.requests.OptionalDataRequest
@@ -42,7 +43,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class UrlsPartialServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
+class UrlsPartialServiceSpec extends ControllerSpecBase with Matchers with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
 
   import UrlsPartialServiceSpec._
 
@@ -68,7 +69,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       .thenReturn(Future.successful(Some(JsNumber(BigDecimal(timestamp)))))
 
     when(lockConnector.getLockByPsa(any())(any(), any()))
-      .thenReturn(Future.successful(Some(SchemeVariance(psaId, srn))))
+      .thenReturn(Future.successful(Some(SchemeVariance(psaId, srn.id))))
     when(updateConnector.fetch(any())(any(), any()))
       .thenReturn(Future.successful(Some(schemeNameJsonOption)))
     when(updateConnector.lastUpdated(any())(any(), any()))
@@ -231,8 +232,9 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
   val timestamp: Long = System.currentTimeMillis
   private val psaId = "A0000000"
-  private val srn = "srn"
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
+  val srn = SchemeReferenceNumber("S123456L")
+
 
   private val deleteDate = LocalDate.now(ZoneOffset.UTC).plusDays(frontendAppConfig.daysDataSaved).format(formatter)
 
@@ -242,7 +244,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeNameJsonOption: JsObject = Json.obj("schemeName" -> schemeName)
   val schemeNameRACDACJsonOption: JsObject = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> schemeName))
   val schemeSrnNumberOnlyData: JsObject =
-    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> srn))
+    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> srn.id))
 
 
 

@@ -50,7 +50,8 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
       view(form,
         NormalMode,
         adviserName,
-        schemeName
+        schemeName,
+        srn
       )(fakeRequest, messages).toString()
 
   private def controller(
@@ -73,13 +74,13 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
     )
 
   def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
   "AdviserEmailAddressController" when {
 

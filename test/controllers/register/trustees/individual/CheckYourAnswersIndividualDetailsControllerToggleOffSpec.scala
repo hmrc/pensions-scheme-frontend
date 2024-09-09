@@ -50,22 +50,24 @@ class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controlle
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -98,11 +100,10 @@ class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controlle
 object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[String] = Some("S123")
   val name = "test name"
   val trusteeName: PersonName = PersonName("test", "name")
   val trusteeDob: LocalDate = LocalDate.now()
@@ -112,19 +113,19 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers()
-  private def trusteeDob(mode: Mode, srn: Option[String]) =
+  private def trusteeDob(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasNino(mode: Mode, srn: Option[String]) =
+  private def hasNino(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def nino(mode: Mode, srn: Option[String]) =
+  private def nino(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def noNinoReason(mode: Mode, srn: Option[String]) =
+  private def noNinoReason(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasUtr(mode: Mode, srn: Option[String]) =
+  private def hasUtr(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def utr(mode: Mode, srn: Option[String]) =
+  private def utr(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def noUtrReason(mode: Mode, srn: Option[String]) =
+  private def noUtrReason(mode: Mode, srn: SchemeReferenceNumber) =
     routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
   private val fullAnswers = emptyAnswers
@@ -145,7 +146,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
             _.set(TrusteeNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn)
 
   def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
@@ -171,7 +172,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -190,7 +191,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
     )
 
 
-  private def allValuesNo(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -244,7 +245,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
       new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       allowChangeHelper,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
@@ -254,7 +255,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, postUrl: Call = postUrl,
+                   srn: SchemeReferenceNumber, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(

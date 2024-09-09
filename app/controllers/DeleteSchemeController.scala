@@ -21,6 +21,7 @@ import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import identifiers.SchemeNameId
+import models.SchemeReferenceNumber
 import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,19 +50,19 @@ class DeleteSchemeController @Inject()(
   private val sessionExpired: Future[Result] = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
-              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey)))
+              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey, "")))
       }
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey))),
+            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey, ""))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {
               _ =>

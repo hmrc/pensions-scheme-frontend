@@ -34,7 +34,6 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   private val fakeUserAnswersCacheConnector = mock[UpdateSchemeCacheConnector]
 
   val schemeName = "scheme"
-  val srn = "srn"
 
   val validData: JsObject = Json.obj(
     SchemeNameId.toString -> schemeName
@@ -56,7 +55,7 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   def viewAsString(): String =
     view(
       Some(schemeName),
-      Some(srn)
+      (srn)
     )(fakeRequest, messages).toString
 
   appRunning()

@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -50,8 +51,8 @@ class ConfirmDeleteDirectorController @Inject()(
                                                )(implicit val executionContext: ExecutionContext
                                                ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { director =>
           if (director.isDeleted) {
@@ -64,7 +65,8 @@ class ConfirmDeleteDirectorController @Inject()(
                   form(director.fullName),
                   director.fullName,
                   routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                  existingSchemeName
+                  existingSchemeName,
+                  srn
                 )
               )
             )
@@ -74,8 +76,8 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
-  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
 
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { director =>
@@ -86,7 +88,8 @@ class ConfirmDeleteDirectorController @Inject()(
                 formWithErrors,
                 director.fullName,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex, mode, srn),
-                existingSchemeName
+                existingSchemeName,
+                srn
               ))),
             value => {
               if (value) {

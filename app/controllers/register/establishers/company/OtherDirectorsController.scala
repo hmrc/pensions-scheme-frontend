@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,8 +53,8 @@ class OtherDirectorsController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
           case None => Ok(view(form, mode, establisherIndex, existingSchemeName, postCall(mode, srn,
@@ -65,8 +66,8 @@ class OtherDirectorsController @Inject()(
 
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
@@ -79,5 +80,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, Option[String], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, SchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
 }

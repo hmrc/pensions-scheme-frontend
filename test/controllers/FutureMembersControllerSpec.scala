@@ -42,7 +42,7 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
     FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
 
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
+    view(form, NormalMode, schemeName, srn)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -64,14 +64,14 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(cache: UserAnswersCacheConnector): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode)
+    controller(cache = cache).onSubmit(NormalMode, srn)
 
   "Future Members Controller" when {
 

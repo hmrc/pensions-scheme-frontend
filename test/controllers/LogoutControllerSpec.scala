@@ -39,7 +39,7 @@ class LogoutControllerSpec extends ControllerSpecBase with Results with MockitoS
     "redirect to feedback survey page for an Individual and clear down session data cache" in {
       when(mockSessionDataCacheConnector.removeAll(any())(any(), any()))
         .thenReturn(Future.successful(Ok))
-      val result = logoutController.onPageLoad(fakeRequest)
+      val result = logoutController.onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.serviceSignOut)

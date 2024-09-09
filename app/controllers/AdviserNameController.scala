@@ -21,8 +21,9 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider
 import identifiers.AdviserNameId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -56,17 +57,17 @@ class AdviserNameController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode, existingSchemeName))
+      Ok(view(preparedForm, mode, existingSchemeName, ""))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, ""))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
-            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap), ""))
           }
       )
   }

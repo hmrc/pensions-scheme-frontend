@@ -17,8 +17,11 @@
 package controllers.behaviours
 
 import controllers.ControllerSpecBase
+import controllers.InsurerConfirmAddressControllerSpec.fakeAuditService
+import controllers.register.trustees.company.CompanyAddressController
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
+import models.{Index, NormalMode}
 import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -65,10 +68,28 @@ trait AddressControllerBehaviours extends ControllerSpecBase
     "render manualAddress from GET request" in {
       running(_ => builder) {
         implicit app =>
+          val address = Address(
+            addressLine1 = "value 1",
+            addressLine2 = "value 2",
+            None, None,
+            postcode = Some("AB1 1AB"),
+            country = "GB"
+          )
 
-          val request = addCSRFToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
 
-          val result = route(app, request).value
+          val firstIndex: Index = Index(0)
+
+          fakeAuditService.reset()
+
+          val controller = app.injector.instanceOf[CompanyAddressController]
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -76,7 +97,7 @@ trait AddressControllerBehaviours extends ControllerSpecBase
             form,
             viewmodel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
       }
     }
 

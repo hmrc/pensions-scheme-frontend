@@ -33,21 +33,21 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       view,
       controllerComponents
     )
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, None, index = Index(0))
+  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index = Index(0))
 
-  def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, srn, "test company name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, srn, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

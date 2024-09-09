@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.register.establishers.partnership.routes._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipHasVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -50,7 +51,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
 
   def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] = formProvider("messages__vat__formError", partnershipName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
       title = Message("messages__hasVAT", Message("messages__thePartnership")),
@@ -59,8 +60,8 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
           details =>
@@ -68,8 +69,8 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
           details =>

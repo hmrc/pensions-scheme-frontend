@@ -50,22 +50,24 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes())
-        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, srn)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, srn),
           title = Message("checkYourAnswers.hs.heading"),
-          h1 = Message("checkYourAnswers.hs.heading"))
+          h1 = Message("checkYourAnswers.hs.heading"),
+          srn = srn)
       }
     }
 
@@ -124,9 +126,9 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(mode: Mode = NormalMode, srn: Option[String] = None): Call = {
+  def onwardRoute(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Call = {
     if (mode == NormalMode) {
-      controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+      controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index, srn)
     } else {
       controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
     }
@@ -135,7 +137,6 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[String] = Some("S123")
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -145,25 +146,25 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[String]): String =
+  private def hasPartnershipUTRRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def partnershipUTRRoute(mode: Mode, srn: Option[String]): String =
+  private def partnershipUTRRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def noPartnershipUTRRoute(mode: Mode, srn: Option[String]): String =
+  private def noPartnershipUTRRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipVatRoute(mode: Mode, srn: Option[String]): String =
+  private def hasPartnershipVatRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipEnterVATRoute(mode: Mode, srn: Option[String]): String =
+  private def partnershipEnterVATRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[String]): String =
+  private def hasPartnershipPayeRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[String]): String =
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: SchemeReferenceNumber): String =
     routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
@@ -196,7 +197,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -226,7 +227,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[String]): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -276,7 +277,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
@@ -286,7 +287,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[String] = None, title:Message, h1:Message): String =
+                   srn: SchemeReferenceNumber, title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

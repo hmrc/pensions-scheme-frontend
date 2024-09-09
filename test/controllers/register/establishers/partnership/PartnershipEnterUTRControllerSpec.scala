@@ -41,7 +41,6 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   private val formProvider = new UTRFormProvider()
   private val form = formProvider()
   private val index = Index(0)
-  private val srn = None
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
 
   private val viewModel = UTRViewModel(
@@ -63,7 +62,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -75,7 +74,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipEnterUTRId(index))(testUtr).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = testUtr))
@@ -93,7 +92,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", dummyUtr))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -110,7 +109,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipEnterUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "invalid value"))
             val boundForm = form.bind(Map("utr" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, index, srn)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

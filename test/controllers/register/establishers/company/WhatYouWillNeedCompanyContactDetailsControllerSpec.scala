@@ -31,13 +31,12 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   private val establisherName = CompanyDetails("Test Company")
   private val index = 0
-  private val srn = Some("srn")
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def onwardRoute(mode: Mode, srn: Option[String]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
+  private def onwardRoute(mode: Mode, srn: SchemeReferenceNumber): Call = CompanyEmailController.onPageLoad(mode, srn, index)
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber): String = view(
     None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
@@ -47,10 +46,10 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
           modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, srn, index)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString()
+          contentAsString(result) mustBe viewAsString(NormalMode, srn)
         }
       }
     }

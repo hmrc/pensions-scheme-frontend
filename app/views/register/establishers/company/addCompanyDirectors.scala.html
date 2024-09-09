@@ -40,7 +40,7 @@
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String]
+    srn: SchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))){

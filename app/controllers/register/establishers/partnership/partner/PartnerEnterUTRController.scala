@@ -21,8 +21,9 @@ import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -47,8 +48,8 @@ class PartnerEnterUTRController @Inject()(
                                            val view: utr
                                          )(implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
@@ -57,8 +58,8 @@ class PartnerEnterUTRController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
@@ -69,7 +70,7 @@ class PartnerEnterUTRController @Inject()(
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String],
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber,
                         partnerName: String): UTRViewModel = {
     UTRViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerEnterUTRController.onSubmit

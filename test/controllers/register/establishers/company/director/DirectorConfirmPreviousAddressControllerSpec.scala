@@ -66,7 +66,6 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndex = 0
   val directorIndex = 0
-  val srn = Some("srn")
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new DirectorConfirmPreviousAddressController(
@@ -75,7 +74,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       countryOptions,

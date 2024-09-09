@@ -21,9 +21,10 @@ import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,8 +51,8 @@ class PartnerEnterNINOController @Inject()(
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes
     .PartnerEnterNINOController.onSubmit _
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           name =>
@@ -63,7 +64,7 @@ class PartnerEnterNINOController @Inject()(
         }
     }
 
-  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
+  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: SchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
@@ -73,8 +74,8 @@ class PartnerEnterNINOController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           name =>

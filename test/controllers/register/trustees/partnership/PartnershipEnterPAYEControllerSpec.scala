@@ -46,7 +46,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) {
         app =>
@@ -64,14 +64,14 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteePartnership),
         bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
-        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider())
+        bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn))
 
       )) {
         app =>
           val request =
             addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+          val result = controller.onSubmit(NormalMode, Index(0), srn)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -85,7 +85,6 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
 
   val form = new PayeFormProvider()("test partnership name")
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

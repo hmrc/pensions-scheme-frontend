@@ -54,20 +54,20 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       formProvider,
       mockPensionAdministratorConnector,
       controllerComponents,
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName, srn)(fakeRequest, messages).toString
 
   "RACDACName Controller" must {
 
     "return OK and the correct view for a GET" in {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -78,7 +78,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       val validData = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> "value 1"))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, srn)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill("value 1"))
     }
@@ -87,7 +87,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "value 1"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -99,7 +99,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
         val boundForm = form.bind(Map("value" -> ""))
 
-        val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode, srn)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

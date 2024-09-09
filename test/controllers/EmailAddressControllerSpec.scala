@@ -21,11 +21,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import forms.EmailFormProvider
 import identifiers.TypedIdentifier
-import models.CheckUpdateMode
+import models.{CheckUpdateMode, SchemeReferenceNumber}
 import models.requests.DataRequest
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
@@ -48,11 +48,13 @@ class EmailAddressControllerSpec extends SpecBase with Matchers with OptionValue
 
   private val view = injector.instanceOf[emailAddress]
 
+  val srn = SchemeReferenceNumber("srn")
   val viewmodel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
     postCall = Call("GET", "www.example.com"),
     title = "title",
     heading = "heading",
-    hint = Some("legend")
+    hint = Some("legend"),
+    srn = srn
   )
 
   "get" must {

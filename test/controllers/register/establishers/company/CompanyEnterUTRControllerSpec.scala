@@ -53,7 +53,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterUTRController]
         val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-        val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+        val result = controller.onSubmit(NormalMode, srn, index = 0)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -65,7 +65,6 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   private val view = injector.instanceOf[utr]
 

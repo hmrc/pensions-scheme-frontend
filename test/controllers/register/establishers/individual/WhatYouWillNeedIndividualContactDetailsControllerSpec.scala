@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherEmailController
 import models.person.PersonName
-import models.{Mode, NormalMode, UpdateMode}
+import models.{Mode, NormalMode, SchemeReferenceNumber, UpdateMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
@@ -30,13 +30,12 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
 
   private val establisherName = PersonName("Test", "Name")
   private val index = 0
-  private val srn = Some("srn")
 
-  private def onwardRoute(mode: Mode, srn: Option[String]): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
+  private def onwardRoute(mode: Mode, srn: SchemeReferenceNumber): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[String] = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: SchemeReferenceNumber): String = view(
     None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
@@ -46,10 +45,10 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
           modules(UserAnswers().establishersIndividualName(index, establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString()
+          contentAsString(result) mustBe viewAsString(NormalMode, srn)
         }
       }
     }

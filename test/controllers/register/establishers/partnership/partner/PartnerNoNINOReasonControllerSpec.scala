@@ -36,7 +36,6 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val name = "first last"
   private val form = formProvider("messages__reason__error_ninoRequired", name)
   private val establisherIndex, partnerIndex = Index(0)
-  private val srn = None
   private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
 
   private val viewModel = ReasonViewModel(
@@ -54,7 +53,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
@@ -66,7 +65,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, srn)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -75,7 +74,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,7 +85,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, srn)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

@@ -41,9 +41,9 @@ import scala.concurrent.Future
 
 class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute: Call = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex, None)
+  def onwardRoute: Call = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex,srn)
 
-  def manualInputCall: Call = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+  def manualInputCall: Call = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex,srn)
 
   val formProvider = new PostCodeLookupFormProvider()
 
@@ -63,7 +63,8 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     manualInputCall,
     Message("messages__directorPreviousAddressPostcodeLookup__title"),
     Message("messages__previousAddressPostcodeLookup__heading",director.fullName),
-    Some(director.fullName)
+    Some(director.fullName),
+    srn = srn
   )
   private val view = injector.instanceOf[postcodeLookup]
 
@@ -71,7 +72,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
       app =>
         val controller = app.injector.instanceOf[DirectorPreviousAddressPostcodeLookupController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0,srn)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe view(form, viewmodel, None)(fakeRequest, messages).toString
     }
@@ -88,7 +89,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[DirectorPreviousAddressPostcodeLookupController]
         val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0,srn)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }

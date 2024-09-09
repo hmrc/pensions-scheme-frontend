@@ -68,7 +68,6 @@ object EstablisherEnterUTRControllerSpec extends EstablisherEnterUTRControllerSp
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

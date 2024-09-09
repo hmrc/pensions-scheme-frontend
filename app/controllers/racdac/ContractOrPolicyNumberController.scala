@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.racdac.ContractOrPolicyNumberFormProvider
 import identifiers.racdac.ContractOrPolicyNumberId
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,31 +53,31 @@ class ContractOrPolicyNumberController @Inject()(
     with controllers.Retrievals
 {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request => {
       withRACDACName{ racdacName =>
         val form = formProvider(racdacName)
         val preparedForm = request.userAnswers.get(ContractOrPolicyNumberId).fold(form)(v => form.fill(v))
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            Ok(view(preparedForm, mode, psaName, racdacName))
+            Ok(view(preparedForm, mode, psaName, racdacName, srn))
           }
       }
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         val form = formProvider(racdacName)
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             pensionAdministratorConnector.getPSAName.map { psaName =>
-              BadRequest(view(formWithErrors, mode, psaName, racdacName))
+              BadRequest(view(formWithErrors, mode, psaName, racdacName, srn))
             }
           },
           value =>
             dataCacheConnector.save(request.externalId, ContractOrPolicyNumberId, value).map {
-              cacheMap => Redirect(navigator.nextPage(ContractOrPolicyNumberId, mode, UserAnswers(cacheMap)))
+              cacheMap => Redirect(navigator.nextPage(ContractOrPolicyNumberId, mode, UserAnswers(cacheMap), srn))
             }
         )
       }

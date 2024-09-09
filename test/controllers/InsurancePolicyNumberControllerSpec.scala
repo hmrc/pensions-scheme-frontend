@@ -23,7 +23,7 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsurancePolicyNumberFormProvider
 import forms.mappings.Transforms
 import identifiers.InsurancePolicyNumberId
-import models.NormalMode
+import models.{NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
@@ -65,10 +65,11 @@ class InsurancePolicyNumberControllerSpec extends ControllerWithQuestionPageBeha
   }
 }
 object InsurancePolicyNumberControllerSpec {
+  val srn = SchemeReferenceNumber("S123456L")
 
   val policyNumber = "test policy number"
   val companyName = "test company name"
-  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, None)
+  private def postUrl = routes.InsurancePolicyNumberController.onSubmit(NormalMode, srn)
   private val formProvider = new InsurancePolicyNumberFormProvider()
   private val form = formProvider.apply()
   private val mandatoryData = UserAnswers().insuranceCompanyName(companyName)
@@ -80,7 +81,7 @@ object InsurancePolicyNumberControllerSpec {
 
   private def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String = form => {
     val view = base.injector.instanceOf[insurancePolicyNumber]
-    view(form, NormalMode, Some(companyName), None, postUrl, None)(base.fakeRequest, base.messages).toString()
+    view(form, NormalMode, Some(companyName), None, postUrl, srn)(base.fakeRequest, base.messages).toString()
   }
 
   private def controller(base: ControllerSpecBase)(
@@ -97,7 +98,7 @@ object InsurancePolicyNumberControllerSpec {
       navigator,
       authAction,
       dataRetrievalAction,
-      FakeAllowAccessProvider(),
+      FakeAllowAccessProvider(srn),
       new DataRequiredActionImpl(),
       formProvider,
       controllerComponents,
@@ -106,14 +107,14 @@ object InsurancePolicyNumberControllerSpec {
   }
 
   private def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode, srn)
 
   private def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, srn)
 
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersService): Action[AnyContent] =
-    controller(base)(cache = cache).onSubmit(NormalMode, None)
+    controller(base)(cache = cache).onSubmit(NormalMode, srn)
 }
 
 

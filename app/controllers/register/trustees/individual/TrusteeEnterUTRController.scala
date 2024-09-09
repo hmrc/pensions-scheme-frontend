@@ -32,6 +32,7 @@ import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
@@ -46,8 +47,8 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
                                           val view: utr
                                          )(implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { trusteeName =>
           get(TrusteeUTRId(index), viewModel(mode, index, srn, trusteeName.fullName), form)
@@ -56,7 +57,7 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, trusteeName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.TrusteeEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual")),
@@ -66,8 +67,8 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { trusteeName =>
           post(TrusteeUTRId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form)

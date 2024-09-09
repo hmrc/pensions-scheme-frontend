@@ -43,20 +43,19 @@ import scala.concurrent.Future
 
 class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
   private val index = Index(0)
-  private val srn = Some("test-srn")
   private val trusteeName = "test name"
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(mode: Mode): Call = mode match {
-      case NormalMode => controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+      case NormalMode => controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index, srn)
       case _ => controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
     }
 
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
 
-  private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: SchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None, StringCYA[TrusteeEmailId](
       Some(messages("messages__enterEmail", trusteeName)),
       Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
@@ -71,7 +70,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call, hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: SchemeReferenceNumber, postUrl: Call, hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
@@ -97,17 +96,19 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           val app = applicationBuilder(fullAnswers.dataRetrievalAction).overrides(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, index, srn)(fakeRequest)
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
+          contentAsString(result) mustBe viewAsString(answerSection(NormalMode, srn),
             title = Message("checkYourAnswers.hs.heading"),
-            h1 = Message("checkYourAnswers.hs.heading"), postUrl = submitUrl(NormalMode))
+            h1 = Message("checkYourAnswers.hs.heading"), postUrl = submitUrl(NormalMode),
+            srn = srn)
           app.stop()
         }
 
@@ -116,10 +117,10 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
             bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
-            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
+            bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider(srn)),
             bind[DataRetrievalAction].to(fullAnswers.dataRetrievalAction),
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
-            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
+            bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider(srn))
           )
           running(_.overrides(ftBinding: _*)) {
             app =>

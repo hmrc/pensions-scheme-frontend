@@ -21,8 +21,9 @@ import controllers.PhoneNumberController
 import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorPhoneNumberId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,8 +53,8 @@ class DirectorPhoneNumberController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, directorIndex).retrieve.map {
           vm =>
@@ -61,7 +62,7 @@ class DirectorPhoneNumberController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, srn: Option[String], establisherIndex: Index, directorIndex: Index)
+  private def viewModel(mode: Mode, srn: SchemeReferenceNumber, establisherIndex: Index, directorIndex: Index)
   : Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
@@ -77,8 +78,8 @@ class DirectorPhoneNumberController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, establisherIndex, directorIndex).retrieve.map {
           vm =>

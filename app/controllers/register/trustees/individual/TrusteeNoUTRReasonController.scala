@@ -33,6 +33,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
@@ -47,8 +48,8 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
                                              val view: reason
                                             )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           trusteeName =>
@@ -57,8 +58,8 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           trusteeName =>
@@ -70,7 +71,7 @@ class TrusteeNoUTRReasonController @Inject()(val appConfig: FrontendAppConfig,
   private def form(trusteeName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_utrRequired", trusteeName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], trusteeName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: SchemeReferenceNumber, trusteeName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theIndividual")),

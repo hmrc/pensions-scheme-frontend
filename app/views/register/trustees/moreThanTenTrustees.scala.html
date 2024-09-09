@@ -29,7 +29,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: Option[String], submitUrl: Call, srn: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, schemeName: Option[String], submitUrl: Call, srn: SchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__moreThanTenTrustees__title"))) {
 
@@ -41,7 +41,7 @@
 
         @input_yes_no(
             field = form("value"),
-            label = messages("messages__moreThanTenTrustees__heading", schemeName),
+            label = messages("messages__moreThanTenTrustees__heading", schemeName, srn),
             hint = Some(messages("messages__moreThanTenTrustees__hint")),
             headingIsLegend = true
         )

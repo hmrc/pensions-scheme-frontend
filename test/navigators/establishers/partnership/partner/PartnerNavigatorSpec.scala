@@ -17,6 +17,7 @@
 package navigators.establishers.partnership.partner
 
 import base.SpecBase
+import controllers.ControllerSpecBase
 import controllers.register.establishers.partnership.partner.routes._
 import generators.Generators
 import identifiers.Identifier
@@ -35,7 +36,7 @@ import utils.UserAnswers
 
 import java.time.LocalDate
 
-class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
+class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators with ControllerSpecBase {
 
   import PartnerNavigatorSpec._
 
@@ -45,59 +46,59 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(AddPartnersId(index))(false, taskListPage(NormalMode, None)),
-        row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, None), Some(addPartnersMoreThan10)),
-        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, None, partnerIndex = 1), Some(lessThan10Partners)),
-        row(PartnerNameId(index, index))(somePersonNameValue, dobPage(NormalMode, None)),
-        row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(NormalMode, None)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(NormalMode, None)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(NormalMode, None)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(NormalMode, None)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(NormalMode, None)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(NormalMode, None)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(NormalMode, None)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, postcodeLookupPage(NormalMode, None)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, postcodeLookupPage(NormalMode, None)),
-        row(PartnerAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), addressListPage(NormalMode, None)),
-        row(PartnerAddressListId(index, index))(someTolerantAddress, addressYearsPage(NormalMode, None)),
-        row(PartnerAddressId(index, index))(someAddress, addressYearsPage(NormalMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(NormalMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(NormalMode, None)),
-        row(PartnerPreviousAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), paAddressListPage(NormalMode, None)),
-        row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, emailPage(NormalMode, None)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(NormalMode, None)),
-        row(PartnerEmailId(index, index))(someStringValue, phonePage(NormalMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(NormalMode, None)),
-        row(OtherPartnersId(index))(false, taskListPage(NormalMode, None)),
-        row(OtherPartnersId(index))(true, taskListPage(NormalMode, None))
+        row(AddPartnersId(index))(false, taskListPage(NormalMode, srn)),
+        row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, srn), Some(addPartnersMoreThan10)),
+        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, srn, partnerIndex = 1), Some(lessThan10Partners)),
+        row(PartnerNameId(index, index))(somePersonNameValue, dobPage(NormalMode, srn)),
+        row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(NormalMode, srn)),
+        row(PartnerHasNINOId(index, index))(true, ninoPage(NormalMode, srn)),
+        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(NormalMode, srn)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(NormalMode, srn)),
+        row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(NormalMode, srn)),
+        row(PartnerHasUTRId(index, index))(true, utrPage(NormalMode, srn)),
+        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(NormalMode, srn)),
+        row(PartnerEnterUTRId(index, index))(someRefValue, postcodeLookupPage(NormalMode, srn)),
+        row(PartnerNoUTRReasonId(index, index))(someStringValue, postcodeLookupPage(NormalMode, srn)),
+        row(PartnerAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), addressListPage(NormalMode, srn)),
+        row(PartnerAddressListId(index, index))(someTolerantAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnerAddressId(index, index))(someAddress, addressYearsPage(NormalMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(NormalMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(NormalMode, srn)),
+        row(PartnerPreviousAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), paAddressListPage(NormalMode, srn)),
+        row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, emailPage(NormalMode, srn)),
+        row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(NormalMode, srn)),
+        row(PartnerEmailId(index, index))(someStringValue, phonePage(NormalMode, srn)),
+        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(NormalMode, srn)),
+        row(OtherPartnersId(index))(false, taskListPage(NormalMode, srn)),
+        row(OtherPartnersId(index))(true, taskListPage(NormalMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, srn)
   }
 
   "CheckMode" must {
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckMode, None)),
-        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, None)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, None)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckMode, None)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckMode, None))
+        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckMode, srn)),
+        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, srn)),
+        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, srn)),
+        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, srn)),
+        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, srn)),
+        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, srn)),
+        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, srn)),
+        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckMode, srn)),
+        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, srn)),
+        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckMode, srn)),
+        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckMode, srn)),
+        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckMode, srn)),
+        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckMode, srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, srn)
   }
 
   "UpdateMode" must {
@@ -169,7 +170,6 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
 
 object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
-  private val srn = Some("srn")
   private val johnDoe = PersonName("first", "last")
   private def validData(partners: PersonName*) = {
     Json.obj(
@@ -186,61 +186,61 @@ object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(index, index))(value = true).asOpt.value
 
-  private def isThisPaPage(mode: Mode,  srn: Option[String]): Call =
+  private def isThisPaPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(index, index, srn)
 
-  private def otherPartnersPage(mode: Mode,  srn: Option[String]): Call =
+  private def otherPartnersPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn)
 
-  private def taskListPage(mode: Mode,  srn: Option[String]): Call =
+  private def taskListPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def partnerNamePage(mode: Mode, srn: Option[String], partnerIndex: Int): Call =
+  private def partnerNamePage(mode: Mode, srn: SchemeReferenceNumber, partnerIndex: Int): Call =
     controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)
 
-  private def dobPage(mode: Mode, srn: Option[String]): Call =
+  private def dobPage(mode: Mode, srn: SchemeReferenceNumber): Call =
     PartnerDOBController.onPageLoad(mode, index, index, srn)
 
-  private def hasNinoPage(mode: Mode,  srn: Option[String]): Call =
+  private def hasNinoPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerHasNINOController.onPageLoad(mode, index, index, srn)
 
-  private def ninoPage(mode: Mode,  srn: Option[String]): Call =
+  private def ninoPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerEnterNINOController.onPageLoad(mode, index, index, srn)
 
-  private def whyNoNinoPage(mode: Mode,  srn: Option[String]): Call =
+  private def whyNoNinoPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerNoNINOReasonController.onPageLoad(mode, index, index, srn)
 
-  private def hasUtrPage(mode: Mode,  srn: Option[String]): Call =
+  private def hasUtrPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerHasUTRController.onPageLoad(mode, index, index, srn)
 
-  private def utrPage(mode: Mode,  srn: Option[String]): Call =
+  private def utrPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerEnterUTRController.onPageLoad(mode, index, index, srn)
 
-  private def whyNoUtrPage(mode: Mode,  srn: Option[String]): Call =
+  private def whyNoUtrPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerNoUTRReasonController.onPageLoad(mode, index, index, srn)
 
-  private def cyaPage(mode: Mode,  srn: Option[String]): Call =
+  private def cyaPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     CheckYourAnswersController.onPageLoad(journeyMode(mode), index, index, srn)
 
-  private def postcodeLookupPage(mode: Mode,  srn: Option[String]): Call =
+  private def postcodeLookupPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
 
-  private def addressListPage(mode: Mode,  srn: Option[String]): Call =
+  private def addressListPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerAddressListController.onPageLoad(mode, index, index, srn)
 
-  private def paPostcodeLookupPage(mode: Mode,  srn: Option[String]): Call =
+  private def paPostcodeLookupPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
 
-  private def paAddressListPage(mode: Mode,  srn: Option[String]): Call =
+  private def paAddressListPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, index, index, srn)
 
-  private def addressYearsPage(mode: Mode,  srn: Option[String]): Call =
+  private def addressYearsPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerAddressYearsController.onPageLoad(mode, index, index, srn)
 
-  private def emailPage(mode: Mode,  srn: Option[String]): Call =
+  private def emailPage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerEmailController.onPageLoad(mode, index, index, srn)
 
-  private def phonePage(mode: Mode,  srn: Option[String]): Call =
+  private def phonePage(mode: Mode,  srn: SchemeReferenceNumber): Call =
     PartnerPhoneController.onPageLoad(mode, index, index, srn)
 }
 

@@ -48,7 +48,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
   val directorDetails = PersonName("first", "last")
 
-  private val onwardCall = routes.DirectorEmailController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+  private val onwardCall = routes.DirectorEmailController.onPageLoad(NormalMode, establisherIndex, directorIndex, srn)
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -69,10 +69,11 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   private val view = injector.instanceOf[manualAddress]
 
   val viewmodel = ManualAddressViewModel(
-    routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, None),
+    routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
     countryOptions.options,
     Message("messages__common__confirmPreviousAddress__h1", Message("messages__theDirector")),
-    Message("messages__common__confirmPreviousAddress__h1", directorDetails.fullName)
+    Message("messages__common__confirmPreviousAddress__h1", directorDetails.fullName),
+    srn
   )
   val address = Address(
     "value 1",
@@ -89,7 +90,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
         app =>
           val controller = app.injector.instanceOf[DirectorPreviousAddressController]
 
-          val result = controller.onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex, directorIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -104,7 +105,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
     "redirect to next page on POST request" which {
       "saves director address" in {
-        val onwardCall = routes.DirectorEmailController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+        val onwardCall = routes.DirectorEmailController.onPageLoad(NormalMode, establisherIndex, directorIndex, srn)
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
@@ -119,7 +120,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
           val controller = app.injector.instanceOf[DirectorPreviousAddressController]
 
-          val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, srn)(postRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardCall.url
@@ -145,7 +146,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
         val controller = app.injector.instanceOf[DirectorPreviousAddressController]
 
-        val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, srn)(postRequest)
 
         fakeAuditService.reset()
 

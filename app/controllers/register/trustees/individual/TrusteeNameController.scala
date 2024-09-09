@@ -40,6 +40,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
@@ -56,8 +57,8 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val updatedForm = request.userAnswers.get(TrusteeNameId(index)).fold(form)(form.fill)
         Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
@@ -66,15 +67,16 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
   private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] =
     formProvider("messages__error__trustees")
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[String]) = CommonFormWithHintViewModel(
+  private def viewmodel(mode: Mode, index: Index, srn: SchemeReferenceNumber) = CommonFormWithHintViewModel(
     TrusteeNameController.onSubmit(mode, index, srn),
     Message("messages__trusteeName__title"),
-    Message("messages__trusteeName__heading")
+    Message("messages__trusteeName__heading"),
+    srn = srn
   )
 
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
+  () andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

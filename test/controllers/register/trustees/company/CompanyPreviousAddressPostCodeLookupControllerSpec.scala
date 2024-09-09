@@ -40,6 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.FakeNavigator
+import utils.annotations.NoSuspendedCheck
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -48,7 +49,7 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), srn)
 
 
   private val view = injector.instanceOf[postcodeLookup]
@@ -80,24 +81,29 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
         bind[UserAnswersService].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval)
+        bind[DataRetrievalAction].to(retrieval),
+        bind[AllowAccessActionProvider].to(FakeAllowAccessProvider(srn))
+
       )) {
         implicit app =>
 
           val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
+          val validPostcode = "ZZ1 1ZZ"
 
           lazy val viewModel = PostcodeLookupViewModel(
-            postCall = controller.postCall(NormalMode, firstIndex, None),
-            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
+            postCall = controller.postCall(NormalMode, firstIndex, srn),
+            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, srn),
             title = Message(controller.title),
             heading = Message(controller.heading, company.companyName),
-            subHeading = Some(company.companyName)
+            subHeading = Some(company.companyName),
+            srn = srn
           )
 
-          val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))
+          val fakeRequest = addCSRFToken(FakeRequest()
+            .withFormUrlEncodedBody("postcode" -> validPostcode)
             .withHeaders("Csrf-Token" -> "nocheck"))
 
-          val result = route(app, request).value
+          val result = controller.onPageLoad(NormalMode, firstIndex, srn)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -105,7 +111,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             form,
             viewModel,
             None
-          )(request, messages).toString
+          )(fakeRequest, messages).toString
       }
     }
 
@@ -136,7 +142,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
               .withHeaders("Csrf-Token" -> "nocheck"))
 
             val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, srn)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardRoute.url

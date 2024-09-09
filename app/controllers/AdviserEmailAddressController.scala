@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.adviser.AdviserEmailFormProvider
 import identifiers.{AdviserEmailId, AdviserNameId, SchemeNameId}
-import models.Mode
+import models.{Mode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -62,7 +62,7 @@ class AdviserEmailAddressController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName, "")))
       }
   }
 
@@ -74,13 +74,13 @@ class AdviserEmailAddressController @Inject()(
             schemeName <- SchemeNameId.retrieve
             adviserName <- AdviserNameId.retrieve
           } yield {
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName)))
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName, "")))
           }
         },
         value =>
           dataCacheConnector.save(request.externalId, AdviserEmailId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserEmailId, mode, UserAnswers(cacheMap)))
+              Redirect(navigator.nextPage(AdviserEmailId, mode, UserAnswers(cacheMap), ""))
           }
       )
   }

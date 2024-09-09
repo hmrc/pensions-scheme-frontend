@@ -72,7 +72,6 @@ object PspSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val view = injector.instanceOf[pspTaskList]
   private val fakeHsTaskListHelper = mock[HsTaskListHelperPsp]
 
-  private val srn = "S1000000456"
   private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: PspDataRetrievalAction = userAnswers): PspSchemeTaskListController =
@@ -83,7 +82,7 @@ object PspSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       controllerComponents,
       view,
       fakeHsTaskListHelper,
-      FakeAllowAccessProvider()
+      FakeAllowAccessProvider(srn)
     )
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
