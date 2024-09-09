@@ -22,7 +22,7 @@ import forms.register.SchemeTypeFormProvider
 import identifiers.{SchemeNameId, SchemeTypeId}
 
 import javax.inject.Inject
-import models.{Mode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,27 +48,27 @@ class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(SchemeTypeId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, NormalMode, schemeName, "")))
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, srn)))
+            Future.successful(BadRequest(view(formWithErrors, NormalMode, schemeName, "")))
           },
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap), srn))
+            Redirect(navigator.nextPage(SchemeTypeId, NormalMode, UserAnswers(cacheMap), ""))
           )
       )
   }

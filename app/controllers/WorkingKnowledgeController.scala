@@ -51,28 +51,28 @@ class WorkingKnowledgeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString, srn))
+      Ok(view(preparedForm, mode, existingSchemeNameOrEmptyString, ""))
   }
 
   private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
     existingSchemeName.getOrElse("")
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString, srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString, ""))),
         value => {
 
           dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap), srn))
+            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap), ""))
           )
         }
       )

@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
-import models.{Mode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
@@ -56,17 +56,17 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn)) {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(view(preparedForm, mode, existingSchemeName.getOrElse(""), srn))
+      Ok(view(preparedForm, NormalMode, existingSchemeName.getOrElse(""), ""))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse(""), srn))),
+          Future.successful(BadRequest(view(formWithErrors, NormalMode, existingSchemeName.getOrElse(""), "srn"))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
@@ -74,11 +74,12 @@ class SchemeNameController @Inject()(
                 BadRequest(view(form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match", psaName
-                ), mode, existingSchemeName.getOrElse(""), srn))
+                ), NormalMode, existingSchemeName.getOrElse(""), "srn"))
               }
             } else {
+              //TODO fetch srn here
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
-                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap), srn))
+                Redirect(navigator.nextPage(SchemeNameId, NormalMode, UserAnswers(cacheMap), ""))
               }
             } recoverWith {
               case e: NotFoundException =>

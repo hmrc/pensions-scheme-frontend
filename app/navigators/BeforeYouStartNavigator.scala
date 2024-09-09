@@ -30,10 +30,10 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
                                         frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom, srn: SchemeReferenceNumber): Option[NavigateTo] = from.id match {
-    case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode, srn))
+    case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad())
     case SchemeTypeId => schemeTypeRoutes(from.userAnswers, srn)
-    case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode, srn))
-    case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode, srn))
+    case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+    case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers(srn)
     case _ => None
   }
@@ -41,7 +41,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   private def schemeTypeRoutes(answers: UserAnswers, srn: SchemeReferenceNumber): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
       case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
-        NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode, srn))
+        NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
       case Some(_) =>
         NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode, srn))
       case None =>

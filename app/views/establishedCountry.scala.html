@@ -45,7 +45,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
 
-    @formHelper(action = routes.EstablishedCountryController.onSubmit(mode, srn),  Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.EstablishedCountryController.onSubmit(mode),  Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

@@ -66,11 +66,11 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
 
     val beforeYouStart = AnswerSection(
       None,
-      SchemeNameId.row(routes.SchemeNameController.onPageLoad(srn).url, mode) ++
-        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode, srn).url, mode) ++
+      SchemeNameId.row(routes.SchemeNameController.onPageLoad().url, mode) ++
+        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad().url, mode) ++
         HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode, srn).url, mode) ++
-        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode, srn).url, mode) ++
-        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode, srn).url, mode)
+        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url, mode) ++
+        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url, mode)
     )
 
     val heading = (titleOrHeading: Message) =>

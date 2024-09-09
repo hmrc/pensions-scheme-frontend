@@ -38,10 +38,10 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
                                                          )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      Future.successful(Ok(view(existingSchemeName, srn)))
+      Future.successful(Ok(view(existingSchemeName, "")))
   }
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() { Redirect(AdviserNameController.onPageLoad(NormalMode, srn)) }
+  def onSubmit(): Action[AnyContent] = authenticate() { Redirect(AdviserNameController.onPageLoad(NormalMode, "")) }
 }

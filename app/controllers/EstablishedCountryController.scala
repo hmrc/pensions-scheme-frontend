@@ -23,7 +23,7 @@ import forms.EstablishedCountryFormProvider
 import identifiers.{EstablishedCountryId, SchemeNameId}
 
 import javax.inject.Inject
-import models.{Mode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,27 +51,27 @@ class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(EstablishedCountryId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, countryOptions.options, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, mode, countryOptions.options, schemeName, "")))
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode = NormalMode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options, schemeName, srn)))
+            Future.successful(BadRequest(view(formWithErrors, mode, countryOptions.options, schemeName, "")))
           },
         value =>
           dataCacheConnector.save(request.externalId, EstablishedCountryId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(EstablishedCountryId, mode, UserAnswers(cacheMap), srn))
+            Redirect(navigator.nextPage(EstablishedCountryId, mode, UserAnswers(cacheMap), ""))
           )
       )
   }
