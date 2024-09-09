@@ -31,7 +31,7 @@
 
 
 <p class="govuk-margin-top-8 govuk-body">
-    <a id="return-link" class="govuk-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))(call => call)">
+    <a id="return-link" class="govuk-link" href="@anotherReturn.fold(controllers.routes.PsaSchemeTaskListController.onPageLoad(srn))(call => call)">
         @returnMessage
     </a>
 </p>

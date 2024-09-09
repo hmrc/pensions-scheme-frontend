@@ -23,7 +23,7 @@ import controllers.address.AddressListController
 import identifiers._
 
 import javax.inject.Inject
-import models.{Mode, SchemeReferenceNumber}
+import models.Mode
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -49,30 +49,30 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                             )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode ): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      viewModel(mode, srn).map(get)
+      viewModel(mode).map(get)
   }
 
-  private def viewModel(mode: Mode, srn: SchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+  private def viewModel(mode: Mode )(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
     (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.map {
       case addresses ~ name =>
         AddressListViewModel(
-          postCall = routes.AdviserAddressListController.onSubmit(mode, srn),
-          manualInputCall = routes.AdviserAddressController.onPageLoad(mode, srn),
+          postCall = routes.AdviserAddressListController.onSubmit(mode),
+          manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
           addresses = addresses,
           heading = Message("messages__dynamic_whatIsAddress", name),
           title = Message("messages__dynamic_whatIsAddress", Message("messages__theAdviser")),
-          srn = srn,
+          srn = "",
           entityName = name
         )
-    }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode, srn))))
+    }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
-      viewModel(mode, srn).map {
+      viewModel(mode).map {
         vm =>
           post(vm, AdviserAddressListId, AdviserAddressId, mode, s"Adviser Address: ${vm.entityName}",
             AdviserAddressPostCodeLookupId)

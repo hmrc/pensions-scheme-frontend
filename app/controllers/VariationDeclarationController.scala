@@ -58,7 +58,7 @@ class VariationDeclarationController @Inject()(
     with I18nSupport
     with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
             updateSchemeCacheConnector.fetch(srn).map {
@@ -69,7 +69,7 @@ class VariationDeclarationController @Inject()(
                   href = VariationDeclarationController.onClickAgree(srn)
                 ))
               case _ =>
-                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
+                Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(srn))
             }
     }
 

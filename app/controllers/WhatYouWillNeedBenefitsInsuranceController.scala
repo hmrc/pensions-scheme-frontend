@@ -37,12 +37,12 @@ class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAp
                                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      Future.successful(Ok(view(existingSchemeName, srn)))
+      Future.successful(Ok(view(existingSchemeName, "")))
   }
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
-    Future.successful(Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode, srn)))
+  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData()).async {
+    Future.successful(Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)))
   }
 }

@@ -56,17 +56,17 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
-      Ok(view(preparedForm, NormalMode, existingSchemeName.getOrElse(""), ""))
+      Ok(view(preparedForm, mode, existingSchemeName.getOrElse(""), ""))
   }
 
-  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, NormalMode, existingSchemeName.getOrElse(""), "srn"))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse(""), "srn"))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
@@ -79,7 +79,7 @@ class SchemeNameController @Inject()(
             } else {
               //TODO fetch srn here
               dataCacheConnector.save(request.externalId, SchemeNameId, value).map { cacheMap =>
-                Redirect(navigator.nextPage(SchemeNameId, NormalMode, UserAnswers(cacheMap), ""))
+                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap), ""))
               }
             } recoverWith {
               case e: NotFoundException =>

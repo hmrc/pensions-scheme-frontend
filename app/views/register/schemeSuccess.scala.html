@@ -55,7 +55,7 @@
 
 @layout(pageTitle = messages("messages__complete__title"), showBackLink = false) {
 
-    @formHelper(action = routes.SchemeSuccessController.onSubmit(srn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.SchemeSuccessController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @panel(
             panelTitle = messages("messages__complete__heading"),

@@ -42,7 +42,7 @@
         <li>@messages("messages__before_you_start__item_4")</li>
     </ul>
 
-    @button_link("site.continue", SchemeNameController.onPageLoad().url, "submit")
+    @button_link("site.continue", SchemeNameonPageLoad(mode).url, "submit")
 
     @components.return_link(messages("site.return_to", psaName), None, Some(appConfig.managePensionsSchemeOverviewUrl), "")
 

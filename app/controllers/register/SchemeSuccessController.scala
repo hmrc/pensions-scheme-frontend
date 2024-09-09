@@ -48,7 +48,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
 
       pensionAdministratorConnector.getPSAEmail.flatMap { email =>
@@ -72,7 +72,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                     LocalDate.now(),
                     submissionReferenceNumber.schemeReferenceNumber,
                     request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-                    email, srn
+                    email, ""
                   )))
               case JsError(_) => Future(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
             }
@@ -82,7 +82,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
   }
 
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = authenticate() {
+  def onSubmit(): Action[AnyContent] = authenticate() {
     Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 }

@@ -43,24 +43,24 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
 
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       val bankAccountSection = AnswerSection(
         None,
-        UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode, srn).url) ++
-          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode, srn).url)
+        UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
+          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
       val vm = CYAViewModel(
         answerSections = Seq(bankAccountSection),
-        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, srn),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(""),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,
-        srn = srn,
+        srn = "",
         hideSaveAndContinueButton = request.viewOnly,
         title = Message("checkYourAnswers.hs.title"),
         h1 = Message("checkYourAnswers.hs.title")

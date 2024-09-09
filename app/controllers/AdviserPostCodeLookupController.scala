@@ -53,29 +53,29 @@ class AdviserPostCodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
-          get(viewmodel(mode, adviserName, srn))
+          get(viewmodel(mode, adviserName))
         }
     }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] =
+  def onSubmit(mode: Mode): Action[AnyContent] =
     (authenticate() andThen getData() andThen requireData).async {
       implicit request =>
         AdviserNameId.retrieve.map { adviserName =>
-          post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName, srn), mode)
+          post(AdviserAddressPostCodeLookupId, viewmodel(mode, adviserName), mode)
         }
     }
 
-  private def viewmodel(mode: Mode, adviserName: String, srn: SchemeReferenceNumber) =
+  private def viewmodel(mode: Mode, adviserName: String) =
     PostcodeLookupViewModel(
-      routes.AdviserPostCodeLookupController.onSubmit(mode, srn),
-      routes.AdviserAddressController.onPageLoad(mode, srn),
+      routes.AdviserPostCodeLookupController.onSubmit(mode),
+      routes.AdviserAddressController.onPageLoad(mode),
       title = Message("messages__adviserPostCodeLookup__heading", Message("messages__theAdviser")),
       heading = Message("messages__adviserPostCodeLookup__heading", adviserName),
       subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-      srn = srn
+      srn = ""
     )
 }

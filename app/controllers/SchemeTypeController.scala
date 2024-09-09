@@ -48,27 +48,27 @@ class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(SchemeTypeId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, NormalMode, schemeName, "")))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, NormalMode, schemeName, "")))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, "")))
           },
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeTypeId, NormalMode, UserAnswers(cacheMap), ""))
+            Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap), ""))
           )
       )
   }

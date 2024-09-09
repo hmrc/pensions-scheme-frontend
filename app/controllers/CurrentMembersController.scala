@@ -49,26 +49,26 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
                                         ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits
   with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(CurrentMembersId) match {
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, srn))),
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, ""))),
           value =>
             dataCacheConnector.save(request.externalId, CurrentMembersId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(CurrentMembersId, mode, UserAnswers(cacheMap), srn))
+              Redirect(navigator.nextPage(CurrentMembersId, mode, UserAnswers(cacheMap), ""))
             }
         )
       }

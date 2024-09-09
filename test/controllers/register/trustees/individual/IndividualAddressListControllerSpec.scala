@@ -150,7 +150,6 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
       val request = addCSRFToken(FakeRequest())
       val controller = app.injector.instanceOf[IndividualAddressListController]
-      println(s"${request.body.toString}")
       val result = controller.onPageLoad(NormalMode, Index(0), srn)(request)
 
       status(result) mustBe SEE_OTHER

@@ -29,7 +29,7 @@ case object AboutMembersSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationAddLinkText, variationsViewLinkText),
-      controllers.routes.WhatYouWillNeedMembersController.onPageLoad(srn).url
+      controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
@@ -41,7 +41,7 @@ case object AboutMembersSpoke extends Spoke {
   override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationContinueLinkText, variationsViewLinkText),
-      controllers.routes.WhatYouWillNeedMembersController.onPageLoad(srn).url
+      controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -57,7 +57,7 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn, registrationAddLinkText, variationsViewLinkText),
-      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad(srn).url
+      controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
@@ -72,7 +72,7 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
       if (mode == UpdateMode)
         controllers.routes.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, srn).url
       else
-        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad(srn).url
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -83,19 +83,19 @@ case object AboutBankDetailsSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text_add", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad(srn).url
+      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
     )
 
   override def changeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text", name),
-      controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad(srn).url
+      controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url
     )
 
   override def incompleteChangeLink(name: String)(mode: Mode, srn: SchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       Message("messages__schemeTaskList__about_bank_details_link_text_continue", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad(srn).url
+      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
     )
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =

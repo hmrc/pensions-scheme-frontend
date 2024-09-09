@@ -89,15 +89,15 @@ class DeclarationController @Inject()(
   }
 
 
-  def onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
         case _ =>
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
-          showPage(Ok.apply, mode, srn)
+          showPage(Ok.apply, NormalMode, "")
         } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad("")))
         }
       }
   }
@@ -106,7 +106,7 @@ class DeclarationController @Inject()(
                       (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val isEstCompany = request.userAnswers.hasCompanies(NormalMode)
-    val href = DeclarationController.onClickAgree(mode, srn)
+    val href = DeclarationController.onClickAgree
 
     val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head
     else DeclarationDormant.values(1)
@@ -153,7 +153,7 @@ class DeclarationController @Inject()(
       case _ => false
     }
 
-  def onClickAgree(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onClickAgree(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
       val updatedUA = request.userAnswers.remove(identifiers.racdac.DeclarationId).asOpt
@@ -167,10 +167,10 @@ class DeclarationController @Inject()(
         _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
         _ <- auditTcmp(psaId.id, request.userAnswers)
       } yield {
-        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), srn))
+        Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap), submissionResponse.schemeReferenceNumber))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(srn)))
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad("")))
         case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }

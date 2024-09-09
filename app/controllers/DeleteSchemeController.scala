@@ -50,19 +50,19 @@ class DeleteSchemeController @Inject()(
   private val sessionExpired: Future[Result] = Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
 
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
-              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey, srn)))
+              Future.successful(Ok(view(form, schemeName, psaName, hintTextMessageKey, "")))
       }
   }
 
-  def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onSubmit(): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey, srn))),
+            Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey, ""))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {
               _ =>

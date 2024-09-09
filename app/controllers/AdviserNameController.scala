@@ -51,23 +51,23 @@ class AdviserNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.get(AdviserNameId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode, existingSchemeName, srn))
+      Ok(view(preparedForm, mode, existingSchemeName, ""))
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, srn))),
+          Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, ""))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserNameId, value).map { cacheMap =>
-            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap), srn))
+            Redirect(navigator.nextPage(AdviserNameId, mode, UserAnswers(cacheMap), ""))
           }
       )
   }

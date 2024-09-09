@@ -48,29 +48,29 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(UKBankAccountId) match {
           case None => form(schemeName)
           case Some(value) => form(schemeName).fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
   private def form(schemeName: String)(implicit messages: Messages): Form[Boolean] = formProvider(schemeName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
 
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, srn))),
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, ""))),
           value =>
             dataCacheConnector.save(request.externalId, UKBankAccountId, value).map { cacheMap =>
-              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap), srn))
+              Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap), ""))
             }
         )
       }

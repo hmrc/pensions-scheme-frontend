@@ -33,7 +33,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__investment_regulated_scheme__title"))){
 
-    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = InvestmentRegulatedSchemeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

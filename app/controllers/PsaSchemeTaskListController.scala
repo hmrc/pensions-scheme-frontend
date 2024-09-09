@@ -62,8 +62,8 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   private val logger  = Logger(classOf[PsaSchemeTaskListController])
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, Some(srn), refreshData = true)
-    andThen allowAccess(srn)).async {
+  def onPageLoad(mode: Mode = NormalMode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, None, refreshData = true)
+    ).async {
     implicit request =>
 
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {
@@ -74,7 +74,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
       lastUpdatedDate.flatMap { date =>
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
-        (srn, request.userAnswers, schemeNameOpt) match {
+        ("", request.userAnswers, schemeNameOpt) match {
           case (_, Some(userAnswers), Some(schemeName)) =>
             featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
               case true =>

@@ -45,7 +45,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                        )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(srn) andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         pensionAdministratorConnector.getPSAEmail.flatMap { email =>

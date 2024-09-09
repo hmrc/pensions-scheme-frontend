@@ -34,7 +34,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__adviserName__title"))) {
 
-    @formHelper(action = AdviserNameController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = AdviserNameController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

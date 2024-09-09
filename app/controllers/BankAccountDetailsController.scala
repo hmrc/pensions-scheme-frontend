@@ -50,27 +50,27 @@ class BankAccountDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         val preparedForm = request.userAnswers.get(BankAccountDetailsId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, mode, schemeName, "")))
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeNameId.retrieve.map { schemeName =>
-            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, srn)))
+            Future.successful(BadRequest(view(formWithErrors, mode, schemeName, "")))
           },
         value =>
           dataCacheConnector.save(request.externalId, BankAccountDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(BankAccountDetailsId, mode, UserAnswers(cacheMap), srn)))
+            Redirect(navigator.nextPage(BankAccountDetailsId, mode, UserAnswers(cacheMap), "")))
       )
   }
 }

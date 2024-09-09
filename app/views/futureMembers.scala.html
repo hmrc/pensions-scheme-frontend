@@ -35,7 +35,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__future_members__title"))) {
 
-    @formHelper(action = FutureMembersController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = FutureMembersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

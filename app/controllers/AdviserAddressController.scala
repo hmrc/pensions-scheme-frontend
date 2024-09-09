@@ -62,29 +62,29 @@ class AdviserAddressController @Inject()(
   private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
   private[controllers] val hint = None
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.map { adviserName =>
-        get(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName, srn))
+        get(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName))
       }
   }
 
-  private def viewmodel(mode: Mode, adviserName: String, srn: SchemeReferenceNumber): ManualAddressViewModel =
+  private def viewmodel(mode: Mode, adviserName: String): ManualAddressViewModel =
     ManualAddressViewModel(
-      postCall(mode, srn),
+      postCall(mode),
       countryOptions.options,
       title = title,
       heading = heading(adviserName),
-      srn
+      ""
     )
 
   private[controllers] def heading(adviserName: String): Message =
     Message("messages__common__confirmAddress__h1", adviserName)
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       AdviserNameId.retrieve.map { adviserName =>
-        post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName, srn), mode, "Adviser Address",
+        post(AdviserAddressId, AdviserAddressListId, viewmodel(mode, adviserName), mode, "Adviser Address",
           AdviserAddressPostCodeLookupId)
       }
   }

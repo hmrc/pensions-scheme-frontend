@@ -51,7 +51,7 @@ class AdviserPhoneController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       val form = formProvider()
       for {
@@ -62,11 +62,11 @@ class AdviserPhoneController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName, srn)))
+        Future.successful(Ok(view(preparedForm, mode, adviserName, schemeName, "")))
       }
   }
 
-  def onSubmit(mode: Mode, srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
@@ -74,13 +74,13 @@ class AdviserPhoneController @Inject()(
             schemeName <- SchemeNameId.retrieve
             adviserName <- AdviserNameId.retrieve
           } yield {
-            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName, srn)))
+            Future.successful(BadRequest(view(formWithErrors, mode, adviserName, schemeName, "")))
           }
         },
         value =>
           dataCacheConnector.save(request.externalId, AdviserPhoneId, value).map {
             cacheMap =>
-              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap), srn))
+              Redirect(navigator.nextPage(AdviserPhoneId, mode, UserAnswers(cacheMap), ""))
           }
       )
   }
