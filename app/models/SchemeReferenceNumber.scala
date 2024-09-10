@@ -59,7 +59,7 @@ object SchemeReferenceNumber {
     new JavascriptLiteral[Option[SchemeReferenceNumber]] {
       def to(value: Option[SchemeReferenceNumber]): String = value match {
         case Some(schemeRef) => s"'${schemeRef.id}'"
-        case None => "null"
+        case None => ""
       }
     }
 
