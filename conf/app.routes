@@ -8,12 +8,12 @@ GET         /                                                        controllers
 
 
 GET         /scheme-detail                                          controllers.TaskListRedirectController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /scheme-detail                                     controllers.TaskListRedirectController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
+GET         /scheme-detail/:srn                                     controllers.TaskListRedirectController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
 
-GET         /pension-scheme                                     controllers.PspSchemeTaskListController.onPageLoad(srn: SchemeReferenceNumber)
+GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: SchemeReferenceNumber)
 
 GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /scheme-details                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
+GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 
@@ -33,7 +33,7 @@ GET         /logout                                                  controllers
 GET         /you-need-to-register                                    controllers.YouNeedToRegisterController.onPageLoad()
 
 GET         /your-action-was-not-processed                          controllers.YourActionWasNotProcessedController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /your-action-was-not-processed                      controllers.YourActionWasNotProcessedController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
+GET         /your-action-was-not-processed/:srn                      controllers.YourActionWasNotProcessedController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
 
 GET         /continue-registration                                   controllers.ContinueRegistrationController.continue()
 
@@ -84,15 +84,15 @@ GET         /insurance-company-name                                  controllers
 POST        /insurance-company-name                                  controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/insurance-company-name                           controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/insurance-company-name                           controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/insurance-company-name                       controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/insurance-company-name                       controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/insurance-company-name/:srn                       controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/insurance-company-name/:srn                       controllers.InsuranceCompanyNameController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /insurance-policy-number                                 controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /insurance-policy-number                                 controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/insurance-policy-number                          controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/insurance-policy-number                          controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/insurance-policy-number                      controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/insurance-policy-number                      controllers.InsurancePolicyNumberController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /uk-bank-account                                         controllers.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
 POST        /uk-bank-account                                         controllers.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
@@ -128,58 +128,58 @@ GET         /type-of-benefits                                        controllers
 POST        /type-of-benefits                                        controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/type-of-benefits                                 controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/type-of-benefits                                 controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/type-of-benefits                             controllers.TypeOfBenefitsController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/type-of-benefits                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/type-of-benefits/:srn                             controllers.TypeOfBenefitsController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /money-purchase-benefits                                 controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /money-purchase-benefits                                 controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/money-purchase-benefits                          controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/money-purchase-benefits                          controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/money-purchase-benefits                      controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/money-purchase-benefits                      controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/money-purchase-benefits/:srn                      controllers.MoneyPurchaseBenefitsController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/money-purchase-benefits/:srn                      controllers.MoneyPurchaseBenefitsController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /benefits-secured-by-insurance                           controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /benefits-secured-by-insurance                           controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/benefits-secured-by-insurance                    controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/benefits-secured-by-insurance                    controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/benefits-secured-by-insurance                controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/benefits-secured-by-insurance                controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/benefits-secured-by-insurance/:srn                controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/benefits-secured-by-insurance/:srn                controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 
 GET         /enter-postcode                                          controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /enter-postcode                                          controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/enter-postcode                                   controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/enter-postcode                                   controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/enter-postcode                               controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/enter-postcode                               controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/enter-postcode/:srn                               controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/enter-postcode/:srn                               controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /select-address                                          controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /select-address                                          controllers.InsurerSelectAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/select-address                                   controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/select-address                                   controllers.InsurerSelectAddressController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/select-address                               controllers.InsurerSelectAddressController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/select-address                               controllers.InsurerSelectAddressController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/select-address/:srn                               controllers.InsurerSelectAddressController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/select-address/:srn                               controllers.InsurerSelectAddressController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /confirm-address                                         controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /confirm-address                                         controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
 GET         /change/confirm-address                                  controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
 POST        /change/confirm-address                                  controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = CheckMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/confirm-address                              controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-POST        /:mode/confirm-address                              controllers.InsurerConfirmAddressController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /:mode/confirm-address/:srn                              controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+POST        /:mode/confirm-address/:srn                              controllers.InsurerConfirmAddressController.onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber])
 
 GET         /check-your-answers-before-start                         controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/check-your-answers-before-start              controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-GET         /check-your-answers-before-start                    controllers.CheckYourAnswersBeforeYouStartController.pspOnPageLoad(srn: SchemeReferenceNumber)
+GET         /:mode/check-your-answers-before-start/:srn              controllers.CheckYourAnswersBeforeYouStartController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /check-your-answers-before-start/:srn                    controllers.CheckYourAnswersBeforeYouStartController.pspOnPageLoad(srn: SchemeReferenceNumber)
 
 GET         /check-your-answers-members                              controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/check-your-answers-members                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-GET         /check-your-answers-members                         controllers.CheckYourAnswersMembersController.pspOnPageLoad(srn: SchemeReferenceNumber)
+GET         /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /check-your-answers-members/:srn                         controllers.CheckYourAnswersMembersController.pspOnPageLoad(srn: SchemeReferenceNumber)
 
 GET         /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 
 GET         /check-your-answers-benefits-insurance                   controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/check-your-answers-benefits-insurance        controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-GET         /check-your-answers-benefits-insurance              controllers.CheckYourAnswersBenefitsAndInsuranceController.pspOnPageLoad(srn: SchemeReferenceNumber)
+GET         /:mode/check-your-answers-benefits-insurance/:srn        controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /check-your-answers-benefits-insurance/:srn              controllers.CheckYourAnswersBenefitsAndInsuranceController.pspOnPageLoad(srn: SchemeReferenceNumber)
 
 GET         /select-adviser-address                                  controllers.AdviserAddressListController.onPageLoad(mode: Mode = NormalMode)
 POST        /select-adviser-address                                  controllers.AdviserAddressListController.onSubmit(mode: Mode = NormalMode)
@@ -213,11 +213,11 @@ POST        /:mode/who-has-working-knowledge                         controllers
 
 GET         /check-adviser-answers                                   controllers.AdviserCheckYourAnswersController.onPageLoad()
 
-GET         /declare-after-changing-details                     controllers.VariationDeclarationController.onPageLoad(srn: Option[SchemeReferenceNumber])
-GET         /on-click-declare-after-changing-details            controllers.VariationDeclarationController.onClickAgree(srn: Option[SchemeReferenceNumber])
+GET         /declare-after-changing-details/:srn                     controllers.VariationDeclarationController.onPageLoad(srn: Option[SchemeReferenceNumber])
+GET         /on-click-declare-after-changing-details/:srn            controllers.VariationDeclarationController.onClickAgree(srn: Option[SchemeReferenceNumber])
 
-GET         /make-more-changes                                  controllers.AnyMoreChangesController.onPageLoad(srn: Option[SchemeReferenceNumber])
-POST        /make-more-changes                                  controllers.AnyMoreChangesController.onSubmit(srn: Option[SchemeReferenceNumber])
+GET         /make-more-changes/:srn                                  controllers.AnyMoreChangesController.onPageLoad(srn: Option[SchemeReferenceNumber])
+POST        /make-more-changes/:srn                                  controllers.AnyMoreChangesController.onSubmit(srn: Option[SchemeReferenceNumber])
 
 GET         /confirmation                                            controllers.register.SchemeSuccessController.onPageLoad()
 POST        /confirmation                                            controllers.register.SchemeSuccessController.onSubmit()
@@ -225,10 +225,10 @@ POST        /confirmation                                            controllers
 GET         /declaration                                             controllers.register.DeclarationController.onPageLoad
 GET         /on-click-declaration                                    controllers.register.DeclarationController.onClickAgree
 
-GET         /details-updated                                    controllers.register.SchemeVariationsSuccessController.onPageLoad(srn: SchemeReferenceNumber)
+GET         /details-updated/:srn                                    controllers.register.SchemeVariationsSuccessController.onPageLoad(srn: SchemeReferenceNumber)
 
-GET         /you-still-have-changes                             controllers.register.StillNeedDetailsController.onPageLoad(srn: Option[SchemeReferenceNumber])
-GET         /cannot-make-changes                                controllers.register.CannotMakeChangesController.onPageLoad(srn: Option[SchemeReferenceNumber])
+GET         /you-still-have-changes/:srn                             controllers.register.StillNeedDetailsController.onPageLoad(srn: Option[SchemeReferenceNumber])
+GET         /cannot-make-changes/:srn                                controllers.register.CannotMakeChangesController.onPageLoad(srn: Option[SchemeReferenceNumber])
 
 GET         /urls-partial                                            controllers.UrlsPartialController.retrieveUrlsPartial
 GET         /can-scheme-be-registered                                controllers.UrlsPartialController.checkIfSchemeCanBeRegistered
@@ -239,7 +239,7 @@ POST        /discard-scheme                                          controllers
 GET         /discard-racdac                                          controllers.RacdacDeleteSchemeController.onPageLoad
 POST        /discard-racdac                                          controllers.RacdacDeleteSchemeController.onSubmit
 
-GET         /delete-changes                                     controllers.DeleteSchemeChangesController.onPageLoad(srn: SchemeReferenceNumber)
-POST        /delete-changes                                     controllers.DeleteSchemeChangesController.onSubmit(srn: SchemeReferenceNumber)
+GET         /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onPageLoad(srn: SchemeReferenceNumber)
+POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: SchemeReferenceNumber)
 
 GET         /cannot-start-registration                               controllers.CannotStartRegistrationController.onPageLoad
