@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.{JavascriptLiteral, PathBindable}
+import play.api.mvc.{JavascriptLiteral, PathBindable, QueryStringBindable}
 
 import scala.language.implicitConversions
 import scala.util.matching.Regex
@@ -42,26 +42,38 @@ object SchemeReferenceNumber {
     }
   }
 
-  implicit def schemeReferenceNumberToString(srn: SchemeReferenceNumber): String =
-    srn.id
+  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[SchemeReferenceNumber] =
+    new QueryStringBindable[SchemeReferenceNumber] {
 
-  implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber =
-    SchemeReferenceNumber(srn)
+      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SchemeReferenceNumber]] = {
+        stringBinder.bind(key, params).map {
+          case Right(value) => Right(SchemeReferenceNumber(value))
+          case Left(error) => Left(error)
+        }
+      }
 
-  case class InvalidSchemeReferenceNumberException() extends Exception
-
-  implicit val format: OFormat[SchemeReferenceNumber] = Json.format[SchemeReferenceNumber]
-
-  import play.api.routing._
-  import play.api.routing.sird._
-
-  implicit val jsLiteralOptionSchemeRef: JavascriptLiteral[Option[SchemeReferenceNumber]] =
-    new JavascriptLiteral[Option[SchemeReferenceNumber]] {
-      def to(value: Option[SchemeReferenceNumber]): String = value match {
-        case Some(schemeRef) => s"'${schemeRef.id}'"
-        case None => ""
+      override def unbind(key: String, value: SchemeReferenceNumber): String = {
+        stringBinder.unbind(key, value.id)
       }
     }
+      implicit def schemeReferenceNumberToString(srn: SchemeReferenceNumber): String =
+        srn.id
 
+      implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber =
+        SchemeReferenceNumber(srn)
 
+      case class InvalidSchemeReferenceNumberException() extends Exception
+
+      implicit val format: OFormat[SchemeReferenceNumber] = Json.format[SchemeReferenceNumber]
+
+      import play.api.routing._
+      import play.api.routing.sird._
+
+      implicit val jsLiteralOptionSchemeRef: JavascriptLiteral[Option[SchemeReferenceNumber]] =
+        new JavascriptLiteral[Option[SchemeReferenceNumber]] {
+          def to(value: Option[SchemeReferenceNumber]): String = value match {
+            case Some(schemeRef) => s"'${schemeRef.id}'"
+            case None => ""
+          }
+        }
 }
