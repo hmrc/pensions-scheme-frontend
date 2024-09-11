@@ -233,6 +233,79 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         statsSection = Some(StatsSection(0, 4, None))
       )
     }
+
+    "throw the runtime exception if establisher index is more than establishers list" in {
+      val userAnswers = userAnswersWithSchemeName
+        .establisherCompanyEntity(index = 0)
+        .establisherCompanyEntity(index = 1)
+
+      when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+
+      val exception = intercept[RuntimeException] {
+        helper.taskListEstablisher(userAnswers, None, None, 2)
+      }
+
+      assert(exception.getMessage == "INVALID-ESTABLISHER")
+    }
+  }
+
+  "task list for trustee" must {
+
+    "return the task list with all the trustee sections for company when there are deleted trustees" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeCompanyEntity(index = 0)
+        .trusteeCompanyEntity(index = 1, isDeleted = true)
+        .trusteeIndividualEntity(index = 2)
+        .trusteeIndividualEntity(index = 3, isDeleted = true)
+        .trusteePartnershipEntity(index = 4, isDeleted = true)
+        .trusteePartnershipEntity(index = 5)
+
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+      when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
+      when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
+
+      val result = helper.taskListTrustee(userAnswers, None, None, 5)
+
+      result mustBe SchemeDetailsTaskListTrustees(
+        h1 = "scheme",
+        srn = None,
+        trustee = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
+        allComplete = false,
+        statsSection = Some(StatsSection(0, 3, None))
+      )
+    }
+
+    "return the task list with all the trustee sections for company when there are no deleted trustees" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeCompanyEntity(index = 0)
+        .trusteeCompanyEntity(index = 1)
+
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+
+      val result = helper.taskListTrustee(userAnswers, None, None, 1)
+
+      result mustBe SchemeDetailsTaskListTrustees(
+        h1 = "scheme",
+        srn = None,
+        trustee = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
+        allComplete = false,
+        statsSection = Some(StatsSection(0, 3, None))
+      )
+    }
+
+    "throw the runtime exception if trustee index is more than trustees list" in {
+      val userAnswers = userAnswersWithSchemeName
+        .trusteeCompanyEntity(index = 0)
+        .trusteeCompanyEntity(index = 1)
+
+      when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
+
+      val exception = intercept[RuntimeException] {
+        helper.taskListTrustee(userAnswers, None, None, 2)
+      }
+
+      assert(exception.getMessage == "INVALID-TRUSTEE")
+    }
   }
 
 
