@@ -17,8 +17,8 @@ GET         /declaration                             controllers.racdac.Declarat
 GET         /on-click-agree                          controllers.racdac.DeclarationController.onClickAgree()
 
 GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /:mode/check-your-answers/:srn           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
-GET         /check-your-answers/:srn                 controllers.racdac.CheckYourAnswersController.pspOnPageLoad(srn: SchemeReferenceNumber)
+GET         /:mode/check-your-answers           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber])
+GET         /check-your-answers                 controllers.racdac.CheckYourAnswersController.pspOnPageLoad(srn: SchemeReferenceNumber)
 
 GET         /confirmation                            controllers.racdac.SchemeSuccessController.onPageLoad()
 POST        /confirmation                            controllers.racdac.SchemeSuccessController.onSubmit()
