@@ -59,6 +59,17 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
+
+    "redirect to Page Not Found when taskListEstablisher throws a RuntimeException" in {
+      when(mockHsTaskListHelperRegistration.taskListEstablisher(any(), any(), any(), any()))
+        .thenThrow(new RuntimeException("INVALID-ESTABLISHER"))
+
+      val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
+        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.register.establishers.routes.PageNotFoundController.onPageLoad().url)
+    }
   }
 }
 

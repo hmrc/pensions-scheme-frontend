@@ -112,6 +112,9 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   : SchemeDetailsTaskListEntitySection = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
 
+    if(index >= seqEstablishers.size) {
+      throw new RuntimeException("INVALID-ESTABLISHER")
+    }
     val establisher = seqEstablishers(index)
     if (establisher.isDeleted) throw new RuntimeException("Establisher has been deleted.") else {
       establisher.id match {
@@ -146,6 +149,9 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   : SchemeDetailsTaskListEntitySection = {
     val seqTrustees = userAnswers.allTrustees
 
+    if(index >= seqTrustees.size) {
+      throw new RuntimeException("INVALID-TRUSTEE")
+    }
     val trustee = seqTrustees(index)
     if (trustee.isDeleted) throw new RuntimeException("Trustee has been deleted.") else {
       trustee.id match {
