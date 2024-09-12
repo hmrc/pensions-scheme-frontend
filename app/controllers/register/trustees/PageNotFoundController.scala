@@ -19,7 +19,6 @@ package controllers.register.trustees
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -32,15 +31,13 @@ class PageNotFoundController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val controllerComponents: MessagesControllerComponents,
                                         authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
                                         appConfig: FrontendAppConfig,
                                         view: pageNotFound
                                       )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = {
-    (authenticate() andThen getData(mode) andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = {
+    authenticate().async {
       implicit request =>
         Future.successful(Ok(view()))
     }
