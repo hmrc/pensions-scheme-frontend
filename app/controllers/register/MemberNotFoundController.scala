@@ -36,10 +36,17 @@ class MemberNotFoundController @Inject()(
                                       )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(label: Option[String]): Action[AnyContent] = {
+  def onEstablishersPageLoad(): Action[AnyContent] = {
     authenticate().async {
       implicit request =>
-        Future.successful(Ok(view(label.getOrElse(""))))
+        Future.successful(Ok(view("establishers")))
+    }
+  }
+
+  def onTrusteesPageLoad(): Action[AnyContent] = {
+    authenticate().async {
+      implicit request =>
+        Future.successful(Ok(view("trustees")))
     }
   }
 
