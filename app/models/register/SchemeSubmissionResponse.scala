@@ -19,7 +19,7 @@ package models.register
 import models.SchemeReferenceNumber
 import play.api.libs.json.{Format, Json}
 
-case class SchemeSubmissionResponse(schemeReferenceNumber: SchemeReferenceNumber)
+case class SchemeSubmissionResponse(schemeReferenceNumber: String)
 
 object SchemeSubmissionResponse {
   implicit val formatsSchemeSubmissionResponse: Format[SchemeSubmissionResponse] = Json.format[SchemeSubmissionResponse]

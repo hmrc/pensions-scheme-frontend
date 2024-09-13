@@ -165,14 +165,15 @@ class DeclarationController @Inject()(
         cacheMap <- dataCacheConnector.upsert(request.externalId, updatedUA.json)
         submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id, SchemeJourneyType.NON_RAC_DAC_SCHEME)
         _ <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-        _ <- sendEmail(submissionResponse.schemeReferenceNumber, psaId)
+        _ <- sendEmail(SchemeReferenceNumber(submissionResponse.schemeReferenceNumber), psaId)
         _ <- auditTcmp(psaId.id, request.userAnswers)
       } yield {
         Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
           Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
-        case _ =>
+        case ex2 =>
+          println(s"${ex2.getMessage}")
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }
   }
@@ -203,6 +204,7 @@ class DeclarationController @Inject()(
   //scalastyle:off magic.number
   private def formatSrnForEmail(srn: SchemeReferenceNumber): String = {
     //noinspection ScalaStyle
+    println(s"***********************srn created is $srn")
     val (start, end) = srn.id.splitAt(6)
     start + ' ' + end
   }
