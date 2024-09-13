@@ -172,8 +172,7 @@ class DeclarationController @Inject()(
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
           Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
-        case ex2 =>
-          println(s"${ex2.getMessage}")
+        case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }
   }
@@ -204,7 +203,6 @@ class DeclarationController @Inject()(
   //scalastyle:off magic.number
   private def formatSrnForEmail(srn: SchemeReferenceNumber): String = {
     //noinspection ScalaStyle
-    println(s"***********************srn created is $srn")
     val (start, end) = srn.id.splitAt(6)
     start + ' ' + end
   }

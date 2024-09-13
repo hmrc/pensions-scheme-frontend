@@ -48,7 +48,6 @@ object SchemeReferenceNumber {
 
   implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Option[SchemeReferenceNumber]] = new PathBindable[Option[SchemeReferenceNumber]] {
     override def bind(key: String, value: String): Either[String, Option[SchemeReferenceNumber]] = {
-      println(s"In optionPathBindable bind key:$key  value:$value")
       if (value.isEmpty) {
         Right(None)
       } else {
@@ -60,7 +59,6 @@ object SchemeReferenceNumber {
     }
 
     override def unbind(key: String, srnOpt: Option[SchemeReferenceNumber]): String = {
-      println(s"In optionPathBindable bind key:$key  srnOpt:$srnOpt")
       srnOpt.map(_.id).getOrElse("")
     }
   }
@@ -88,24 +86,19 @@ object SchemeReferenceNumber {
   implicit def optionQueryBindable(implicit schemeRefBinder: QueryStringBindable[SchemeReferenceNumber]): QueryStringBindable[Option[SchemeReferenceNumber]] =
     new QueryStringBindable[Option[SchemeReferenceNumber]] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Option[SchemeReferenceNumber]]] = {
-        println(s"In query bind bind key $key  params $params")
         params.get(key) match {
           case Some(Seq("")) => Some(Right(None))
           case Some(Seq("noSRN")) =>
-            println(s"""In Some(Seq("noSRN"))""")
             Some(Right(None))
           case Some(_) => schemeRefBinder.bind(key, params).map {
             case Right(schemeRef) => Right(Some(schemeRef))
             case Left(error) => Left(error)
           }
-          case None =>
-            println(s"In None in bind.......")
-            ((None))
+          case None => None
         }
       }
 
       override def unbind(key: String, value: Option[SchemeReferenceNumber]): String = {
-        println(s"In unbind......key is $key, value is $value")
         value.map(schemeRefBinder.unbind(key, _)).getOrElse(s"$key=noSRN")
       }
     }
