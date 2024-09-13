@@ -70,7 +70,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
       renderOkResponse(taskList, schemeName, mode, srn)
     } catch {
       case e: RuntimeException if e.getMessage == "INVALID-TRUSTEE" =>
-        Future.successful(Redirect(controllers.register.trustees.routes.PageNotFoundController.onPageLoad()))
+        Future.successful(Redirect(controllers.register.routes.MemberNotFoundController.onPageLoad(Some("trustees"))))
     }
   }
 
