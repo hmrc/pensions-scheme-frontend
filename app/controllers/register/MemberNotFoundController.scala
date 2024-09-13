@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers
+package controllers.register
 
 import config.FrontendAppConfig
 import controllers.Retrievals
@@ -22,24 +22,31 @@ import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.register.establishers.pageNotFound
+import views.html.register.memberNotFound
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class PageNotFoundController @Inject()(
+class MemberNotFoundController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val controllerComponents: MessagesControllerComponents,
                                         authenticate: AuthAction,
                                         appConfig: FrontendAppConfig,
-                                        view: pageNotFound
+                                        view: memberNotFound
                                       )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(): Action[AnyContent] = {
+  def onEstablishersPageLoad(): Action[AnyContent] = {
     authenticate().async {
       implicit request =>
-        Future.successful(Ok(view()))
+        Future.successful(Ok(view("establishers")))
+    }
+  }
+
+  def onTrusteesPageLoad(): Action[AnyContent] = {
+    authenticate().async {
+      implicit request =>
+        Future.successful(Ok(view("trustees")))
     }
   }
 

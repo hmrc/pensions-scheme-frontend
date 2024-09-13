@@ -32,7 +32,6 @@ GET         /:index/company/already-deleted                          controllers
 GET         /:index/company/:mode/already-deleted/:srn               controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
 
 GET         /:index/establisher-tasklist                             controllers.register.establishers.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(mode: Mode = NormalMode, index:Index, srn: Option[String] = None)
-GET         /page-not-found                                          controllers.register.establishers.PageNotFoundController.onPageLoad()
 
 ->          /                                                        establishersCompany.Routes
 ->          /                                                        establishersIndividual.Routes

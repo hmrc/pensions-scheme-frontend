@@ -243,3 +243,7 @@ GET         /delete-changes/:srn                                     controllers
 POST        /delete-changes/:srn                                     controllers.DeleteSchemeChangesController.onSubmit(srn: String)
 
 GET         /cannot-start-registration                               controllers.CannotStartRegistrationController.onPageLoad
+
+GET         /trustees/member-not-found                               controllers.register.MemberNotFoundController.onTrusteesPageLoad()
+
+GET         /establishers/member-not-found                           controllers.register.MemberNotFoundController.onEstablishersPageLoad()

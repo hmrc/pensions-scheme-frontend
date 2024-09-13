@@ -68,7 +68,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .onPageLoad(NormalMode, 0, None)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.register.trustees.routes.PageNotFoundController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.register.routes.MemberNotFoundController.onTrusteesPageLoad().url)
     }
   }
 }

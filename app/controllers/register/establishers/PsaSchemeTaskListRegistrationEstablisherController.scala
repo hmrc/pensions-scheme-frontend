@@ -66,7 +66,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
 
     } catch {
       case e: RuntimeException if e.getMessage == "INVALID-ESTABLISHER" =>
-        Future.successful(Redirect(controllers.register.establishers.routes.PageNotFoundController.onPageLoad()))
+        Future.successful(Redirect(controllers.register.routes.MemberNotFoundController.onEstablishersPageLoad()))
     }
   }
 

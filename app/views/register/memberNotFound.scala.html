@@ -21,13 +21,13 @@
     appConfig: FrontendAppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(label: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__pageNotFound404__title")) {
 
     @components.heading(messages("messages__pageNotFound404__heading"))
 
-    @components.paragraph_text(messages("messages__pageNotFound__trustee__p1"))
+    @components.paragraph_text(messages("messages__memberNotFound__p1", label))
 
     @components.paragraph_text(messages("messages__pageNotFound404__p1"))
 
