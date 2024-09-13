@@ -353,7 +353,7 @@ object PensionsSchemeConnectorSpec extends OptionValues {
       Json.obj(
         "processingDate" -> "1969-07-20T20:18:00Z",
         "formBundle" -> "test-form-bundle",
-        "schemeReferenceNumber" -> schemeId
+        "schemeReferenceNumber" -> "test-scheme-id"
       )
     )
 

@@ -242,7 +242,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeNameJsonOption: JsObject = Json.obj("schemeName" -> schemeName)
   val schemeNameRACDACJsonOption: JsObject = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> schemeName))
   val schemeSrnNumberOnlyData: JsObject =
-    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> srn))
+    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> "srn"))
 
 
 
