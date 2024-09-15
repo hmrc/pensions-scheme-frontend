@@ -50,7 +50,7 @@ class CompanyEnterPAYEController @Inject()(
                                             val controllerComponents: MessagesControllerComponents
                                           )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {

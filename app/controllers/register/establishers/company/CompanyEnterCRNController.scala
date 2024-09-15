@@ -52,7 +52,7 @@ class CompanyEnterCRNController @Inject()(
 
   def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
