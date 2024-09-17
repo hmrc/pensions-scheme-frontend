@@ -14,7 +14,7 @@ GET         /:index/:mode/company/vat-registration-number/:srn                  
 POST        /:index/:mode/company/vat-registration-number/:srn                        controllers.register.trustees.company.CompanyEnterVATController.onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
 
 GET         /:index/company/enter-employer-paye-reference                             controllers.register.trustees.company.CompanyEnterPAYEController.onPageLoad(mode: Mode = NormalMode, index: Index, srn: Option[SchemeReferenceNumber] = None)
-POST        /:index/company/enter-employer-paye-reference/:srn                             controllers.register.trustees.company.CompanyEnterPAYEController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[SchemeReferenceNumber])
+POST        /:index/company/enter-employer-paye-reference                             controllers.register.trustees.company.CompanyEnterPAYEController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[SchemeReferenceNumber] = None)
 GET         /:index/change/company/enter-employer-paye-reference/:srn                      controllers.register.trustees.company.CompanyEnterPAYEController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[SchemeReferenceNumber])
 POST        /:index/change/company/enter-employer-paye-reference/:srn                      controllers.register.trustees.company.CompanyEnterPAYEController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[SchemeReferenceNumber])
 GET         /:index/:mode/company/enter-employer-paye-reference/:srn                  controllers.register.trustees.company.CompanyEnterPAYEController.onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
