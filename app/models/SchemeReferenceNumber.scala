@@ -22,7 +22,26 @@ import play.api.mvc.{JavascriptLiteral, PathBindable, QueryStringBindable}
 import scala.language.implicitConversions
 import scala.util.matching.Regex
 
-case class SchemeReferenceNumber(id: String)
+case class SchemeReferenceNumber(id: String){
+  implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Option[SchemeReferenceNumber]] = new PathBindable[Option[SchemeReferenceNumber]] {
+    override def bind(key: String, value: String): Either[String, Option[SchemeReferenceNumber]] = {
+      println(s"************in optionPathBindable path bind $key $value")
+      if (value.isEmpty) {
+        Right(None)
+      } else {
+        stringBinder.bind(key, value) match {
+          case Right(v) => Right(Some(SchemeReferenceNumber(v)))
+          case Left(error) => Left(error)
+        }
+      }
+    }
+
+    override def unbind(key: String, srnOpt: Option[SchemeReferenceNumber]): String = {
+      println(s"************in optionPathBindable unbind $key $srnOpt")
+      srnOpt.map(_.id).getOrElse("")
+    }
+  }
+}
 
 object SchemeReferenceNumber {
 
@@ -59,24 +78,7 @@ object SchemeReferenceNumber {
     }
   }
 
-  implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Option[SchemeReferenceNumber]] = new PathBindable[Option[SchemeReferenceNumber]] {
-    override def bind(key: String, value: String): Either[String, Option[SchemeReferenceNumber]] = {
-      println(s"************in optionPathBindable path bind $key $value")
-      if (value.isEmpty) {
-        Right(None)
-      } else {
-        stringBinder.bind(key, value) match {
-          case Right(v) => Right(Some(SchemeReferenceNumber(v)))
-          case Left(error) => Left(error)
-        }
-      }
-    }
 
-    override def unbind(key: String, srnOpt: Option[SchemeReferenceNumber]): String = {
-      println(s"************in optionPathBindable unbind $key $srnOpt")
-      srnOpt.map(_.id).getOrElse("")
-    }
-  }
 
 
   // QueryBindable for SchemeReferenceNumber
@@ -129,10 +131,10 @@ object SchemeReferenceNumber {
   implicit def schemeReferenceNumberToString(srn: SchemeReferenceNumber): String =
     srn.id
 
-  implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber = {
-    println(s"************* stringToSchemeReferenceNumber $srn")
-    SchemeReferenceNumber(srn)
-  }
+//  implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber = {
+//    println(s"************* stringToSchemeReferenceNumber $srn")
+//    SchemeReferenceNumber(srn)
+//  }
 
   case class InvalidSchemeReferenceNumberException() extends Exception
 

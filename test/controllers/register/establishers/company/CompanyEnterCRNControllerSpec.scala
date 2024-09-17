@@ -44,7 +44,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
-          val result = controller.onPageLoad(CheckUpdateMode, srn, index = 0)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, 0, srn)(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(viewModel(), form, None, postCall(CheckUpdateMode, srn, firstIndex),
               srn)(fakeRequest, messages).toString
@@ -57,7 +57,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(data):_*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
-          val result = controller.onPageLoad(CheckUpdateMode, srn, index = 0)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, 0, srn)(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(viewModel(), form.fill(ReferenceValue("1234567")), None, postCall(CheckUpdateMode, srn, firstIndex),
             srn)(fakeRequest, messages).toString

@@ -137,7 +137,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private def hasCompanyNumberRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, 0).url
   private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), srn, index).url
+    routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), index, srn).url
   private def noCompanyNumberReasonRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
     routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn, index).url
   private def hasCompanyUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
