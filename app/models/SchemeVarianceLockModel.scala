@@ -22,7 +22,7 @@ import utils.{Enumerable, WithName}
 import scala.language.implicitConversions
 
 
-case class SchemeVariance(psaId: String, srn: SchemeReferenceNumber)
+case class SchemeVariance(psaId: String, srn: String)
 
 object SchemeVariance {
   implicit val format: OFormat[SchemeVariance] = Json.format[SchemeVariance]

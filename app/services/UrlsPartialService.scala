@@ -190,17 +190,17 @@ class UrlsPartialService @Inject()(
     pensionSchemeVarianceLockConnector.getLockByPsa(psaId).flatMap {
       case Some(schemeVariance) =>
         updateConnector.fetch(schemeVariance.srn).flatMap {
-          case Some(data) => variationsDeleteDate(schemeVariance.srn).map { dateOfDeletion =>
+          case Some(data) => variationsDeleteDate(SchemeReferenceNumber(schemeVariance.srn)).map { dateOfDeletion =>
             val schemeName = (data \ "schemeName").as[String]
             Seq(
               OverviewLink(
                 id = "continue-variation",
-                url = appConfig.viewUrl.format(schemeVariance.srn.id),
+                url = appConfig.viewUrl.format(schemeVariance.srn),
                 linkText = Message("messages__schemeOverview__scheme_variations_continue", schemeName, dateOfDeletion)
               ),
               OverviewLink(
                 id = "delete-variation",
-                url = appConfig.deleteVariationsUrl.format(schemeVariance.srn.id),
+                url = appConfig.deleteVariationsUrl.format(schemeVariance.srn),
                 linkText = Message("messages__schemeOverview__scheme_variations_delete", schemeName)
               )
             )
