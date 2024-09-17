@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
           case (UpdateMode, Some(srnNo)) =>
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo), schemeName))
+            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo.id), schemeName))
           case _ =>
             pensionAdministratorConnector.getPSAName.map { psaName =>
               (appConfig.managePensionsSchemeOverviewUrl.url, psaName)
@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
       implicit request =>
         lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-        Future.successful(Ok(view(vm(UpdateMode), schemeName, appConfig.schemeDashboardUrl(None, request.pspId).format(srn))))
+        Future.successful(Ok(view(vm(UpdateMode), schemeName, appConfig.schemeDashboardUrl(None, request.pspId).format(srn.id))))
     }
 
   def vm(mode: Mode)(implicit request: DataRequest[AnyContent]): CYAViewModel = {

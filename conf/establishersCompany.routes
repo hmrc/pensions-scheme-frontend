@@ -75,7 +75,7 @@ GET         /:index/company/enter-employer-paye-reference                       
 POST        /:index/company/enter-employer-paye-reference                             controllers.register.establishers.company.CompanyEnterPAYEController.onSubmit(mode: Mode = NormalMode, index: Index, srn: Option[SchemeReferenceNumber] = None)
 GET         /:index/change/company/enter-employer-paye-reference                      controllers.register.establishers.company.CompanyEnterPAYEController.onPageLoad(mode: Mode = CheckMode, index: Index, srn: Option[SchemeReferenceNumber] = None)
 POST        /:index/change/company/enter-employer-paye-reference                      controllers.register.establishers.company.CompanyEnterPAYEController.onSubmit(mode: Mode = CheckMode, index: Index, srn: Option[SchemeReferenceNumber] = None)
-GET         /:index/:mode/company/enter-employer-paye-reference                  controllers.register.establishers.company.CompanyEnterPAYEController.onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None)
+GET         /:index/:mode/company/enter-employer-paye-reference/:srn                  controllers.register.establishers.company.CompanyEnterPAYEController.onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
 POST        /:index/:mode/company/enter-employer-paye-reference/:srn                  controllers.register.establishers.company.CompanyEnterPAYEController.onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
 
 GET         /:index/company/dormant-in-last-12-months                                 controllers.register.establishers.company.IsCompanyDormantController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None, index:Index)

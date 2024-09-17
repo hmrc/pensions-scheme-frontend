@@ -74,7 +74,7 @@ class CheckYourAnswersCompanyDetailsController @Inject()(
             HasCompanyVATId(index).row(routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
             CompanyEnterVATId(index).row(routes.CompanyEnterVATController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             HasCompanyPAYEId(index).row(routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, index).url, mode) ++
-            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index).url, mode) ++
+            CompanyEnterPAYEId(index).row(routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), index, srn).url, mode) ++
             IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, index).url, mode)
         ))
 

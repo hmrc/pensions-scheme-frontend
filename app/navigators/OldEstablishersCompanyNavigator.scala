@@ -347,7 +347,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
   private def confirmHasCompanyPAYE(index: Int, mode: Mode, srn: Option[SchemeReferenceNumber])(answers: UserAnswers): Option[NavigateTo] = {
     (answers.get(HasCompanyPAYEId(index)), mode) match {
       case (Some(true), _) =>
-        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterPAYEController.onPageLoad(mode, index))
+        NavigateTo.dontSave(establisherCompanyRoutes.CompanyEnterPAYEController.onPageLoad(mode, index, srn))
       case (Some(false), NormalMode) =>
         NavigateTo.dontSave(establisherCompanyRoutes.IsCompanyDormantController.onPageLoad(mode, srn, index))
       case (Some(false), UpdateMode) =>

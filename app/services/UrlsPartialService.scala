@@ -195,12 +195,12 @@ class UrlsPartialService @Inject()(
             Seq(
               OverviewLink(
                 id = "continue-variation",
-                url = appConfig.viewUrl.format(schemeVariance.srn),
+                url = appConfig.viewUrl.format(schemeVariance.srn.id),
                 linkText = Message("messages__schemeOverview__scheme_variations_continue", schemeName, dateOfDeletion)
               ),
               OverviewLink(
                 id = "delete-variation",
-                url = appConfig.deleteVariationsUrl.format(schemeVariance.srn),
+                url = appConfig.deleteVariationsUrl.format(schemeVariance.srn.id),
                 linkText = Message("messages__schemeOverview__scheme_variations_delete", schemeName)
               )
             )

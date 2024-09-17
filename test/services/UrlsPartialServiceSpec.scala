@@ -281,9 +281,9 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
       Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
   )
 
-  private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn),
+  private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn.id),
     Message("messages__schemeOverview__scheme_variations_continue", schemeName, deleteDate)),
-    OverviewLink("delete-variation", frontendAppConfig.deleteVariationsUrl.format(srn),
+    OverviewLink("delete-variation", frontendAppConfig.deleteVariationsUrl.format(srn.id),
       Message("messages__schemeOverview__scheme_variations_delete", schemeName)))
 
   private val dataCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
