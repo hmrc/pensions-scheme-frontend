@@ -25,7 +25,6 @@ import scala.util.matching.Regex
 case class SchemeReferenceNumber(id: String){
   implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Option[SchemeReferenceNumber]] = new PathBindable[Option[SchemeReferenceNumber]] {
     override def bind(key: String, value: String): Either[String, Option[SchemeReferenceNumber]] = {
-      //println(s"************in optionPathBindable path bind $key $value")
       if (value.isEmpty) {
         Right(None)
       } else {
@@ -37,7 +36,6 @@ case class SchemeReferenceNumber(id: String){
     }
 
     override def unbind(key: String, srnOpt: Option[SchemeReferenceNumber]): String = {
-      //println(s"************in optionPathBindable unbind $key $srnOpt")
       srnOpt.map(_.id).getOrElse("")
     }
   }
@@ -54,7 +52,6 @@ object SchemeReferenceNumber {
     val regexSRN: Regex = "^S[0-9]{10}$".r
 
     override def bind(key: String, value: String): Either[String, SchemeReferenceNumber] = {
-      //println(s"************in srnPathBindable path bind $key $value")
 
       val pattern = """SchemeReferenceNumber\((.*?)\)""".r
 
@@ -66,14 +63,12 @@ object SchemeReferenceNumber {
       stringBinder.bind(key, result) match {
         case Right(srn@regexSRN(_*)) =>
           Right(SchemeReferenceNumber(srn))
-        case x =>
-          //println(s"what is this srn!!! $x")
+        case _ =>
           Left("SchemeReferenceNumber binding failed")
       }
     }
 
     override def unbind(key: String, value: SchemeReferenceNumber): String = {
-      //println(s"************in srnPathBindable path unbind $key $value")
       stringBinder.unbind(key, value.id)
     }
   }
@@ -85,8 +80,6 @@ object SchemeReferenceNumber {
   implicit def queryBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[SchemeReferenceNumber] =
     new QueryStringBindable[SchemeReferenceNumber] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SchemeReferenceNumber]] = {
-        //println(s"************in queryBindable bind $key $params")
-
         stringBinder.bind(key, params) match {
           case Some(Right(id)) => Some(Right(SchemeReferenceNumber(id)))
           case Some(Left(error)) => Some(Left(error))
@@ -95,8 +88,6 @@ object SchemeReferenceNumber {
       }
 
       override def unbind(key: String, value: SchemeReferenceNumber): String = {
-        //println(s"************in queryBindable unbind $key $value")
-
         stringBinder.unbind(key, value.id)
       }
     }
@@ -107,7 +98,6 @@ object SchemeReferenceNumber {
   implicit def optionQueryBindable(implicit schemeRefBinder: QueryStringBindable[SchemeReferenceNumber]): QueryStringBindable[Option[SchemeReferenceNumber]] =
     new QueryStringBindable[Option[SchemeReferenceNumber]] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Option[SchemeReferenceNumber]]] = {
-        //println(s"in optionQueryBindable bind $key $params")
 
         params.get(key) match {
           case Some(Seq("")) => Some(Right(None))
@@ -122,8 +112,6 @@ object SchemeReferenceNumber {
       }
 
       override def unbind(key: String, value: Option[SchemeReferenceNumber]): String = {
-        //println(s"in optionQueryBindable unbind $key $value")
-
         value.map(schemeRefBinder.unbind(key, _)).getOrElse(s"$key=noSRN")
       }
     }
@@ -132,7 +120,6 @@ object SchemeReferenceNumber {
     srn.id
 
   implicit def stringToSchemeReferenceNumber(srn: SchemeReferenceNumber): SchemeReferenceNumber = {
-    //println(s"************* stringToSchemeReferenceNumber $srn")
     SchemeReferenceNumber(srn)
   }
 
@@ -144,9 +131,7 @@ object SchemeReferenceNumber {
 
   implicit val jsLiteralOptionSchemeRef: JavascriptLiteral[Option[SchemeReferenceNumber]] =
     new JavascriptLiteral[Option[SchemeReferenceNumber]] {
-      //println(s"In jsLiteralOptionSchemeRef*********************")
       override def to(value: Option[SchemeReferenceNumber]): String = {
-        //println(s"In jsLiteralOptionSchemeRef in to for $value *********************")
         value match {
           case Some(schemeRef) => s"${schemeRef.id}"
           case None => ""
@@ -157,9 +142,7 @@ object SchemeReferenceNumber {
 
   implicit val jsLiteralOptionSchemeRef2: JavascriptLiteral[Some[SchemeReferenceNumber]] =
     new JavascriptLiteral[Some[SchemeReferenceNumber]] {
-      //println(s"In jsLiteralOptionSchemeRef*********************")
       override def to(value: Some[SchemeReferenceNumber]): String = {
-        //println(s"In jsLiteralOptionSchemeRef in to for $value *********************")
         value match {
           case Some(schemeRef) => s"${schemeRef.id}"
           case _ => ""
@@ -169,9 +152,7 @@ object SchemeReferenceNumber {
 
   implicit val jsLiteralSchemeRef: JavascriptLiteral[SchemeReferenceNumber] =
     new JavascriptLiteral[SchemeReferenceNumber] {
-      //println(s"In JavascriptLiteral*********************")
       override def to(value: SchemeReferenceNumber): String = {
-        //println(s"In JavascriptLiteral in to for $value *********************")
         value.id
       }
    }
