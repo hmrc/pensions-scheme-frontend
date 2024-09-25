@@ -32,6 +32,7 @@ import views.html.moneyPurchaseBenefits
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class MoneyPurchaseBenefitsController @Inject()(
                                                  override val messagesApi: MessagesApi,
@@ -49,13 +50,13 @@ class MoneyPurchaseBenefitsController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  val postCall: (Mode, Option[String]) => Call =
+  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call =
     routes.MoneyPurchaseBenefitsController.onSubmit
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()
 
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(
@@ -69,7 +70,7 @@ class MoneyPurchaseBenefitsController @Inject()(
         ))
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(

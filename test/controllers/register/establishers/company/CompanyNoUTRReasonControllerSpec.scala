@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -42,7 +42,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private val srn = Some("S123")
+  private val srn = Some(SchemeReferenceNumber("S123"))
 
   val viewmodel = ReasonViewModel(
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, srn, index = 0),

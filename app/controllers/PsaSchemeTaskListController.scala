@@ -62,7 +62,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   private val logger  = Logger(classOf[PsaSchemeTaskListController])
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {

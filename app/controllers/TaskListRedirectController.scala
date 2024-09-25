@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                                            schemeDetailsConnector: SchemeDetailsConnector,
@@ -54,7 +55,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = authenticate(Some(PSA)).async {
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = authenticate(Some(PSA)).async {
     implicit request =>
 
       redirects.flatMap {

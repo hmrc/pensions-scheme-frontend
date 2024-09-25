@@ -19,13 +19,14 @@ package viewmodels.address
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
+import models.SchemeReferenceNumber
 
 case class ManualAddressViewModel(
                                    postCall: Call,
                                    countryOptions: Seq[InputOption],
                                    title: Message,
                                    heading: Message,
-                                   srn: Option[String] = None
+                                   srn: Option[SchemeReferenceNumber] = None
                                  ) {
 
 }

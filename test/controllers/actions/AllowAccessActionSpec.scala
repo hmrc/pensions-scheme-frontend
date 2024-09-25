@@ -22,7 +22,7 @@ import connectors.PensionsSchemeConnector
 import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
-import models.{PSAMinimalFlags, UpdateMode}
+import models.{PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -46,7 +46,7 @@ class AllowAccessActionSpec
     with MockitoSugar {
 
   def allowAccessWithRedirectBasedOnUserAnswers(
-                                                 testHarness: (Option[String], PensionsSchemeConnector) => TestHarness,
+                                                 testHarness: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness,
                                                  userAnswers: UserAnswers,
                                                  description: String,
                                                  expectedResult: => Option[String]
@@ -96,7 +96,7 @@ class AllowAccessActionSpec
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  class TestAllowAccessAction(srn: Option[String],
+  class TestAllowAccessAction(srn: Option[SchemeReferenceNumber],
                               psc: PensionsSchemeConnector = pensionsSchemeConnector
                              )
     extends AllowAccessActionMain(srn, psc, config, errorHandler, true, false)
@@ -107,7 +107,7 @@ class AllowAccessActionSpec
   }
 
   class TestAllowAccessActionTaskList(
-                                       srn: Option[String],
+                                       srn: Option[SchemeReferenceNumber],
                                        psc: PensionsSchemeConnector = pensionsSchemeConnector,
                                        allowPsa: Boolean = true,
                                        allowPsp: Boolean = false
@@ -119,7 +119,7 @@ class AllowAccessActionSpec
   }
 
   class TestAllowAccessActionNoSuspendedCheck(
-                                               srn: Option[String],
+                                               srn: Option[SchemeReferenceNumber],
                                                psc: PensionsSchemeConnector = pensionsSchemeConnector
                                              )
     extends AllowAccessActionNoSuspendedCheck(srn, psc, config, errorHandler)
@@ -128,14 +128,14 @@ class AllowAccessActionSpec
       super.filter(request)
   }
 
-  private val generateTestHarnessForAllowAccessMain: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessMain: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessAction(_, _)
-  private val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessTaskList: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionTaskList(_, _)
-  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  private val srn = Some("S123")
+  private val srn = Some(SchemeReferenceNumber("S123"))
 
   private val suspendedUserAnswers = UserAnswers(
     Json.obj(
@@ -246,7 +246,7 @@ class AllowAccessActionSpec
   }
 
   //scalastyle:off method.length
-  def allowAccessAction(testHarness: (Option[String], PensionsSchemeConnector) => TestHarness): Unit = {
+  def allowAccessAction(testHarness: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness): Unit = {
     "allow access where association between psa id and srn and " +
       "user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]

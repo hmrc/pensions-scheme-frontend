@@ -36,6 +36,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PartnerNameController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -52,7 +53,7 @@ class PartnerNameController @Inject()(
                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](PartnerNameId(establisherIndex, partnerIndex)) match {
@@ -65,7 +66,7 @@ class PartnerNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]) =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]) =
     CommonFormWithHintViewModel(
     postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partnerName__title"),
@@ -73,7 +74,7 @@ class PartnerNameController @Inject()(
     srn = srn
   )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(

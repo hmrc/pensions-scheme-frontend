@@ -937,12 +937,12 @@ class SpokeCreationServiceSpec
 object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
 
   private val personName = PersonName("First", "Last")
-  private val srn = Some("S123")
+  private val srn = Some(SchemeReferenceNumber("S123"))
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val address = Address("line1", "line2", None, None, None, "GB")
 
-  private def estCompanyAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def estCompanyAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -953,7 +953,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, establisherIndex = 0).url), status)
   )
 
-  private def estCompanyInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estCompanyInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -964,7 +964,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index = 0).url), status)
   )
 
-  private def estCompanyCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estCompanyCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index = 0).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -975,7 +975,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index = 0).url), status)
   )
 
-  private def estPartnershipAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def estPartnershipAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index = 0).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -986,7 +986,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherPartnershipPartnerRoutes.WhatYouWillNeedPartnerController.onPageLoad(mode, 0, srn).url), status)
   )
 
-  private def estPartnershipInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estPartnershipInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index = 0).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -997,7 +997,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def estPartnershipCompleteSpokeWithoutPartners(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estPartnershipCompleteSpokeWithoutPartners(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1006,14 +1006,14 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def estPartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = {
+  private def estPartnershipCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = {
     estPartnershipCompleteSpokeWithoutPartners(mode, srn, linkText, status) ++ Seq(
       EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_partners", schemeName),
         establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, index = 0, srn).url), status)
     )
   }
 
-  private def estIndividualAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def estIndividualAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -1022,7 +1022,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def estIndividualInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estIndividualInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1031,7 +1031,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def estIndividualCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def estIndividualCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1040,7 +1040,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeCompanyAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def trusteeCompanyAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -1049,7 +1049,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeCompanyInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteeCompanyInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteeCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1058,7 +1058,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteeCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeCompanyCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteeCompanyCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteeCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1067,7 +1067,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteeCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteePartnershipAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def trusteePartnershipAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -1076,7 +1076,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteePartnershipInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteePartnershipInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1085,7 +1085,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteePartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteePartnershipCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteePartnershipCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteePartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1094,7 +1094,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteePartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeIndividualAddSpokes(mode: Mode, srn: Option[String], status: Option[Boolean]) = Seq(
+  private def trusteeIndividualAddSpokes(mode: Mode, srn: Option[SchemeReferenceNumber], status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_details", schemeName),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message("messages__schemeTaskList__add_address", schemeName),
@@ -1103,7 +1103,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeIndividualInProgressSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteeIndividualInProgressSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteeIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),
@@ -1112,7 +1112,7 @@ object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
       trusteeIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index = 0, srn).url), status)
   )
 
-  private def trusteeIndividualCompleteSpoke(mode: Mode, srn: Option[String], linkText: String, status: Option[Boolean]) = Seq(
+  private def trusteeIndividualCompleteSpoke(mode: Mode, srn: Option[SchemeReferenceNumber], linkText: String, status: Option[Boolean]) = Seq(
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_details", schemeName),
       trusteeIndividualRoutes.CheckYourAnswersIndividualDetailsController.onPageLoad(mode, index = 0, srn).url), status),
     EntitySpoke(TaskListLink(Message(s"messages__schemeTaskList__${linkText}_address", schemeName),

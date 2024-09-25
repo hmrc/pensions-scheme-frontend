@@ -35,6 +35,7 @@ import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class AlreadyDeletedController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -47,7 +48,7 @@ class AlreadyDeletedController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         establisherName(index, establisherKind) match {
@@ -57,7 +58,7 @@ class AlreadyDeletedController @Inject()(
         }
     }
 
-  private def vm(establisherName: String, mode: Mode, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(establisherName: String, mode: Mode, srn: Option[SchemeReferenceNumber]) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
     returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)

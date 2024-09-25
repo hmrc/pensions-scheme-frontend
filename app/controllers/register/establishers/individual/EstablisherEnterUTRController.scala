@@ -32,6 +32,7 @@ import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -47,7 +48,7 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
                                              )
                                              (implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>
@@ -57,7 +58,7 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.EstablisherEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__theIndividual")),
@@ -67,7 +68,7 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>

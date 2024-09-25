@@ -34,6 +34,7 @@ import views.html.register.establishers.psaTaskListRegistrationEstablishers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                                                    override val messagesApi: MessagesApi,
@@ -46,7 +47,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false) andThen allowAccess(srn)).async {
       implicit request =>
         val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
@@ -58,7 +59,8 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
         }
     }
 
-  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[String], index: Int)
+
+  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber], index: Int)
                                 (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     try {
       val taskList = hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index)
@@ -70,7 +72,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
     }
   }
 
-  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: Option[String])
+  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber])
                               (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     Future.successful(
       Ok(

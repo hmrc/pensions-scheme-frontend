@@ -357,7 +357,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val mockEmailConnector = mock[EmailConnector]
 
-  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse(SchemeReferenceNumber("S1234567890"))
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail

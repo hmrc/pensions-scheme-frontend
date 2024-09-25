@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{CheckUpdateMode, Index, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -65,7 +65,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn = Some(SchemeReferenceNumber("S123"))
 
   private val view = injector.instanceOf[utr]
 

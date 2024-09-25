@@ -35,6 +35,7 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class DirectorPreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                       val userAnswersService: UserAnswersService,
@@ -50,13 +51,13 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
                                                      )(implicit val ec: ExecutionContext) extends
   AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).map(get)
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).map {
@@ -72,7 +73,7 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
     (DirectorNameId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex,
       directorIndex)).retrieve.map {

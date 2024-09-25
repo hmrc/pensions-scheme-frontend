@@ -34,6 +34,7 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class IndividualPostCodeLookupController @Inject()(
                                                     val appConfig: FrontendAppConfig,
@@ -57,13 +58,13 @@ class IndividualPostCodeLookupController @Inject()(
       TrusteeNameId(index).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         postCodeViewmodel(index, mode, srn).retrieve map get
     }
 
-  private def postCodeViewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+  private def postCodeViewmodel(index: Int, mode: Mode, srn: Option[SchemeReferenceNumber]): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         trusteeName(index).retrieve.map {
@@ -79,7 +80,7 @@ class IndividualPostCodeLookupController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       postCodeViewmodel(index, mode, srn).retrieve.map { vm =>

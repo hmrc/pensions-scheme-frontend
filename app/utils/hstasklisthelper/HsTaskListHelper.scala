@@ -30,9 +30,9 @@ import viewmodels._
 
 abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationService) extends Enumerable.Implicits {
 
-  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList
+  def taskList(ua: UserAnswers, viewOnly: Option[Boolean], srn: Option[SchemeReferenceNumber], lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList
 
-  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  protected[utils] def aboutSection(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber])
   : SchemeDetailsTaskListEntitySection = {
     val schemeName = userAnswers.get(SchemeNameId).getOrElse("")
     SchemeDetailsTaskListEntitySection(
@@ -42,7 +42,7 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
     )
   }
 
-  protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  protected[utils] def establishersSection(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber])
   : Seq[SchemeDetailsTaskListEntitySection] = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
 
@@ -80,7 +80,7 @@ abstract class HsTaskListHelper @Inject()(spokeCreationService: SpokeCreationSer
     nonDeletedEstablishers.flatten
   }
 
-  protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  protected[utils] def trusteesSection(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber])
   : Seq[SchemeDetailsTaskListEntitySection] = {
     val sections = userAnswers.allTrustees
     val notDeletedElements = for ((section, _) <- sections.zipWithIndex) yield {

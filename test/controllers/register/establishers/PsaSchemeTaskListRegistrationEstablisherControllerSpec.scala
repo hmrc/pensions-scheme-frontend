@@ -19,7 +19,7 @@ package controllers.register.establishers
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.SchemeNameId
-import models.{EntitySpoke, NormalMode, TaskListLink}
+import models.{EntitySpoke, NormalMode, SchemeReferenceNumber, TaskListLink}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -55,7 +55,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+        .onPageLoad(NormalMode, 0, Some(SchemeReferenceNumber("srn")))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }

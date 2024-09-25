@@ -18,12 +18,11 @@ package controllers
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
+import models.SchemeReferenceNumber
 import play.api.data.Form
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.anyMoreChanges
 
@@ -35,7 +34,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   def date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
-  val srn = Some("123")
+  val srn = Some(SchemeReferenceNumber("123"))
 
   def dateToCompleteDeclaration: String = LocalDate.now().plusDays(28).
     format(DateTimeFormatter.ofPattern("d MMMM yyyy"))

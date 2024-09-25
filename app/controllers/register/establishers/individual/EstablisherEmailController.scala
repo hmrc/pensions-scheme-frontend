@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).retrieve.map {
@@ -59,7 +60,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
@@ -74,7 +75,7 @@ class EstablisherEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).retrieve.map {

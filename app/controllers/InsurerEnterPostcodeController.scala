@@ -35,6 +35,7 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -50,8 +51,8 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                val view: postcodeLookup
                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
-  val postCall: (Mode, Option[String]) => Call = routes.InsurerEnterPostcodeController.onSubmit
-  val manualCall: (Mode, Option[String]) => Call = routes.InsurerConfirmAddressController.onPageLoad
+  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurerEnterPostcodeController.onSubmit
+  val manualCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurerConfirmAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 
@@ -59,7 +60,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         InsuranceCompanyNameId.retrieve.map { name =>
@@ -67,7 +68,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def viewModel(mode: Mode, srn: Option[String], name: String)(implicit request: DataRequest[AnyContent])
+  def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber], name: String)(implicit request: DataRequest[AnyContent])
   : PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
@@ -78,7 +79,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.map { name =>

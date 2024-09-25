@@ -184,7 +184,7 @@
     }
 
     <p class="govuk-body govuk-!-margin-top-7">
-        <a id="save-and-return" class="govuk-link" href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn))">
+        <a id="save-and-return" class="govuk-link" href="@taskSections.srn.fold(appConfig.managePensionsSchemeOverviewUrl.url)(srn => appConfig.managePensionsSchemeSummaryUrl.format(srn.id))">
         @if(taskSections.srn.isDefined) {
             @messages("messages__complete__returnToSchemeOverview", schemeName)
         } else {

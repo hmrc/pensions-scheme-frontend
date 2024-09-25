@@ -27,13 +27,14 @@ import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
+import models.SchemeReferenceNumber
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean] = None)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 
-  def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean] = None)
+  def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean] = None)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 }
 
@@ -65,11 +66,11 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     }
   }
 
-  override def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean])
+  override def getPspSchemeDetails(pspId: String, srn: SchemeReferenceNumber, refreshData: Option[Boolean])
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
     val url = config.pspSchemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("srn" -> srn,
+    val schemeHc = hc.withExtraHeaders("srn" -> srn.id,
     "pspId" -> pspId,
     "refreshData" -> refreshData.map(_.toString).getOrElse("false"))
 

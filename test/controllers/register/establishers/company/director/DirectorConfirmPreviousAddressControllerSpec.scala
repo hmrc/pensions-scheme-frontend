@@ -66,7 +66,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndex = 0
   val directorIndex = 0
-  val srn = Some("srn")
+  val srn = Some(SchemeReferenceNumber("srn"))
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new DirectorConfirmPreviousAddressController(

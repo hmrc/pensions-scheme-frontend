@@ -55,18 +55,18 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  class TestAllowAccessAction(srn: Option[String],
+  class TestAllowAccessAction(srn: Option[SchemeReferenceNumber],
                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
 
   }
 
-  class TestAllowAccessActionTaskList(srn: Option[String],
+  class TestAllowAccessActionTaskList(srn: Option[SchemeReferenceNumber],
                                       psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionTaskList(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
-  class TestAllowAccessActionNoSuspendedCheck(srn: Option[String],
+  class TestAllowAccessActionNoSuspendedCheck(srn: Option[SchemeReferenceNumber],
                                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionNoSuspendedCheck(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
@@ -75,7 +75,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
   val generateTestHarnessForAllowAccessSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  val srn = Some("S123")
+  val srn = Some(SchemeReferenceNumber("S123"))
 
   val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))

@@ -37,6 +37,7 @@ import views.html.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
@@ -54,7 +55,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val answerSections = Seq(AnswerSection(

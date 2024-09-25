@@ -290,7 +290,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0, None)
 
   private def companyRegistrationNumberNew(mode: Mode): Call =
-    controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, None, 0)
+    controllers.register.establishers.company.routes.CompanyEnterCRNController.onPageLoad(mode, 0, None)
 
   private def establisherTasklist: Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(0)

@@ -171,7 +171,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val srnValue = "S1000000456"
-  private val srn = Some(srnValue)
+  private val srn = Some(SchemeReferenceNumber(srnValue))
   private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =

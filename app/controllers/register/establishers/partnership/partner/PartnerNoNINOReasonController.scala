@@ -33,6 +33,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnerNoNINOReasonController @Inject()(
                                                override val appConfig: FrontendAppConfig,
@@ -52,7 +53,7 @@ class PartnerNoNINOReasonController @Inject()(
   private def form(name: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_ninoRequired", name)
 
   private def viewModel(mode: Mode, establisherIndex: Index,
-                        partnerIndex: Index, srn: Option[String], name: String): ReasonViewModel = {
+                        partnerIndex: Index, srn: Option[SchemeReferenceNumber], name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.PartnerNoNINOReasonController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__whyNoNINO", Message("messages__thePartner")),
@@ -61,7 +62,7 @@ class PartnerNoNINOReasonController @Inject()(
     )
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>
@@ -70,7 +71,7 @@ class PartnerNoNINOReasonController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { name =>

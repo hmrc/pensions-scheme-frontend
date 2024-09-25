@@ -95,7 +95,7 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 
 object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   val formProvider       = new NINOFormProvider()
-  private val srn        = Some("srn")
+  private val srn        = Some(SchemeReferenceNumber("srn"))
   val form: Form[ReferenceValue] = formProvider("First Name Last Name")
   private val index      = Index(0)
   private val ninoData   = "CS700100A"
@@ -133,7 +133,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String], trusteeName: String =trusteeFullName): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], trusteeName: String =trusteeFullName): String = {
 
     val vm = NinoViewModel(
       postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, srn),

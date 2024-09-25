@@ -51,7 +51,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   }
 
   private val index = Index(0)
-  private val srn = Some("test-srn")
+  private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
@@ -63,10 +63,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private def submitUrl(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def updateModeUrl(mode: Mode, srn: Option[String]): Call =
+  private def updateModeUrl(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def answerSection(mode: Mode, srn: Option[String] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -84,7 +84,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(index),
                    hideButton: Boolean = false, title: Message, h1: Message): String =
     view(
       CYAViewModel(

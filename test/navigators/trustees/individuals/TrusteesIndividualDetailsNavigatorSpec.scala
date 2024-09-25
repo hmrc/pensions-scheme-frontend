@@ -124,7 +124,7 @@ object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers wit
   private val someDate =  LocalDate.now()
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val exisitingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
   private val uaFeatureToggleOn = {
     val uaWithToggle = Json.obj(
       SchemeRegistration.asString -> true
@@ -132,7 +132,7 @@ object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers wit
     UserAnswers(uaWithToggle)
   }
 
-  private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

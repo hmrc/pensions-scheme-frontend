@@ -35,6 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
@@ -51,7 +52,7 @@ class CompanyAddressYearsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { companyDetails =>
@@ -60,7 +61,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map { companyDetails =>
@@ -72,7 +73,7 @@ class CompanyAddressYearsController @Inject()(
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__company_address_years__form_error", companyName))
 
-  private def viewModel(mode: Mode, srn: Option[String], index: Index, companyName: String) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index, companyName: String) = AddressYearsViewModel(
     postCall = routes.CompanyAddressYearsController.onSubmit(mode, srn, index),
     title = Message("messages__company_address_years__title"),
     heading = Message("messages__company_address_years__h1", companyName),

@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -66,7 +66,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   private val partnershipName = "test partnership name"
   val form = new EnterVATFormProvider()(partnershipName)
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn = Some(SchemeReferenceNumber("S123"))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

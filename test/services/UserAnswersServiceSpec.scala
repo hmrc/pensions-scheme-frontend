@@ -291,7 +291,7 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
-  private val srn = "S1234567890"
+  private val srn = SchemeReferenceNumber("S1234567890")
 
   val json: JsValue = Json.obj(
     FakeIdentifier.toString -> "fake value",

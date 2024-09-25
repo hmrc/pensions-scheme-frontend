@@ -34,6 +34,7 @@ import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class IndividualConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
@@ -57,7 +58,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>
@@ -67,7 +68,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
         }
     }
 
-  private def viewmodel(trusteeName: String, mode: Mode, index: Int, srn: Option[String]) = {
+  private def viewmodel(trusteeName: String, mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]) = {
     Retrieval(
       implicit request =>
         ExistingCurrentAddressId(index).retrieve.map { address =>
@@ -84,7 +85,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>

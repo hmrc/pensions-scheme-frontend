@@ -32,6 +32,7 @@ import views.html.typeOfBenefits
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TypeOfBenefitsController @Inject()(
                                           override val messagesApi: MessagesApi,
@@ -53,7 +54,7 @@ class TypeOfBenefitsController @Inject()(
   private def form(schemeName: String)
                   (implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
@@ -73,7 +74,7 @@ class TypeOfBenefitsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {

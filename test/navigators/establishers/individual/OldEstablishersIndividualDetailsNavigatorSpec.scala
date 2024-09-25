@@ -136,7 +136,7 @@ object OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase with Match
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val existingEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(false).asOpt.value
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
   private val someDate = LocalDate.now()
 }
 

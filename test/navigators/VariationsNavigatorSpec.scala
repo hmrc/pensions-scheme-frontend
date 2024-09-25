@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{TypeOfBenefits, UpdateMode}
+import models.{SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -32,7 +32,7 @@ class VariationsNavigatorSpec
     with OptionValues
     with Enumerable.Implicits {
 
-  private val srnValue = "S123"
+  private val srnValue = SchemeReferenceNumber("S123")
   private val srn      = Some(srnValue)
 
   private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)

@@ -17,7 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{PsaLock, SchemeVariance, VarianceLock}
+import models.{PsaLock, SchemeReferenceNumber, SchemeVariance, VarianceLock}
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
@@ -240,14 +240,14 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
 object PensionSchemeVarianceLockConnectorSpec {
 
   private val psaId = "A2100005"
-  private val srn = "00000000AA"
+  private val srn = SchemeReferenceNumber("00000000AA")
 
   private val lockUrl = s"/pensions-scheme/update-scheme/lock"
   private val getLockUrl = s"/pensions-scheme/update-scheme/getLock"
   private val releaseLockUrl = s"/pensions-scheme/update-scheme/release-lock"
   private val isLockByPsaOrSchemeUrl = s"/pensions-scheme/update-scheme/isLockByPsaOrScheme"
 
-  val schemeVarianceLockResponse = SchemeVariance("A2100005", "00000000AA")
+  val schemeVarianceLockResponse = SchemeVariance("A2100005", SchemeReferenceNumber("00000000AA"))
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 

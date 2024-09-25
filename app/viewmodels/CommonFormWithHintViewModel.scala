@@ -17,12 +17,13 @@
 package viewmodels
 
 import play.api.mvc.Call
+import models.SchemeReferenceNumber
 
 case class CommonFormWithHintViewModel(
                                         postCall: Call,
                                         title: Message,
                                         heading: Message,
                                         hint: Option[Message] = None,
-                                        srn: Option[String] = None,
+                                        srn: Option[SchemeReferenceNumber] = None,
                                         formFieldName: Option[String] = None
                                       )

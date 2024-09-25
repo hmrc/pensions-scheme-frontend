@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.deleteSchemeChanges
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class DeleteSchemeChangesController @Inject()(
                                                appConfig: FrontendAppConfig,
@@ -49,7 +50,7 @@ class DeleteSchemeChangesController @Inject()(
   private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit _
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate() andThen getData()).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       request.psaId match {
         case Some(psaId) =>
@@ -61,7 +62,7 @@ class DeleteSchemeChangesController @Inject()(
       }
   }
 
-      private def getSchemeName(srn: String, psaId: String)(block: (String, String) => Future[Result])
+      private def getSchemeName(srn: SchemeReferenceNumber, psaId: String)(block: (String, String) => Future[Result])
                                (implicit hc: HeaderCarrier): Future[Result] =
         minimalPsaConnector.getPsaNameFromPsaID(psaId).flatMap { psaName =>
           updateConnector.fetch(srn).flatMap { data =>
@@ -78,7 +79,7 @@ class DeleteSchemeChangesController @Inject()(
           }
         }
 
-      def onSubmit(srn: String): Action[AnyContent] = (authenticate() andThen getData()).async {
+      def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
         implicit request =>
           request.psaId.map { psaId =>
             getSchemeName(srn, psaId.id) { (psaName, schemeName) =>

@@ -35,6 +35,7 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class DirectorPreviousAddressPostcodeLookupController @Inject()(
                                                                  override val appConfig: FrontendAppConfig,
@@ -60,13 +61,13 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map(get)
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]) = Retrieval {
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]) = Retrieval {
     implicit request =>
       directorName(establisherIndex, directorIndex).retrieve.map(
         name => PostcodeLookupViewModel(
@@ -80,7 +81,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
       )
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map(

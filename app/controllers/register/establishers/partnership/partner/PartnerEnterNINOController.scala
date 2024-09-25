@@ -32,6 +32,7 @@ import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnerEnterNINOController @Inject()(
                                             val appConfig: FrontendAppConfig,
@@ -50,7 +51,7 @@ class PartnerEnterNINOController @Inject()(
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes
     .PartnerEnterNINOController.onSubmit _
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -63,7 +64,7 @@ class PartnerEnterNINOController @Inject()(
         }
     }
 
-  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[String])
+  private def viewmodel(name: String, establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber])
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(establisherIndex), Index(partnerIndex), srn),
@@ -73,7 +74,7 @@ class PartnerEnterNINOController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {

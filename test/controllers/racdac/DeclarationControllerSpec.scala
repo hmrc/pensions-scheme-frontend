@@ -25,7 +25,7 @@ import helpers.DataCompletionHelper
 import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
-import models.{MinimalPSA, PSAMinimalFlags}
+import models.{MinimalPSA, PSAMinimalFlags, SchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -151,7 +151,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val view = injector.instanceOf[declaration]
   private val mockAppConfig = mock[FrontendAppConfig]
 
-  private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = "srn")
+  private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = SchemeReferenceNumber("srn"))
 
   private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(

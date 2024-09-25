@@ -18,6 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
+import models.SchemeReferenceNumber
 import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -26,10 +27,11 @@ import play.api.mvc.{Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import org.scalatestplus.mockito.MockitoSugar
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class FakeAllowAccessAction(srn: Option[String],
+class FakeAllowAccessAction(srn: Option[SchemeReferenceNumber],
                             pensionsSchemeConnector: PensionsSchemeConnector,
                             errorHandler: FrontendErrorHandler,
                             allowPsa: Boolean = true,
@@ -42,7 +44,7 @@ object FakeAllowAccessAction extends MockitoSugar {
   def getMockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 }
 
-case class FakeAllowAccessProvider(srn: Option[String] = None,
+case class FakeAllowAccessProvider(srn: Option[SchemeReferenceNumber] = None,
                                    pensionsSchemeConnector: Option[PensionsSchemeConnector] = None
                                   ) extends AllowAccessActionProvider with MockitoSugar {
 
@@ -52,7 +54,7 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
     override def messagesApi: MessagesApi = ???
   }
 
-  override def apply(srn: Option[String], allowPsa: Boolean = true, allowPsp: Boolean = false ): AllowAccessAction = {
+  override def apply(srn: Option[SchemeReferenceNumber], allowPsa: Boolean = true, allowPsp: Boolean = false ): AllowAccessAction = {
     new FakeAllowAccessAction(
       srn,
       pensionsSchemeConnector match {

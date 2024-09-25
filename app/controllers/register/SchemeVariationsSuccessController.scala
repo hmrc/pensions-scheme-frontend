@@ -29,6 +29,8 @@ import views.html.register.schemeVariationsSuccess
 
 import scala.concurrent.ExecutionContext
 
+import models.SchemeReferenceNumber
+
 class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   cacheConnector: UpdateSchemeCacheConnector,
@@ -40,7 +42,7 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController
   with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, Some(srn))).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, Some(srn))).async {
     implicit request =>
       val schemeName = existingSchemeName
       cacheConnector.removeAll(srn).map { _ =>

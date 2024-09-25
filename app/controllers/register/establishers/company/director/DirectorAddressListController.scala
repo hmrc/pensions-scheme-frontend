@@ -35,6 +35,7 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class DirectorAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                               val userAnswersService: UserAnswersService,
@@ -50,13 +51,13 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
                                              )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).map(get)
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String])
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (DirectorNameId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex,
       directorIndex)).retrieve.map {
@@ -77,7 +78,7 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
 
   }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).map {

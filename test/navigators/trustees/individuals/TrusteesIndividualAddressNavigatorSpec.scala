@@ -115,7 +115,7 @@ object TrusteesIndividualAddressNavigatorSpec extends SpecBase with Matchers wit
   private lazy val index = 0
   private val newTrusteeUserAnswers: UserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
 }
 
 

@@ -33,6 +33,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
@@ -49,7 +50,7 @@ class CompanyAddressYearsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends controllers.address
 .AddressYearsController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {
@@ -58,7 +59,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {
@@ -67,7 +68,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
+  private def viewmodel(index: Index, mode: Mode, srn: Option[SchemeReferenceNumber]): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.map {

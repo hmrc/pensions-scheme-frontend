@@ -41,7 +41,7 @@
     schemeName: Option[String],
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String]
+    srn: Option[SchemeReferenceNumber]
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))){

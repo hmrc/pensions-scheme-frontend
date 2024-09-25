@@ -32,6 +32,7 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class EstablisherNoUTRReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
@@ -48,7 +49,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theIndividual")),
@@ -57,7 +58,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
     )
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>
@@ -66,7 +67,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>

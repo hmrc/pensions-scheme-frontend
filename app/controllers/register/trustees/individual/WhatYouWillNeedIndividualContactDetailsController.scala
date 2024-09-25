@@ -31,6 +31,7 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                                   override val messagesApi: MessagesApi,
@@ -46,7 +47,7 @@ class WhatYouWillNeedIndividualContactDetailsController @Inject()(val appConfig:
                                                                  )(implicit val ec: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request => {
         val nextPageHref = routes.TrusteeEmailController.onPageLoad(mode, index, srn)

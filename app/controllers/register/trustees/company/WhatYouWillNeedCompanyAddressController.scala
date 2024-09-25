@@ -29,6 +29,7 @@ import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
 import scala.concurrent.Future
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,
@@ -41,7 +42,7 @@ class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppCo
                                                        ) extends FrontendBaseController with I18nSupport with
   Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] = (authenticate() andThen
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map {
