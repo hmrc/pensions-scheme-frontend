@@ -1961,3 +1961,4 @@ messages__trustees__prefill__multi__error__required = Select all establishers th
 messages__trustees__prefill__multi__error__moreThanTen = You can add up to 10 trustees using this service. You have already added {0} so you can only add {1} more
 messages__trustees__prefill__multi__error__noneWithValue = Select the establishers that are also trustees, or select "none of the above"
 
+messages__memberNotFound__p1 = The web address that has been entered includes an index number for {0} that exceeds the total number we have on record.

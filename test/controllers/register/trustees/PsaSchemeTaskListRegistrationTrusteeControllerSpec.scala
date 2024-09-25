@@ -59,6 +59,17 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
+
+    "redirect to Page Not Found for a GET if RuntimeException with 'INVALID-TRUSTEE' is thrown" in {
+      when(mockHsTaskListHelperRegistration.taskListTrustee(any(), any(), any(), any()))
+        .thenThrow(new RuntimeException("INVALID-TRUSTEE"))
+
+      val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
+        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.register.routes.MemberNotFoundController.onTrusteesPageLoad().url)
+    }
   }
 }
 
