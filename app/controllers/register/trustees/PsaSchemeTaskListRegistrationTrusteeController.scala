@@ -53,7 +53,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
 
         (srn, request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
-            handleValidRequest(userAnswers, schemeName, mode, srn.map(_.id), index)
+            handleValidRequest(userAnswers, schemeName, mode, srn, index)
 
           case (Some(_), _, _) =>
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

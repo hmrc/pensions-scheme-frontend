@@ -47,25 +47,20 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false)
-    andThen allowAccess(srn)).async {
-    implicit request =>
-      val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
-      (srn, request.userAnswers, schemeNameOpt) match {
-        case (None, Some(userAnswers), Some(schemeName)) =>
-          Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index.id),
-            schemeName,
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn).url
-          )))
-        case (Some(_), _, _) =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-        case _ =>
-          Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
-      }
-  }
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+    (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false) andThen allowAccess(srn)).async {
+      implicit request =>
+        val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
+
+        (srn, request.userAnswers, schemeNameOpt) match {
+          case (None, Some(userAnswers), Some(schemeName)) => handleValidRequest(userAnswers, schemeName, mode, srn, index)
+          case (Some(_), _, _) => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
+          case _ => Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
+        }
+    }
 
 
-  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[String], index: Int)
+  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber], index: Int)
                                 (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     try {
       val taskList = hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index)
@@ -77,7 +72,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
     }
   }
 
-  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: Option[String])
+  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber])
                               (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     Future.successful(
       Ok(
