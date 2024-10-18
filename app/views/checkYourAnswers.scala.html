@@ -46,8 +46,10 @@
 
     @if(vm.returnOverview){
         @components.return_link("messages__complete__return", vm.schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
-    } else {
-        @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
+    } else if (vm.anotherReturn.isDefined) {
+        if (vm.anotherReturn.get != vm.href) {
+            @components.return_link("messages__schemeTaskList__returnlink", vm.schemeName, vm.anotherReturn, vm.srn)
+        }
     }
 
 }
