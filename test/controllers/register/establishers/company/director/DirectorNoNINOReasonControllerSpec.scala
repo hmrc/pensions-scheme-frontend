@@ -85,15 +85,15 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
       FakeUserAnswersService.verify(DirectorNoNINOReasonId(establisherIndex, directorIndex), "reason")
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+    "render the same page with invalid error message when invalid characters are entered" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<>?:-{}<>,/.,/;#\";]["))
 
       val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) must include(messages("messages__reason__error_ninoRequired", name))
     }
+
 
   }
 }

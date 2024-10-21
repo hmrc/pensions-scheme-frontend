@@ -92,6 +92,17 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         contentAsString(result) mustBe viewAsString(boundForm)
       }
 
+      "return a Bad Request and invalid errors when invalid chars are submitted" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<>?:-{}<>,/.,/;#\";]["))
+        val boundForm = form.bind(Map("value" -> "<>?:-{}<>,/.,/;#\";]["))
+
+        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+        contentAsString(result) must include(messages("messages__reason__error_ninoRequired", name))
+      }
+
     }
   }
 
