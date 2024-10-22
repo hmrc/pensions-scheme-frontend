@@ -17,25 +17,30 @@
 package handlers
 
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import models.Link
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
-import play.api.mvc.Request
+import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import views.html.{error_template, error_template_page_not_found}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class ErrorHandlerWithReturnLinkToManage @Inject()(
                                                     appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
-                                                    override val notFoundView: error_template_page_not_found,
-                                                    override val errorView: error_template
-                                                  ) extends ErrorHandler(appConfig, messagesApi, notFoundView,
-  errorView) with I18nSupport {
+                                                    override val notFoundTemplateView: error_template_page_not_found,
+                                                    override val errorTemplateView: error_template
+                                                  ) extends ErrorHandler(appConfig, messagesApi, notFoundTemplateView,
+  errorTemplateView) with I18nSupport {
 
-  override def notFoundTemplate(implicit request: Request[_]): Html = {
+  override def notFoundTemplate(implicit request: RequestHeader): Future[Html] = {
+    implicit def requestImplicit: Request[_] = Request(request, "")
     val linkContent = messagesApi.apply("messages__complete__returnToManagePensionSchemes")(Lang.defaultLang)
-    notFoundView(Link(linkContent, appConfig.managePensionsSchemeOverviewUrl.url, Some(linkContent))
+    Future.successful(notFoundTemplateView(Link(linkContent, appConfig.managePensionsSchemeOverviewUrl.url, Some(linkContent)))
     )
   }
 }
