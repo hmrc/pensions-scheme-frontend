@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 
 import javax.inject.{Inject, Singleton}
 import models.Link
-import play.api.i18n.{I18nSupport, Lang, MessagesApi}
+import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -38,9 +38,14 @@ class ErrorHandler @Inject()(
                             ) (implicit val ec: ExecutionContext)
   extends FrontendErrorHandler with I18nSupport {
 
-  def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader): Future[Html] = {
-    implicit def requestImplicit: Request[_] = Request(request, "")
-    Future.successful(errorTemplateView(pageTitle, heading, message, appConfig))
+  override def standardErrorTemplate(
+                                      pageTitle: String,
+                                      heading: String,
+                                      message: String
+                                    )(implicit request: RequestHeader): Future[Html] = {
+    def requestImplicit: Request[_] = Request(request, "")
+    def messages: Messages = messagesApi.preferred(request)
+    Future.successful(errorTemplateView(pageTitle, heading, message, appConfig)(requestImplicit, messages))
   }
 
   def notFoundTemplate(implicit request: Request[_]): Future[Html] = {
