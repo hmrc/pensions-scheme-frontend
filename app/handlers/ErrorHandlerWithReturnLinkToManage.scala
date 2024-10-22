@@ -25,8 +25,7 @@ import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import views.html.{error_template, error_template_page_not_found}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ErrorHandlerWithReturnLinkToManage @Inject()(
@@ -34,7 +33,7 @@ class ErrorHandlerWithReturnLinkToManage @Inject()(
                                                     override val messagesApi: MessagesApi,
                                                     override val notFoundTemplateView: error_template_page_not_found,
                                                     override val errorTemplateView: error_template
-                                                  ) extends ErrorHandler(appConfig, messagesApi, notFoundTemplateView,
+                                                  ) (implicit ec: ExecutionContext) extends ErrorHandler(appConfig, messagesApi, notFoundTemplateView,
   errorTemplateView) with I18nSupport {
 
   override def notFoundTemplate(implicit request: RequestHeader): Future[Html] = {

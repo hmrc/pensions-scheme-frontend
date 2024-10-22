@@ -47,7 +47,7 @@ case class FakeAllowAccessProvider(srn: Option[String] = None,
                                   ) extends AllowAccessActionProvider with MockitoSugar {
 
   private val errorHandler = new FrontendErrorHandler {
-    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
+    def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
 
     override def messagesApi: MessagesApi = ???
   }
