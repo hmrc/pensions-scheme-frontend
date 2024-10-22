@@ -25,7 +25,6 @@ import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.{HttpResponseHelper, UserAnswers}
 
@@ -58,7 +57,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: Frontend
 
     val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
 
-    http.post(url).withBody(answers.json).execute[HttpResponse].map { response =>
+    http.post(url).withBody(answers.json).execute[HttpResponse](httpResponseReads, ec).map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)
@@ -77,7 +76,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: Frontend
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
     val url = url"${config.updateSchemeDetailsUrl}"
-    http.post(url).withBody(answers.json).execute[HttpResponse].map { response =>
+    http.post(url).withBody(answers.json).execute[HttpResponse](httpResponseReads, ec).map { response =>
       response.status match {
         case OK => Right(())
         case _ =>
@@ -96,7 +95,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: Frontend
         ("schemeReferenceNumber", srn),
         ("Content-Type", "application/json"))
 
-    http.get(url"${config.checkAssociationUrl}").setHeader(headers: _*).execute[HttpResponse].map { response =>
+    http.get(url"${config.checkAssociationUrl}").setHeader(headers: _*).execute[HttpResponse](httpResponseReads, ec).map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)
