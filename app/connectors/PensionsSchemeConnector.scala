@@ -55,9 +55,10 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: Frontend
                     (implicit hc: HeaderCarrier,
                      ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
+    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId" , psaId))
     val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
 
-    http.post(url).withBody(answers.json).execute[HttpResponse](httpResponseReads, ec).map { response =>
+    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)
@@ -75,8 +76,10 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: Frontend
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
+    implicit val headerCarrier = Seq(("psaId", psaId),("pstr", pstr))
     val url = url"${config.updateSchemeDetailsUrl}"
-    http.post(url).withBody(answers.json).execute[HttpResponse](httpResponseReads, ec).map { response =>
+
+    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
       response.status match {
         case OK => Right(())
         case _ =>
