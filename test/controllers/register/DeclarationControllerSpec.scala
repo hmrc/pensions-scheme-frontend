@@ -38,7 +38,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}

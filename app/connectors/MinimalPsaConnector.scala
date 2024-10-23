@@ -22,7 +22,8 @@ import models.{MinimalPSA, PSAMinimalFlags}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
-import uk.gov.hmrc.http.{HttpClient, _}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http._
 import utils.HttpResponseHelper
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +42,7 @@ trait MinimalPsaConnector {
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
 }
 
-class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class MinimalPsaConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
   extends MinimalPsaConnector
     with HttpResponseHelper {
 
@@ -49,9 +50,9 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
 
   override def getMinimalPsaDetails(psaId: String)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
-    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+    val psaHc = Seq(("psaId", psaId))
 
-    http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
+    http.get(url"${config.minimalPsaDetailsUrl}").setHeader(psaHc: _*).execute[HttpResponse] map { response =>
 
       response.status match {
         case OK =>
@@ -83,9 +84,9 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClient, config: FrontendAppCon
 
   override def getMinimalFlags(psaId: String)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] = {
-    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+    val psaHc = Seq("psaId" -> psaId)
 
-    http.GET[HttpResponse](config.minimalPsaDetailsUrl)(implicitly, psaHc, implicitly) map { response =>
+    http.get(url"${config.minimalPsaDetailsUrl}").setHeader(psaHc: _*).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]

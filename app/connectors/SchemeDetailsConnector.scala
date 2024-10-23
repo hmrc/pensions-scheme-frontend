@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ trait SchemeDetailsConnector {
 }
 
 @Singleton
-class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class SchemeDetailsConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
   extends SchemeDetailsConnector
     with HttpResponseHelper {
 
@@ -47,18 +47,15 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
   override def getSchemeDetails(psaId: String, schemeIdType: String, idNumber: String, refreshData: Option[Boolean])
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
-    val url = config.schemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("schemeIdType" -> schemeIdType,
-      "idNumber" -> idNumber,
-      "PSAId" -> psaId,
-      "refreshData" -> refreshData.map(_.toString).getOrElse("false"))
+    val url = url"${config.schemeDetailsUrl}"
+    val schemeHc = Seq(("schemeIdType", schemeIdType), ("idNumber", idNumber), ("PSAId", psaId), ("refreshData", refreshData.map(_.toString).getOrElse("false")))
 
-    http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
+    http.get(url).setHeader(schemeHc: _*).execute[HttpResponse].map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)
           UserAnswers(json)
-        case _ => handleErrorResponse("GET", url)(response)
+        case _ => handleErrorResponse("GET", url.toString)(response)
       }
     } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to get scheme details", t)
@@ -68,15 +65,14 @@ class SchemeDetailsConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
   override def getPspSchemeDetails(pspId: String, srn: String, refreshData: Option[Boolean])
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
-    val url = config.pspSchemeDetailsUrl
-    val schemeHc = hc.withExtraHeaders("srn" -> srn,
-    "pspId" -> pspId,
-    "refreshData" -> refreshData.map(_.toString).getOrElse("false"))
+    val url = url"${config.pspSchemeDetailsUrl}"
 
-    http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
+    val schemeHc = Seq(("srn", srn), ("pspId", pspId), ("refreshData", refreshData.map(_.toString).getOrElse("false")))
+
+    http.get(url).setHeader(schemeHc: _*).execute[HttpResponse].map { response =>
       response.status match {
         case OK => UserAnswers(Json.parse(response.body))
-        case _ => handleErrorResponse("GET", url)(response)
+        case _ => handleErrorResponse("GET", url.toString)(response)
       }
     } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to psp get scheme details", t)

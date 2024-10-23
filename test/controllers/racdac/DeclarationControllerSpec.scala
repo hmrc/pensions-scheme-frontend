@@ -36,7 +36,7 @@ import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
