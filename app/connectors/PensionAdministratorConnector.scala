@@ -18,12 +18,13 @@ package connectors
 
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -38,16 +39,16 @@ trait PensionAdministratorConnector {
 }
 
 @Singleton
-class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
   extends PensionAdministratorConnector {
 
   private val logger  = Logger(classOf[PensionAdministratorConnectorImpl])
 
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = config.pensionsAdministratorUrl + config.getPSAEmail
+    val url = url"${config.pensionsAdministratorUrl + config.getPSAEmail}"
 
-    http.GET[HttpResponse](url) map { response =>
+    http.get(url).execute[HttpResponse].map { response =>
       require(response.status == OK)
 
       response.body
@@ -62,9 +63,9 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
 
   def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = config.pensionsAdministratorUrl + config.getPSAName
+    val url = url"${config.pensionsAdministratorUrl + config.getPSAName}"
 
-    http.GET[HttpResponse](url) map { response =>
+    http.get(url).execute[HttpResponse].map { response =>
       require(response.status == OK)
 
       response.body

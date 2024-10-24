@@ -30,7 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.domain.{PsaId, PspId}
@@ -38,7 +38,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import utils.UserAnswers
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AllowAccessActionSpec
   extends SpecBase
@@ -79,8 +79,12 @@ class AllowAccessActionSpec
   private val config = injector.instanceOf[FrontendAppConfig]
 
   private val errorHandler = new FrontendErrorHandler {
+    implicit protected val ec: ExecutionContext = global
+
     override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
-                                      (implicit request: Request[_]): Html = Html("")
+                                      (implicit request: RequestHeader): Future[Html] = {
+      Future.successful(Html(""))
+    }
 
     override def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
   }

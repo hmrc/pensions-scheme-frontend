@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.google.inject.{Inject, Singleton, ImplementedBy}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
 import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
@@ -24,8 +24,9 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{HttpClient, HttpResponse, HeaderCarrier}
-import utils.{UserAnswers, HttpResponseHelper}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +46,7 @@ trait PensionsSchemeConnector {
 }
 
 @Singleton
-class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
   extends PensionsSchemeConnector with HttpResponseHelper {
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
@@ -54,9 +55,10 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
                     (implicit hc: HeaderCarrier,
                      ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
-    val url = config.registerSchemeUrl(schemeJourneyType)
+    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId" , psaId))
+    val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
 
-    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId)).map { response =>
+    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)
@@ -66,7 +68,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
             case JsError(errors) => throw JsResultException(errors)
           }
         case _ =>
-          handleErrorResponse("POST", url)(response)
+          handleErrorResponse("POST", url.toString)(response)
       }
     }
   }
@@ -74,12 +76,14 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    val url = config.updateSchemeDetailsUrl
-    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr)).map { response =>
+    implicit val headerCarrier = Seq(("psaId", psaId),("pstr", pstr))
+    val url = url"${config.updateSchemeDetailsUrl}"
+
+    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
       response.status match {
         case OK => Right(())
         case _ =>
-          handleErrorResponse("POST", url)(response)
+          handleErrorResponse("POST", url.toString)(response)
       }
     }
   }
@@ -87,12 +91,14 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
   def checkForAssociation(userId: String, srn: String, isPsa: Boolean)
                          (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
+
     val headers: Seq[(String, String)] =
-      Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+      Seq(
+        (if(isPsa) "psaId" else "pspId", userId),
+        ("schemeReferenceNumber", srn),
+        ("Content-Type", "application/json"))
 
-    implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
-
-    http.GET[HttpResponse](config.checkAssociationUrl)(implicitly, hc, implicitly).map { response =>
+    http.get(url"${config.checkAssociationUrl}").setHeader(headers: _*).execute[HttpResponse](httpResponseReads, ec).map { response =>
       response.status match {
         case OK =>
           val json = Json.parse(response.body)

@@ -18,14 +18,15 @@ package connectors
 
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
+
 import javax.inject.{Inject, Singleton}
 import models.{Lock, SchemeVariance}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -51,7 +52,7 @@ trait PensionSchemeVarianceLockConnector {
 }
 
 @Singleton
-class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
   extends PensionSchemeVarianceLockConnector {
 
   private val logger  = Logger(classOf[PensionSchemeVarianceLockConnectorImpl])
@@ -59,11 +60,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   override def lock(psaId: String, srn: String)
                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Lock] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId", psaId), ("srn", srn))
 
-    val url = s"${config.updateSchemeDetailsUrl}/lock"
+    val url = url"${config.updateSchemeDetailsUrl}/lock"
 
-    http.POSTEmpty[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+    http.post(url).setHeader(headerCarrier: _*).execute[HttpResponse].map { response =>
 
       response.status match {
         case OK =>
@@ -80,11 +81,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   override def getLock(psaId: String, srn: String)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId", psaId), ("srn", srn))
 
-    val url = s"${config.updateSchemeDetailsUrl}/getLock"
+    val url = url"${config.updateSchemeDetailsUrl}/getLock"
 
-    http.GET[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+    http.get(url).setHeader(headerCarrier: _*).execute[HttpResponse].map { response =>
 
       response.status match {
         case NOT_FOUND =>
@@ -103,11 +104,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   override def getLockByPsa(psaId: String)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SchemeVariance]] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId)
+    implicit val headerCarrier: Seq[(String, String)] =  Seq(("psaId" , psaId))
 
-    val url = s"${config.updateSchemeDetailsUrl}/get-lock-by-psa"
+    val url = url"${config.updateSchemeDetailsUrl}/get-lock-by-psa"
 
-    http.GET[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+    http.get(url).setHeader(headerCarrier: _*).execute[HttpResponse].map { response =>
 
       response.status match {
         case NOT_FOUND =>
@@ -127,11 +128,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   override def isLockByPsaIdOrSchemeId(psaId: String, srn: String)
                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Lock]] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+   implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId" , psaId), ("srn" , srn))
 
-    val url = s"${config.updateSchemeDetailsUrl}/isLockByPsaOrScheme"
+    val url = url"${config.updateSchemeDetailsUrl}/isLockByPsaOrScheme"
 
-    http.GET[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+    http.get(url).setHeader(headerCarrier: _*) .execute[HttpResponse].map { response =>
 
       response.status match {
         case NOT_FOUND =>
@@ -154,11 +155,11 @@ class PensionSchemeVarianceLockConnectorImpl @Inject()(http: HttpClient, config:
   override def releaseLock(psaId: String, srn: String)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    implicit val headerCarrier: HeaderCarrier = hc.withExtraHeaders("psaId" -> psaId, "srn" -> srn)
+    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId" , psaId), ("srn" , srn))
 
-    val url = s"${config.updateSchemeDetailsUrl}/release-lock"
+    val url = url"${config.updateSchemeDetailsUrl}/release-lock"
 
-    http.DELETE[HttpResponse](url)(implicitly, headerCarrier, implicitly).map { response =>
+    http.delete(url).setHeader(headerCarrier: _*).execute[HttpResponse].map { response =>
 
       response.status match {
         case OK => {}
