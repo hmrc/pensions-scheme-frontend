@@ -539,6 +539,8 @@ messages__addCompanyDirectors_lede = You must tell us about all your directors. 
 messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+messages__addCompanyDirectors__completed = Completed
+messages__addCompanyDirectors__incomplete = Incomplete
 
 messages__director_address_years__title = Has {0} used this address for at least 1 year?
 messages__director_address_years__heading = Has {0} used this address for at least 1 year?
@@ -962,6 +964,8 @@ messages__addPartners_add_more = Do you want to add another partner?
 messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using this service.
 messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
+messages__addPartners__completed = Completed
+messages__addPartners__incomplete = Incomplete
 
 messages__establishers__secondaryHeading = Establishers for {0}
 messages__trustees__secondaryHeading = Trustees for {0}

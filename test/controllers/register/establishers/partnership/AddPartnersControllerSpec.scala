@@ -79,10 +79,11 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
 
-  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
+  private def viewAsString(form: Form[_] = form, completePartners: Seq[PartnerEntity] = Nil, incompletePartners: Seq[PartnerEntity] = Nil) =
     view(
       form,
-      partners,
+      completePartners,
+      incompletePartners,
       postUrl,
       None,
       false,
@@ -134,7 +135,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+            incompletePartners = Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -163,7 +164,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
+        incompletePartners = Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
     }
 
     "redirect to the next page when maximum partners exist and the user submits" in {
@@ -186,7 +187,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, partnersViewModel)
+      contentAsString(result) mustBe viewAsString(form, incompletePartners = partnersViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
