@@ -72,10 +72,14 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       mockFeatureToggleService
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil, enableSubmission: Boolean = false) =
+  private def viewAsString(form: Form[_] = form,
+                           completeDirectors: Seq[DirectorEntity] = Nil,
+                           incompleteDirectors: Seq[DirectorEntity] = Nil,
+                           enableSubmission: Boolean = false) =
     view(
       form,
-      directors,
+      completeDirectors,
+      incompleteDirectors,
       None,
       postCall(NormalMode, None, establisherIndex),
       false,
@@ -130,7 +134,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
 
           contentAsString(result) mustBe viewAsString(
             form,
-            Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)),
+            incompleteDirectors = Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)),
             enableSubmission = true)
         }
     }
@@ -145,7 +149,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       val result = controller(getRelevantData).onPageLoad(NormalMode, None, establisherIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, directorsViewModel, enableSubmission = true)
+      contentAsString(result) mustBe viewAsString(form, incompleteDirectors = directorsViewModel, enableSubmission = true)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -181,7 +185,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(
         boundForm,
-        Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
+        incompleteDirectors = Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 0)))
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {
