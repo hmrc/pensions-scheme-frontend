@@ -7,13 +7,13 @@
 GET         /                                                        controllers.BeforeYouStartController.onPageLoad()
 
 
-GET         /scheme-detail                                          controllers.TaskListRedirectController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /scheme-detail/:srn                                     controllers.TaskListRedirectController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
+GET         /scheme-detail                                          controllers.TaskListRedirectController.onPageLoad(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+GET         /scheme-detail/:srn                                     controllers.TaskListRedirectController.onPageLoad(mode: Mode = UpdateMode, srn: OptionalSchemeReferenceNumber)
 
 GET         /pension-scheme/:srn                                     controllers.PspSchemeTaskListController.onPageLoad(srn: SchemeReferenceNumber)
 
-GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None)
-GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: Option[SchemeReferenceNumber])
+GET         /scheme-details                                          controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+GET         /scheme-details/:srn                                     controllers.PsaSchemeTaskListController.onPageLoad(mode: Mode = UpdateMode, srn: OptionalSchemeReferenceNumber)
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 

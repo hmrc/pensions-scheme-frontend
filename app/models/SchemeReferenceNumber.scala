@@ -22,29 +22,47 @@ import play.api.mvc.{JavascriptLiteral, PathBindable, QueryStringBindable}
 import scala.language.implicitConversions
 import scala.util.matching.Regex
 
-case class SchemeReferenceNumber(id: String){
-  implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Option[SchemeReferenceNumber]] = new PathBindable[Option[SchemeReferenceNumber]] {
-    override def bind(key: String, value: String): Either[String, Option[SchemeReferenceNumber]] = {
+
+case class OptionalSchemeReferenceNumber(opt: Option[SchemeReferenceNumber])
+
+object EmptyOptionalSchemeReferenceNumber extends OptionalSchemeReferenceNumber(None)
+object OptionalSchemeReferenceNumber {
+
+  implicit def fromSrn(srn: Option[SchemeReferenceNumber]): OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(srn)
+  implicit def toSrn(srnOpt: OptionalSchemeReferenceNumber): Option[SchemeReferenceNumber] = srnOpt.opt
+  implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[OptionalSchemeReferenceNumber] = new PathBindable[OptionalSchemeReferenceNumber] {
+    override def bind(key: String, value: String): Either[String, OptionalSchemeReferenceNumber] = {
       if (value.isEmpty) {
-        Right(None)
+        Right(OptionalSchemeReferenceNumber(None))
       } else {
         stringBinder.bind(key, value) match {
-          case Right(v) => Right(Some(SchemeReferenceNumber(v)))
+          case Right(v) =>
+            Right(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(v))))
           case Left(error) => Left(error)
         }
       }
     }
 
-    override def unbind(key: String, srnOpt: Option[SchemeReferenceNumber]): String = {
-      srnOpt.map(_.id).getOrElse("")
+    override def unbind(key: String, srnOpt: OptionalSchemeReferenceNumber): String = {
+      srnOpt.opt.map(_.id).getOrElse("")
     }
   }
+
+  implicit val jsLiteral: JavascriptLiteral[OptionalSchemeReferenceNumber] =
+    new JavascriptLiteral[OptionalSchemeReferenceNumber] {
+      override def to(value: OptionalSchemeReferenceNumber): String = {
+        value.opt match {
+          case Some(schemeRef) => s"${schemeRef.id}"
+          case None => ""
+        }
+      }
+    }
 }
+
+case class SchemeReferenceNumber(id: String)
 
 object SchemeReferenceNumber {
 
-
-  val regexSRN: Regex = "^S[0-9]{10}$".r
 
   // PathBindable for SchemeReferenceNumber
   implicit def srnPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[SchemeReferenceNumber] = new PathBindable[SchemeReferenceNumber] {

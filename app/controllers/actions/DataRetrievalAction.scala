@@ -288,7 +288,7 @@ class RacdacDataRetrievalImpl(
         case None => refreshSchemeDetails
         case Some(jsonValue) => (jsonValue \ SchemeSrnId.toString).validate[String] match {
           case JsSuccess(value, _) =>
-            if (value eq srn) {
+            if (value eq srn.id) {
               Future.successful(Some(jsonValue))
             } else {
               refreshSchemeDetails
