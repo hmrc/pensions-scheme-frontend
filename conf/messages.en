@@ -1721,7 +1721,7 @@ messages__enterPAYE__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter the Unique Taxpayer Reference (UTR)
 messages__utr__error_invalid = Enter the Unique Taxpayer Reference (UTR) in the correct format
-messages__companyUtr__guidance1 = This is a 10-digit or 13-digit number. It may also start or end with the letter ‘k’.
+messages__companyUtr__guidance1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’.
 messages__companyUtr__guidance2 = You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages_utr__hint = For example, 12345 67890
 messages__utr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
