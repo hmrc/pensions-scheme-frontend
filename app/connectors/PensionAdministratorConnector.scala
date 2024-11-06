@@ -39,20 +39,19 @@ trait PensionAdministratorConnector {
 }
 
 @Singleton
-class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
+class PensionAdministratorConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
   extends PensionAdministratorConnector {
 
   private val logger  = Logger(classOf[PensionAdministratorConnectorImpl])
 
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = url"${config.pensionsAdministratorUrl + config.getPSAEmail}"
+    val url = url"${config.pensionsAdministratorUrl}${config.getPSAEmail}"
 
-    http.get(url).execute[HttpResponse].map { response =>
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
       require(response.status == OK)
-
       response.body
-
     } andThen logExceptions("email")
 
   }
@@ -63,13 +62,13 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: Fr
 
   def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = url"${config.pensionsAdministratorUrl + config.getPSAName}"
+    val url = url"${config.pensionsAdministratorUrl}${config.getPSAName}"
 
-    http.get(url).execute[HttpResponse].map { response =>
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
       require(response.status == OK)
-
       response.body
-
     } andThen logExceptions("name")
+
   }
 }

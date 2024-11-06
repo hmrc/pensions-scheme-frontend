@@ -23,7 +23,6 @@ import identifiers.TypedIdentifier
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Format
-import play.api.libs.ws.WSClient
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

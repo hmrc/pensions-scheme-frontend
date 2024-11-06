@@ -22,42 +22,33 @@ import connectors.CacheConnector.headers
 import play.api.libs.json._
 import uk.gov.hmrc.http._
 import play.api.http.Status._
-import play.api.libs.ws.WSClient
 import play.api.mvc.Results._
 import play.api.mvc.Result
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataCacheConnector @Inject()(
-                                           config: FrontendAppConfig,
-                                           http: WSClient
-                                         ) {
+class SessionDataCacheConnector @Inject()(config: FrontendAppConfig, httpClientV2: HttpClientV2) {
 
-  private def url(cacheId: String) = s"${config.pensionsAdministratorUrl}/pension-administrator/journey-cache/session-data/$cacheId"
+  private def url(cacheId: String) = url"${config.pensionsAdministratorUrl}/pension-administrator/journey-cache/session-data/$cacheId"
 
-  def fetch(id: String)(implicit ec: ExecutionContext,
-                        hc: HeaderCarrier): Future[Option[JsValue]] = {
-    http
-      .url(url(id))
-      .withHttpHeaders(headers(hc): _*)
-      .get()
+  def fetch(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2.get(url(id))
+      .setHeader(headers(hc): _*)
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
-          case NOT_FOUND =>
-            Future.successful(None)
-          case OK =>
-            Future.successful(Some(Json.parse(response.body)))
-          case _ =>
-            Future.failed(new HttpException(response.body, response.status))
+          case NOT_FOUND => Future.successful(None)
+          case OK => Future.successful(Some(Json.parse(response.body)))
+          case _ => Future.failed(new HttpException(response.body, response.status))
         }
       }
-  }
 
-  def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
-    http
-      .url(url(id))
-      .withHttpHeaders(headers(hc): _*)
-      .delete()
+  def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+    httpClientV2.delete(url(id))
+      .setHeader(headers(hc): _*)
+      .execute[HttpResponse]
       .map(_ => Ok)
-  }
+
 }

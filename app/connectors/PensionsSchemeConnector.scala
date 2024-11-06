@@ -33,85 +33,89 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
-                    (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[SchemeSubmissionResponse]
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
+                    )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean = true)
-                         (implicit headerCarrier: HeaderCarrier,
+  def checkForAssociation(userId: String, srn: String, isPsa: Boolean = true
+                         )(implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]]
 }
 
 @Singleton
-class PensionsSchemeConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
+class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
   extends PensionsSchemeConnector with HttpResponseHelper {
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
-                    (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
+                    )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
-    implicit val headerCarrier: Seq[(String, String)] = Seq(("psaId" , psaId))
     val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
+    val headers = Seq("psaId" -> psaId)
 
-    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
-      response.status match {
-        case OK =>
-          val json = Json.parse(response.body)
+    httpClientV2.post(url)
+      .withBody(answers.json)
+      .setHeader(headers:_ *)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK =>
+            val json = Json.parse(response.body)
 
-          json.validate[SchemeSubmissionResponse] match {
-            case JsSuccess(value, _) => value
-            case JsError(errors) => throw JsResultException(errors)
-          }
-        case _ =>
-          handleErrorResponse("POST", url.toString)(response)
+            json.validate[SchemeSubmissionResponse] match {
+              case JsSuccess(value, _) => value
+              case JsError(errors) => throw JsResultException(errors)
+            }
+          case _ =>
+            handleErrorResponse("POST", url.toString)(response)
+        }
       }
-    }
   }
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    implicit val headerCarrier = Seq(("psaId", psaId),("pstr", pstr))
     val url = url"${config.updateSchemeDetailsUrl}"
+    val headers = Seq("psaId" -> psaId, "pstr" -> pstr)
 
-    http.post(url).setHeader(headerCarrier: _*).withBody(answers.json).execute[HttpResponse].map { response =>
-      response.status match {
-        case OK => Right(())
-        case _ =>
-          handleErrorResponse("POST", url.toString)(response)
+    httpClientV2.post(url)
+      .withBody(answers.json)
+      .setHeader(headers:_ *)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK => Right(())
+          case _ =>
+            handleErrorResponse("POST", url.toString)(response)
+        }
       }
-    }
   }
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean)
-                         (implicit headerCarrier: HeaderCarrier,
+  def checkForAssociation(userId: String, srn: String, isPsa: Boolean
+                         )(implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
-
     val headers: Seq[(String, String)] =
-      Seq(
-        (if(isPsa) "psaId" else "pspId", userId),
-        ("schemeReferenceNumber", srn),
-        ("Content-Type", "application/json"))
+      Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+    val url = url"${config.checkAssociationUrl}"
+    implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
-    http.get(url"${config.checkAssociationUrl}").setHeader(headers: _*).execute[HttpResponse](httpResponseReads, ec).map { response =>
-      response.status match {
-        case OK =>
-          val json = Json.parse(response.body)
+    httpClientV2.get(url)(hc)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            val json = Json.parse(response.body)
 
-          json.validate[Boolean] match {
-            case JsSuccess(value, _) => Right(value)
-            case JsError(errors) => throw JsResultException(errors)
-          }
-        case _ =>
-          logger.error(response.body)
-          Left(response)
+            json.validate[Boolean] match {
+              case JsSuccess(value, _) => Right(value)
+              case JsError(errors) => throw JsResultException(errors)
+            }
+          case _ =>
+            logger.error(response.body)
+            Left(response)
+        }
       }
-    }
   }
 }
 
