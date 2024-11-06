@@ -64,7 +64,7 @@ messages__common__establisher = establisher
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually{1}.
 
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
-messages__hasUtr__p1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’. \n \n You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasUtr__p1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 
 messages__error__postcode = Enter a postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
