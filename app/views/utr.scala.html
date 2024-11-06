@@ -40,14 +40,11 @@
 
         @components.heading(messages(viewmodel.heading), true)
 
-        @components.paragraph_text(messages("messages__companyUtr__guidance1"))
-
-        @components.paragraph_text(messages("messages__companyUtr__guidance2"))
-
         @input_text(
             field = form("utr"),
             label = messages(viewmodel.title),
             labelClass = Some("govuk-visually-hidden"),
+            hint = Some(messages("messages__hasUtr__p1"))
             numericField = true
         )
 
