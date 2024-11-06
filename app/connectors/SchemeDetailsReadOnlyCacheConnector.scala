@@ -18,13 +18,14 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+
 import javax.inject.Singleton
-import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 @Singleton
 class SchemeDetailsReadOnlyCacheConnector @Inject()(
                                                      override val config: FrontendAppConfig,
-                                                     override val http: WSClient
+                                                     override val httpClientV2: HttpClientV2
                                                    ) extends CacheConnector {
 
   override protected def url(id: String) = s"${config
