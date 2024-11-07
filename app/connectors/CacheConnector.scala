@@ -23,7 +23,6 @@ import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.UserAnswers
@@ -57,7 +56,7 @@ trait CacheConnector extends UserAnswersCacheConnector {
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
             httpClientV2.post(url(cacheId))
-              .withBody(PlainText(Json.stringify(updatedJson)).value)
+              .withBody(updatedJson)
               .setHeader(headers(hc): _*)
               .execute[HttpResponse].flatMap { response =>
                 response.status match {
