@@ -46,7 +46,7 @@ class PensionAdministratorConnectorImpl @Inject()(httpClientV2: HttpClientV2, co
 
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = url"${config.pensionsAdministratorUrl + config.getPSAEmail}"
+    val url = url"${config.pensionsAdministratorUrl}${config.getPSAEmail}"
 
     httpClientV2.get(url)
       .execute[HttpResponse].map { response =>
@@ -62,7 +62,7 @@ class PensionAdministratorConnectorImpl @Inject()(httpClientV2: HttpClientV2, co
 
   def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
-    val url = url"${config.pensionsAdministratorUrl + config.getPSAName}"
+    val url = url"${config.pensionsAdministratorUrl}${config.getPSAName}"
 
     httpClientV2.get(url)
       .execute[HttpResponse].map { response =>
