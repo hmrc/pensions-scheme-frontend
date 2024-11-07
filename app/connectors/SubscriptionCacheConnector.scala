@@ -18,6 +18,7 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import uk.gov.hmrc.http.StringContextOps
 
 import javax.inject.Singleton
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -29,8 +30,8 @@ class SubscriptionCacheConnector @Inject()(
                                           ) extends CacheConnector {
 
   override protected def url(id: String) =
-    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id"
+    url"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id"
 
   override protected def lastUpdatedUrl(id: String) =
-    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
+    url"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
 }

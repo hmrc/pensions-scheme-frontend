@@ -28,6 +28,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.UserAnswers
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import java.net.URL
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,8 +46,7 @@ trait CacheConnector extends UserAnswersCacheConnector {
                                                  ec: ExecutionContext, hc: HeaderCarrier
                                                 ): Future[JsValue] = modify(cacheId, _.set(id)(value))
 
-  override def upsert(cacheId: String, value: JsValue)
-                     (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
   private[connectors] def modify(cacheId: String,
@@ -56,7 +56,7 @@ trait CacheConnector extends UserAnswersCacheConnector {
       json =>
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
-            httpClientV2.post(url"${url(cacheId)}")
+            httpClientV2.post(url(cacheId))
               .withBody(PlainText(Json.stringify(updatedJson)).value)
               .setHeader(headers(hc): _*)
               .execute[HttpResponse].flatMap { response =>
@@ -72,9 +72,8 @@ trait CacheConnector extends UserAnswersCacheConnector {
         }
     }
 
-  override def fetch(id: String
-                    )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
-    httpClientV2.get(url"${url(id)}")
+  override def fetch(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2.get(url(id))
       .setHeader(headers(hc): _*)
       .execute[HttpResponse].flatMap { response =>
         response.status match {
@@ -91,19 +90,14 @@ trait CacheConnector extends UserAnswersCacheConnector {
                                               )(implicit ec: ExecutionContext, hc: HeaderCarrier
                                               ): Future[JsValue] = modify(cacheId, _.remove(id))
 
-  override def removeAll(id: String
-                        )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
-    httpClientV2.delete(url"${url(id)}")
+  override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+    httpClientV2.delete(url(id))
       .setHeader(headers(hc): _*)
       .execute[HttpResponse]
       .map(_ => Ok)
 
-  override def lastUpdated(id: String)
-                          (implicit
-                           ec: ExecutionContext,
-                           hc: HeaderCarrier
-                          ): Future[Option[JsValue]] =
-    httpClientV2.get(url"${lastUpdatedUrl(id)}")
+  override def lastUpdated(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2.get(lastUpdatedUrl(id))
       .setHeader(headers(hc): _*)
       .execute[HttpResponse].flatMap { response =>
         response.status match {
@@ -117,9 +111,9 @@ trait CacheConnector extends UserAnswersCacheConnector {
         }
       }
 
-  protected def url(id: String): String
+  protected def url(id: String): URL
 
-  protected def lastUpdatedUrl(id: String): String
+  protected def lastUpdatedUrl(id: String): URL
 }
 
 object CacheConnector {
