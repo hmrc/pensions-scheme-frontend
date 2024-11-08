@@ -55,7 +55,7 @@
         content = Text(label)
     ),
     formGroup = FormGroup(classes = Some(groupClass.getOrElse(""))),
-    hint = hint.map(hintValue => Hint(content = Text(hintValue))),
+    hint = hint.map( hintText => Hint(content = HtmlContent(hintText))),
     classes = inputClass.fold("govuk-!-width-one-half")(classes => classes),
     pattern = if (numericField) { Some("[0-9]*")} else {
         None
