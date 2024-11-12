@@ -52,10 +52,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -73,7 +73,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(

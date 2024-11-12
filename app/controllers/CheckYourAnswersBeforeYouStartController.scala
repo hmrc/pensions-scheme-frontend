@@ -48,7 +48,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
   FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
@@ -61,7 +61,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
           Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
       }
 
-  private def vm(mode: Mode, srn: Option[SchemeReferenceNumber])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
 
     val beforeYouStart = AnswerSection(

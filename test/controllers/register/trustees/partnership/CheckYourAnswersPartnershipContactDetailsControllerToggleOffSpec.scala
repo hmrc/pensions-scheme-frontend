@@ -59,10 +59,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -80,7 +80,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(),
                    hideButton: Boolean = false, title: Message, h1: Message): String =
     view(
       CYAViewModel(

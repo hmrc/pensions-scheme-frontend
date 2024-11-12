@@ -25,7 +25,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.requests.DataRequest
 
 import javax.inject.Inject
-import models.{FeatureToggleName, Index, Mode}
+import models.{FeatureToggleName, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,6 @@ import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
@@ -56,7 +55,7 @@ class AddCompanyDirectorsController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Int): Action[AnyContent] = (authenticate() andThen getData
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
@@ -64,7 +63,7 @@ class AddCompanyDirectorsController @Inject()(
         mode, srn)))
   }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
     srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)

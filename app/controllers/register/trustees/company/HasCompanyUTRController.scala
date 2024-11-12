@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasUTRFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, HasCompanyUTRId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -48,7 +48,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -57,7 +57,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.trustees.company.routes.HasCompanyUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__theCompany")),
@@ -69,7 +69,7 @@ class HasCompanyUTRController @Inject()(override val appConfig: FrontendAppConfi
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__hasCompanyUtr__error__required", companyName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {

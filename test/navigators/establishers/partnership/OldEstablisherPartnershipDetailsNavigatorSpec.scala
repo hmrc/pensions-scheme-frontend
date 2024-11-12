@@ -144,13 +144,13 @@ object OldEstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
 
-  private def addEstablisherPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  private def addEstablisherPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), srn)
 
-  private def hasVatPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def hasVatPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
-  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 }
 

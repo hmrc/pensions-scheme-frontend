@@ -92,7 +92,7 @@ object EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with M
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val srn                   = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

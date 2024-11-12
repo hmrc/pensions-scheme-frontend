@@ -41,7 +41,7 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, None)
     case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
@@ -54,13 +54,13 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
     case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier,
+  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier,
     Call] = {
     case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, srn)
     case AddressListId(index) if mode == UpdateMode => AddressYearsController.onPageLoad(mode, index, srn)
@@ -77,29 +77,29 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
 }
 
 object EstablishersIndividualAddressNavigator {
-  private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     ua.get(IsEstablisherNewId(index)) match {
       case Some(true) => CheckYourAnswersAddressController.onPageLoad(mode, index, srn)
       case _ => moreChanges(srn)
     }
 
-  private def moreChanges(srn: Option[SchemeReferenceNumber]): Call = AnyMoreChangesController.onPageLoad(srn)
+  private def moreChanges(srn: OptionalSchemeReferenceNumber): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  private def establisherAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = {
+  private def establisherAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = {
     ua.get(IsEstablisherNewId(index)) match {
       case Some(true) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
       case _ => IndividualConfirmPreviousAddressController.onPageLoad(index, srn)
     }
   }
 
-  private def establisherAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def establisherAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     ua.get(AddressYearsId(index)) match {
       case Some(AddressYears.OverAYear) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, srn)
       case Some(AddressYears.UnderAYear) => previousAddressLookup(mode, index, srn)
       case _ => SessionExpiredController.onPageLoad
     }
 
-  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def previousAddressLookup(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     PreviousAddressPostCodeLookupController.onPageLoad(mode, index, srn)
 }
 

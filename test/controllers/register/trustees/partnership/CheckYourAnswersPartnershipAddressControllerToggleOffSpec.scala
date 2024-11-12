@@ -105,13 +105,13 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
 
   private val emptyAnswers = UserAnswers()
   private val mockFeatureToggleService = mock[FeatureToggleService]
-  private def partnershipAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipAddressController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipAddressYearsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipAddressYearsController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipPreviousAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipPreviousAddressController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipTradingTimeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipTradingTimeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasBeenTradingController.onPageLoad(mode, Index(index), srn).url
 
   private val fullAnswers = emptyAnswers
@@ -132,14 +132,14 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
   private def postUrlUpdateMode: Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
 
-  private def addressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  private def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", partnershipName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
     Some(Link("site.change", partnershipAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_address", partnershipName))))
   )
 
-  private def addressYearsAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  private def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", partnershipName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -147,7 +147,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
       Some(Message("messages__visuallyhidden__dynamic_addressYears", partnershipName))))
   )
 
-  def tradingTimeAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  def tradingTimeAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__hasBeenTrading__h1", partnershipName),
     Seq("site.yes"),
     answerIsMessageKey = true,
@@ -155,7 +155,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
       Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", partnershipName))))
   )
 
-  private def previousAddressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow =
+  private def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(
       Message("messages__previousAddressFor", partnershipName),
       UserAnswers().addressAnswer(previousAddress),
@@ -164,7 +164,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnershipName))))
     )
 
-  private def previousAddressAddLink(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow =
+  private def previousAddressAddLink(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(
       Message("messages__previousAddressFor", partnershipName),
       Seq("site.not_entered"),
@@ -206,7 +206,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
       mockFeatureToggleService
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl,
+  private def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl,
                            title:Message, h1:Message): String =
     view(
       CYAViewModel(

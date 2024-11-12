@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
 import identifiers.register.establishers.partnership.OtherPartnersId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import utils.UserAnswers
 import views.html.register.establishers.partnership.otherPartners
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class OtherPartnersController @Inject()(
                                          appConfig: FrontendAppConfig,
@@ -52,7 +52,7 @@ class OtherPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>
@@ -64,7 +64,7 @@ class OtherPartnersController @Inject()(
 
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>

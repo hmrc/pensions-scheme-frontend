@@ -48,13 +48,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def submitUrlUpdateMode(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  private def submitUrlUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
@@ -88,7 +88,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(),
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(

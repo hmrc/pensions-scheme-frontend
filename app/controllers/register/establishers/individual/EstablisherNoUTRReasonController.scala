@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNoUTRReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,6 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class EstablisherNoUTRReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
@@ -49,7 +49,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.EstablisherNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__theIndividual")),
@@ -58,7 +58,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
     )
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>
@@ -67,7 +67,7 @@ class EstablisherNoUTRReasonController @Inject()(override val appConfig: Fronten
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>

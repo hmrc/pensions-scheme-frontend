@@ -22,8 +22,9 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -34,7 +35,6 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnerPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val appConfig: FrontendAppConfig,
@@ -55,7 +55,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
@@ -64,7 +64,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
         )
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map(
@@ -73,7 +73,7 @@ class PartnerPreviousAddressPostcodeLookupController @Inject()(
         )
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]) = Retrieval {
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber) = Retrieval {
     implicit request =>
       PartnerNameId(establisherIndex, partnerIndex).retrieve.map(
         details => PostcodeLookupViewModel(

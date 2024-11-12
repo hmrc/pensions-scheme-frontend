@@ -34,7 +34,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
 
-  protected def routes(from: NavigateFrom, mode: Mode, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  protected def routes(from: NavigateFrom, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case HaveAnyTrusteesId =>
         haveAnyTrusteesRoutes(from.userAnswers)
@@ -49,7 +49,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
-  private def redirectToAnyMoreChanges(normalModeRoutes: Call, mode: Mode, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = {
+  private def redirectToAnyMoreChanges(normalModeRoutes: Call, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
     if (mode == CheckMode || mode == NormalMode) {
       NavigateTo.dontSave(normalModeRoutes)
     } else {
@@ -73,7 +73,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = {
+  private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
     import controllers.register.trustees.routes._
     val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
 
@@ -92,7 +92,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def trusteeKindRoutes(index: Int,
                                 answers: UserAnswers,
                                 mode: Mode,
-                                srn: Option[SchemeReferenceNumber]
+                                srn: OptionalSchemeReferenceNumber
                                ): Option[NavigateTo] = {
     answers.get(TrusteeKindId(index)) match {
       case Some(TrusteeKind.Company) =>
@@ -113,8 +113,8 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

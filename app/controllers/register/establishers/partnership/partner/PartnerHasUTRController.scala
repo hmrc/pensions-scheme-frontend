@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerHasUTRId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -48,7 +48,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index,
-                        srn: Option[SchemeReferenceNumber], personName: String): CommonFormWithHintViewModel =
+                        srn: OptionalSchemeReferenceNumber, personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasUTRController.onSubmit(mode, establisherIndex, partnerIndex, srn),
       title = Message("messages__hasUTR", Message("messages__thePartner")),
@@ -60,7 +60,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
 
   private def form(personName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasUtr__error__required", personName)
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -70,7 +70,7 @@ class PartnerHasUTRController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {

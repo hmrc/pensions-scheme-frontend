@@ -22,9 +22,10 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressListController => GenericAddressListController}
 import identifiers.register.establishers.individual._
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -34,7 +35,6 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class PreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -50,13 +50,13 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
                                              )(implicit val ec: ExecutionContext) extends
   GenericAddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(get)
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber])
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (EstablisherNameId(index) and PreviousPostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>
@@ -74,7 +74,7 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
     )
   }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, index, srn).map(

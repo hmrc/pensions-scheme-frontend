@@ -41,7 +41,7 @@ class DataRetrievalImpl(
                          schemeDetailsConnector: SchemeDetailsConnector,
                          minimalPsaConnector: MinimalPsaConnector,
                          mode: Mode,
-                         srn: Option[SchemeReferenceNumber],
+                         srn: OptionalSchemeReferenceNumber,
                          refreshData: Boolean
                        )(implicit val executionContext: ExecutionContext) extends DataRetrieval {
 
@@ -329,7 +329,7 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         schemeDetailsConnector: SchemeDetailsConnector,
                                         minimalPsaConnector: MinimalPsaConnector
                                        )(implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[SchemeReferenceNumber], refreshData: Boolean): DataRetrieval = {
+  override def apply(mode: Mode, srn: OptionalSchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
     new DataRetrievalImpl(dataConnector,
       viewConnector,
       updateConnector,
@@ -347,12 +347,12 @@ class RacdacDataRetrievalActionImpl @Inject()(@Racdac dataConnector: UserAnswers
                                               schemeDetailsConnector: SchemeDetailsConnector,
                                               minimalPsaConnector: MinimalPsaConnector)
                                              (implicit ec: ExecutionContext) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[SchemeReferenceNumber], refreshData: Boolean): DataRetrieval = {
-    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: Option[SchemeReferenceNumber])
+  override def apply(mode: Mode, srn: OptionalSchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
+    new RacdacDataRetrievalImpl(mode, dataConnector, viewConnector, schemeDetailsConnector, minimalPsaConnector, srn: OptionalSchemeReferenceNumber)
   }
 }
 
 
 trait DataRetrievalAction {
-  def apply(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None, refreshData: Boolean = false): DataRetrieval
+  def apply(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, refreshData: Boolean = false): DataRetrieval
 }

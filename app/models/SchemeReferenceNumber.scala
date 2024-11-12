@@ -28,7 +28,7 @@ case class OptionalSchemeReferenceNumber(opt: Option[SchemeReferenceNumber])
 object EmptyOptionalSchemeReferenceNumber extends OptionalSchemeReferenceNumber(None)
 object OptionalSchemeReferenceNumber {
 
-  implicit def fromSrn(srn: Option[SchemeReferenceNumber]): OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(srn)
+  implicit def fromSrn(srn: OptionalSchemeReferenceNumber): OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(srn)
   implicit def toSrn(srnOpt: OptionalSchemeReferenceNumber): Option[SchemeReferenceNumber] = srnOpt.opt
   implicit def optionPathBindable(implicit stringBinder: PathBindable[String]): PathBindable[OptionalSchemeReferenceNumber] = new PathBindable[OptionalSchemeReferenceNumber] {
     override def bind(key: String, value: String): Either[String, OptionalSchemeReferenceNumber] = {

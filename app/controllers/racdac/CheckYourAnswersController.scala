@@ -19,23 +19,22 @@ package controllers.racdac
 import config.FrontendAppConfig
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-import identifiers.racdac.{RACDACNameId, ContractOrPolicyNumberId}
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.AuthEntity.PSP
 import models.requests.DataRequest
-import models.{Mode, UpdateMode, CheckMode, NormalMode}
-import play.api.i18n.{MessagesApi, I18nSupport}
+import models.{CheckMode, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import utils.checkyouranswers.Ops._
-import utils.{UserAnswers, CountryOptions, Enumerable}
-import viewmodels.{AnswerSection, Message, CYAViewModel}
+import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -51,7 +50,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val returnLinkDetails: Future[(String, String)] =(mode, srn) match {

@@ -102,7 +102,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
 
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
   val name = "test name"
   val trusteeName: PersonName = PersonName("test", "name")
   val trusteeDob: LocalDate = LocalDate.now()
@@ -112,19 +112,19 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers()
-  private def trusteeDob(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def trusteeDob(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasNino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasNino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def nino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def nino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def noNinoReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def noNinoReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasUtr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasUtr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def utr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def utr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def noUtrReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def noUtrReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
   private val fullAnswers = emptyAnswers
@@ -171,7 +171,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -190,7 +190,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     )
 
 
-  private def allValuesNo(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -254,7 +254,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl,
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(

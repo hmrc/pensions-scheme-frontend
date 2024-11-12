@@ -21,8 +21,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers._
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.MessagesApi
@@ -34,7 +35,6 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class InsurerSelectAddressController @Inject()(override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -51,13 +51,13 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
   Retrievals {
 
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       viewModel(mode, srn).map(get)
   }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn).map {
@@ -73,7 +73,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
         }
     }
 
-  private def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber])(implicit request: DataRequest[AnyContent])
+  private def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent])
   : Either[Future[Result],
     AddressListViewModel] = {
     (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.map {

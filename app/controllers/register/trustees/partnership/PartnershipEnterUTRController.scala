@@ -47,7 +47,7 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
                                               val view: utr
                                              )(implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -55,7 +55,7 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -65,7 +65,7 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], partnershipName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, partnershipName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.PartnershipEnterUTRController.onSubmit(mode, index, srn),
       title = Message("messages__enterUTR", Message("messages__thePartnership")),

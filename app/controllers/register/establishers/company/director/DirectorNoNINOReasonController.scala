@@ -21,9 +21,10 @@ import controllers.actions._
 import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNoNINOReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +35,6 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorNoNINOReasonController @Inject()(
                                                 override val appConfig: FrontendAppConfig,
@@ -51,7 +51,7 @@ class DirectorNoNINOReasonController @Inject()(
                                               )(implicit val ec: ExecutionContext) extends ReasonController with
   Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { name =>
@@ -60,7 +60,7 @@ class DirectorNoNINOReasonController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { name =>
@@ -74,7 +74,7 @@ class DirectorNoNINOReasonController @Inject()(
     formProvider("messages__reason__error_ninoRequired", name)
 
   private def viewModel(mode: Mode, establisherIndex: Index,
-                        directorIndex: Index, srn: Option[SchemeReferenceNumber], name: String): ReasonViewModel =
+                        directorIndex: Index, srn: OptionalSchemeReferenceNumber, name: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.DirectorNoNINOReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),
       title = Message("messages__whyNoNINO", Message("messages__theDirector")),

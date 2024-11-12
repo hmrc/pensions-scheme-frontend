@@ -17,15 +17,15 @@
 package controllers.register.establishers.company.director
 
 import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -37,7 +37,6 @@ import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorDOBController @Inject()(
                                        val appConfig: FrontendAppConfig,
@@ -55,7 +54,7 @@ class DirectorDOBController @Inject()(
 
   val form: Form[LocalDate] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(
@@ -66,7 +65,7 @@ class DirectorDOBController @Inject()(
         )
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber], token: Message)
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber, token: Message)
                        (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, directorIndex, srn),
@@ -77,7 +76,7 @@ class DirectorDOBController @Inject()(
 
   private def postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.DirectorDOBController.onSubmit
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         post(

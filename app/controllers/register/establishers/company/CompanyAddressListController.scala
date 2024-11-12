@@ -25,7 +25,7 @@ import controllers.address.AddressListController
 import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -36,7 +36,6 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class CompanyAddressListController @Inject()(
                                               override val appConfig: FrontendAppConfig,
@@ -53,13 +52,13 @@ class CompanyAddressListController @Inject()(
                                             )(implicit val ec: ExecutionContext) extends AddressListController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).map(get)
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).map(
@@ -75,7 +74,7 @@ class CompanyAddressListController @Inject()(
         )
     }
 
-  private def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index)
+  private def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
     (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.map {
       case companyDetails ~ addresses =>

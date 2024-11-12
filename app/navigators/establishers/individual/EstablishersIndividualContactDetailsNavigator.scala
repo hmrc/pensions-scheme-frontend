@@ -39,26 +39,26 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) if mode == NormalMode => phonePage(mode, index, srn)
     case EstablisherEmailId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
     case EstablisherPhoneId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) => phonePage(mode, index, srn)
     case EstablisherPhoneId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) if ua.get(IsEstablisherNewId(index)).getOrElse(false) =>
       cyaIndividualContactDetailsPage(mode, index, srn)
@@ -70,10 +70,10 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
 }
 
 object EstablishersIndividualContactDetailsNavigator {
-  private def phonePage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def phonePage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     EstablisherPhoneController.onPageLoad(mode, index, srn)
 
-  private def cyaIndividualContactDetailsPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaIndividualContactDetailsPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersContactDetailsController.onPageLoad(journeyMode(mode), index, srn)
 }
 

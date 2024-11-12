@@ -95,7 +95,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex: Index = Index(0)
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(

@@ -33,7 +33,7 @@ class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends 
   override def nextPageOptional(id: Identifier,
                                 mode: Mode,
                                 userAnswers: UserAnswers,
-                                srn: Option[SchemeReferenceNumber])
+                                srn: OptionalSchemeReferenceNumber)
                                (implicit ex: IdentifiedRequest,
                                 ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
     navigators.asScala.foldRight(Option.empty[Call]) {

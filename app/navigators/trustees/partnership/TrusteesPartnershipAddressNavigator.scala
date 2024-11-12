@@ -40,7 +40,7 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
-                                       srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier, Call] = {
+                                       srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, None)
     case PartnershipAddressListId(index) if mode == NormalMode =>
       PartnershipAddressYearsController.onPageLoad(mode, index, None)
@@ -60,12 +60,12 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   private def updateModeRoutes(mode: VarianceMode,
                                ua: UserAnswers,
-                               srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier, Call] = {
+                               srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, srn)
     case PartnershipAddressListId(index) if mode == UpdateMode =>
       PartnershipAddressYearsController.onPageLoad(mode, index, srn)
@@ -86,20 +86,20 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
     case PartnershipPreviousAddressId(_) => moreChanges(srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 }
 
 object TrusteesPartnershipAddressNavigator {
-  private def moreChanges(srn: Option[SchemeReferenceNumber]): Call = AnyMoreChangesController.onPageLoad(srn)
+  private def moreChanges(srn: OptionalSchemeReferenceNumber): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def previousAddressLookup(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 
-  private def cyaAddress(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaAddress(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
 
-  private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     ua.get(PartnershipAddressYearsId(index)) match {
       case Some(AddressYears.OverAYear) =>
         CheckYourAnswersPartnershipAddressController.onPageLoad(journeyMode(mode), index, srn)
@@ -107,10 +107,10 @@ object TrusteesPartnershipAddressNavigator {
       case _ => SessionExpiredController.onPageLoad
     }
 
-  private def hasBeenTrading(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def hasBeenTrading(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
 
-  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = {
+  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = {
     if (isNewTrustee(index, ua)) {
       CheckYourAnswersPartnershipAddressController.onPageLoad(journeyMode(mode), index, srn)
     } else {

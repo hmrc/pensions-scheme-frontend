@@ -23,10 +23,11 @@ import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.director._
+
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -39,7 +40,6 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorAddressController @Inject()(
                                            val appConfig: FrontendAppConfig,
@@ -67,7 +67,7 @@ class DirectorAddressController @Inject()(
       DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.map {
@@ -78,7 +78,7 @@ class DirectorAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.map {
@@ -94,7 +94,7 @@ class DirectorAddressController @Inject()(
         }
     }
 
-  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: Option[SchemeReferenceNumber], name: String)
+  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(establisherIndex), Index(directorIndex), srn),

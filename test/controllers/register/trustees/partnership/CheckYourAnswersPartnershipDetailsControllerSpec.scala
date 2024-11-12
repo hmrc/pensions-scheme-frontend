@@ -127,13 +127,13 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   def onwardRoute(index: Int): Call =
     controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  def onwardRouteUpdateMode(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  def onwardRouteUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -144,25 +144,25 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def partnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
 
-  private def noPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def noPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipVatRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasPartnershipVatRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipEnterVATRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipEnterVATRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasPartnershipPayeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
@@ -195,7 +195,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -225,7 +225,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -286,7 +286,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None, title:Message, h1:Message): String = {
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, title:Message, h1:Message): String = {
 
     val route = mode match {
       case NormalMode => onwardRoute(index)

@@ -22,7 +22,7 @@ import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.Mode._
 import models.requests.DataRequest
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
+import models.{CheckUpdateMode, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,7 +34,6 @@ import views.html.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
@@ -49,7 +48,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
   extends FrontendBaseController
     with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         Ok(view(vm(mode, srn)))
@@ -61,7 +60,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
         Ok(view(vm(UpdateMode, Some(srn))))
     }
 
-  private def vm(mode: Mode, srn: Option[SchemeReferenceNumber])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
 
       implicit val userAnswers: UserAnswers = request.userAnswers
       val benefitsAndInsuranceSection = AnswerSection(

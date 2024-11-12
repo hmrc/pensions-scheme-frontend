@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -35,7 +36,6 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorAddressPostcodeLookupController @Inject()(
                                                          override val appConfig: FrontendAppConfig,
@@ -59,13 +59,13 @@ class DirectorAddressPostcodeLookupController @Inject()(
   }
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(establisherIndex, directorIndex, mode, srn).retrieve map get
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(establisherIndex, directorIndex, mode, srn).retrieve.map(
@@ -74,7 +74,7 @@ class DirectorAddressPostcodeLookupController @Inject()(
         )
     }
 
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber])
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: OptionalSchemeReferenceNumber)
   : Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>

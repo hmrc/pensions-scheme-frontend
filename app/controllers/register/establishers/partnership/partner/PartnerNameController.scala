@@ -21,10 +21,11 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
+
 import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,7 +37,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class PartnerNameController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -53,7 +53,7 @@ class PartnerNameController @Inject()(
                                      )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](PartnerNameId(establisherIndex, partnerIndex)) match {
@@ -66,7 +66,7 @@ class PartnerNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__partner")
 
-  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]) =
+  private def viewmodel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber) =
     CommonFormWithHintViewModel(
     postCall = routes.PartnerNameController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partnerName__title"),
@@ -74,7 +74,7 @@ class PartnerNameController @Inject()(
     srn = srn
   )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(

@@ -23,9 +23,10 @@ import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual._
+
 import javax.inject.Inject
 import models.address.Address
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,7 +38,6 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
@@ -63,7 +63,7 @@ class TrusteePreviousAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.map {
@@ -76,7 +76,7 @@ class TrusteePreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[SchemeReferenceNumber], name: String): ManualAddressViewModel =
+  private def viewmodel(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),
       countryOptions.options,
@@ -85,7 +85,7 @@ class TrusteePreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       trusteeName(index).retrieve.map {

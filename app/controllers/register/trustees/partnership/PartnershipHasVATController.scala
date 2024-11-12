@@ -50,7 +50,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                            )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -62,7 +62,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
   def form(partnershipName: String)(implicit request: DataRequest[AnyContent]): Form[Boolean] =
     formProvider("messages__vat__formError", partnershipName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = PartnershipHasVATController.onSubmit(mode, index, srn),
       title = Message("messages__hasVAT", Message("messages__thePartnership")),
@@ -71,7 +71,7 @@ class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {

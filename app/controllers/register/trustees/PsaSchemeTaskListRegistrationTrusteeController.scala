@@ -46,7 +46,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false) andThen allowAccess(srn)).async {
       implicit request =>
         val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
@@ -63,7 +63,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
         }
     }
 
-  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber], index: Index)
+  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index)
                                 (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     try {
       val taskList = hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id)
@@ -74,7 +74,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
     }
   }
 
-  private def renderOkResponse(taskList: SchemeDetailsTaskListTrustees, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber])
+  private def renderOkResponse(taskList: SchemeDetailsTaskListTrustees, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber)
                               (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     Future.successful(
       Ok(

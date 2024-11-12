@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.director.{DirectorHasUTRId, DirectorNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -49,7 +49,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
                                         )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map {
@@ -59,7 +59,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber],
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber,
                         personName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorHasUTRController.onSubmit(mode,
@@ -73,7 +73,7 @@ class DirectorHasUTRController @Inject()(override val appConfig: FrontendAppConf
   private def form(personName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__hasUtr__error__required", personName)
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map {

@@ -19,7 +19,7 @@ import models.SchemeReferenceNumber
 
 case class SchemeDetailsTaskListEstablishers(
                                   h1: String,
-                                  srn: Option[SchemeReferenceNumber],
+                                  srn: OptionalSchemeReferenceNumber,
                                   establisher: SchemeDetailsTaskListEntitySection,
                                   allComplete: Boolean,
                                   statsSection: Option[StatsSection]

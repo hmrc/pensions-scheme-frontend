@@ -80,7 +80,7 @@ object TrusteeEnterUTRControllerSpec extends TrusteeEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex: Index = Index(0)
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

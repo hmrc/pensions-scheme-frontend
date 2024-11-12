@@ -124,7 +124,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
   val companyName = "test company name"
 
   private val crn = "crn"
@@ -134,27 +134,27 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private val reason = "reason"
 
   private val emptyAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
-  private def hasCompanyNumberRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasCompanyNumberRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.HasCompanyCRNController.onPageLoad(checkMode(mode), srn, 0).url
-  private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def companyRegistrationNumberVariationsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), index, srn).url
-  private def noCompanyNumberReasonRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def noCompanyNumberReasonRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), srn, index).url
-  private def hasCompanyUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasCompanyUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.HasCompanyUTRController.onPageLoad(checkMode(mode), srn, index).url
-  private def companyUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def companyUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), srn, index).url
-  private def noCompanyUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def noCompanyUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyNoUTRReasonController.onPageLoad(checkMode(mode), srn, 0).url
-  private def hasCompanyVatRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasCompanyVatRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.HasCompanyVATController.onPageLoad(checkMode(mode), srn, 0).url
-  private def companyEnterVATRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def companyEnterVATRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
-  private def hasCompanyPayeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def hasCompanyPayeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.HasCompanyPAYEController.onPageLoad(checkMode(mode), srn, 0).url
-  private def companyPayeVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def companyPayeVariationsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
-  private def isCompanyDormantRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
+  private def isCompanyDormantRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
   routes.IsCompanyDormantController.onPageLoad(checkMode(mode), srn, 0).url
 
   private val fullAnswersYes = emptyAnswers
@@ -198,7 +198,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       )
     ))
 
-  private def companyDetailsAllValues(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def companyDetailsAllValues(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       hasCompanyNumberYesRow(mode, srn) ++
@@ -212,52 +212,52 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
         dormantAnswerRow(mode, srn)
     ))
 
-  private def hasCompanyNumberYesRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def hasCompanyNumberYesRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasCRN", companyName), hasCompanyNumberRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__dynamic_hasCrn", companyName))) else Nil
 
-  private def companyNumberRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def companyNumberRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__checkYourAnswers__establishers__company__number"), companyRegistrationNumberVariationsRoute(mode, srn), crn,
     messages("messages__visuallyhidden__dynamic_crn", companyName)))
 
-  private def utrRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def utrRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
     Seq(stringChangeLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
       messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))) else
       Seq(stringLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, srn), utr,
         messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName)))
 
-  private def vatRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def vatRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__vat"), companyEnterVATRoute(mode, srn), vat,
       messages("messages__visuallyhidden__dynamic_vat_number", companyName)))
 
-  private def payeRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def payeRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__paye"), companyPayeVariationsRoute(mode, srn), paye,
       messages("messages__visuallyhidden__dynamic_paye", companyName)))
 
-  private def hasCompanyUTRYesRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def hasCompanyUTRYesRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasUTR", companyName), hasCompanyUTRRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__dynamic_hasUtr", companyName))) else Nil
 
-  private def hasCompanyVatYesRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def hasCompanyVatYesRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasVAT", companyName), hasCompanyVatRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__dynamic_hasVat", companyName))) else Nil
 
-  private def hasCompanyPayeYesRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def hasCompanyPayeYesRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__hasPAYE", companyName), hasCompanyPayeRoute(mode, srn), value = true,
         messages("messages__visuallyhidden__dynamic_hasPaye", companyName))) else Nil
 
-  private def dormantAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerRow] =
+  private def dormantAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     if(mode == NormalMode)
       Seq(booleanChangeLink(messages("messages__company__cya__dormant", companyName),
         isCompanyDormantRoute(mode, srn), value = false,
     messages("messages__visuallyhidden__dynamic_company__dormant", companyName))) else Nil
 
-  private def companyDetailsAllReasons(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def companyDetailsAllReasons(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -322,7 +322,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl, title:Message, h1:Message): String =
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,

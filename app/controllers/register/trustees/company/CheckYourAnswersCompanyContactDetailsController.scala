@@ -25,7 +25,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, 
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggleName, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FeatureToggleService, UserAnswersService}
@@ -37,7 +37,6 @@ import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
@@ -57,7 +56,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
   with I18nSupport
   with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       val notNewEstablisher = !userAnswers.get(IsTrusteeNewId(index)).getOrElse(true)

@@ -96,7 +96,7 @@ class AllowAccessActionSpec
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  class TestAllowAccessAction(srn: Option[SchemeReferenceNumber],
+  class TestAllowAccessAction(srn: OptionalSchemeReferenceNumber,
                               psc: PensionsSchemeConnector = pensionsSchemeConnector
                              )
     extends AllowAccessActionMain(srn, psc, config, errorHandler, true, false)
@@ -107,7 +107,7 @@ class AllowAccessActionSpec
   }
 
   class TestAllowAccessActionTaskList(
-                                       srn: Option[SchemeReferenceNumber],
+                                       srn: OptionalSchemeReferenceNumber,
                                        psc: PensionsSchemeConnector = pensionsSchemeConnector,
                                        allowPsa: Boolean = true,
                                        allowPsp: Boolean = false
@@ -119,7 +119,7 @@ class AllowAccessActionSpec
   }
 
   class TestAllowAccessActionNoSuspendedCheck(
-                                               srn: Option[SchemeReferenceNumber],
+                                               srn: OptionalSchemeReferenceNumber,
                                                psc: PensionsSchemeConnector = pensionsSchemeConnector
                                              )
     extends AllowAccessActionNoSuspendedCheck(srn, psc, config, errorHandler)

@@ -46,7 +46,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
   FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         Future.successful(Ok(view(vm(mode, srn))))
@@ -58,7 +58,7 @@ class CheckYourAnswersMembersController @Inject()(override val messagesApi: Mess
         Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
     }
 
-  private def vm(mode: Mode, srn: Option[SchemeReferenceNumber])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
     val membersSection = AnswerSection(
       None,

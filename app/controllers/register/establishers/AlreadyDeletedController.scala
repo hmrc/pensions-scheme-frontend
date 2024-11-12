@@ -22,11 +22,12 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,7 +36,6 @@ import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class AlreadyDeletedController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -48,7 +48,7 @@ class AlreadyDeletedController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, establisherKind: EstablisherKind, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         establisherName(index, establisherKind) match {
@@ -58,7 +58,7 @@ class AlreadyDeletedController @Inject()(
         }
     }
 
-  private def vm(establisherName: String, mode: Mode, srn: Option[SchemeReferenceNumber]) = AlreadyDeletedViewModel(
+  private def vm(establisherName: String, mode: Mode, srn: OptionalSchemeReferenceNumber) = AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__establisher_title"),
     deletedEntity = establisherName,
     returnCall = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)

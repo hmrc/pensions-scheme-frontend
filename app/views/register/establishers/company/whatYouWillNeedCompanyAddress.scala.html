@@ -19,7 +19,7 @@
     button_link: components.button_link
 )
 
-@(schemeName: Option[String], href: Call, srn: Option[SchemeReferenceNumber], companyName:String)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], href: Call, srn: OptionalSchemeReferenceNumber, companyName:String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__whatYouWillNeedAddress__title")) {
 

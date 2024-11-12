@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherHasUTRId, EstablisherNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,7 +33,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
@@ -48,21 +48,21 @@ class EstablisherHasUTRController @Inject()(override val appConfig: FrontendAppC
                                            (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         get(EstablisherHasUTRId(index), form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         post(EstablisherHasUTRId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasUTRController.onSubmit(mode,
         index, srn),

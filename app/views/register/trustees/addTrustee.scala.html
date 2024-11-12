@@ -39,7 +39,7 @@
     completeTrustees: Seq[Trustee[_]],
     incompleteTrustees: Seq[Trustee[_]],
     schemeName: Option[String],
-    srn: Option[SchemeReferenceNumber]
+    srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @allTrustees = @{ completeTrustees ++ incompleteTrustees }

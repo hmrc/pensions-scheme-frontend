@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import models.{FeatureToggleName, Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggleName, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FeatureToggleService
@@ -29,7 +29,6 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -42,7 +41,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   featureToggleService: FeatureToggleService
                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber] = None, establisherIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val directorIndex = request.userAnswers.allDirectors(establisherIndex).size

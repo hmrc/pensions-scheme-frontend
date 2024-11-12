@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId}
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.data.Form
@@ -35,7 +36,6 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -60,7 +60,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         InsuranceCompanyNameId.retrieve.map { name =>
@@ -68,7 +68,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber], name: String)(implicit request: DataRequest[AnyContent])
+  def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber, name: String)(implicit request: DataRequest[AnyContent])
   : PostcodeLookupViewModel =
     PostcodeLookupViewModel(
       postCall(mode, srn),
@@ -79,7 +79,7 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       InsuranceCompanyNameId.retrieve.map { name =>

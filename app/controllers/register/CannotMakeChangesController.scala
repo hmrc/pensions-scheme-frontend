@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 
 import javax.inject.Inject
-import models.UpdateMode
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -29,7 +29,6 @@ import utils.annotations.TaskList
 import views.html.register.cannotMakeChanges
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class CannotMakeChangesController @Inject()(
                                              appConfig: FrontendAppConfig,
@@ -44,7 +43,7 @@ class CannotMakeChangesController @Inject()(
   FrontendBaseController with Retrievals with I18nSupport {
 
 
-  def onPageLoad(srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen allowAccessAction(srn)).async {
+  def onPageLoad(srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen allowAccessAction(srn)).async {
     implicit request =>
       Future.successful(Ok(view(srn, existingSchemeName)))
   }

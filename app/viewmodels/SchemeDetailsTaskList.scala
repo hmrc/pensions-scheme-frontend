@@ -15,11 +15,11 @@
  */
 
 package viewmodels
-import models.SchemeReferenceNumber
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class SchemeDetailsTaskList(
                                   h1: String,
-                                  srn: Option[SchemeReferenceNumber],
+                                  srn: OptionalSchemeReferenceNumber,
                                   beforeYouStart: SchemeDetailsTaskListEntitySection,
                                   about: SchemeDetailsTaskListEntitySection,
                                   workingKnowledge: Option[SchemeDetailsTaskListEntitySection],

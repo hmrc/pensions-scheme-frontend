@@ -186,61 +186,61 @@ object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(index, index))(value = true).asOpt.value
 
-  private def isThisPaPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def isThisPaPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(index, index, srn)
 
-  private def otherPartnersPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def otherPartnersPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn)
 
-  private def taskListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def taskListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
-  private def partnerNamePage(mode: Mode, srn: Option[SchemeReferenceNumber], partnerIndex: Int): Call =
+  private def partnerNamePage(mode: Mode, srn: OptionalSchemeReferenceNumber, partnerIndex: Int): Call =
     controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)
 
-  private def dobPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  private def dobPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     PartnerDOBController.onPageLoad(mode, index, index, srn)
 
-  private def hasNinoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def hasNinoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerHasNINOController.onPageLoad(mode, index, index, srn)
 
-  private def ninoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def ninoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerEnterNINOController.onPageLoad(mode, index, index, srn)
 
-  private def whyNoNinoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def whyNoNinoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerNoNINOReasonController.onPageLoad(mode, index, index, srn)
 
-  private def hasUtrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def hasUtrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerHasUTRController.onPageLoad(mode, index, index, srn)
 
-  private def utrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def utrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerEnterUTRController.onPageLoad(mode, index, index, srn)
 
-  private def whyNoUtrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def whyNoUtrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerNoUTRReasonController.onPageLoad(mode, index, index, srn)
 
-  private def cyaPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersController.onPageLoad(journeyMode(mode), index, index, srn)
 
-  private def postcodeLookupPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def postcodeLookupPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
 
-  private def addressListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def addressListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressListController.onPageLoad(mode, index, index, srn)
 
-  private def paPostcodeLookupPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def paPostcodeLookupPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
 
-  private def paAddressListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def paAddressListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, index, index, srn)
 
-  private def addressYearsPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def addressYearsPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressYearsController.onPageLoad(mode, index, index, srn)
 
-  private def emailPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def emailPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerEmailController.onPageLoad(mode, index, index, srn)
 
-  private def phonePage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
+  private def phonePage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
     PartnerPhoneController.onPageLoad(mode, index, index, srn)
 }
 

@@ -63,7 +63,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def viewAsString(mode: Mode,
                            answerSection: (Mode, Option[SchemeReferenceNumber]) => Seq[AnswerSection],
                            href: Call,
-                           srn: Option[SchemeReferenceNumber],
+                           srn: OptionalSchemeReferenceNumber,
                            title: Message,
                            h1: Message): String =
     viewAsString(mode, answerSection(NormalMode, srn), href, srn, title, h1)
@@ -71,7 +71,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def viewAsString(mode: Mode,
                            answerSection: Seq[AnswerSection],
                            href: Call,
-                           srn: Option[SchemeReferenceNumber],
+                           srn: OptionalSchemeReferenceNumber,
                            title: Message,
                            h1: Message): String =
     view(
@@ -90,7 +90,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "having set up answer sections" when {
     val request: DataRequest[AnyContent]  = FakeDataRequest(directorAnswers)
-    def answerSectionDirector(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+    def answerSectionDirector(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
       Seq(
         AnswerSection(
           None,
@@ -167,7 +167,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends SpecBase {
   val index                                                          = Index(0)
   val schemeName                                                     = "test scheme name"
-  def href(mode: Mode, srn: Option[SchemeReferenceNumber], companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
+  def href(mode: Mode, srn: OptionalSchemeReferenceNumber, companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
   val name                                                           = "First Name"
 
   val directorPersonDetails = PersonName("first name", "last name", false)

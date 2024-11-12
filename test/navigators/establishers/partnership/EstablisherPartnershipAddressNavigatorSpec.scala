@@ -120,20 +120,20 @@ object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers
   private val srn = Some(SchemeReferenceNumber("srn"))
   private val newEstablisherUserAnswers: UserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
 
-  private def addressYearsPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)
+  private def addressYearsPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressYearsController.onPageLoad(mode, index, srn)
 
-  private def addressListPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = PartnershipAddressListController.onPageLoad(mode, index, srn)
+  private def addressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressListController.onPageLoad(mode, index, srn)
 
-  private def previousAddressPostcodeLookupPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  private def previousAddressPostcodeLookupPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 
-  private def cyaAddressPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
+  private def cyaAddressPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, srn)
 
-  private def isThisPreviousAddressPage(srn: Option[SchemeReferenceNumber]): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, srn)
+  private def isThisPreviousAddressPage(srn: OptionalSchemeReferenceNumber): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, srn)
 
-  private def previousAddressListPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
+  private def previousAddressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, srn)
 
-  private def hasBeenTradingPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
+  private def hasBeenTradingPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, srn)
 }
 
 

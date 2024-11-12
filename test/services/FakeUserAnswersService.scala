@@ -44,7 +44,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
   private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
   private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
-  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[SchemeReferenceNumber], id: I, value: A)
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =
   {
@@ -53,7 +53,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     Future.successful(Json.obj())
   }
 
-  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[SchemeReferenceNumber], id: I, value: A, changeId: TypedIdentifier[Boolean])
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A, changeId: TypedIdentifier[Boolean])
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =
   {
@@ -71,14 +71,14 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     }
   }
 
-  override def upsert(mode: Mode, srn: Option[SchemeReferenceNumber], value: JsValue)
+  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)
             (implicit ec: ExecutionContext, hc: HeaderCarrier,
              request: DataRequest[AnyContent]): Future[JsValue] = {
     data += ("userAnswer" -> Json.toJson(value))
     Future.successful(value)
   }
 
-  override def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[SchemeReferenceNumber], id: I)
+  override def remove[I <: TypedIdentifier[_]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier,

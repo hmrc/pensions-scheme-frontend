@@ -21,7 +21,7 @@ import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
 import models.requests.AuthenticatedRequest
-import models.{Mode, NormalMode, PSAMinimalFlags, UpdateMode}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                                            schemeDetailsConnector: SchemeDetailsConnector,
@@ -55,7 +54,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = authenticate(Some(PSA)).async {
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = authenticate(Some(PSA)).async {
     implicit request =>
 
       redirects.flatMap {

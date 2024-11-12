@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
-import models.{Mode, TypeOfBenefits}
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -32,7 +32,6 @@ import views.html.typeOfBenefits
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class TypeOfBenefitsController @Inject()(
                                           override val messagesApi: MessagesApi,
@@ -54,7 +53,7 @@ class TypeOfBenefitsController @Inject()(
   private def form(schemeName: String)
                   (implicit messages: Messages): Form[TypeOfBenefits] = formProvider(schemeName)
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {
@@ -74,7 +73,7 @@ class TypeOfBenefitsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         SchemeNameId.retrieve.map {

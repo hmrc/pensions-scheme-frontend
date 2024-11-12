@@ -35,9 +35,9 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def onwardRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
+  private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = CompanyEmailController.onPageLoad(mode, srn, index)
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
     None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {

@@ -21,15 +21,15 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.individual.EstablisherNameId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedIndividualDetails
 
 import scala.concurrent.Future
-import models.SchemeReferenceNumber
 
 class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
@@ -41,7 +41,7 @@ class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAp
                                                            val controllerComponents: MessagesControllerComponents
                                                           ) extends FrontendBaseController with I18nSupport with
   Retrievals {
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] = (authenticate() andThen
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {

@@ -44,7 +44,7 @@ class VariationDeclarationControllerSpec
 
   private val schemeName = "Test Scheme Name"
   private val srnNumber = SchemeReferenceNumber("S12345")
-  private val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber(srnNumber))
+  private val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber(srnNumber))
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 

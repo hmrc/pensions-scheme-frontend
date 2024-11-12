@@ -23,7 +23,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -34,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -50,7 +49,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
                                          implicit val executionContext: ExecutionContext
                                         ) extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -59,7 +58,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -69,7 +68,7 @@ class HasCompanyPAYEController @Inject()(override val appConfig: FrontendAppConf
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyPAYEController.onSubmit(mode, srn, index),
       title = Message("messages__hasPAYE", Message("messages__theCompany")),

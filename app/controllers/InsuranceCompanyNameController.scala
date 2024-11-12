@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.insuranceCompanyName
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -51,7 +51,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen allowAccess(srn)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
@@ -59,7 +59,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
       Ok(view(preparedForm, mode, existingSchemeName, submitCall, srn))
   }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

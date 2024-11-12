@@ -51,7 +51,7 @@ class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   private def checkYourAnswers: Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

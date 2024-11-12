@@ -35,7 +35,7 @@
     mode: Mode,
     schemeName: Option[String],
     postCall: Call,
-    srn: Option[SchemeReferenceNumber]
+    srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__moneyPurchaseBenefits__title"))) {

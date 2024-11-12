@@ -21,9 +21,10 @@ import controllers.ReasonController
 import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorNoUTRReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -48,7 +48,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
                                               val view: reason
                                              )(implicit val ec: ExecutionContext) extends ReasonController {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { details =>
@@ -58,7 +58,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { details =>
@@ -72,7 +72,7 @@ class DirectorNoUTRReasonController @Inject()(override val appConfig: FrontendAp
   private def form(directorName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__reason__error_utrRequired", directorName)
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber],
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber,
                         directorName: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.DirectorNoUTRReasonController.onSubmit(mode, establisherIndex, directorIndex, srn),

@@ -72,7 +72,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   private def checkYourAnswers: Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }
