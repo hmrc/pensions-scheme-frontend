@@ -38,7 +38,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
   val form = formProvider("messages__reason__error_ninoRequired", name)
   val establisherIndex, directorIndex = Index(0)
   val srn = None
-  val postCall = routes.DirectorNoNINOReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  val postCall = routes.DirectorNoNINOReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,

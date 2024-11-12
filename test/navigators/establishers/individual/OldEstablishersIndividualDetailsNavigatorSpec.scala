@@ -96,39 +96,39 @@ class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase
     val updateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(UpdateMode, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherDOBId(index))(someDate, EstablisherHasNINOController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherEnterNINOId(index))(someRefValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, srn), Some(newEstablisherUserAnswers))
+        row(EstablisherNameId(index))(somePersonNameValue, AddEstablisherController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherDOBId(index))(someDate, EstablisherHasNINOController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherEnterNINOId(index))(someRefValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoNINOReasonId(index))(someStringValue, EstablisherHasUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(UpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, OptionalSchemeReferenceNumber(srn))
   }
 
   "CheckUpdateMode" must {
     val checkUpdateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherDOBId(index))(someDate, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherEnterNINOId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherDOBId(index))(someDate, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(true, EstablisherEnterNINOController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherEnterNINOId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
         row(EstablisherEnterNINOId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
-        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasNINOId(index))(false, EstablisherNoNINOReasonController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoNINOReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherHasUTRId(index))(true, EstablisherEnterUTRController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherUTRId(index))(someRefValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
         row(EstablisherUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(existingEstablisherUserAnswers)),
-        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, srn), Some(newEstablisherUserAnswers))
+        row(EstablisherHasUTRId(index))(false, EstablisherNoUTRReasonController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(EstablisherNoUTRReasonId(index))(someStringValue, CheckYourAnswersDetailsController.onPageLoad(journeyMode(CheckUpdateMode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, OptionalSchemeReferenceNumber(srn))
   }
 }
 

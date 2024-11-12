@@ -37,7 +37,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__hasUtr__partnership_error_required","test partnership name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__thePartnership").resolve),

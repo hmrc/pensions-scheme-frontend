@@ -35,7 +35,7 @@ class HasCompanyEnterUTRControllerSpec extends ControllerSpecBase {
   val form = formProvider("messages__hasCompanyUtr__error__required","test company name")
   val index = Index(0)
   val srn = None
-  val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, srn, index)
+  val postCall = controllers.register.establishers.company.routes.HasCompanyUTRController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index)
   val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__theCompany").resolve),

@@ -53,7 +53,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   )
 
   private def viewmodel = ConfirmAddressViewModel(
-    postCall = routes.DirectorConfirmPreviousAddressController.onSubmit(establisherIndex, directorIndex, srn),
+    postCall = routes.DirectorConfirmPreviousAddressController.onSubmit(establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__confirmPreviousAddress__title"),
     heading = Message("messages__confirmPreviousAddress__heading", name),
     hint = None,
@@ -100,7 +100,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   "DirectorConfirmPreviousAddressController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(getRelevantData).onPageLoad(UpdateMode, establisherIndex, directorIndex, srn)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -109,7 +109,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getData = new FakeDataRetrievalAction(Some(validData.flatMap(_.set(DirectorConfirmPreviousAddressId(establisherIndex, directorIndex))(false)).get.json))
 
-      val result = controller(getData).onPageLoad(UpdateMode, establisherIndex, directorIndex, srn)(fakeRequest)
+      val result = controller(getData).onPageLoad(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(false))
     }
@@ -117,7 +117,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller(getRelevantData).onSubmit(UpdateMode, establisherIndex, directorIndex, srn)(postRequest)
+      val result = controller(getRelevantData).onSubmit(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -127,14 +127,14 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(getRelevantData).onSubmit(UpdateMode, establisherIndex, directorIndex, srn)(postRequest)
+      val result = controller(getRelevantData).onSubmit(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(UpdateMode, establisherIndex, directorIndex, srn)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -142,7 +142,7 @@ class DirectorConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(UpdateMode, establisherIndex, directorIndex, srn)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(UpdateMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

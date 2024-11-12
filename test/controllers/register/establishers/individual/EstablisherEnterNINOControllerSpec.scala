@@ -39,20 +39,20 @@ class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
   "EstablisherEnterNINOController Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
-      val result = controller().onPageLoad(UpdateMode, firstIndex, srn)(fakeRequest)
+      val result = controller().onPageLoad(UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, UpdateMode, firstIndex, srn)
+      contentAsString(result) mustBe viewAsString(form, UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
-      val result          = controller(getRelevantData).onPageLoad(UpdateMode, firstIndex, srn)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, firstIndex, srn)
+      val result          = controller(getRelevantData).onPageLoad(UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("nino" -> "CS700100A")
-      val result      = controller().onSubmit(UpdateMode, firstIndex, srn)(postRequest)
+      val result      = controller().onSubmit(UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -60,9 +60,9 @@ class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("nino" -> "invalid value")
       val boundForm   = form.bind(Map("nino" -> "invalid value"))
-      val result      = controller().onSubmit(UpdateMode, firstIndex, srn)(postRequest)
+      val result      = controller().onSubmit(UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, UpdateMode, firstIndex, srn)
+      contentAsString(result) mustBe viewAsString(boundForm, UpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -139,9 +139,9 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = {
     val vm = NinoViewModel(
-      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, srn),
+      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
       title = messages("messages__enterNINO", messages("messages__theIndividual")),
       heading = messages("messages__enterNINO", establisherName),
       hint = messages("messages__common__nino_hint"),

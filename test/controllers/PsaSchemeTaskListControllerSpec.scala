@@ -77,7 +77,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
@@ -92,7 +92,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -135,7 +135,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
@@ -152,7 +152,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

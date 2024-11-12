@@ -40,7 +40,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
       running(_.overrides(modules(getMandatoryEstablisherPartnership): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -73,7 +73,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
-    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterPAYE", partnershipName),
     hint = Some(Message("messages__enterPAYE__hint")),

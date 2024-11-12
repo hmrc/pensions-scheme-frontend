@@ -48,28 +48,28 @@ class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends Co
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
 
-  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None, StringCYA[TrusteeEmailId](
       Some(messages("messages__enterEmail", trusteeName)),
       Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
-    )().row(TrusteeEmailId(index))(routes.TrusteeEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
+    )().row(TrusteeEmailId(index))(routes.TrusteeEmailController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers) ++
       StringCYA[TrusteePhoneId](
         Some(messages("messages__enterPhoneNumber", trusteeName)),
         Some(messages("messages__visuallyhidden__dynamic_phone_number", trusteeName))
       )().row(TrusteePhoneId(index))(
-        routes.TrusteePhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
+        routes.TrusteePhoneController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers)
     ))
   }
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
@@ -123,10 +123,10 @@ class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends Co
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, postUrl = submitUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), postUrl = submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePerson")),
                 h1 = Message("messages__contactDetailsFor", trusteeName))
               app.stop()

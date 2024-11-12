@@ -39,7 +39,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__partnershipHasPaye__error__required", partnershipDetails.name)
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasPAYE", Message("messages__thePartnership").resolve),

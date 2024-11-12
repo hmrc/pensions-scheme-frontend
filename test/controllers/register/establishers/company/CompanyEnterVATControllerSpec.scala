@@ -39,7 +39,7 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
     running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterVATController]
-        val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
+        val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
     }
@@ -72,7 +72,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
   private val view = injector.instanceOf[enterVATView]
 
   val viewModel = EnterVATViewModel(
-    routes.CompanyEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.CompanyEnterVATController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
     heading = Message("messages__enterVAT", "test company name"),
     hint = Message("messages__enterVAT__hint", "test company name"),

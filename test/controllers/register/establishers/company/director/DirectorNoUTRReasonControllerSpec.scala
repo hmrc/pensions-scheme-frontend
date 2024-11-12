@@ -79,7 +79,7 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.director.routes.DirectorNoUTRReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val postCall = controllers.register.establishers.company.director.routes.DirectorNoUTRReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = ReasonViewModel(
     postCall,
     title = Message("messages__noDirectorUtr__title"),

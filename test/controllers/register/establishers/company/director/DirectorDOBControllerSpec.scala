@@ -60,9 +60,9 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
 
   private val postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.DirectorDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      postCall = postCall(mode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )

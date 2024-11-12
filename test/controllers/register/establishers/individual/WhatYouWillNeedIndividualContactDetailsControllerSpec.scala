@@ -32,12 +32,12 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
   private val index = 0
   private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = EstablisherEmailController.onPageLoad(mode, index, srn)
+  private def onwardRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call = EstablisherEmailController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def viewAsString(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
-    None, onwardRoute(mode, srn), srn, establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
+    None, onwardRoute(mode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), establisherName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
     "in Subscription" must {
@@ -60,10 +60,10 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
           modules(UserAnswers().establishersIndividualName(index, establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+          val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, srn)
+          contentAsString(result) mustBe viewAsString(UpdateMode, OptionalSchemeReferenceNumber(srn))
         }
       }
     }

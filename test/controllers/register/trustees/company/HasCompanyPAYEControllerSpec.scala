@@ -37,7 +37,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   val form = formProvider("messages__companyPayeRef__error__required","test company name")
   val index = Index(0)
   val srn = None
-  val postCall = controllers.register.trustees.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, index, srn)
+  val postCall = controllers.register.trustees.company.routes.HasCompanyPAYEController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
 
   val viewModel = CommonFormWithHintViewModel(
     postCall,

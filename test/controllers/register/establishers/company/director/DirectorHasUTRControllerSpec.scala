@@ -82,7 +82,7 @@ object DirectorHasUTRControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None
-  private val postCall = routes.DirectorHasUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val postCall = routes.DirectorHasUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__theDirector")),

@@ -52,28 +52,28 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
         Some(messages("messages__visuallyhidden__dynamic_email_address", partnershipDetails.name))
       )().row(PartnershipEmailId(index))(
-        routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
+        routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers) ++
 
         StringCYA[PartnershipPhoneNumberId](
           Some(messages("messages__enterPhoneNumber", partnershipDetails.name)),
           Some(messages("messages__visuallyhidden__dynamic_phone_number", partnershipDetails.name))
         )().row(PartnershipPhoneNumberId(index))(
-          routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
+          routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers)
     ))
   }
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -130,10 +130,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
                 h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }

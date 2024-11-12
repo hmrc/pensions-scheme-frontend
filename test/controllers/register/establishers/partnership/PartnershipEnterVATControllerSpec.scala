@@ -40,7 +40,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
       running(_.overrides(modules(getMandatoryEstablisherPartnership):_*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
-          val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -71,7 +71,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = EnterVATViewModel(
-    routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterVAT", partnershipName),
     hint = Message("messages__enterVAT__hint", partnershipName),

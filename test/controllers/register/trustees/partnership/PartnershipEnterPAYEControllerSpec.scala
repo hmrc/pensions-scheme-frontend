@@ -52,7 +52,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
         app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
@@ -90,7 +90,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
-    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterPAYE", "test partnership name"),
     hint = Some(Message("messages__enterPAYE__hint")),

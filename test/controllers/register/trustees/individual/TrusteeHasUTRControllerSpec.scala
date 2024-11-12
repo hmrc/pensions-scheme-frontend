@@ -41,7 +41,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   private val srn = None
   private val utr = "test-utr"
   private val noUtr = "no utr"
-  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasUTRController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall = postCall,
     title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),

@@ -64,24 +64,24 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
     def navigationForUpdateModeEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad(UpdateMode, index, srn)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn))
+        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherIndividual, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
   "CheckUpdateMode" must {
     def navigationForCheckUpdateModeEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
         row(EstablisherEmailId(index))(someStringValue, anyMoreChangesPage(srn)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
         row(EstablisherPhoneId(index))(someStringValue, anyMoreChangesPage(srn))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeEstablisherIndividual, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeEstablisherIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
 }
@@ -91,8 +91,8 @@ object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with M
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
+  private def cyaContactDetailsPage(mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+    CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
 }
 

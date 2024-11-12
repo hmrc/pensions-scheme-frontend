@@ -81,7 +81,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),
+    routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterUTR", "test partnership name"),
     hint = Message("messages_utr__hint"),

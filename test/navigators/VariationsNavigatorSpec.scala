@@ -35,7 +35,7 @@ class VariationsNavigatorSpec
   private val srnValue = SchemeReferenceNumber("S123")
   private val srn      = Some(srnValue)
 
-  private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
+  private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
   private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
   private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(srn)
 
@@ -65,7 +65,7 @@ class VariationsNavigatorSpec
           row(AnyMoreChangesId)(false, declaration, ua = Some(complete)),
           row(AnyMoreChangesId)(false, stillChanges)
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, OptionalSchemeReferenceNumber(srn))
     }
   }
 }

@@ -54,7 +54,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
         val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyEnterCRNController]
-        val result = controller.onPageLoad(CheckUpdateMode, srn, firstIndex)(request)
+        val result = controller.onPageLoad(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex)(request)
 
           status(result) mustBe OK
           contentAsString(result) mustBe
@@ -62,7 +62,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
               viewModel(),
               form,
               None,
-              postCall(CheckUpdateMode, srn, firstIndex),
+              postCall(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex),
               srn
             )(request, messages).toString
 
@@ -80,7 +80,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "1234567")))
         val controller = app.injector.instanceOf[CompanyEnterCRNController]
-        val result = controller.onSubmit(CheckUpdateMode, srn, firstIndex)(request)
+        val result = controller.onSubmit(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex)(request)
 
         status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)

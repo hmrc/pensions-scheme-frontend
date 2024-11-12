@@ -42,7 +42,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     val navigationForNewTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Next Page"),
-      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)),
+      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)),
       row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index),Some(uaFeatureToggleOn)),
       row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(NormalMode, index, None)),
       row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(NormalMode, index, None)),
@@ -80,19 +80,19 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     val navigationForVarianceModeTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Expected next page"),
-      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeEnterNINOId(index))(someRefValue, TrusteeHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers))
+      row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeEnterNINOId(index))(someRefValue, TrusteeHasUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers))
     )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
 
@@ -100,20 +100,20 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     val navigationForVarianceModeTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeEnterNINOId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeEnterNINOId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
         row(TrusteeEnterNINOId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingTrusteeUserAnswers)),
-        row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
         row(TrusteeUTRId(index))(someRefValue, anyMoreChangesPage(srn), Some(exisitingTrusteeUserAnswers)),
-        row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, srn), Some(newTrusteeUserAnswers))
+        row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForVarianceModeTrusteeIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
 
@@ -133,6 +133,6 @@ object TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers wit
   }
 
   private def cyaIndividualDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
+    CheckYourAnswersIndividualDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
 }

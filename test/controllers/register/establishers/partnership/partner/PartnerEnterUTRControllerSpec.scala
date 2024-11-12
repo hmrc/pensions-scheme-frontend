@@ -39,7 +39,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryPartner): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
-          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -71,7 +71,7 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn),
+    routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__thePartner").resolve),
     heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),

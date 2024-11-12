@@ -50,15 +50,15 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val fullAnswers = UserAnswers().establishersIndividualName(index, establisherName).
     establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     val emailAnswerRow = AnswerRow(
       messages("messages__enterEmail", establisherName.fullName),
       Seq(email),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), index, srn).url,
+      Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url,
         Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName.fullName))))
     )
 
@@ -66,7 +66,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       messages("messages__enterPhoneNumber", establisherName.fullName),
       Seq(phone),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), index, srn).url,
+      Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url,
         Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName.fullName))))
     )
 
@@ -75,7 +75,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(
@@ -133,10 +133,10 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePerson")),
                 h1 = Message("messages__contactDetailsFor", establisherName.fullName))
           }

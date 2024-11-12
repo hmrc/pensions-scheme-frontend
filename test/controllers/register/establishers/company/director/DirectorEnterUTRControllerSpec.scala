@@ -40,7 +40,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
-          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -72,7 +72,7 @@ object DirectorEnterUTRControllerSpec extends DirectorEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
+    routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__theDirector")),
     heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),

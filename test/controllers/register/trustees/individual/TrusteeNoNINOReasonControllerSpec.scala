@@ -36,7 +36,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     val form = formProvider("messages__reason__error_ninoRequired", name)
     val index = Index(0)
     val srn = None
-    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, index, srn)
+    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,

@@ -43,7 +43,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterPAYEController]
-          val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString()
       }
@@ -74,7 +74,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
-    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterPAYE", Message("messages__theCompany")),
     heading = Message("messages__enterPAYE", "test company name"),
     hint = Some(Message("messages__enterPAYE__hint")),

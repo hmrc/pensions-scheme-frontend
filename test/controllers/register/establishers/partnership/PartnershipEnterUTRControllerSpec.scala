@@ -45,7 +45,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase {
   private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
 
   private val viewModel = UTRViewModel(
-    postCall = routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, srn),
+    postCall = routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterUTR", partnershipDetails.name),
     hint = Message("messages_utr__hint"),

@@ -82,7 +82,7 @@ object PartnerHasUTRControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
   private val srn = None
-  private val postCall = routes.PartnerHasUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+  private val postCall = routes.PartnerHasUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__thePartner")),

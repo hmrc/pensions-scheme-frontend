@@ -37,7 +37,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__reason__error_ninoRequired", name)
   private val establisherIndex, partnerIndex = Index(0)
   private val srn = None
-  private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+  private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn))
 
   private val viewModel = ReasonViewModel(
     postCall = postCall,

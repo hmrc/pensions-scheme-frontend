@@ -37,7 +37,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
   private val form         = formProvider("messages__genericHasNino__error__required", name)
   private val index        = Index(0)
   private val srn          = None
-  private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(NormalMode, index, srn)
+  private val postCall     = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__theIndividual")),

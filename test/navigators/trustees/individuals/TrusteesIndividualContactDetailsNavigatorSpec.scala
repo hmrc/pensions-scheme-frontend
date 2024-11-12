@@ -45,7 +45,7 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
         row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, EmptyOptionalSchemeReferenceNumber)
   }
 
   "CheckMode" must {
@@ -56,31 +56,31 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
         row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "UpdateMode" must {
     def navigationForUpdateModeTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad(UpdateMode, index, srn)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn))
+        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeTrusteeIndividual, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeTrusteeIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
   "CheckUpdateMode" must {
     def navigationForCheckUpdateModeTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteeEmailId(index))(someStringValue, anyMoreChangesPage(srn)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, srn), Some(newTrusteeUserAnswers)),
-        row(TrusteePhoneId(index))(someStringValue, anyMoreChangesPage(srn))
+        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteeEmailId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(TrusteePhoneId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn)))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeTrusteeIndividual, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeTrusteeIndividual, OptionalSchemeReferenceNumber(srn))
   }
 
 }

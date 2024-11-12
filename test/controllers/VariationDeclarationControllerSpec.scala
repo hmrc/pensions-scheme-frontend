@@ -78,7 +78,7 @@ class VariationDeclarationControllerSpec
     reset(schemeDetailsConnector)
   }
 
-  private def viewAsString(): String = view(Some(schemeName), srn, postCall)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(Some(schemeName), OptionalSchemeReferenceNumber(srn), postCall)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 

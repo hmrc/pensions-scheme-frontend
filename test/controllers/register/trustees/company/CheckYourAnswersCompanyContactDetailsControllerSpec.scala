@@ -48,13 +48,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrlUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def submitUrlUpdateMode(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
   private def submitUrl(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     val cn = userAnswers.get(CompanyDetailsId(index)).map(_.companyName).value
 
@@ -63,13 +63,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
         Some(messages("messages__enterEmail", cn)),
         Some(messages("messages__visuallyhidden__dynamic_email_address", cn))
       )().row(CompanyEmailId(index))(
-        routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
+        routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](
           Some(messages("messages__enterPhoneNumber", cn)),
           Some(messages("messages__visuallyhidden__dynamic_phone_number", cn))
         )().row(CompanyPhoneId(index))(
-          routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
+          routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, userAnswers)
     ))
   }
 
@@ -91,7 +91,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -132,10 +132,10 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrlUpdateMode(UpdateMode, srn), srn = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrlUpdateMode(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn) = srn,
             title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
             h1 = Message("messages__contactDetailsFor", "test company"))
         }

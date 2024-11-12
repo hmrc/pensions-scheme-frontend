@@ -39,7 +39,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
     running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterUTRController]
-        val result = controller.onPageLoad(CheckUpdateMode, srn, index = 0)(fakeRequest)
+        val result = controller.onPageLoad(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
     }
@@ -72,7 +72,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
+    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex),
     title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__enterUTR", "test company name"),
     hint = Message("messages_utr__hint"),

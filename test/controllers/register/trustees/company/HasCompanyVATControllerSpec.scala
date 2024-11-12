@@ -41,7 +41,7 @@ class HasCompanyVATControllerSpec extends ControllerSpecBase with MockitoSugar w
   private val form = formProvider("messages__hasCompanyVat__error__required", "test company name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.company.routes.HasCompanyVATController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
 
   val viewModel = CommonFormWithHintViewModel(
     postCall,

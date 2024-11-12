@@ -40,7 +40,7 @@ class EstablisherEnterUTRControllerSpec extends ControllerSpecBase with Matchers
       running(_.overrides(modules(getMandatoryEstablisherIndividual): _*)) {
         app =>
           val controller = app.injector.instanceOf[EstablisherEnterUTRController]
-          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -55,7 +55,7 @@ class EstablisherEnterUTRControllerSpec extends ControllerSpecBase with Matchers
         app =>
           val controller = app.injector.instanceOf[EstablisherEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(CheckUpdateMode, firstIndex, srn)(postRequest)
+          val result = controller.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -75,7 +75,7 @@ object EstablisherEnterUTRControllerSpec extends EstablisherEnterUTRControllerSp
   private val view = injector.instanceOf[utr]
 
   val viewModel = UTRViewModel(
-    routes.EstablisherEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.EstablisherEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__theIndividual")),
     heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),

@@ -66,7 +66,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
                            srn: OptionalSchemeReferenceNumber,
                            title: Message,
                            h1: Message): String =
-    viewAsString(mode, answerSection(NormalMode, srn), href, srn, title, h1)
+    viewAsString(mode, answerSection(NormalMode, OptionalSchemeReferenceNumber(srn)), href, OptionalSchemeReferenceNumber(srn), title, h1)
 
   private def viewAsString(mode: Mode,
                            answerSection: Seq[AnswerSection],
@@ -90,40 +90,40 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "having set up answer sections" when {
     val request: DataRequest[AnyContent]  = FakeDataRequest(directorAnswers)
-    def answerSectionDirector(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
+    def answerSectionDirector(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] =
       Seq(
         AnswerSection(
           None,
           Seq(
             DirectorNameId(index, index)
-              .row(routes.DirectorNameController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
+              .row(routes.DirectorNameController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly),
             DirectorDOBId(index, index)
-              .row(routes.DirectorDOBController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
-            DirectorHasNINOId(index, index).row(routes.DirectorHasNINOController.onPageLoad(Mode.checkMode(mode), index, index, srn).url,
+              .row(routes.DirectorDOBController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly),
+            DirectorHasNINOId(index, index).row(routes.DirectorHasNINOController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url,
                                                 mode)(request, implicitly),
             DirectorEnterNINOId(index, index)
-              .row(routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
+              .row(routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly),
             DirectorNoNINOReasonId(index, index)
-              .row(routes.DirectorNoNINOReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
+              .row(routes.DirectorNoNINOReasonController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request,
                                                                                                                         implicitly),
-            DirectorHasUTRId(index, index).row(routes.DirectorHasUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url,
+            DirectorHasUTRId(index, index).row(routes.DirectorHasUTRController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url,
                                                mode)(request, implicitly),
-            DirectorEnterUTRId(index, index).row(routes.DirectorEnterUTRController.onPageLoad(Mode.checkMode(mode), index, index, srn).url,
+            DirectorEnterUTRId(index, index).row(routes.DirectorEnterUTRController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url,
                                                  mode)(request, implicitly),
             DirectorNoUTRReasonId(index, index)
-              .row(routes.DirectorNoUTRReasonController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
-            DirectorAddressId(index, index).row(routes.DirectorAddressController.onPageLoad(Mode.checkMode(mode), index, index, srn).url,
+              .row(routes.DirectorNoUTRReasonController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly),
+            DirectorAddressId(index, index).row(routes.DirectorAddressController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url,
                                                 mode)(request, implicitly),
             DirectorAddressYearsId(index, index)
-              .row(routes.DirectorAddressYearsController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
+              .row(routes.DirectorAddressYearsController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request,
                                                                                                                         implicitly),
             DirectorPreviousAddressId(index, index)
-              .row(routes.DirectorPreviousAddressController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request,
+              .row(routes.DirectorPreviousAddressController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request,
                                                                                                                            implicitly),
             DirectorEmailId(index, index)
-              .row(routes.DirectorEmailController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly),
+              .row(routes.DirectorEmailController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly),
             DirectorPhoneNumberId(index, index)
-              .row(routes.DirectorPhoneNumberController.onPageLoad(Mode.checkMode(mode), index, index, srn).url, mode)(request, implicitly)
+              .row(routes.DirectorPhoneNumberController.onPageLoad(Mode.checkMode(mode), index, index, OptionalSchemeReferenceNumber(srn)).url, mode)(request, implicitly)
           ).flatten
         )
       )
@@ -167,7 +167,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends SpecBase {
   val index                                                          = Index(0)
   val schemeName                                                     = "test scheme name"
-  def href(mode: Mode, srn: OptionalSchemeReferenceNumber, companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, srn, companyIndex)
+  def href(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn), companyIndex)
   val name                                                           = "First Name"
 
   val directorPersonDetails = PersonName("first name", "last name", false)

@@ -110,7 +110,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
-      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
     }
   }
 
@@ -148,7 +148,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
-      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
     }
   }
 

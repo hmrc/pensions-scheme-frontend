@@ -35,10 +35,10 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   val form = formProvider("messages__hasBeenTradingCompany__error__required","test company name")
   val index = Index(0)
   val srn = None
-  val postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, srn, index)
+  val postCall = controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index)
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, srn, index),
+    controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index),
     title = Message("messages__hasBeenTradingCompany__title"),
     heading = Message("messages__hasBeenTrading__h1", "test company name"),
     hint = None

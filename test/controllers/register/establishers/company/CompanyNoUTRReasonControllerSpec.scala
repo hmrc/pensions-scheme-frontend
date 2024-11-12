@@ -45,7 +45,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val srn = Some(SchemeReferenceNumber("S123"))
 
   val viewmodel = ReasonViewModel(
-    postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, srn, index = 0),
+    postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoUTR", companyName),
     srn = srn
@@ -59,7 +59,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
-            val result = controller.onPageLoad(NormalMode, srn, index = 0)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
             status(result) mustBe OK
             contentAsString(result) mustBe view(form, viewmodel, None)(fakeRequest, messages).toString
         }
@@ -71,7 +71,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(data):_*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
-            val result = controller.onPageLoad(NormalMode, srn, index = 0)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
             status(result) mustBe OK
             contentAsString(result) mustBe view(form.fill(value = "no reason"), viewmodel, None)(fakeRequest, messages).toString
         }

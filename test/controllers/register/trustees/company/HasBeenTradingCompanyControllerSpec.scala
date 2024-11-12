@@ -39,10 +39,10 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   val form: Form[Boolean] = formProvider("messages__tradingAtLeastOneYear__error","test company name")
   val index: Index = Index(0)
   val srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber
-  val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn)
+  val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
 
   val viewModel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, srn),
+    controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__trustee_company_trading-time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test company name"),
     hint = None

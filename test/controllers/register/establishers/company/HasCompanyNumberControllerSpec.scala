@@ -38,10 +38,10 @@ class HasCompanyNumberControllerSpec extends ControllerSpecBase with MockitoSuga
   val form = formProvider("messages__hasCompanyNumber__error__required", "test company name")
   val index = Index(0)
   val srn = None
-  val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index)
+  val postCall = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index)
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, srn, index),
+    controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index),
     title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
     heading = Message("messages__hasCRN", "test company name"),
     hint = Some(Message("messages__hasCompanyNumber__p1"))

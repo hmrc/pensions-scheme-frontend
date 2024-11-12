@@ -58,9 +58,9 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, index, srn),
+      postCall = postCall(mode, index, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )

@@ -61,9 +61,9 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 
   private val postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
+      postCall = postCall(mode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )

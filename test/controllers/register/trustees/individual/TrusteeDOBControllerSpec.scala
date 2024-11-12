@@ -59,9 +59,9 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 
   private val postCall = routes.TrusteeDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
-      postCall = postCall(mode, index, srn),
+      postCall = postCall(mode, index, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )
