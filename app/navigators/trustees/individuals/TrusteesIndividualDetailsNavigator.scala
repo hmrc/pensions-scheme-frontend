@@ -37,10 +37,10 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   import TrusteesIndividualDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
@@ -54,17 +54,17 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case TrusteeDOBId(index) if mode == NormalMode =>
       hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case id@TrusteeHasNINOId(index) =>
       booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case TrusteeEnterNINOId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeEnterNINOId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeNoNINOReasonId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case id@TrusteeHasUTRId(index) =>
       booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index) =>

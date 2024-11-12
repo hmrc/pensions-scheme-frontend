@@ -21,9 +21,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.VariationDeclarationId
 import identifiers.register._
-import models.NormalMode
+import models.OptionalSchemeReferenceNumber.toSrn
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.UserAnswers
-import models.SchemeReferenceNumber
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -42,7 +42,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
     if (userAnswers.isBeforeYouStartCompleted(NormalMode))
-      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+      NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
     else
       NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
 
@@ -51,7 +51,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = (from.id, srn) match {
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = (from.id, toSrn(srn)) match {
     case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes
       .SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None

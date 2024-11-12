@@ -38,32 +38,32 @@ class TrusteesIndividualAddressNavigator @Inject()(
   import TrusteesIndividualAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index) =>
-      IndividualAddressListController.onPageLoad(mode, index, None)
+      IndividualAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualAddressListId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressYearsId(index) =>
-      trusteeAddressYearsRoutes(mode, ua, index, None)
+      trusteeAddressYearsRoutes(mode, ua, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualPreviousAddressPostCodeLookupId(index) =>
-      TrusteePreviousAddressListController.onPageLoad(mode, index, None)
+      TrusteePreviousAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case TrusteePreviousAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteePreviousAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =

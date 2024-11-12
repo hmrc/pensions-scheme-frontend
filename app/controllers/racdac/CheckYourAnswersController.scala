@@ -21,8 +21,9 @@ import connectors.PensionAdministratorConnector
 import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.AuthEntity.PSP
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.DataRequest
-import models.{CheckMode, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -53,7 +54,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
+        val returnLinkDetails: Future[(String, String)] =(mode, toSrn(srn)) match {
           case (UpdateMode, Some(srnNo)) =>
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
             Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo.id), schemeName))
@@ -96,7 +97,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       schemeName = schemeName,
       returnOverview = true,
       hideEditLinks = request.viewOnly,
-      srn = None,
+      srn = EmptyOptionalSchemeReferenceNumber,
       hideSaveAndContinueButton = request.viewOnly,
       title = h1,
       h1 = h1

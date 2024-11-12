@@ -40,7 +40,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
 
-  def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call
+  def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
 

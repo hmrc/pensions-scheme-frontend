@@ -81,6 +81,6 @@ class CompanyDetailsController @Inject()(
       )
   }
 
-  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.CompanyDetailsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit _
 
 }

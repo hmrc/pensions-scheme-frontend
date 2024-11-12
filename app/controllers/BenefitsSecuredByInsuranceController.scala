@@ -49,7 +49,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
                                                     )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
+  val postCall: (Mode, OptionalSchemeReferenceNumber) => Call = routes.BenefitsSecuredByInsuranceController.onSubmit
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

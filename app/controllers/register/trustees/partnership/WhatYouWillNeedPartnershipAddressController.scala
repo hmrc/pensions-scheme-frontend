@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
-import models.{Index, Mode, PartnershipDetails}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, PartnershipDetails, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -29,7 +30,6 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,

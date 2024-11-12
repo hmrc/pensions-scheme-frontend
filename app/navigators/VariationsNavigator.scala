@@ -19,9 +19,8 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
-import models.UpdateMode
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import utils.Enumerable
-import models.SchemeReferenceNumber
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
   extends AbstractNavigator

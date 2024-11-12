@@ -61,7 +61,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     )
 
   private def viewAsString(mode: Mode,
-                           answerSection: (Mode, Option[SchemeReferenceNumber]) => Seq[AnswerSection],
+                           answerSection: (Mode, OptionalSchemeReferenceNumber) => Seq[AnswerSection],
                            href: Call,
                            srn: OptionalSchemeReferenceNumber,
                            title: Message,

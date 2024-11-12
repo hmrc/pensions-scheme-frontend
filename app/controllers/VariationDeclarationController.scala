@@ -21,6 +21,7 @@ import connectors._
 import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
@@ -80,7 +81,7 @@ class VariationDeclarationController @Inject()(
     (authenticate() andThen getData(UpdateMode, srn) andThen requireData).async {
       implicit request =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)
-        (srn, request.userAnswers.get(PstrId)) match {
+        (toSrn(srn), request.userAnswers.get(PstrId)) match {
           case (Some(srnId), Some(pstr)) =>
             val ua =
               request

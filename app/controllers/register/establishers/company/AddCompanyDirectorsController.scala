@@ -105,6 +105,6 @@ class AddCompanyDirectorsController @Inject()(
     }
   }
 
-  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
 
 }

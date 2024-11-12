@@ -17,7 +17,7 @@
 package models.details
 
 import play.api.libs.json._
-import models.SchemeReferenceNumber
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class SchemeMemberNumbers(current: String, future: String)
 

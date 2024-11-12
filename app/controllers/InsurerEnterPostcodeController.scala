@@ -51,8 +51,8 @@ class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,
                                                val view: postcodeLookup
                                               )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
-  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurerEnterPostcodeController.onSubmit
-  val manualCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurerConfirmAddressController.onPageLoad
+  val postCall: (Mode, OptionalSchemeReferenceNumber) => Call = routes.InsurerEnterPostcodeController.onSubmit
+  val manualCall: (Mode, OptionalSchemeReferenceNumber) => Call = routes.InsurerConfirmAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 

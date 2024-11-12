@@ -29,6 +29,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId, CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId, TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.address.Address
 import models.requests.DataRequest
 import models.{Mode, _}
@@ -96,7 +97,7 @@ trait UserAnswersService {
                                                                              ec: ExecutionContext,
                                                                              hc: HeaderCarrier,
                                                                              request: DataRequest[AnyContent]
-  ): Future[JsValue] = (srn, request.psaId) match {
+  ): Future[JsValue] = (toSrn(srn), request.psaId) match {
     case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
       case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
       case _ => Future(Json.obj())

@@ -164,9 +164,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
 
   //scalastyle:on cyclomatic.complexity
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = normalRoutes(from, NormalMode, None)
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = normalRoutes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, EmptyOptionalSchemeReferenceNumber)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = normalRoutes(from, UpdateMode, srn)
 

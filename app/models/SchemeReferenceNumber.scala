@@ -16,6 +16,7 @@
 
 package models
 
+import models.details.SchemeDetails
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{JavascriptLiteral, PathBindable, QueryStringBindable}
 
@@ -27,6 +28,7 @@ case class OptionalSchemeReferenceNumber(opt: Option[SchemeReferenceNumber])
 
 object EmptyOptionalSchemeReferenceNumber extends OptionalSchemeReferenceNumber(None)
 object OptionalSchemeReferenceNumber {
+  implicit val formats: OFormat[OptionalSchemeReferenceNumber] = Json.format[OptionalSchemeReferenceNumber]
 
   implicit def fromSrn(srn: OptionalSchemeReferenceNumber): OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(srn)
   implicit def toSrn(srnOpt: OptionalSchemeReferenceNumber): Option[SchemeReferenceNumber] = srnOpt.opt

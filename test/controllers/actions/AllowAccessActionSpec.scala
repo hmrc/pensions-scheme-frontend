@@ -46,7 +46,7 @@ class AllowAccessActionSpec
     with MockitoSugar {
 
   def allowAccessWithRedirectBasedOnUserAnswers(
-                                                 testHarness: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness,
+                                                 testHarness: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness,
                                                  userAnswers: UserAnswers,
                                                  description: String,
                                                  expectedResult: => Option[String]
@@ -128,11 +128,11 @@ class AllowAccessActionSpec
       super.filter(request)
   }
 
-  private val generateTestHarnessForAllowAccessMain: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessMain: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessAction(_, _)
-  private val generateTestHarnessForAllowAccessTaskList: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessTaskList: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionTaskList(_, _)
-  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness =
+  private val generateTestHarnessForAllowAccessNoSuspendedCheck: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
   private val srn = Some(SchemeReferenceNumber("S123"))
@@ -246,7 +246,7 @@ class AllowAccessActionSpec
   }
 
   //scalastyle:off method.length
-  def allowAccessAction(testHarness: (Option[SchemeReferenceNumber], PensionsSchemeConnector) => TestHarness): Unit = {
+  def allowAccessAction(testHarness: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness): Unit = {
     "allow access where association between psa id and srn and " +
       "user answers present and an srn IS present and viewonly mode" in {
       val psc: PensionsSchemeConnector = mock[PensionsSchemeConnector]

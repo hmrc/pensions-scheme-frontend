@@ -36,7 +36,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
   val formProvider = new MoneyPurchaseBenefitsFormProvider()
   val form: Form[MoneyPurchaseBenefits] = formProvider()
   val schemeName = "Test Scheme Name"
-  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
+  val postCall: (Mode, OptionalSchemeReferenceNumber) => Call = routes.MoneyPurchaseBenefitsController.onSubmit
 
   private val view = injector.instanceOf[moneyPurchaseBenefits]
 

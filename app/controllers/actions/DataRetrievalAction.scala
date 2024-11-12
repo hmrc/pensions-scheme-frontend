@@ -21,6 +21,7 @@ import connectors._
 import identifiers.PsaMinimalFlagsId._
 import identifiers.racdac.IsRacDacId
 import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
+import models.OptionalSchemeReferenceNumber.toSrn
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.Logger
@@ -52,7 +53,7 @@ class DataRetrievalImpl(
       case NormalMode | CheckMode =>
         createOptionalRequest(dataConnector.fetch(request.externalId), viewOnly = false)(request)
       case UpdateMode | CheckUpdateMode =>
-        (srn, request.psaId) match {
+        (toSrn(srn), request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
             lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
               getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
@@ -227,7 +228,7 @@ class RacdacDataRetrievalImpl(
                                viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                schemeDetailsConnector: SchemeDetailsConnector,
                                minimalPsaConnector: MinimalPsaConnector,
-                               srnOpt: Option[SchemeReferenceNumber])(implicit val executionContext: ExecutionContext) extends DataRetrieval {
+                               srnOpt: OptionalSchemeReferenceNumber)(implicit val executionContext: ExecutionContext) extends DataRetrieval {
   private val logger = Logger(classOf[RacdacDataRetrievalImpl])
   override protected def transform[A](request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -237,7 +238,7 @@ class RacdacDataRetrievalImpl(
       case NormalMode | CheckMode => getOrCreateOptionalRequest(dataConnector.fetch, viewOnly = false)(request)
 
       case UpdateMode | CheckUpdateMode =>
-        (srnOpt, request.psaId) match {
+        (toSrn(srnOpt), request.psaId) match {
           case (Some(srn), Some(psaId)) =>
             getOrCreateOptionalRequest(dataInUpdateMode(srn, psaId.id)(request, hc), viewOnly = true)(request)
           case _ => Future(OptionalDataRequest(

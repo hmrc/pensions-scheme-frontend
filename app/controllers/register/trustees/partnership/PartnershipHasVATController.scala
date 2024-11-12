@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.register.trustees.partnership.routes._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipHasVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -34,7 +35,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipHasVATController @Inject()(val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,

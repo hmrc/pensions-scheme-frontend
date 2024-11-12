@@ -80,5 +80,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
 }

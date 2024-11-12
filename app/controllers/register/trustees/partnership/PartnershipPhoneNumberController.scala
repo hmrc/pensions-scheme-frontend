@@ -22,8 +22,9 @@ import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPhoneId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipPhoneNumberController @Inject()(val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,

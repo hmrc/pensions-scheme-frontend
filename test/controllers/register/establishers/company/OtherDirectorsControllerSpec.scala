@@ -44,7 +44,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val formProvider = new OtherDirectorsFormProvider()
   val form = formProvider()
   val companyName = "test company name"
-  private def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(

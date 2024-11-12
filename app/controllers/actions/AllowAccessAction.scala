@@ -22,6 +22,7 @@ import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.PsaMinimalFlagsId
 import PsaMinimalFlagsId._
 import config.FrontendAppConfig
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.{OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import models.requests.OptionalDataRequest
 import play.api.Logging
@@ -53,7 +54,7 @@ abstract class AllowAccessAction(srn: OptionalSchemeReferenceNumber,
 
     val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
 
-    (optionUA, optionPsaMinimalFlagsId, srn) match {
+    (optionUA, optionPsaMinimalFlagsId, toSrn(srn)) match {
       case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
         Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>

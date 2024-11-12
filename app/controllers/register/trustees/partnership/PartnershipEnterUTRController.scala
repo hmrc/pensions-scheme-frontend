@@ -21,8 +21,9 @@ import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
+
 import javax.inject.Inject
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -32,7 +33,6 @@ import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,

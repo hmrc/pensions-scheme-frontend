@@ -20,8 +20,9 @@ import connectors.{DelimitedAdminException, MinimalPsaConnector, SchemeDetailsCo
 import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.AuthenticatedRequest
-import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,7 +62,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
         case Some(result) => Future.successful(result)
         case _ =>
 
-          (mode, srn, request.psaId) match {
+          (mode, toSrn(srn), request.psaId) match {
             case (UpdateMode, Some(srnNo), Some(psaId)) =>
               schemeDetailsConnector.getSchemeDetails(psaId.id, schemeIdType = "srn", srnNo).map { ua =>
                 ua.get(IsRacDacId) match {
@@ -72,7 +73,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
                 }
               }
 
-            case (NormalMode, None, _) => Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)))
+            case (NormalMode, Some(srn), _) => Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(Some(srn)))))
 
             case _ => Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
           }

@@ -22,11 +22,10 @@ import controllers.register.establishers.individual.{routes => establisherIndivi
 import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import models.Index.indexToInt
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import play.api.mvc.Call
 import utils.UserAnswers
 import viewmodels.Message
-import models.SchemeReferenceNumber
 
 case object EstablisherCompanyDetails extends DetailsSpoke {
   override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =

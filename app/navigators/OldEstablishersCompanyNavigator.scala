@@ -38,7 +38,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
                               mode: Mode,
                               srn: OptionalSchemeReferenceNumber,
                               answers: UserAnswers,
-                              cyaPage: (Int, Mode, Option[SchemeReferenceNumber]) => Option[NavigateTo]): Option[NavigateTo] = {
+                              cyaPage: (Int, Mode, OptionalSchemeReferenceNumber) => Option[NavigateTo]): Option[NavigateTo] = {
     if (mode == CheckMode || mode == NormalMode)
       cyaPage(index, journeyMode(mode), srn)
     else if (answers.get(IsEstablisherNewId(index)).getOrElse(false))
@@ -175,14 +175,14 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case IsCompanyDormantId(index) =>
-      NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, None, index))
-    case _ => routes(from, NormalMode, None)
+      NavigateTo.dontSave(establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index))
+    case _ => routes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, None)
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = editRoutes(from, CheckMode, EmptyOptionalSchemeReferenceNumber)
 
   override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = editRoutes(from, CheckUpdateMode, srn)
 

@@ -15,7 +15,7 @@
  */
 
 package viewmodels
-import models.SchemeReferenceNumber
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class SchemeDetailsTaskListTrustees(
                                   h1: String,

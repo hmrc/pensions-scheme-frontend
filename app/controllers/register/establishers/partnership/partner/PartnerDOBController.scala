@@ -84,5 +84,5 @@ class PartnerDOBController @Inject()(
     )
   }
 
-  private def postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.PartnerDOBController.onSubmit
+  private def postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.PartnerDOBController.onSubmit
 }

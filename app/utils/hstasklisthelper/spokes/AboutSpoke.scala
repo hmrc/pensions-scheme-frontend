@@ -16,10 +16,9 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink, UpdateMode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink, UpdateMode}
 import utils.UserAnswers
 import viewmodels.Message
-import models.SchemeReferenceNumber
 
 case object AboutMembersSpoke extends Spoke {
   private val variationsViewLinkText = "messages__schemeTaskList__about_members_link_text_view"

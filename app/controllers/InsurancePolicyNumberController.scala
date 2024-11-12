@@ -64,7 +64,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(preparedForm, mode, companyName, existingSchemeName, postCall(mode, srn), srn)))
     }
 
-  def postCall: (Mode, Option[SchemeReferenceNumber]) => Call = routes.InsurancePolicyNumberController.onSubmit
+  def postCall: (Mode, OptionalSchemeReferenceNumber) => Call = routes.InsurancePolicyNumberController.onSubmit
 
   def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {

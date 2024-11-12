@@ -16,10 +16,9 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import utils.UserAnswers
 import viewmodels.Message
-import models.SchemeReferenceNumber
 
 case object WorkingKnowledgeSpoke extends Spoke {
   override def addLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =

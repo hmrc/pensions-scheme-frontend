@@ -21,9 +21,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.NormalMode
+import models.{NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.UserAnswers
-import models.SchemeReferenceNumber
 
 class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {

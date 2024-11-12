@@ -28,7 +28,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompany
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models.register.establishers.EstablisherKind
-import models.{LastUpdated, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, LastUpdated, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 
@@ -51,7 +51,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
-      None,
+      EmptyOptionalSchemeReferenceNumber,
       beforeYouStartSection(answers),
       aboutSection(answers, NormalMode, srn),
       workingKnowledgeSection(answers),
@@ -70,7 +70,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
       answers.get(SchemeNameId).getOrElse(""),
-      None,
+      EmptyOptionalSchemeReferenceNumber,
       beforeYouStartSection(answers),
       aboutSection(answers, NormalMode, srn),
       workingKnowledgeSection(answers),
@@ -89,7 +89,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
     SchemeDetailsTaskListEstablishers(
       answers.get(SchemeNameId).getOrElse(""),
-      None,
+      EmptyOptionalSchemeReferenceNumber,
       section,
       section.entities.forall(_.isCompleted.contains(true)),
       Some(StatsSection(totalCompletedSections, totalSectionsEstablisher(answers, establisherIndex), None))
@@ -101,7 +101,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
     SchemeDetailsTaskListTrustees(
       answers.get(SchemeNameId).getOrElse(""),
-      None,
+      EmptyOptionalSchemeReferenceNumber,
       section,
       section.entities.forall(_.isCompleted.contains(true)),
       Some(StatsSection(totalCompletedSections, 3, None))
@@ -183,7 +183,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   private[utils] def beforeYouStartSection(userAnswers: UserAnswers): SchemeDetailsTaskListEntitySection = {
     SchemeDetailsTaskListEntitySection(None,
-      spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, None, userAnswers.get(SchemeNameId)
+      spokeCreationService.getBeforeYouStartSpoke(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber, userAnswers.get(SchemeNameId)
         .getOrElse(""), None),
       Some(Message("messages__schemeTaskList__before_you_start_header"))
     )
@@ -225,7 +225,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
       case Some(false) =>
         Some(
           SchemeDetailsTaskListEntitySection(None,
-            spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, None, userAnswers.get
+            spokeCreationService.getWorkingKnowledgeSpoke(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber, userAnswers.get
             (SchemeNameId).getOrElse(""), None),
             None
           )

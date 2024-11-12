@@ -16,9 +16,8 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import utils.UserAnswers
-import models.SchemeReferenceNumber
 
 case object BeforeYouStartSpoke extends Spoke {
   private val registrationLinkText = "messages__schemeTaskList__before_you_start_link_text"

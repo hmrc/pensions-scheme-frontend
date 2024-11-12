@@ -66,7 +66,7 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  private def postCall: (Mode, Index, Option[SchemeReferenceNumber]) => Call = routes.TrusteeDOBController.onSubmit
+  private def postCall: (Mode, Index, OptionalSchemeReferenceNumber) => Call = routes.TrusteeDOBController.onSubmit
 
   def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {

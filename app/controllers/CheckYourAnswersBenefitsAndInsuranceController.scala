@@ -21,6 +21,7 @@ import identifiers._
 import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.Mode._
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.DataRequest
 import models.{CheckUpdateMode, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,9 +56,9 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
     }
 
   def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
-    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData) {
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(OptionalSchemeReferenceNumber(Some(srn)), allowPsa = true, allowPsp = true) andThen requireData) {
       implicit request =>
-        Ok(view(vm(UpdateMode, Some(srn))))
+        Ok(view(vm(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)))))
     }
 
   private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
@@ -78,7 +79,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(override val mess
       val heading = (name: String) => if (mode == NormalMode) Message("checkYourAnswers.hs.title") else
         Message("messages__benefitsAndInsuranceDetailsFor", name)
 
-      val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
+      val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, toSrn(srn)) match {
         case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
         case _ => None
       }

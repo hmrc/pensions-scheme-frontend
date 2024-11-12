@@ -16,11 +16,10 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import play.api.mvc.Call
 import utils.UserAnswers
 import viewmodels.Message
-import models.SchemeReferenceNumber
 
 trait Spoke {
 

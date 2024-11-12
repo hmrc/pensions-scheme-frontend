@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import identifiers._
+
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -60,11 +61,11 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
       val vm = CYAViewModel(
         answerSections = seqAnswerSection,
-        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None),
+        href = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber),
         schemeName = existingSchemeName,
         returnOverview = false,
         hideEditLinks = request.viewOnly,
-        srn = None,
+        srn = EmptyOptionalSchemeReferenceNumber,
         hideSaveAndContinueButton = request.viewOnly,
         title = Message("checkYourAnswers.hs.title"),
         h1 = Message("checkYourAnswers.hs.title")

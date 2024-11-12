@@ -21,9 +21,10 @@ import controllers.EnterVATController
 import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,7 +34,6 @@ import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,

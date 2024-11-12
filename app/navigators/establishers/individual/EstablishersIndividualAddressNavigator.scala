@@ -36,22 +36,22 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   import EstablishersIndividualAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
-    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, None)
-    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, None)
-    case AddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case AddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, None)
-    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, None)
-    case PreviousAddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
-    case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, None)
+    case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
+    case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
+    case AddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
+    case AddressId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
+    case AddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
+    case AddressYearsId(index) => establisherAddressYearsRoutes(mode, ua, index, EmptyOptionalSchemeReferenceNumber)
+    case PreviousPostCodeLookupId(index) => PreviousAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
+    case PreviousAddressListId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
+    case PreviousAddressId(index) => CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =

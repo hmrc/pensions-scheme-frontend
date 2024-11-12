@@ -49,7 +49,7 @@ class MoneyPurchaseBenefitsController @Inject()(
     with I18nSupport
     with Retrievals {
 
-  val postCall: (Mode, Option[SchemeReferenceNumber]) => Call =
+  val postCall: (Mode, OptionalSchemeReferenceNumber) => Call =
     routes.MoneyPurchaseBenefitsController.onSubmit
 
   private def form: Form[MoneyPurchaseBenefits] = formProvider()

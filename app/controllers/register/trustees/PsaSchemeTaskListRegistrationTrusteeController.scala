@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeNameId
 import models.AuthEntity.PSA
+import models.OptionalSchemeReferenceNumber.toSrn
 import models._
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -51,7 +52,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
       implicit request =>
         val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
 
-        (srn, request.userAnswers, schemeNameOpt) match {
+        (toSrn(srn), request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
             handleValidRequest(userAnswers, schemeName, mode, srn, index)
 
