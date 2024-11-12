@@ -78,7 +78,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
     val connector = injector.instanceOf[PensionAdministratorConnector]
 
-    recoverToSucceededIf[uk.gov.hmrc.http.BadGatewayException]{
+    recoverToSucceededIf[IllegalArgumentException]{
       connector.getPSAEmail
     }
 
@@ -112,7 +112,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
     val connector = injector.instanceOf[PensionAdministratorConnector]
 
-    recoverToSucceededIf[uk.gov.hmrc.http.BadGatewayException]{
+    recoverToSucceededIf[IllegalArgumentException]{
       connector.getPSAName
     }
 
