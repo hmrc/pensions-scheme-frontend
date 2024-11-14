@@ -32,39 +32,38 @@ import scala.util.Failure
 @ImplementedBy(classOf[MinimalPsaConnectorImpl])
 trait MinimalPsaConnector {
 
-  def getMinimalFlags(psaId: String)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
+  def getMinimalFlags(psaId: String
+                     )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
 
-  def getMinimalPsaDetails(psaId: String)
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
+  def getMinimalPsaDetails(psaId: String
+                          )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
 
-  def getPsaNameFromPsaID(psaId: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
+  def getPsaNameFromPsaID(psaId: String
+                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
 }
 
-class MinimalPsaConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
-  extends MinimalPsaConnector
-    with HttpResponseHelper {
+class MinimalPsaConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
+  extends MinimalPsaConnector with HttpResponseHelper {
 
   private val logger  = Logger(classOf[MinimalPsaConnectorImpl])
 
-  override def getMinimalPsaDetails(psaId: String)
-                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
-    val psaHc = Seq(("psaId", psaId))
+  override def getMinimalPsaDetails(psaId: String
+                                   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
+    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+    val url = url"${config.minimalPsaDetailsUrl}"
 
-    http.get(url"${config.minimalPsaDetailsUrl}").setHeader(psaHc: _*).execute[HttpResponse] map { response =>
-
-      response.status match {
-        case OK =>
-          Json.parse(response.body).validate[MinimalPSA] match {
-            case JsSuccess(value, _) => value
-            case JsError(errors) => throw JsResultException(errors)
-          }
-
-        case FORBIDDEN if response.body.contains(delimitedErrorMsg) => throw new DelimitedAdminException
-        case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
-      }
-    } andThen {
+    httpClientV2.get(url)(psaHc)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK =>
+            Json.parse(response.body).validate[MinimalPSA] match {
+              case JsSuccess(value, _) => value
+              case JsError(errors) => throw JsResultException(errors)
+            }
+          case FORBIDDEN if response.body.contains(delimitedErrorMsg) => throw new DelimitedAdminException
+          case _ => handleErrorResponse("GET", url.toString)(response)
+        }
+      } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to invite PSA to administer scheme", t)
     }
   }
@@ -84,18 +83,20 @@ class MinimalPsaConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppC
 
   override def getMinimalFlags(psaId: String)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] = {
-    val psaHc = Seq("psaId" -> psaId)
+    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+    val url = url"${config.minimalPsaDetailsUrl}"
 
-    http.get(url"${config.minimalPsaDetailsUrl}").setHeader(psaHc: _*).execute[HttpResponse] map { response =>
-      response.status match {
-        case OK =>
-          val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]
-          val isDeceased = (response.json \ "deceasedFlag").as[Boolean]
-          val rlsFlag = (response.json \ "rlsFlag").as[Boolean]
-          PSAMinimalFlags(isSuspended, isDeceased, rlsFlag)
-        case _ => handleErrorResponse("GET", config.minimalPsaDetailsUrl)(response)
-      }
-    } andThen {
+    httpClientV2.get(url)(psaHc)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK =>
+            val isSuspended = (response.json \ "isPsaSuspended").as[Boolean]
+            val isDeceased = (response.json \ "deceasedFlag").as[Boolean]
+            val rlsFlag = (response.json \ "rlsFlag").as[Boolean]
+            PSAMinimalFlags(isSuspended, isDeceased, rlsFlag)
+          case _ => handleErrorResponse("GET", url.toString)(response)
+        }
+      } andThen {
       case Failure(t: Throwable) => logger.warn("Unable to get PSA minimal details", t)
     }
   }
