@@ -47,7 +47,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -86,7 +86,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
+      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
 
       status(result) mustBe SEE_OTHER
 
@@ -102,7 +102,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
+      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
 
       status(result) mustBe BAD_REQUEST
 
@@ -128,7 +128,7 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
     title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__hasVAT", partnershipName),
     hint = None,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val mockUserAnswersService: UserAnswersService =

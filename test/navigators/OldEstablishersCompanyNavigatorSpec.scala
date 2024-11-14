@@ -281,7 +281,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
 
   private def startDirectorJourney(mode: Mode, index: Index) = directorName(mode, index)
 
-  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, None)
+  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, Index, EmptyOptionalSchemeReferenceNumber)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
 

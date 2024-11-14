@@ -47,7 +47,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
   val establisherIndex: Index = Index(0)
   val partnerIndex: Index = Index(0)
 
-  private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+  private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
 
   val partner: PersonName = PersonName("first", "last")
 
@@ -90,13 +90,13 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
     "render manualAddress from GET request" in {
 
-      val postCall = routes.PartnerAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(partnerIndex), None)
+      val postCall = routes.PartnerAddressController.onSubmit( NormalMode, index(establisherIndex), Index(partnerIndex), None)
       running(_.overrides(modules(retrieval) ++
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerAddressController]
 
-          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -112,7 +112,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+        val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
@@ -127,7 +127,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
           val controller = app.injector.instanceOf[PartnerAddressController]
 
-          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardCall.url
@@ -152,7 +152,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
         val controller = app.injector.instanceOf[PartnerAddressController]
 
-        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         fakeAuditService.reset()
 

@@ -23,7 +23,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupId
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -85,8 +85,8 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
     view(
       form,
       AddressListViewModel(
-        routes.PartnershipPreviousAddressListController.onSubmit(NormalMode, index, None),
-        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
+        routes.PartnershipPreviousAddressListController.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
+        routes.PartnershipPreviousAddressController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
         addresses,
         title = previousAddressTitle,
         heading = previousAddressHeading,
@@ -99,7 +99,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
 
     "return OK and the correct view for a GET" in {
       val getData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getData).onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller(getData).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -108,7 +108,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
       val getData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getData).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -133,14 +133,14 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val getData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getData).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -148,7 +148,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "1"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

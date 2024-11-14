@@ -60,7 +60,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(),
@@ -101,7 +101,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
 
 object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
@@ -112,13 +112,13 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def establisherAddressRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String =
+  private def establisherAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
     routes.AddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def establisherAddressYearsRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String =
+  private def establisherAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
     routes.AddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def establisherPreviousAddressRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String =
+  private def establisherPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
     routes.PreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = UserAnswers().
@@ -127,10 +127,10 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     establishersIndividualAddressYears(index, addressYearsUnderAYear).
     establishersIndividualPreviousAddress(index, previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  def addressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -138,7 +138,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_address", establisherName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressYears", establisherName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -146,7 +146,7 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_addressYears", establisherName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__previousAddressFor", establisherName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -154,13 +154,13 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(None,
+  def answerSection(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(None,
     if (mode == NormalMode) Seq(addressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), addressYearsAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)))
     else Seq(addressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)))))
 
   private val view = injector.instanceOf[checkYourAnswers]
   private val mockFeatureToggleService = mock[FeatureToggleService]
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

@@ -22,7 +22,7 @@ import connectors.PensionsSchemeConnector
 import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
-import models.{PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -57,7 +57,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = testHarness(srn, psc)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), psc)
         .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000")), viewOnly = true))
 
       assertEqual(futureResult, expectedResult)
@@ -69,7 +69,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = testHarness(srn, psc)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), psc)
         .test(OptionalDataRequest(fakeRequest, "id", Some(userAnswers), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, expectedResult)
@@ -171,7 +171,7 @@ class AllowAccessActionSpec
       testHarness = generateTestHarnessForAllowAccessMain,
       userAnswers = suspendedUserAnswers,
       description = "PSA is suspended",
-      expectedResult = Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn).url)
+      expectedResult = Some(controllers.register.routes.CannotMakeChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)).url)
     )
 
     behave like allowAccessWithRedirectBasedOnUserAnswers(
@@ -187,7 +187,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
+      val futureResult = generateTestHarnessForAllowAccessMain(OptionalSchemeReferenceNumber(srn), pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
@@ -215,7 +215,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = generateTestHarnessForAllowAccessTaskList(srn, pensionsSchemeConnector)
+      val futureResult = generateTestHarnessForAllowAccessTaskList(OptionalSchemeReferenceNumber(srn), pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
@@ -238,7 +238,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = generateTestHarnessForAllowAccessNoSuspendedCheck(srn, pensionsSchemeConnector)
+      val futureResult = generateTestHarnessForAllowAccessNoSuspendedCheck(OptionalSchemeReferenceNumber(srn), pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
@@ -253,7 +253,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = testHarness(srn, psc)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), psc)
         .test(OptionalDataRequest(
           fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000")), viewOnly = true)
         )
@@ -266,7 +266,7 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(false)))
 
-      val futureResult = testHarness(srn, psc)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), psc)
         .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
 
       futureResult.foreach { result =>
@@ -281,28 +281,28 @@ class AllowAccessActionSpec
       when(psc.checkForAssociation(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Right(true)))
 
-      val futureResult = testHarness(srn, psc)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), psc)
         .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
     }
 
     "allow access for user with no data" in {
-      val futureResult = testHarness(None, pensionsSchemeConnector)
+      val futureResult = testHarness(EmptyOptionalSchemeReferenceNumber, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
     }
 
     "allow access to pages for user with no srn in Normal mode" in {
-      val futureResult = testHarness(None, pensionsSchemeConnector)
+      val futureResult = testHarness(EmptyOptionalSchemeReferenceNumber, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
     }
 
     "allow access to pages for users that are not suspended" in {
-      val futureResult = testHarness(srn, pensionsSchemeConnector)
+      val futureResult = testHarness(OptionalSchemeReferenceNumber(srn), pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", Some(notSuspendedUserAnswers), Some(PsaId("A0000000"))))
 
       assertEqual(futureResult, None)
@@ -321,7 +321,7 @@ class AllowAccessActionSpec
         val psaId = if(isPsa) Some(PsaId("A0000000")) else None
         val pspId = if(!isPsa) Some(PspId("20000000")) else None
 
-        new TestAllowAccessActionTaskList(if(withSrn) srn else None, psc, allowPsa = allowPsa, allowPsp = allowPsp)
+        new TestAllowAccessActionTaskList(if(withSrn) OptionalSchemeReferenceNumber(srn) else EmptyOptionalSchemeReferenceNumber, psc, allowPsa = allowPsa, allowPsp = allowPsp)
           .test(OptionalDataRequest(fakeRequest, "id", Some(UserAnswers(Json.obj())), psaId, pspId))
           .map { case Some(value) => false
           case None => true

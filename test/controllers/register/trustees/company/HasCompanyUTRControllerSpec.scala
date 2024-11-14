@@ -81,7 +81,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
   "HasCompanyUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -90,7 +90,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -101,7 +101,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -110,7 +110,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     "if user changes answer from yes to no then clean up should take place on utr number" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = true)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(HasCompanyUTRId(index), false)
@@ -120,7 +120,7 @@ class HasCompanyUTRControllerSpec extends ControllerSpecBase {
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeCompanyPlusUtr(hasUtrValue = false)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

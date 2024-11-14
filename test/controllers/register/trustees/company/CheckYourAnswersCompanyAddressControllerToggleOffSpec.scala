@@ -52,7 +52,7 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
       "return OK and the correct view with full answers" in {
 
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
 
@@ -91,7 +91,7 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+          .onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
       )
     }
   }
@@ -100,7 +100,7 @@ class CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSp
 
 object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
@@ -113,12 +113,12 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
   private val emptyAnswers = UserAnswers()
   private val mockFeatureToggle = mock[FeatureToggleService]
 
-  private def companyAddressRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def companyAddressYearsRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
-  private def companyTradingTimeRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyTradingTimeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def companyPreviousAddressRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers.
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
@@ -131,11 +131,11 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
     trusteesCompanyDetails(index, CompanyDetails(companyName)).
     trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
-  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   def postUrlUpdateMode: Call = PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
 
-  def addressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddress", companyName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -143,7 +143,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_address", companyName))))
   )
 
-  def addressYearsAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", companyName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
@@ -151,7 +151,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_addressYears", companyName))))
   )
 
-  def tradingTimeAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def tradingTimeAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__hasBeenTrading__h1", companyName),
     Seq("site.yes"),
     answerIsMessageKey = true,
@@ -159,7 +159,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", companyName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteePreviousAddress", companyName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
@@ -167,7 +167,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName))))
   )
 
-  def previousAddressAddLink(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def previousAddressAddLink(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__trusteePreviousAddress", companyName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
@@ -175,8 +175,8 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", companyName)))))
 
   def companyAddressNormal: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
-    addressAnswerRow(NormalMode, None), addressYearsAnswerRow(NormalMode, None),
-    tradingTimeAnswerRow(NormalMode, None), previousAddressAnswerRow(NormalMode, None)
+    addressAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber), addressYearsAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber),
+    tradingTimeAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber), previousAddressAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber)
   )))
 
   def companyAddressUpdate: Seq[AnswerSection] = Seq(AnswerSection(None, Seq(
@@ -193,7 +193,7 @@ object CheckYourAnswersCompanyAddressControllerToggleOffSpec extends ControllerS
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
       fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
 
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
       href = postUrl,

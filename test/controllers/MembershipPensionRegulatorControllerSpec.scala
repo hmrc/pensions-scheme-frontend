@@ -45,7 +45,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
       view
     )
 
-  def viewAsString(): String = view(NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(): String = view(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 

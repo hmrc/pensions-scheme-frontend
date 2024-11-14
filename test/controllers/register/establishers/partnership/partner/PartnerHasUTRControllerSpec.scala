@@ -34,7 +34,7 @@ class PartnerHasUTRControllerSpec extends ControllerSpecBase {
 
   "PartnerHasUTRController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -44,7 +44,7 @@ class PartnerHasUTRControllerSpec extends ControllerSpecBase {
       val validData = validPartnerData("hasUtr" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -52,7 +52,7 @@ class PartnerHasUTRControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -63,7 +63,7 @@ class PartnerHasUTRControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
-import models.{CheckUpdateMode, Index, NormalMode, SchemeReferenceNumber}
+import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -53,7 +53,7 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterVATController]
         val postRequest = fakeRequest.withFormUrlEncodedBody(("vat", "123456789"))
-        val result = controller.onSubmit(NormalMode, index = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, index = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -77,7 +77,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
     heading = Message("messages__enterVAT", "test company name"),
     hint = Message("messages__enterVAT__hint", "test company name"),
     subHeading = None,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }
 

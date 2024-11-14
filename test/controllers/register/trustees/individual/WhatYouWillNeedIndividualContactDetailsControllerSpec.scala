@@ -31,9 +31,9 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
   private val index = 0
   private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def onwardRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
-  private def viewAsString(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
+  private def viewAsString(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
     None, onwardRoute(mode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), trusteeName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
@@ -43,7 +43,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
           modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

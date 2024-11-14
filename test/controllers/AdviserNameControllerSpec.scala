@@ -45,7 +45,7 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   "AdviserName Controller" must {
 

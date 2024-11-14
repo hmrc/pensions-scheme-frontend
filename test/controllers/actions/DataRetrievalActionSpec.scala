@@ -21,6 +21,7 @@ import connectors._
 import identifiers.PsaMinimalFlagsId._
 import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId, UKBankAccountId}
 import matchers.JsonMatchers
+import models.OptionalSchemeReferenceNumber.toSrn
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
@@ -61,7 +62,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
                 schemeDetailsConnector: SchemeDetailsConnector = schemeDetailsConnector,
                 minimalPsaConnector: MinimalPsaConnector = minimalPsaConnector,
                 mode: Mode = NormalMode,
-                srn: Option[String] = None,
+                srn: Option[SchemeReferenceNumber] = None,
                 refreshData: Boolean = false
                ) extends
     DataRetrievalImpl(
@@ -85,8 +86,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
   private val answersFromDESWithSuspensionFlag = answersFromDES
     .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
 
-  private def userAnswersDummy(status: String, OptionalSchemeReferenceNumber(srn): String) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
-    .set(SchemeSrnId)(srn).asOpt.value
+  private def userAnswersDummy(status: String, srn: OptionalSchemeReferenceNumber) = UserAnswers().set(SchemeStatusId)(status).asOpt.value
+    .set(SchemeSrnId)(toSrn(srn).map(_.id).getOrElse("")).asOpt.value
 
   override def beforeEach(): Unit = {
     reset(dataCacheConnector)
@@ -115,7 +116,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val action = new Harness(viewConnector = viewCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -136,7 +137,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -160,7 +161,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -184,7 +185,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -206,7 +207,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -229,7 +230,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -252,7 +253,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = false)
 
       val futureResult = action.callTransform(authRequest)
@@ -267,7 +268,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is no data in the read-only cache in UpdateMode and " +
       s"lock is not held by psa then build new user answers with data retrieved from scheme details" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(srn) = srn).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, EmptyOptionalSchemeReferenceNumber).set(UKBankAccountId)(true).asOpt.value
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future(None)
       when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
@@ -277,7 +278,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val action = new Harness(viewConnector = viewCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -293,7 +294,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is no data in the update cache in UpdateMode and " +
       s"variance lock is held by psa then release the lock and get data in readonly cache" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(srn) = srn).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, EmptyOptionalSchemeReferenceNumber).set(UKBankAccountId)(true).asOpt.value
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(Some(VarianceLock)))
       when(lockRepoConnector.releaseLock(any(), any())(any(), any())).thenReturn(Future((): Unit))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future(None)
@@ -305,7 +306,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val action = new Harness(viewConnector = viewCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -326,7 +327,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "overwrite data with new user answers with data retrieved from scheme details and add it to the request" +
       "and set view only to false" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(srn) = srn).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, EmptyOptionalSchemeReferenceNumber).set(UKBankAccountId)(true).asOpt.value
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
@@ -339,7 +340,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -355,7 +356,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is not open, then build new user answers with data retrieved from scheme details and set view only to true" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusPending, OptionalSchemeReferenceNumber(srn) = srn).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusPending, EmptyOptionalSchemeReferenceNumber).set(UKBankAccountId)(true).asOpt.value
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
@@ -368,7 +369,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -385,7 +386,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is open and srn is different from cached srn then no user answers is added to the request and view only is true" in {
       val differentSrn = "different-srn"
-      val answersFromDES = userAnswersDummy(statusOpen, OptionalSchemeReferenceNumber(srn) = differentSrn)
+      val answersFromDES = userAnswersDummy(statusOpen, srn = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(differentSrn))))
       val answersFromDESWithSuspensionFlag = answersFromDES
         .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
       val uaInsertedIntoViewCache = answersFromDESWithSuspensionFlag.set(UKBankAccountId)(true).asOpt.value
@@ -404,7 +405,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -424,14 +425,14 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn
         Future.successful(Some(answers))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, "different-srn").json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(userAnswersDummy(statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("different-srn")))).json))
 
       val action = new Harness(
         viewConnector = viewCacheConnector,
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = true)
 
       val futureResult = action.callTransform(authRequest)
@@ -467,7 +468,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     }
 
     s"when refreshData is $refreshData and there is no srn in UpdateMode set userAnswers to 'None' in the request" in {
-      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, OptionalSchemeReferenceNumber(srn) = None, refreshData = refreshData)
+      val action = new Harness(viewConnector = viewCacheConnector, lockConnector = lockRepoConnector, mode = UpdateMode, srn = EmptyOptionalSchemeReferenceNumber, refreshData = refreshData)
 
       val futureResult = action.callTransform(authRequest)
 
@@ -483,7 +484,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val action = new Harness(updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = refreshData)
 
       val futureResult = action.callTransform(authRequest)
@@ -505,7 +506,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = refreshData)
 
       val futureResult = action.callTransform(authRequest)
@@ -527,7 +528,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         updateConnector = updateCacheConnector,
         lockConnector = lockRepoConnector,
         mode = UpdateMode,
-        srn = srnOpt,
+        srn = srnOpt.map(SchemeReferenceNumber(_)),
         refreshData = refreshData)
 
       val futureResult = action.callTransform(authRequest)

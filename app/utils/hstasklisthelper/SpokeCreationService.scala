@@ -33,22 +33,22 @@ class SpokeCreationService extends Enumerable.Implicits {
   def getBeforeYouStartSpoke(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String,
                              index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
-      createSpoke(answers, BeforeYouStartSpoke, mode, srn, name, index, None)
+      createSpoke(answers, BeforeYouStartSpoke, mode, srn, name, None, None)
     )
   }
 
   def getAboutSpokes(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String, index: Option[Index])
   : Seq[EntitySpoke] = {
     Seq(
-      createSpoke(answers, AboutMembersSpoke, mode, srn, name, index, None),
-      createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, index, None)
+      createSpoke(answers, AboutMembersSpoke, mode, srn, name, None, None),
+      createSpoke(answers, AboutBenefitsAndInsuranceSpoke, mode, srn, name, None, None)
     )
   }
 
   def getWorkingKnowledgeSpoke(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String,
                                index: Option[Index]): Seq[EntitySpoke] = {
     Seq(
-      createSpoke(answers, WorkingKnowledgeSpoke, mode, srn, name, index, None)
+      createSpoke(answers, WorkingKnowledgeSpoke, mode, srn, name, None, Some(false))
     )
   }
 

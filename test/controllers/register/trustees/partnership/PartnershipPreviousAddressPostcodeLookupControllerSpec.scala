@@ -101,8 +101,8 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     view(
       form,
       PostcodeLookupViewModel(
-        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index, None),
-        routes.PartnershipPreviousAddressController.onPageLoad(NormalMode, index, None),
+        routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
+        routes.PartnershipPreviousAddressController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Message("messages__partnershipPreviousAddressPostcodeLookup__heading", partnershipName),
         Some(partnershipName)
@@ -113,7 +113,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
   "PartnershipPreviousAddressPostcodeLookup Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -122,7 +122,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     "not populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString()
     }
@@ -131,7 +131,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
       when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(testAnswer))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(testAnswer))))
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -141,14 +141,14 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", ""))
       val boundForm = form.bind(Map("postcode" -> ""))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -156,7 +156,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

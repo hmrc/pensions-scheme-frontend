@@ -43,7 +43,7 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
       Table(
         ("Id", "UserAnswers", "Next Page"),
         row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteePartnership, EmptyOptionalSchemeReferenceNumber)
@@ -53,8 +53,8 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(NormalMode, index, None)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)

@@ -30,11 +30,11 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
   private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
   def viewAsString(): String = view(
     None,
-    controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
+    controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
     None,
     trusteePartnership.name,
     Message("messages__thePartnership")
@@ -50,7 +50,7 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
           bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

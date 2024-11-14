@@ -41,14 +41,14 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with Matchers with
     def normalModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None)),
-        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressYearsController.onPageLoad(mode, index, None)),
-        row(TrusteeAddressId(index))(someAddress, TrusteeAddressYearsController.onPageLoad(mode, index, None)),
-        row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, None)),
-        row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None)),
-        row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, None)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None)),
-        row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, None))
+        row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(IndividualAddressListId(index))(someTolerantAddress, TrusteeAddressYearsController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressId(index))(someAddress, TrusteeAddressYearsController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes(NormalMode), None)
@@ -58,14 +58,14 @@ class TrusteesIndividualAddressNavigatorSpec extends SpecBase with Matchers with
     def checkModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, index, None)),
-        row(IndividualAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
-        row(TrusteeAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
-        row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, None)),
-        row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
-        row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, index, None)),
-        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)),
-        row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None))
+        row(IndividualPostCodeLookupId(index))(Seq(someTolerantAddress), IndividualAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(IndividualAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressYearsId(index))(AddressYears.UnderAYear, IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteeAddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
+        row(IndividualPreviousAddressPostCodeLookupId(index))(Seq(someTolerantAddress), TrusteePreviousAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePreviousAddressId(index))(someAddress, CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes(CheckMode), None)

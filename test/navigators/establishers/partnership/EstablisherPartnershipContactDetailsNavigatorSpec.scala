@@ -43,8 +43,8 @@ class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Ma
     def navigationForNewEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, None)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherPartnership, None)
@@ -54,8 +54,8 @@ class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Ma
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(NormalMode, index, None)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
@@ -92,7 +92,7 @@ object EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with M
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
   private val srn                   = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaPage(mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+  private def cyaPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
 }

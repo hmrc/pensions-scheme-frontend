@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.HasCompanyPAYEId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -31,7 +31,7 @@ import views.html.hasReferenceNumber
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
-  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad (NormalMode, index, None)
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad ( NormalMode, index, EmptyOptionalSchemeReferenceNumber)
 
   val formProvider = new HasPAYEFormProvider()
   val form = formProvider("messages__companyPayeRef__error__required","test company name")
@@ -70,7 +70,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   "HasCompanyPAYEController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -79,7 +79,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -90,7 +90,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPAYE", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

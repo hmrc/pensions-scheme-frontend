@@ -93,7 +93,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
     title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__enterUTR", "test company name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }
 

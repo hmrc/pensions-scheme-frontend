@@ -19,8 +19,9 @@ package controllers
 import audit.{AuditService, TcmpAuditEvent}
 import connectors._
 import controllers.actions._
+import controllers.register.establishers.company.CompanyEnterCRNControllerSpec.srn
 import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
-import models.SchemeReferenceNumber
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -44,7 +45,7 @@ class VariationDeclarationControllerSpec
 
   private val schemeName = "Test Scheme Name"
   private val srnNumber = SchemeReferenceNumber("S12345")
-  private val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber(srnNumber))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(srnNumber))
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 

@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -54,7 +54,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -76,7 +76,7 @@ object DirectorEnterUTRControllerSpec extends DirectorEnterUTRControllerSpec {
     title = Message("messages__enterUTR", Message("messages__theDirector")),
     heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val view = injector.instanceOf[utr]

@@ -22,14 +22,13 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.address.AddressFormProvider
 import identifiers._
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -45,11 +44,11 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
     form =>
       view(
         form,ManualAddressViewModel(
-          routes.InsurerConfirmAddressController.onSubmit(NormalMode, None),
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber),
           options,
           Message("messages__insurer_confirm_address__title"),
           Message("messages__common__confirmAddress__h1", insuranceCompanyName),
-          None
+          EmptyOptionalSchemeReferenceNumber
         ),
         Some(schemeName)
       )(fakeRequest, messages).toString()
@@ -77,13 +76,13 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
     )
 
   def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   def saveAction(cachex: UserAnswersService): Action[AnyContent] =
-    controller(cache = cachex).onSubmit(NormalMode, None)
+    controller(cache = cachex).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   "InsurerConfirmAddressController" when {
 
@@ -118,7 +117,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       val validData: UserAnswers = UserAnswers().schemeName(schemeName)
         .insuranceCompanyName(insuranceCompanyName)
         .insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
-      val result = controller(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       whenReady(result) {
         _ =>

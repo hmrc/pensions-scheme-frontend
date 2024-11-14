@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, NormalMode, SchemeReferenceNumber}
+import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -53,7 +53,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterUTRController]
         val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-        val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -76,7 +76,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
     title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__enterUTR", "test company name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }
 

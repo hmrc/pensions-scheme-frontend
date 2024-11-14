@@ -66,7 +66,7 @@ class DeclarationControllerSpec
       val result = controller(UserAnswers().schemeName("Test Scheme").dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None).url
+      redirectLocation(result).value mustBe controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber).url
     }
 
     "redirect to you must contact HMRC page when deceased flag is true" in {
@@ -142,7 +142,7 @@ class DeclarationControllerSpec
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None).url)
+      redirectLocation(result) mustBe Some(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber).url)
     }
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {

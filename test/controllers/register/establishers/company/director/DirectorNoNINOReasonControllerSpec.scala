@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.DirectorNoNINOReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
@@ -44,7 +44,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
     postCall = postCall,
     title = Message("messages__whyNoNINO", Message("messages__theDirector")),
     heading = Message("messages__whyNoNINO", name),
-    srn = srn
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val view = injector.instanceOf[reason]
@@ -69,7 +69,55 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
   "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -78,7 +126,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -89,7 +137,7 @@ class DirectorNoNINOReasonControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

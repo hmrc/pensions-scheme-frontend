@@ -40,7 +40,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   "ConfirmDeletePartner Controller" must {
     "return OK and the correct view for a GET" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,10 +48,10 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
     "redirect to already deleted view for a GET if the partner was already deleted" in {
       val data = new FakeDataRetrievalAction(Some(testData(partnerDeleted)))
-      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(data).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None).url)
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber).url)
     }
 
     "return a Bad Request on POST and errors when invalid data is submitted" in {
@@ -60,14 +60,14 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "delete the partner on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnerNameId(establisherIndex, partnerIndex), partnerName.copy(isDeleted = true))
@@ -77,7 +77,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     "never delete the partner on a POST if selected No" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequestForCancle)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnerNameId(establisherIndex, partnerIndex))
@@ -94,21 +94,21 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller(data).onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -127,7 +127,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   private val partnerName = PersonName("John", "Doe")
 
   private val form = formProvider.apply(partnerName.fullName)
-  private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex, partnerIndex, None)
+  private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))

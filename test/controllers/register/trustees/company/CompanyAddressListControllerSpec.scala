@@ -75,7 +75,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -95,11 +95,11 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
       }
 
     }
@@ -111,7 +111,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.CompanyAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -134,7 +134,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, 0, None).url)
@@ -156,7 +156,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -178,10 +178,10 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
       }
 
     }
@@ -190,8 +190,8 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0), None),
-      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0), None),
+      routes.CompanyAddressListController.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
+      routes.CompanyAddressController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
       addresses,
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theCompany")),
       heading = Message("messages__dynamic_whatIsAddress", companyDetails.companyName),

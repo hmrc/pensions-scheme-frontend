@@ -50,7 +50,7 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
         val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyEnterVATController]
-        val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+        val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
@@ -66,7 +66,7 @@ class CompanyEnterVATControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("vat", "123456789")))
         val controller = app.injector.instanceOf[CompanyEnterVATController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -81,7 +81,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: EnterVATViewModel = EnterVATViewModel(
-    routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, None),
+    routes.CompanyEnterVATController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__enterVAT", Message("messages__theCompany").resolve),
     heading = Message("messages__enterVAT", "test company name"),
     hint = Message("messages__enterVAT__hint", "test company name"),

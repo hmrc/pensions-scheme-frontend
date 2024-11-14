@@ -22,7 +22,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{FeatureToggle, Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -46,7 +46,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
   import EstablisherNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
-    routes.EstablisherNameController.onSubmit(NormalMode, index, None),
+    routes.EstablisherNameController.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__individualName__title"),
     heading = Message("messages__individualName__heading"))
 
@@ -72,7 +72,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -86,7 +86,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -115,7 +115,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -130,7 +130,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -142,7 +142,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, index, None)(fakeRequest)
+      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
 

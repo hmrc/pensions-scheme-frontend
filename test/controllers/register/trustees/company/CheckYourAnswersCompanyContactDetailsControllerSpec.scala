@@ -48,13 +48,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrlUpdateMode(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+  private def submitUrlUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
   private def submitUrl(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     val cn = userAnswers.get(CompanyDetailsId(index)).map(_.companyName).value
 
@@ -91,7 +91,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -122,7 +122,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe OK
 

@@ -61,7 +61,7 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 
   private val postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
@@ -71,9 +71,9 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
   "PartnerDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
-      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner")),
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber, Message("messages__thePartner")),
       mode = NormalMode,
       requiredData = getMandatoryPartner,
       validData = validData,

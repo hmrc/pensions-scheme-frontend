@@ -51,7 +51,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have correct edit link when the director is incomplete" in {
       val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(NormalMode, 0, 1, None).url
-      directorEntity.editLink(NormalMode, None)  mustBe Some(expectedEditLink)
+      directorEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber)  mustBe Some(expectedEditLink)
     }
 
     "have correct edit link when the director is completed" in {
@@ -66,13 +66,13 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
       val expectedEditLink =
         controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(
-          establisherIndex = 0, directorIndex = 0, NormalMode, None).url
-      completedDirectorEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+          establisherIndex = 0, directorIndex = 0, NormalMode, EmptyOptionalSchemeReferenceNumber).url
+      completedDirectorEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(0, 1, NormalMode, None).url
-      directorEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      val expectedDeleteLink = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(0, 1, NormalMode, EmptyOptionalSchemeReferenceNumber).url
+      directorEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -92,12 +92,12 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have edit link" in {
       val expectedEditLink = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(1).url
-      partnershipEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      partnershipEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Partnership, None).url
-      partnershipEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      partnershipEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -117,12 +117,12 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have correct edit link" in {
       val expectedEditLink = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(1).url
-      companyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      companyEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Company, None).url
-      companyEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      companyEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -142,12 +142,12 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have correct edit link" in {
       val expectedEditLink = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(1).url
-      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      individualEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Indivdual, None).url
-      individualEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      individualEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -186,12 +186,12 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have edit link" in {
       val expectedEditLink = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(1).url
-      partnershipEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      partnershipEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Partnership, None).url
-      partnershipEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      partnershipEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
 
     "dont have delete link with update mode" in {
@@ -221,14 +221,14 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have edit link" in {
       val expectedEditLink = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(1).url
-      companyEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      companyEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
     }
 
 
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, None).url
-      companyEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      companyEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
 
     "dont have delete link with update mode" in {
@@ -258,13 +258,13 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
     "have an edit link" in {
       val expectedEditLink = controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(1).url
-      individualEntity.editLink(NormalMode, None) mustBe Some(expectedEditLink)
+      individualEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedEditLink)
 
     }
 
     "have correct delete link" in {
       val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, None).url
-      individualEntity.deleteLink(NormalMode, None) mustBe Some(expectedDeleteLink)
+      individualEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 

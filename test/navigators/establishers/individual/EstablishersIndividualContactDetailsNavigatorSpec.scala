@@ -42,8 +42,8 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
     def navigationForNewEstablisherIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad(NormalMode, index, None)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(EstablisherEmailId(index))(someStringValue, EstablisherPhoneController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherIndividual, None)
@@ -53,8 +53,8 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None)),
-        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(EstablisherEmailId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(EstablisherPhoneId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
@@ -91,7 +91,7 @@ object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with M
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
   private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaContactDetailsPage(mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
 }

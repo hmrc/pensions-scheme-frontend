@@ -26,7 +26,7 @@ import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
-import models.{CompanyDetails, FeatureToggle, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, FeatureToggle, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -56,13 +56,13 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "continue button should be enabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
     }
 
     "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -71,21 +71,21 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "not populate the view on a GET when the question has previously been answered" in {
       val getRelevantData = individualEstablisherDataRetrieval
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
     "populate the view with establishers when they exist and continue button should be disabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
     }
 
     "exclude the deleted establishers from the list" in {
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
     }
@@ -93,21 +93,21 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to the next page when no establishers exist and the user submits" in {
-      val result = controller().onSubmit(NormalMode, None)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -115,7 +115,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -125,7 +125,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase with BeforeAndAfte
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -168,7 +168,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       allEstablishers.filter(_.isCompleted),
       allEstablishers.filterNot(_.isCompleted),
       None,
-      None
+      EmptyOptionalSchemeReferenceNumber
     )(fakeRequest, messages).toString
 
   private val personDetails = PersonName("John", "Doe")
@@ -247,13 +247,13 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
     "continue button should be enabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
     }
 
     "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -262,21 +262,21 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
     "not populate the view on a GET when the question has previously been answered" in {
       val getRelevantData = individualEstablisherDataRetrieval
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
     "populate the view with establishers when they exist and continue button should be disabled" in {
       val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
     }
 
     "exclude the deleted establishers from the list" in {
       val getRelevantData = establisherWithDeletedDataRetrieval
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
     }
@@ -284,21 +284,21 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to the next page when no establishers exist and the user submits" in {
-      val result = controller().onSubmit(NormalMode, None)(fakeRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -306,7 +306,7 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -316,7 +316,7 @@ class AddEstablisherControllerOldSpec extends ControllerSpecBase with BeforeAndA
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -358,7 +358,7 @@ object AddEstablisherControllerOldSpec extends AddEstablisherControllerSpec {
       NormalMode,
       allEstablishers,
       None,
-      None
+      EmptyOptionalSchemeReferenceNumber
     )(fakeRequest, messages).toString
 
   private val personDetails = PersonName("John", "Doe")

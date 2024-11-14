@@ -34,14 +34,14 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
     "onPageLoad() is called" must {
       "return OK and the correct view with return to tasklist" in {
-        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
 
       "return OK and the correct view with return to Manage" in {
-        val result = controller(schemeInfo).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(schemeInfo).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithReturnToManage
@@ -54,7 +54,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and DO display submit button with return to tasklist when in normal mode" in {
-        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -82,7 +82,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private def postUrl: Call = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val schemeInfo = UserAnswers().schemeName(schemeName = "Test Scheme").dataRetrievalAction
 

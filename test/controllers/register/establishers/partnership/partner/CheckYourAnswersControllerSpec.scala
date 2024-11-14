@@ -78,20 +78,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request: FakeDataRequest = FakeDataRequest(partnerAnswersYes)
-        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, None), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, EmptyOptionalSchemeReferenceNumber), None,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(partnerAnswersNo)
-        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, None)(request)
+        val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, None), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, EmptyOptionalSchemeReferenceNumber), None,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -123,7 +123,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
     behave like changeableController(
       controller(partnerAnswersNo.dataRetrievalAction, _: AllowChangeHelper)
-        .onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        .onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
     )
   }
 
@@ -171,7 +171,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some(SchemeReferenceNumber("srn"))).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName)))))
 
-  private def answerRowsYes(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
+  private def answerRowsYes(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
     None,
     Seq(
     nameAnswerRow(mode, OptionalSchemeReferenceNumber(srn)),
@@ -188,7 +188,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )
   ))
 
-  private def answerRowsNo(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
+  private def answerRowsNo(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
     None,
     Seq(
       nameAnswerRow(mode, OptionalSchemeReferenceNumber(srn)),
@@ -205,7 +205,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )
   ))
 
-  private def answerRowsAddLinks(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
+  private def answerRowsAddLinks(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(
     None,
     Seq(
       nameRow(mode, OptionalSchemeReferenceNumber(srn)),
@@ -219,7 +219,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
     )
   ))
 
-  def addressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", personName.fullName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -227,7 +227,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       Some(Message("messages__visuallyhidden__dynamic_address", personName.fullName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__hasBeen1Year", personName.fullName),
     Seq(s"messages__common__${AddressYears.UnderAYear.toString}"),
     answerIsMessageKey = true,
@@ -235,7 +235,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       Some(Message("messages__visuallyhidden__dynamic_addressYears", personName.fullName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__previousAddress__cya", personName.fullName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
@@ -243,64 +243,64 @@ object CheckYourAnswersControllerSpec extends SpecBase {
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", personName.fullName))))
   )
 
-  def hasNinoAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, value: String): AnswerRow = AnswerRow(Message("messages__hasNINO", personName.fullName), Seq(value), answerIsMessageKey = true, Some(
+  def hasNinoAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber, value: String): AnswerRow = AnswerRow(Message("messages__hasNINO", personName.fullName), Seq(value), answerIsMessageKey = true, Some(
     Link("site.change", routes.PartnerHasNINOController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_hasNino", personName.fullName))
     )))
 
-  def hasUtrAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, value: String): AnswerRow =
+  def hasUtrAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber, value: String): AnswerRow =
     AnswerRow(Message("messages__hasUTR", personName.fullName), Seq(value), answerIsMessageKey = true, Some(
     Link("site.change", routes.PartnerHasUTRController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_hasUtr", personName.fullName))
     )))
 
-  def ninoAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def ninoAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("nino"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName))
     )))
 
-  def nameAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow = nameRow(mode, OptionalSchemeReferenceNumber(srn), Some(
+  def nameAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = nameRow(mode, OptionalSchemeReferenceNumber(srn), Some(
     Link("site.change", routes.PartnerNameController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_name", personName.fullName))
     )))
 
-  def nameRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, changeLink: Option[Link] = None): AnswerRow =
+  def nameRow(mode: Mode, srn: OptionalSchemeReferenceNumber, changeLink: Option[Link] = None): AnswerRow =
     AnswerRow("messages__partnerName__cya", Seq(personName.fullName), answerIsMessageKey = false, changeLink)
 
-  def noUtrReasonAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def noUtrReasonAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__whyNoUTR", personName.fullName), Seq("reason"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerNoUTRReasonController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_noUtrReason", personName.fullName))
     )))
 
-  def noNinoReasonAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def noNinoReasonAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__whyNoNINO", personName.fullName), Seq("reason"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerNoNINOReasonController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_noNinoReason", personName.fullName))
     )))
 
-  def dobAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def dobAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     dobRow(mode, OptionalSchemeReferenceNumber(srn), Some(Link("site.change", routes.PartnerDOBController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_date_of_birth", personName.fullName))
     )))
 
-  def dobRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, changeLink: Option[Link] = None): AnswerRow =
+  def dobRow(mode: Mode, srn: OptionalSchemeReferenceNumber, changeLink: Option[Link] = None): AnswerRow =
     AnswerRow(Message("messages__DOB__heading", personName.fullName), Seq("9 June 1962"), answerIsMessageKey = false, changeLink)
 
-  def emailAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def emailAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__enterEmail", personName.fullName), Seq("test@test.com"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerEmailController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_email_address", personName.fullName))
     )))
 
-  def phoneAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  def phoneAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(Message("messages__enterPhoneNumber", personName.fullName), Seq("123456789"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerPhoneController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_phone_number", personName.fullName))
     )))
 
-  private def utrAnswerRow(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): AnswerRow =
+  private def utrAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
   AnswerRow(Message("messages__enterUTR", personName.fullName), Seq("utr"), answerIsMessageKey = false, Some(
     Link("site.change", routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(mode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(srn)).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName))

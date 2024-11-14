@@ -31,7 +31,7 @@ import views.html.hasReferenceNumber
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEnterPAYEController.onPageLoad (NormalMode, index, None)
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEnterPAYEController.onPageLoad ( NormalMode, index, EmptyOptionalSchemeReferenceNumber)
 
   val formProvider = new HasPAYEFormProvider()
   val form = formProvider("messages__companyPayeRef__error__required","test company name")
@@ -70,7 +70,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   "HasCompanyPAYEController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -79,7 +79,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -90,7 +90,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPAYE", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

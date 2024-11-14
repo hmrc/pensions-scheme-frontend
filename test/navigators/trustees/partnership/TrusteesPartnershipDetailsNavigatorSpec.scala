@@ -46,18 +46,18 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
       def navigationForTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(PartnershipDetailsId(index))(partnershipDetails, addTrusteesPage(NormalMode, None)),
+          row(PartnershipDetailsId(index))(partnershipDetails, addTrusteesPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
           row(PartnershipDetailsId(index))(partnershipDetails, TrusteesTaskListPage(index), Some(uaFeatureToggleOn)),
-          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(NormalMode, index, None)),
-          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(NormalMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(NormalMode, index, None))
+          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(false, PartnershipHasPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
         )
 
       behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForTrusteePartnership, None)
@@ -67,16 +67,16 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
       val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Expected next page"),
-          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasVATId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, None)),
-          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(CheckMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, index, None))
+          row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(true, PartnershipEnterVATController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(false, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(true, PartnershipEnterPAYEController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(false, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber))
         )
 
       behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)

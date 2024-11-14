@@ -33,7 +33,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode)
@@ -46,7 +46,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
       }
 
       "return OK and DO display submit button with return to tasklist when in normal mode" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -57,7 +57,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private val schemeName = "Test Scheme Name"
-  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
   private val view = injector.instanceOf[checkYourAnswers]
@@ -102,7 +102,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     schemeName = Some(schemeName),
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = false,
     title = heading(Message("messages__theScheme").resolve, mode),
     h1 = heading(schemeName, mode)

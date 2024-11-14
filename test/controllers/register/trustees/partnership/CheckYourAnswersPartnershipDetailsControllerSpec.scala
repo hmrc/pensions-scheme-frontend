@@ -50,20 +50,20 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes())
-        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -127,7 +127,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   def onwardRoute(index: Int): Call =
     controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  def onwardRouteUpdateMode(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+  def onwardRouteUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
@@ -144,25 +144,25 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def hasPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipUTRRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def partnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
 
-  private def noPartnershipUTRRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def noPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasPartnershipVatRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def hasPartnershipVatRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipEnterVATRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def partnershipEnterVATRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def hasPartnershipPayeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber) =
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
@@ -195,7 +195,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
@@ -225,7 +225,7 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(

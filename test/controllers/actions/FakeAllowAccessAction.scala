@@ -18,7 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
-import models.SchemeReferenceNumber
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

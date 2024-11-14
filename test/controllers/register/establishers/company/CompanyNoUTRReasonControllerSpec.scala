@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
-import models.{CompanyDetails, NormalMode, SchemeReferenceNumber}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -48,7 +48,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoUTR", companyName),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad
@@ -87,7 +87,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "123456789"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -101,7 +101,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
             status(result) mustBe BAD_REQUEST
         }
       }

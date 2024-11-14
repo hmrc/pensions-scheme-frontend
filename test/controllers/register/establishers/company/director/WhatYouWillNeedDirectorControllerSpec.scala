@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes.{DirectorNameController, TrusteesAlsoDirectorsController}
 import models.FeatureToggleName.SchemeRegistration
-import models.{FeatureToggle, Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -52,7 +52,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
   private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(0)
 
-  private def viewAsString(): String = view(None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
@@ -60,7 +60,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -89,7 +89,7 @@ class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase 
 
   private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
 
-  private def viewAsString(): String = view(None, None, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
@@ -97,7 +97,7 @@ class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase 
       "return OK and the correct view" in {
         when(mockFeatureToggleService.get(any())(any(), any()))
           .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

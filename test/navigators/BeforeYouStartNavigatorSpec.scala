@@ -72,5 +72,5 @@ object BeforeYouStartNavigatorSpec {
   private val haveAnyTrusteesCheckPage: Call = HaveAnyTrusteesController.onPageLoad(CheckMode)
   private val establishedCountryPage: Call   = EstablishedCountryController.onPageLoad(NormalMode)
   private val workingKnowledgePage: Call     = WorkingKnowledgeController.onPageLoad(NormalMode)
-  private val checkYourAnswersPage: Call     = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
+  private val checkYourAnswersPage: Call     = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 }

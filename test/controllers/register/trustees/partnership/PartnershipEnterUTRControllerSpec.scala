@@ -39,7 +39,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
   "PartnershipEnterUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,7 +48,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
     "redirect to the next page when valid data is submitted and clean up takes place" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", utrValue))
 
-      val result = controller(getDataWithNoUtrReason).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getDataWithNoUtrReason).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -60,7 +60,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -85,7 +85,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
     title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterUTR", "test partnership name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val view = injector.instanceOf[utr]

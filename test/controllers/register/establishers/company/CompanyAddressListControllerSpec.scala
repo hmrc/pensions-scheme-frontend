@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import play.api.inject.bind
@@ -66,7 +66,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
-  private val onwardRoute = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, None, 0)
+  private val onwardRoute = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, 0)
 
   "Company Address List Controller" must {
 
@@ -75,7 +75,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
       running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[CompanyAddressListController]
         val view = app.injector.instanceOf[addressList]
-        val result = controller.onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe OK
 
@@ -91,10 +91,10 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
 
       running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0)).url)
       }
     }
 
@@ -102,7 +102,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
 
       running(_.overrides(modules(dontGetAnyData): _*)) { app =>
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -116,7 +116,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, None, Index(0))(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe onwardRoute.url
@@ -131,7 +131,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, None, Index(0))(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -146,18 +146,18 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[CompanyAddressListController]
-        val result = controller.onSubmit(NormalMode, None, Index(0))(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, None, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0)).url)
       }
     }
   }
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyAddressListController.onSubmit(NormalMode, None, Index(0)),
-      routes.CompanyAddressController.onPageLoad(NormalMode, None, Index(0)),
+      routes.CompanyAddressListController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0)),
+      routes.CompanyAddressController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0)),
       addresses,
       title = Message("messages__establisherSelectAddress__h1",Message("messages__theEstablisher")),
       heading = Message("messages__establisherSelectAddress__h1", companyDetails.companyName),

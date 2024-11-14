@@ -66,21 +66,21 @@ class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "CS700100A"))
-      val result      = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result      = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired page when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
-      val result          = controller(getRelevantData).onPageLoad(NormalMode, Index(2), None)(fakeRequest)
+      val result          = controller(getRelevantData).onPageLoad( NormalMode, index(2), None)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -139,13 +139,13 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): String = {
     val vm = NinoViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
       title = messages("messages__enterNINO", messages("messages__theIndividual")),
       heading = messages("messages__enterNINO", establisherName),
       hint = messages("messages__common__nino_hint"),
-      srn = srn
+      srn = OptionalSchemeReferenceNumber(srn)
     )
 
     view(form, vm, Some(schemeName))(fakeRequest, messages).toString

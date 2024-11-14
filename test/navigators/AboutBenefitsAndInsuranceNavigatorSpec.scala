@@ -109,9 +109,9 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
 
   private def occupationalPension: Call                               = OccupationalPensionSchemeController.onPageLoad(NormalMode)
-  private def typesofBenefits: Call                                   = TypeOfBenefitsController.onPageLoad(NormalMode, None)
+  private def typesofBenefits: Call                                   = TypeOfBenefitsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
   private def moneyPurchaseBenefits(mode: Mode = NormalMode): Call    = MoneyPurchaseBenefitsController.onPageLoad(mode, None)
-  private def benefitsSecured: Call                                   = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, None)
+  private def benefitsSecured: Call                                   = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
   private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(mode, None)
   private def policyNumber(mode: Mode = NormalMode): Call             = InsurancePolicyNumberController.onPageLoad(mode, None)
   private def insurerPostcode(mode: Mode = NormalMode): Call          = InsurerEnterPostcodeController.onPageLoad(mode, None)

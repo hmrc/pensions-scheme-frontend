@@ -57,7 +57,7 @@ class PartnerConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     hint = None,
     address = testAddress,
     name = name,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)

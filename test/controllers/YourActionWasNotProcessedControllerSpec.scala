@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import identifiers.SchemeNameId
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.yourActionWasNotProcessed
@@ -32,14 +32,14 @@ class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {
   private def controller: YourActionWasNotProcessedController = new YourActionWasNotProcessedController(
     messagesApi, controllerComponents, FakeAuthAction, data, new DataRequiredActionImpl, view)
 
-  private val redirectUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private val redirectUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def viewAsString() = view(Some(schemeName), redirectUrl)(fakeRequest, messages).toString
 
   "YourActionWasNotProcessed Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()

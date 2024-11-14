@@ -52,10 +52,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
-  private def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
@@ -73,7 +73,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -111,7 +111,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode),

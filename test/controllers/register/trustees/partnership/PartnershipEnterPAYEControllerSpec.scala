@@ -71,7 +71,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
           val request =
             addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+          val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }

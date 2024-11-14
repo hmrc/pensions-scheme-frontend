@@ -31,7 +31,7 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
   private val index = 0
   private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
+  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
 
@@ -48,7 +48,7 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
           bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

@@ -47,7 +47,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
     title = Message("messages__hasUTR", Message("messages__theIndividual").resolve),
     heading = Message("messages__hasUTR", "first Last"),
     hint = Some(Message("messages__hasUtr__p1")),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val trusteeIndividualData = UserAnswers().set(TrusteeNameId(0))(PersonName("first", "Last")).asOpt.value
@@ -88,7 +88,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
   "TrusteeHasUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -97,7 +97,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -107,7 +107,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
     "redirect to the session expired page when no trustee name has been added" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller(getEmptyData).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getEmptyData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.SessionExpiredController.onPageLoad.url
@@ -117,7 +117,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -125,7 +125,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
 
     "clean up utr number, if user changes answer from yes to no" in {
      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(getTrusteeIndividualDataWithUtr(true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeIndividualDataWithUtr(true)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -135,7 +135,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
 
     "clean up no utr reason, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteeIndividualDataWithUtr(false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeIndividualDataWithUtr(false)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.userAnswer.get(TrusteeHasUTRId(index)).value mustEqual true

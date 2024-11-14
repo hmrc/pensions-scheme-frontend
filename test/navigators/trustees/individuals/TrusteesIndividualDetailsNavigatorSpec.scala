@@ -44,15 +44,15 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
       ("Id", "UserAnswers", "Next Page"),
       row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)),
       row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index),Some(uaFeatureToggleOn)),
-      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeEnterNINOId(index))(someRefValue, TrusteeHasUTRController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(NormalMode, index, None)),
-      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(NormalMode, index, None)),
-      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(NormalMode, index, None))
+      row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeEnterNINOId(index))(someRefValue, TrusteeHasUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, TrusteeHasUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
     )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, None)
@@ -62,15 +62,15 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
     Table(
       ("Id", "UserAnswers", "Expected next page"),
-      row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckMode, index, None)),
-      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeEnterNINOId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, index, None)),
-      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None)),
-      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, index, None)),
-      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckMode, index, None)),
-      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, index, None))
+      row(TrusteeDOBId(index))(someDate, cyaIndividualDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeEnterNINOId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeNoNINOReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasUTRId(index))(true, TrusteeEnterUTRController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeUTRId(index))(someRefValue, cyaIndividualDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeHasUTRId(index))(false, TrusteeNoUTRReasonController.onPageLoad(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
+      row(TrusteeNoUTRReasonId(index))(someStringValue, cyaIndividualDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber))
     )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)

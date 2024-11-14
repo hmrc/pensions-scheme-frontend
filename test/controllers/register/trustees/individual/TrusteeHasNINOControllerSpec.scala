@@ -47,7 +47,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -88,7 +88,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -106,7 +106,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 

@@ -79,6 +79,6 @@ object EstablisherEnterUTRControllerSpec extends EstablisherEnterUTRControllerSp
     title = Message("messages__enterUTR", Message("messages__theIndividual")),
     heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }

@@ -57,7 +57,7 @@ class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     hint = None,
     address = testAddress,
     name = companyName,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)

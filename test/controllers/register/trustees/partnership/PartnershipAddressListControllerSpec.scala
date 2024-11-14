@@ -79,7 +79,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
         bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -100,11 +100,11 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
       }
 
     }
@@ -117,7 +117,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.PartnershipAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -140,7 +140,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
               .withFormUrlEncodedBody(("value", "0"))
           )
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -162,7 +162,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -185,10 +185,10 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
           )
 
         val controller = app.injector.instanceOf[PartnershipAddressListController]
-        val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+        val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+        redirectLocation(result) mustBe Some(routes.PartnershipPostcodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
       }
 
     }
@@ -196,8 +196,8 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      postCall = routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0), None),
-      manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0), None),
+      postCall = routes.PartnershipAddressListController.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
+      manualInputCall = routes.PartnershipAddressController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
       addresses = addresses,
       heading = Message("messages__common__partnership__selectAddress__h1", partnershipDetails.name),
       title = Message("messages__common__partnership__selectAddress__h1", Message("messages__thePartnership")),

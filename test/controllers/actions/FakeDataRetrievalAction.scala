@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import models.{Mode, NormalMode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import utils.UserAnswers

@@ -90,7 +90,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
   "having set up answer sections" when {
     val request: DataRequest[AnyContent]  = FakeDataRequest(directorAnswers)
-    def answerSectionDirector(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Seq[AnswerSection] =
+    def answerSectionDirector(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
       Seq(
         AnswerSection(
           None,
@@ -131,26 +131,26 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
     "onPageLoad" must {
 
       "return OK and display all the answers" in {
-        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, NormalMode, None)(request)
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode,
                                                     answerSectionDirector _,
-                                                    href(NormalMode, None, 0),
-                                                    None,
+                                                    href(NormalMode, EmptyOptionalSchemeReferenceNumber, 0),
+          EmptyOptionalSchemeReferenceNumber,
                                                     title = Message("checkYourAnswers.hs.heading"),
                                                     h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and display all given answers for UpdateMode" in {
-        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, UpdateMode, Some(SchemeReferenceNumber("srn")))(request)
+        val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(index, index, UpdateMode, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(
           UpdateMode,
-          answerSectionDirector(UpdateMode, Some(SchemeReferenceNumber("srn"))),
-          href(UpdateMode, Some(SchemeReferenceNumber("srn")), 0),
-          Some(SchemeReferenceNumber("srn")),
+          answerSectionDirector(UpdateMode, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))),
+          href(UpdateMode, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))), 0),
+          OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))),
           title = Message("messages__detailsFor", Message("messages__theDirector")),
           h1 = Message("messages__detailsFor", "First Last")
         )
@@ -158,7 +158,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
       behave like changeableController(
         controller(directorAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(index, index, NormalMode, None)(request)
+          .onPageLoad(index, index, NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
       )
     }
   }
@@ -167,7 +167,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 object CheckYourAnswersControllerSpec extends SpecBase {
   val index                                                          = Index(0)
   val schemeName                                                     = "test scheme name"
-  def href(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber, companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn), companyIndex)
+  def href(mode: Mode, srn: OptionalSchemeReferenceNumber, companyIndex: Int): Call = AddCompanyDirectorsController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn), companyIndex)
   val name                                                           = "First Name"
 
   val directorPersonDetails = PersonName("first name", "last name", false)
@@ -211,7 +211,7 @@ object CheckYourAnswersControllerSpec extends SpecBase {
           Some(
             Link(
               "site.add",
-              routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), index, index, Some(SchemeReferenceNumber("srn"))).url,
+              routes.DirectorEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), index, index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))).url,
               Some(messages("messages__visuallyhidden__dynamic_nino", directorPersonDetails.fullName))
             ))
         )

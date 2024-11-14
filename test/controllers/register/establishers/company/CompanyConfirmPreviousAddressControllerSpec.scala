@@ -18,6 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.establishers.company.CompanyEnterCRNControllerSpec.srn
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId}
@@ -59,7 +60,7 @@ class CompanyConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
     hint = None,
     address = testAddress,
     name = name,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)

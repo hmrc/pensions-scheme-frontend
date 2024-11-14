@@ -108,7 +108,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
             }
           case Partnership =>
             PartnershipDetailsId(index).retrieve.map { partnershipDetails =>
-              updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, Some(partnershipDetails), None,
+              updateTrusteeKind(partnershipDetails.name, trusteeKind, trusteeIndex = index, None, Some(partnershipDetails), None,
                 srn, mode)
             }
         }

@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, Index, NormalMode, SchemeReferenceNumber}
+import models.{CheckUpdateMode, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -57,7 +57,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterPAYEController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("paye", "123456789"))
-          val result = controller.onSubmit(NormalMode, index = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, index = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -78,7 +78,7 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec {
     title = Message("messages__enterPAYE", Message("messages__theCompany")),
     heading = Message("messages__enterPAYE", "test company name"),
     hint = Some(Message("messages__enterPAYE__hint")),
-    srn = srn,
+    srn = OptionalSchemeReferenceNumber(srn),
     entityName = Some("test company name")
   )
 

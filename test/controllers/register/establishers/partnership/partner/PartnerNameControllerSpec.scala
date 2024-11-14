@@ -45,7 +45,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
   import PartnerNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
-    routes.PartnerNameController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
+    routes.PartnerNameController.onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__partnerName__title"),
     heading = Message("messages__partnerName__heading"))
 
@@ -76,7 +76,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
   "PartnerName Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -98,7 +98,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PersonName("First Name", "Last Name")))
     }
@@ -115,7 +115,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -124,7 +124,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -146,7 +146,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "01", "lastName" -> "?&^%$£"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -168,21 +168,21 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "tencharactertencharactertencharacter", "lastName" -> "tencharactertencharactertencharacter"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -200,7 +200,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
     }

@@ -56,7 +56,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
   private val fullAnswers = UserAnswers().set(TrusteeEmailId(0))(value = "test@test.com").flatMap(_.set(TrusteePhoneId(0))(value = "12345"))
     .flatMap(_.set(TrusteeNameId(0))(PersonName("test", "name"))).asOpt.value
 
-  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None, StringCYA[TrusteeEmailId](
       Some(messages("messages__enterEmail", trusteeName)),
       Some(messages("messages__visuallyhidden__dynamic_email_address", trusteeName))
@@ -71,7 +71,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call, hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call, hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,
@@ -101,7 +101,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
 

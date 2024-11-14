@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasPAYEId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -58,7 +58,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -69,7 +69,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasPAYEId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -87,7 +87,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -104,7 +104,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
             val boundForm = form.bind(Map("hasPaye" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

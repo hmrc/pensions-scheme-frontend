@@ -51,7 +51,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
       running(_.overrides(modules(retrieval): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(fakeRequest, messages).toString
       }
@@ -69,7 +69,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
             when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
             val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -92,8 +92,8 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   private val addressLookupConnector = mock[AddressLookupConnector]
   private val view = injector.instanceOf[postcodeLookup]
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
-    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
+    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__partnershipPostcodeLookup__heading", Message("messages__thePartnership").resolve),
     heading = Message("messages__partnershipPostcodeLookup__heading", partnershipDetails.name),
     subHeading = Some(partnershipDetails.name)

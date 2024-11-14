@@ -48,13 +48,13 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private def submitUrl(mode: Mode = NormalMode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  private def submitUrlUpdateMode(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber): Call =
+  private def submitUrlUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def answerSection(mode: Mode, OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     Seq(AnswerSection(None,
       StringCYA[CompanyEmailId](userAnswers.get(CompanyDetailsId(index)).map(companyDetails =>
@@ -88,7 +88,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       mockFeatureToggleService
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], OptionalSchemeReferenceNumber(srn): OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(),
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -119,7 +119,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, None, index)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(request)
 
           status(result) mustBe OK
 
@@ -133,7 +133,8 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
           status(result) mustBe OK
 
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrlUpdateMode(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn) = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrlUpdateMode(UpdateMode, OptionalSchemeReferenceNumber(srn)),
+            srn = OptionalSchemeReferenceNumber(srn),
             title = Message("messages__contactDetailsFor", Message("messages__theCompany")),
             h1 = Message("messages__contactDetailsFor", name))
         }

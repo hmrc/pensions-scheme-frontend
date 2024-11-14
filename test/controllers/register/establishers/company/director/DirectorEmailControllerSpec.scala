@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.EmailFormProvider
 import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -62,11 +62,11 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
+        routes.DirectorEmailController.onSubmit(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__director_email__title"),
         Message("messages__enterEmail", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString
@@ -75,7 +75,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -85,7 +85,7 @@ class DirectorEmailControllerSpec extends ControllerSpecBase with MockitoSugar w
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
-        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

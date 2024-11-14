@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -47,12 +47,12 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  private val postCall = controllers.register.establishers.individual.routes.EstablisherNoUTRReasonController.onSubmit(NormalMode, Index(0), None)
+  private val postCall = controllers.register.establishers.individual.routes.EstablisherNoUTRReasonController.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)
   private val viewModel = ReasonViewModel(
     postCall = postCall,
     title = Message("messages__whyNoUTR", Message("messages__theIndividual")),
     heading = Message("messages__whyNoUTR", name),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
   private val view = injector.instanceOf[reason]
 
@@ -64,7 +64,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
       val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -80,7 +80,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
       val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
 
-      val result = controller.onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -111,7 +111,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "blah"))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -129,7 +129,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
       val boundForm = form.bind(Map("noUtrReason" -> ""))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 

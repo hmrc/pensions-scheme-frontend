@@ -54,7 +54,7 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, None),
+        routes.PartnershipPhoneNumberController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
         Message("messages__enterPhoneNumber", trusteePartnershipDetails.name),
         Some(Message("messages__contact_phone__hint", trusteePartnershipDetails.name, schemeName)),
@@ -70,7 +70,7 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipPhoneNumberController]
-            val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -88,7 +88,7 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
           app =>
             val controller = app.injector.instanceOf[PartnershipPhoneNumberController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", phone))
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

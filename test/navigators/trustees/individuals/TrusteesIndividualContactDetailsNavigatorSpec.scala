@@ -41,8 +41,8 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
     def navigationForNewTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad(NormalMode, index, None)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(TrusteeEmailId(index))(someStringValue, TrusteePhoneController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteeIndividual, EmptyOptionalSchemeReferenceNumber)
@@ -52,8 +52,8 @@ class TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Matche
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None)),
-        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage(NormalMode, index, None))
+        row(TrusteeEmailId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
+        row(TrusteePhoneId(index))(someStringValue, cyaContactDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)

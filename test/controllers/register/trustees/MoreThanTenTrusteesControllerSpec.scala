@@ -50,14 +50,14 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
       controllerComponents,
       view)
 
-  val submitUrl: Call = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, None)
+  val submitUrl: Call = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None, submitUrl, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, EmptyOptionalSchemeReferenceNumber, submitUrl, None)(fakeRequest, messages).toString
 
   "MoreThanTenTrustees Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -66,7 +66,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(false))
     }
@@ -74,7 +74,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -84,14 +84,14 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -99,7 +99,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
