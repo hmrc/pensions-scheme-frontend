@@ -24,7 +24,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

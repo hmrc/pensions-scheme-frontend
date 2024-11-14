@@ -21,7 +21,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, Fak
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class PartnershipAddressListControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = routes.PartnershipAddressController.onPageLoad(NormalMode, 0, None)
+  def onwardRoute: Call = routes.PartnershipAddressController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)
   private val view = injector.instanceOf[addressList]
   private val partnershipDetails = PartnershipDetails("test partnership name")
 

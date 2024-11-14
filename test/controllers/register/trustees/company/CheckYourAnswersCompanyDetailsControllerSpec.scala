@@ -49,7 +49,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
 
@@ -60,7 +60,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(companyDetailsAllReasons(NormalMode, EmptyOptionalSchemeReferenceNumber),
@@ -72,7 +72,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -83,7 +83,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -94,7 +94,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -108,7 +108,7 @@ class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase wi
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
+          .onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
       )
     }
   }
@@ -122,7 +122,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   val companyName = "test company name"
 
   private val crn = "crn"
@@ -141,10 +141,10 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     routes.CompanyEnterCRNController.onPageLoad(checkMode(mode), OptionalSchemeReferenceNumber(srn), index).url
 
   private def noCompanyNumberReasonRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.CompanyNoCRNReasonController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def hasCompanyUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.HasCompanyUTRController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.HasCompanyUTRController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def companyUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.CompanyEnterUTRController.onPageLoad(checkMode(mode), OptionalSchemeReferenceNumber(srn), index).url

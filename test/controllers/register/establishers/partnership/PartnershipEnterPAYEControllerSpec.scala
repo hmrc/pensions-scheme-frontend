@@ -68,7 +68,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
   val partnershipName = "test partnership name"
   val form = new PayeFormProvider()(partnershipName)
   val firstIndex = Index(0)
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

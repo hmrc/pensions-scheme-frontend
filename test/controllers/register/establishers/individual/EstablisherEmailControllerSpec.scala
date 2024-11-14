@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherEmailController
 import forms.EmailFormProvider
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -54,7 +54,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", establisherName.fullName),
         Some(Message("messages__contact_details__hint", establisherName.fullName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString

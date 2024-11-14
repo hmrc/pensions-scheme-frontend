@@ -68,7 +68,7 @@ class UrlsPartialServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       .thenReturn(Future.successful(Some(JsNumber(BigDecimal(timestamp)))))
 
     when(lockConnector.getLockByPsa(any())(any(), any()))
-      .thenReturn(Future.successful(Some(SchemeVariance(psaId, OptionalSchemeReferenceNumber(srn)))))
+      .thenReturn(Future.successful(Some(SchemeVariance(psaId, (srn)))))
     when(updateConnector.fetch(any())(any(), any()))
       .thenReturn(Future.successful(Some(schemeNameJsonOption)))
     when(updateConnector.lastUpdated(any())(any(), any()))

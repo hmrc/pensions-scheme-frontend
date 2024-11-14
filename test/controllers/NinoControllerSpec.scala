@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions.DataRetrievalAction
 import forms.NINOFormProvider
 import identifiers.TypedIdentifier
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Mode, NormalMode, ReferenceValue}
+import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -31,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
-
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
@@ -48,7 +48,7 @@ class NinoControllerSpec extends ControllerSpecBase {
     title = Message("messages__enterNINO", Message("messages__thePerson").resolve),
     heading = Message("messages__enterNINO"),
     hint = Message("messages__common__nino_hint"),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]

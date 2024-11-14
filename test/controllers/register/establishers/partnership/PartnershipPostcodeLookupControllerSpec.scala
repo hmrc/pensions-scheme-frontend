@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

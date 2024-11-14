@@ -24,7 +24,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures

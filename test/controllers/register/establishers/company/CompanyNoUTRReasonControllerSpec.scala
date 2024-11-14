@@ -42,7 +42,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private val srn = Some(SchemeReferenceNumber("S123"))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   val viewmodel = ReasonViewModel(
     postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0),

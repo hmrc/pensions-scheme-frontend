@@ -50,7 +50,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes())
-        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, EmptyOptionalSchemeReferenceNumber),
@@ -60,7 +60,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, EmptyOptionalSchemeReferenceNumber),
@@ -72,7 +72,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes(false))
-        val result = controller(fullAnswersYes(false).dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswersYes(false).dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -83,7 +83,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -98,7 +98,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val answers = fullAnswersYes().set(IsEstablisherNewId(0))(true).asOpt.value
         val request = FakeDataRequest(answers)
-        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, OptionalSchemeReferenceNumber(srn)), mode = UpdateMode, srn = OptionalSchemeReferenceNumber(srn),
@@ -109,7 +109,7 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val answers = fullAnswersNo.set(IsEstablisherNewId(0))(true).asOpt.value
         val request = FakeDataRequest(answers)
-        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, OptionalSchemeReferenceNumber(srn)), mode = UpdateMode, srn = srn,
@@ -146,10 +146,10 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
   private def hasPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def partnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def noPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
     routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url

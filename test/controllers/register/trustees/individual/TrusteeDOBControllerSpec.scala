@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -61,7 +61,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 
   private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
-      postCall = postCall(mode, index, OptionalSchemeReferenceNumber(srn)),
+      postCall = postCall(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )
@@ -70,9 +70,9 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
   "TrusteeDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, 0, None),
-      post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel( NormalMode, index, EmptyOptionalSchemeReferenceNumber, Message("messages__theIndividual").resolve),
+      get = data => controller(data).onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber),
+      post = data => controller(data).onSubmit(NormalMode, 0, EmptyOptionalSchemeReferenceNumber),
+      viewModel = viewModel( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber, Message("messages__theIndividual").resolve),
       mode = NormalMode,
       requiredData = getMandatoryTrustee,
       validData = validData,

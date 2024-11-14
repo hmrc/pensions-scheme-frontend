@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
-import models.{AddressYears, Index, NormalMode, PartnershipDetails}
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
@@ -37,7 +37,7 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
   "TrusteeAddressYearsController" must {
 
     "return OK and the correct view on a GET request" in {
-      val result = controller(trusteeData).onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller(trusteeData).onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,14 +48,14 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       val filledForm = form.fill(answer)
       assume(filledForm.errors.isEmpty)
 
-      val result = controller(partnershipAndAnswerData(answer)).onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller(partnershipAndAnswerData(answer)).onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to Session Expired on a GET request if no cached data exists" in {
-      val result = controller(dontGetAnyData).onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -65,7 +65,7 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       val answer = AddressYears.values.head
       val request = fakeRequest.withFormUrlEncodedBody(("value", answer.toString))
 
-      val result = controller(trusteeData).onSubmit(mode, Index, EmptyOptionalSchemeReferenceNumber)(request)
+      val result = controller(trusteeData).onSubmit(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -75,7 +75,7 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       val answer = AddressYears.values.head
       val request = fakeRequest.withFormUrlEncodedBody(("value", answer.toString))
 
-      val result = controller(trusteeData).onSubmit(mode, Index, EmptyOptionalSchemeReferenceNumber)(request)
+      val result = controller(trusteeData).onSubmit(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipAddressYearsId(index), answer)
@@ -85,14 +85,14 @@ class PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
       val filledForm = form.bind(Map.empty[String, String])
       assume(filledForm.errors.nonEmpty)
 
-      val result = controller(trusteeData).onSubmit(mode, Index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller(trusteeData).onSubmit(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to Session Expired on a POST request if no cached data exists" in {
-      val result = controller(dontGetAnyData).onSubmit(mode, Index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(mode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -134,7 +134,7 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
 
   private val viewModel =
     AddressYearsViewModel(
-      postCall = routes.PartnershipAddressYearsController.onSubmit(mode, Index, EmptyOptionalSchemeReferenceNumber),
+      postCall = routes.PartnershipAddressYearsController.onSubmit(mode, Index(0), EmptyOptionalSchemeReferenceNumber),
       title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership").resolve),
       heading = Message("messages__trusteeAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),
       legend = Message("messages__trusteeAddressYears__heading", partnershipUserAnswers.get(PartnershipDetailsId(index)).get.name),

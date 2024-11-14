@@ -24,6 +24,7 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models._
 import models.person.PersonName
 import models.register.trustees.TrusteeKind
+import navigators.establishers.partnership.EstablisherPartnershipAddressNavigatorSpec.srn
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -60,7 +61,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(HaveAnyTrusteesId)(false, taskList(NormalMode, EmptyOptionalSchemeReferenceNumber)),
           rowNoValue(ConfirmDeleteTrusteeId)(addTrustee(NormalMode, EmptyOptionalSchemeReferenceNumber))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
@@ -75,8 +76,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(UpdateMode, OptionalSchemeReferenceNumber(srn))),
           row(TrusteeKindId(0))(TrusteeKind.Individual, trusteeName(UpdateMode, OptionalSchemeReferenceNumber(srn))),
           row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(UpdateMode, OptionalSchemeReferenceNumber(srn))),
-          rowNoValue(MoreThanTenTrusteesId)(controllers.routes.AnyMoreChangesController.onPageLoad(srn)),
-          rowNoValue(ConfirmDeleteTrusteeId)(controllers.routes.AnyMoreChangesController.onPageLoad(srn))
+          rowNoValue(MoreThanTenTrusteesId)(controllers.routes.AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(ConfirmDeleteTrusteeId)(controllers.routes.AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)))
         )
       behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, OptionalSchemeReferenceNumber(srn))
     }
@@ -130,7 +131,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
     controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
 
   private def trusteeKind(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+    controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
   private def taskList(mode: Mode, srn: OptionalSchemeReferenceNumber) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 

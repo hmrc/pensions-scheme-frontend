@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerHasUTRId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService

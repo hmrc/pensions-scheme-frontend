@@ -44,7 +44,7 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, EmptyOptionalSchemeReferenceNumber),
@@ -54,7 +54,7 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, EmptyOptionalSchemeReferenceNumber),
@@ -66,7 +66,7 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -77,7 +77,7 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
@@ -102,7 +102,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
 
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   val name = "test name"
   val trusteeName: PersonName = PersonName("test", "name")
   val trusteeDob: LocalDate = LocalDate.now()
@@ -113,13 +113,13 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
 
   private val emptyAnswers = UserAnswers()
   private def trusteeDob(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeDOBController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
   private def hasNino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
   private def nino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
   private def noNinoReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
   private def hasUtr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
   private def utr(mode: Mode, srn: OptionalSchemeReferenceNumber) =

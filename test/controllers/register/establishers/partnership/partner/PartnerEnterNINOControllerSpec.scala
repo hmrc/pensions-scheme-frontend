@@ -52,7 +52,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
       title = Message("messages__enterNINO", Message("messages__thePartner")),
       heading = messages("messages__enterNINO", partnerName),
       hint = messages("messages__common__nino_hint"),
-      srn = None
+      srn = EmptyOptionalSchemeReferenceNumber
     )
 
     view(form, viewmodel, None)(fakeRequest, messages).toString

@@ -109,5 +109,5 @@ object PspSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
     Some(Message("messages__schemeTaskList__about_scheme_header", schemeName))
   )
 
-  private val schemeDetailsTL = PspTaskList(schemeName, OptionalSchemeReferenceNumber(srn), beforeYouStartSpoke, aboutSpoke, Nil, None, Nil)
+  private val schemeDetailsTL = PspTaskList(schemeName, srn, beforeYouStartSpoke, aboutSpoke, Nil, None, Nil)
 }

@@ -35,25 +35,25 @@ class HsTaskListHelperPspSpec extends AnyWordSpec with Matchers with MockitoSuga
   "h1" must {
     "have the name of the scheme" in {
 
-      helper.taskList(userAnswersJson, OptionalSchemeReferenceNumber(srn)).h1 mustBe schemeName
+      helper.taskList(userAnswersJson, (srn)).h1 mustBe schemeName
     }
   }
 
   "beforeYouStartSection " must {
     "return the correct entity section " in {
-      helper.taskList(userAnswersJson, OptionalSchemeReferenceNumber(srn)).beforeYouStart mustBe beforeYouStartSpoke
+      helper.taskList(userAnswersJson, (srn)).beforeYouStart mustBe beforeYouStartSpoke
     }
   }
 
   "aboutSection " must {
     "return the correct entity section " in {
-      helper.taskList(userAnswersJson, OptionalSchemeReferenceNumber(srn)).about mustBe aboutSpoke
+      helper.taskList(userAnswersJson, (srn)).about mustBe aboutSpoke
     }
   }
 
   "addTrusteeHeader " must {
     "have no link when no trustees are added and viewOnly is true" in {
-      helper.taskList(userAnswersJson, OptionalSchemeReferenceNumber(srn)).trusteeHeader mustBe Some(SchemeDetailsTaskListEntitySection(None, Nil, None))
+      helper.taskList(userAnswersJson, (srn)).trusteeHeader mustBe Some(SchemeDetailsTaskListEntitySection(None, Nil, None))
     }
   }
 
@@ -66,7 +66,7 @@ class HsTaskListHelperPspSpec extends AnyWordSpec with Matchers with MockitoSuga
         establisherPartnershipEntity(index = 4, isDeleted = true).
         establisherPartnershipEntity(index = 5)
 
-      val result = helper.taskList(userAnswers, OptionalSchemeReferenceNumber(srn)).establishers
+      val result = helper.taskList(userAnswers, srn).establishers
 
       result mustBe Seq("test company 0", "test company 1", "first 2 last 2", "first 3 last 3", "test partnership 4", "test partnership 5")
     }
@@ -81,7 +81,7 @@ class HsTaskListHelperPspSpec extends AnyWordSpec with Matchers with MockitoSuga
         trusteePartnershipEntity(index = 4).
         trusteePartnershipEntity(index = 5)
 
-      val result = helper.taskList(userAnswers, OptionalSchemeReferenceNumber(srn)).trustees
+      val result = helper.taskList(userAnswers, (srn)).trustees
 
       result mustBe Seq("test company 0", "test company 1", "first 2 last 2", "first 3 last 3", "test partnership 4", "test partnership 5")
     }
@@ -90,10 +90,10 @@ class HsTaskListHelperPspSpec extends AnyWordSpec with Matchers with MockitoSuga
   "task list" must {
     "return the task list with all the sections" in {
 
-      val result = helper.taskList(userAnswersJson, OptionalSchemeReferenceNumber(srn))
+      val result = helper.taskList(userAnswersJson, (srn))
 
       result mustBe PspTaskList(
-        schemeName, OptionalSchemeReferenceNumber(srn),
+        schemeName, (srn),
         beforeYouStartSpoke,
         aboutSpoke,
         Seq("Test Company", "Test Individual", "Test Partnership"),

@@ -22,7 +22,7 @@ import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
 import models.address.{Address, TolerantAddress}
-import models.{CompanyDetails, Index, NormalMode, SchemeReferenceNumber}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -39,10 +39,10 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   val form: Form[Boolean] = formProvider("messages__tradingAtLeastOneYear__error","test company name")
   val index: Index = Index(0)
   val srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber
-  val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
+  val postCall: Call = controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
 
   val viewModel: CommonFormWithHintViewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
+    controllers.register.trustees.company.routes.HasBeenTradingCompanyController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__trustee_company_trading-time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test company name"),
     hint = None
@@ -87,7 +87,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
   "HasBeenTradingCompanyController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -96,7 +96,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -107,7 +107,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -116,7 +116,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
     "clean up previous address, if user changes answer from yes to no" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = true)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = true)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -128,7 +128,7 @@ class HasBeenTradingCompanyControllerSpec extends ControllerSpecBase {
 
     "not clean up for previous address, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = false)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(getTrusteeCompanyDataWithPreviousAddress(hasBeenTrading = false)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

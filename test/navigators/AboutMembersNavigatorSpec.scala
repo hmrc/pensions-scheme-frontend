@@ -45,7 +45,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(futureMembers(NormalMode)),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
   }
 
   "in CheckMode" must {
@@ -61,7 +61,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(cya),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
   }
 }
 

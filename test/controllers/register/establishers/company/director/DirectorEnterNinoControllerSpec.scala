@@ -88,7 +88,7 @@ class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
       title = Message("messages__enterNINO", Message("messages__theDirector")),
       heading = Message("messages__enterNINO", directorName),
       hint = Message("messages__common__nino_hint"),
-      srn = None
+      srn = EmptyOptionalSchemeReferenceNumber
     )
 
     view(form, viewmodel, None)(fakeRequest, messages).toString

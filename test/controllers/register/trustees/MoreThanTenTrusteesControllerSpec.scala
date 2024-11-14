@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -52,7 +52,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
 
   val submitUrl: Call = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, EmptyOptionalSchemeReferenceNumber, submitUrl, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None, submitUrl, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   "MoreThanTenTrustees Controller" must {
 

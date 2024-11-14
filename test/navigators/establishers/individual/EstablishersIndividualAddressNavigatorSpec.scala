@@ -40,48 +40,48 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with Matchers 
     def normalModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber))
+        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes(NormalMode), None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes(NormalMode), EmptyOptionalSchemeReferenceNumber)
   }
 
   "CheckMode" must {
     def checkModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber)),
-        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index, EmptyOptionalSchemeReferenceNumber))
+        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes(CheckMode), None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes(CheckMode), EmptyOptionalSchemeReferenceNumber)
   }
 
   "UpdateMode" must {
     def updateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next page"),
-        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
+        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressListId(index))(someTolerantAddress, AddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressId(index))(someAddress, AddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
       )
 
     behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes(UpdateMode), OptionalSchemeReferenceNumber(srn))
@@ -91,18 +91,18 @@ class EstablishersIndividualAddressNavigatorSpec extends SpecBase with Matchers 
     def checkUpdateModeRoutes(mode: Mode): TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next page"),
-        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(AddressListId(index))(someTolerantAddress, IndividualConfirmPreviousAddressController.onPageLoad(index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(AddressId(index))(someAddress, IndividualConfirmPreviousAddressController.onPageLoad(index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))),
-        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))),
-        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingEstablisherUserAnswers)),
-        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn), Some(existingEstablisherUserAnswers))
+        row(PostCodeLookupId(index))(Seq(someTolerantAddress), AddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(AddressListId(index))(someTolerantAddress, IndividualConfirmPreviousAddressController.onPageLoad(Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(AddressId(index))(someAddress, IndividualConfirmPreviousAddressController.onPageLoad(Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressYearsId(index))(AddressYears.UnderAYear, PreviousAddressPostCodeLookupController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(AddressYearsId(index))(AddressYears.OverAYear, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PreviousPostCodeLookupId(index))(Seq(someTolerantAddress), PreviousAddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PreviousAddressListId(index))(someTolerantAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(PreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)), Some(existingEstablisherUserAnswers)),
+        row(PreviousAddressId(index))(someAddress, CheckYourAnswersAddressController.onPageLoad(journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(PreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)), Some(existingEstablisherUserAnswers))
       )
 
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes(CheckUpdateMode), OptionalSchemeReferenceNumber(srn))

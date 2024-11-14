@@ -57,7 +57,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, EmptyOptionalSchemeReferenceNumber, firstIndex, EmptyOptionalSchemeReferenceNumber,
+  def viewAsString(form: Form[_] = form): String = view(form, EmptyOptionalSchemeReferenceNumber, firstIndex, None,
     postCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber))(fakeRequest, messages).toString
 
   "EstablisherKind Controller" must {

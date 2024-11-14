@@ -20,7 +20,7 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
 import models.requests.DataRequest
-import models.{CompanyDetails, Link, NormalMode, UpdateMode}
+import models.{CompanyDetails, Index, Link, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -75,7 +75,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(index, companyDetails).
+          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(Index(0), companyDetails).
             set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
@@ -83,7 +83,7 @@ class CompanyPreviousAddressIdSpec extends SpecBase {
         }
 
         "return no answer row if there is no previous address and `is this previous address` is yes" in {
-          val answersWithYesIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(index, companyDetails).
+          val answersWithYesIsThisPreviousAddress = UserAnswers().trusteesCompanyDetails(Index(0), companyDetails).
             set(CompanyConfirmPreviousAddressId(index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, Some(PsaId("A0000000")))
 

@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -51,7 +51,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
     postCall = postCall,
     title = Message("messages__whyNoUTR", Message("messages__theIndividual").resolve),
     heading = Message("messages__whyNoUTR", "Test Name"),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val view = injector.instanceOf[reason]

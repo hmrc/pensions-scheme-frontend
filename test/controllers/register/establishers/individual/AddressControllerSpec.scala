@@ -24,7 +24,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherNameId}
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

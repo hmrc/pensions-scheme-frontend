@@ -87,7 +87,7 @@ class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase 
       mockFeatureToggleService
     )
 
-  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, None)
+  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, EmptyOptionalSchemeReferenceNumber)
 
   private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
 

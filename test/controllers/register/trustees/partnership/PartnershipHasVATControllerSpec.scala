@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import controllers.register.trustees.partnership.routes.PartnershipHasVATController
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.partnership.PartnershipHasVATId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -47,7 +47,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -86,7 +86,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[PartnershipHasVATController]
 
-      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "true")))
 
       status(result) mustBe SEE_OTHER
 
@@ -102,7 +102,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest.withFormUrlEncodedBody(("value", "invalid value")))
 
       status(result) mustBe BAD_REQUEST
 
@@ -124,7 +124,7 @@ object PartnershipHasVATControllerSpec extends ControllerSpecBase with MockitoSu
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   private val viewModel = CommonFormWithHintViewModel(
-    postCall = PartnershipHasVATController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
+    postCall = PartnershipHasVATController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__hasVAT", partnershipName),
     hint = None,

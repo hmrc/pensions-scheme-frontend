@@ -31,7 +31,7 @@ import views.html.hasReferenceNumber
 
 class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
   private val schemeName = None
-  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad ( NormalMode, index, EmptyOptionalSchemeReferenceNumber)
+  def onwardRoute: Call = controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad ( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)
 
   val formProvider = new HasPAYEFormProvider()
   val form = formProvider("messages__companyPayeRef__error__required","test company name")

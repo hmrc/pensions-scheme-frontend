@@ -48,7 +48,7 @@ class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
           rowNoValue(ContinueRegistrationId)(beforeYouStart, ua = Some(beforeYouStartInProgress)),
           rowNoValue(ContinueRegistrationId)(beforeYouStart)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
@@ -57,7 +57,7 @@ class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
           ("Id", "UserAnswers", "Next Page"),
           rowNoValue(VariationDeclarationId)(variationSucess)
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, Some(SchemeReferenceNumber("srn")))
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))))
     }
   }
 }

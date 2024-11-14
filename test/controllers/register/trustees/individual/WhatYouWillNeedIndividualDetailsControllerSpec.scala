@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, Mode, NormalMode, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, UpdateMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
@@ -46,7 +46,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
 
   def viewAsString(mode: Mode): String = {
     val href = controllers.register.trustees.individual.routes.TrusteeDOBController.onPageLoad(mode, index = Index(0), EmptyOptionalSchemeReferenceNumber)
-    view(None, href, None, personName)(fakeRequest, messages).toString
+    view(None, href, EmptyOptionalSchemeReferenceNumber, personName)(fakeRequest, messages).toString
   }
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {

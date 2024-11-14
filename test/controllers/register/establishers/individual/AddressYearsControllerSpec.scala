@@ -22,7 +22,7 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
 import models.person.PersonName
-import models.{AddressYears, Index, NormalMode, UpdateMode}
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

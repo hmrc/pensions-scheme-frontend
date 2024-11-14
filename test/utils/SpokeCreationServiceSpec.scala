@@ -937,7 +937,7 @@ class SpokeCreationServiceSpec
 object SpokeCreationServiceSpec extends OptionValues with DataCompletionHelper {
 
   private val personName = PersonName("First", "Last")
-  private val srn = Some(SchemeReferenceNumber("S123"))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val address = Address("line1", "line2", None, None, None, "GB")

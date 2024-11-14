@@ -20,7 +20,8 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.{BankAccountDetailsId, Identifier, UKBankAccountId}
 import models.register.SortCode
-import models.{BankAccountDetails, CheckMode, NormalMode}
+import models.{BankAccountDetails, CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber}
+import navigators.establishers.partnership.EstablisherPartnershipAddressNavigatorSpec.srn
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -42,7 +43,7 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(UKBankAccountId)(false, checkYourAnswersPage),
           row(BankAccountDetailsId)(bankDetails, checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -53,7 +54,7 @@ class AboutBankDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(UKBankAccountId)(false, checkYourAnswersPage),
           row(BankAccountDetailsId)(bankDetails, checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 

@@ -24,7 +24,7 @@ import controllers.behaviours.AddressControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

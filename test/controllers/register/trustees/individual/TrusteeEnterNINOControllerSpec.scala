@@ -39,9 +39,9 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   "TrusteeNino Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
-      val result = controller().onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+      val result = controller().onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, UpdateMode, index, OptionalSchemeReferenceNumber(srn))
+      contentAsString(result) mustBe viewAsString(form, UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
@@ -52,14 +52,14 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
         .asOpt
         .value
         .dataRetrievalAction
-      val result = controller(getRelevantData).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, index, OptionalSchemeReferenceNumber(srn))
+      val result = controller(getRelevantData).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
+      contentAsString(result) mustBe viewAsString(form.fill(ReferenceValue("CS700100A")), UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))
     }
   }
 
   "redirect to the next page when valid data is submitted" in {
     val postRequest = fakeRequest.withFormUrlEncodedBody("nino" -> "CS700100A")
-    val result      = controller().onSubmit(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(postRequest)
+    val result      = controller().onSubmit(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(postRequest)
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(onwardRoute.url)
   }
@@ -67,27 +67,27 @@ class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   "return a Bad Request and errors when invalid data is submitted" in {
     val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "invalid value")
     val boundForm   = form.bind(Map("value" -> "invalid value"))
-    val result      = controller().onSubmit(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(postRequest)
+    val result      = controller().onSubmit(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(postRequest)
     status(result) mustBe BAD_REQUEST
-    contentAsString(result) mustBe viewAsString(boundForm, UpdateMode, index, OptionalSchemeReferenceNumber(srn))
+    contentAsString(result) mustBe viewAsString(boundForm, UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))
   }
 
   "redirect to Session Expired for a GET if no existing data is found" in {
-    val result = controller(dontGetAnyData).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+    val result = controller(dontGetAnyData).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 
   "redirect to Session Expired for a POST if no existing data is found" in {
     val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "CS700100A"))
-    val result      = controller(dontGetAnyData).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+    val result      = controller(dontGetAnyData).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
 
   "redirect to Session Expired page when the index is not valid" in {
     val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
-    val result          = controller(getRelevantData).onPageLoad( NormalMode, index(2), None)(fakeRequest)
+    val result          = controller(getRelevantData).onPageLoad( NormalMode, Index(2), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
   }
@@ -136,7 +136,7 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, trusteeName: String =trusteeFullName): String = {
 
     val vm = NinoViewModel(
-      postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
+      postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
       title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
       heading = Message("messages__enterNINO", trusteeName),
       hint = "messages__common__nino_hint",

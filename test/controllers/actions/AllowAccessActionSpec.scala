@@ -135,7 +135,7 @@ class AllowAccessActionSpec
   private val generateTestHarnessForAllowAccessNoSuspendedCheck: (OptionalSchemeReferenceNumber, PensionsSchemeConnector) => TestHarness =
     new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  private val srn = Some(SchemeReferenceNumber("S123"))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   private val suspendedUserAnswers = UserAnswers(
     Json.obj(

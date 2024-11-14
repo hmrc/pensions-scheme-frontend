@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
-import models.{Index, NormalMode, PartnershipDetails, ReferenceValue}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails, ReferenceValue}
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -39,7 +39,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
   "PartnershipEnterUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -48,7 +48,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
     "redirect to the next page when valid data is submitted and clean up takes place" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", utrValue))
 
-      val result = controller(getDataWithNoUtrReason).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(getDataWithNoUtrReason).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -60,7 +60,7 @@ class PartnershipEnterUTRControllerSpec extends ControllerSpecBase with Matchers
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -81,7 +81,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.PartnershipEnterUTRController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
+    routes.PartnershipEnterUTRController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterUTR", "test partnership name"),
     hint = Message("messages_utr__hint"),

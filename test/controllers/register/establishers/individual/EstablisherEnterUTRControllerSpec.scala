@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, SchemeReferenceNumber}
+import models.{CheckUpdateMode, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -68,7 +68,7 @@ object EstablisherEnterUTRControllerSpec extends EstablisherEnterUTRControllerSp
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

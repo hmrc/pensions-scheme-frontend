@@ -26,7 +26,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteePreviousAddressId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode, person}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, person}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form

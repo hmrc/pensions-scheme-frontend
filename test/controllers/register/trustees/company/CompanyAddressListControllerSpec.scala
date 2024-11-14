@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.CSRFTokenHelper.addCSRFToken
@@ -137,7 +137,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase {
         val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber).url)
       }
 
     }

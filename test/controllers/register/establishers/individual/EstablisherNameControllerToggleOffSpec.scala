@@ -46,7 +46,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
   import EstablisherNameControllerToggleOffSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
-    routes.EstablisherNameController.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber),
+    routes.EstablisherNameController.onSubmit(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__individualName__title"),
     heading = Message("messages__individualName__heading"))
 
@@ -72,7 +72,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -86,7 +86,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -115,7 +115,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
       app.stop()
@@ -128,7 +128,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
 
-      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -140,7 +140,7 @@ class EstablisherNameControllerToggleOffSpec extends ControllerSpecBase with Bef
 
       val controller = app.injector.instanceOf[EstablisherNameController]
 
-      val result = controller.onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
 

@@ -47,8 +47,8 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val email = "test@test.com"
   private val phone = "1234"
 
-  private val fullAnswers = UserAnswers().establishersIndividualName(index, establisherName).
-    establishersIndividualEmail(index, email = email).establishersIndividualPhone(index, phone = "1234")
+  private val fullAnswers = UserAnswers().establishersIndividualName(Index(0), establisherName).
+    establishersIndividualEmail(Index(0), email = email).establishersIndividualPhone(Index(0), phone = "1234")
 
   private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
@@ -58,7 +58,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       messages("messages__enterEmail", establisherName.fullName),
       Seq(email),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url,
+      Some(Link("site.change", EstablisherEmailController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url,
         Some(messages("messages__visuallyhidden__dynamic_email_address", establisherName.fullName))))
     )
 
@@ -66,7 +66,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       messages("messages__enterPhoneNumber", establisherName.fullName),
       Seq(phone),
       answerIsMessageKey = false,
-      Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), index, OptionalSchemeReferenceNumber(srn)).url,
+      Some(Link("site.change", EstablisherPhoneController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url,
         Some(messages("messages__visuallyhidden__dynamic_phone_number", establisherName.fullName))))
     )
 
@@ -113,7 +113,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
-              val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+              val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
@@ -133,7 +133,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,

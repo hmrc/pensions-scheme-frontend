@@ -26,7 +26,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
 import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues

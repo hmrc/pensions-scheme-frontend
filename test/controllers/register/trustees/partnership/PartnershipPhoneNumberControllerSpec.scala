@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import forms.PhoneFormProvider
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
@@ -58,7 +58,7 @@ class PartnershipPhoneNumberControllerSpec extends ControllerSpecBase with Mocki
         Message("messages__enterPhoneNumber", Message("messages__thePartnership").resolve),
         Message("messages__enterPhoneNumber", trusteePartnershipDetails.name),
         Some(Message("messages__contact_phone__hint", trusteePartnershipDetails.name, schemeName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString

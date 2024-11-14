@@ -99,7 +99,7 @@ class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends Co
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
 
@@ -123,7 +123,7 @@ class CheckYourAnswersIndividualContactDetailsControllerToggleOffSpec extends Co
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), postUrl = submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,

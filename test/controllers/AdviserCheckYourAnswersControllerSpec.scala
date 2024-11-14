@@ -20,7 +20,7 @@ import connectors._
 import controllers.actions._
 import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
-import models.{CheckMode, Link, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Link, NormalMode}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
@@ -28,7 +28,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -119,7 +118,7 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
     schemeName = None,
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

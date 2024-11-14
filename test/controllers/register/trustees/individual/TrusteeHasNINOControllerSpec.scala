@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -47,7 +47,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -63,7 +63,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val controller = app.injector.instanceOf[TrusteeHasNINOController]
 
-      val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -88,7 +88,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -106,7 +106,7 @@ class TrusteeHasNINOControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -126,7 +126,7 @@ object TrusteeHasNINOControllerSpec extends ControllerSpecBase with MockitoSugar
   private val form = formProvider("error", "test trustee name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn))
+  private val postCall = controllers.register.trustees.individual.routes.TrusteeHasNINOController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__theIndividual")),

@@ -40,7 +40,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
-        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(UpdateMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }

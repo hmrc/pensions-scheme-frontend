@@ -22,7 +22,7 @@ import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.FeatureToggleName.SchemeRegistration
-import models.{FeatureToggle, Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode, PartnershipDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -67,7 +67,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
     firstIndex,
     None,
     submitUrl,
-    None
+    EmptyOptionalSchemeReferenceNumber
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

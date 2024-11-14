@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.EmailFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -66,7 +66,7 @@ class TrusteeEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString

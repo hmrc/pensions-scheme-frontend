@@ -42,8 +42,8 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def navigationForNewTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewTrusteePartnership, EmptyOptionalSchemeReferenceNumber)
@@ -53,8 +53,8 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
     behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)
@@ -64,8 +64,8 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def navigationForUpdateModeTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)))
       )
 
     behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeTrusteePartnership, OptionalSchemeReferenceNumber(srn))
@@ -75,9 +75,9 @@ class TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Match
     def navigationForCheckUpdateModeTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(PartnershipEmailId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
         row(PartnershipEmailId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
-        row(PartnershipPhoneId(index))(someStringValue, cyaPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
+        row(PartnershipPhoneId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newTrusteeUserAnswers)),
         row(PartnershipPhoneId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn)))
       )
 
@@ -92,7 +92,7 @@ object TrusteesPartnershipContactDetailsNavigatorSpec extends SpecBase with Matc
   private val srn                   = Some(SchemeReferenceNumber("srn"))
 
   private def cyaPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
+    CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
 
 }
 

@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind

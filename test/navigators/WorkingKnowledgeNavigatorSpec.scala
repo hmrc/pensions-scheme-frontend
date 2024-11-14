@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{CheckMode, Mode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -46,7 +46,7 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
           rowNoValue(AdviserAddressId)(checkYourAnswersPage),
           rowNoValue(AdviserCheckYourAnswersId)(taskList)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -60,7 +60,7 @@ class WorkingKnowledgeNavigatorSpec extends SpecBase with NavigatorBehaviour {
           rowNoValue(AdviserAddressId)(checkYourAnswersPage),
           rowNoValue(AdviserPhoneId)(adviserCYA)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 }

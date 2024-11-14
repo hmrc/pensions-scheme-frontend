@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
@@ -43,7 +43,7 @@ class WhatYouWillNeedCompanyAddressControllerSpec extends ControllerSpecBase wit
 
   lazy val href: Call = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode, index = Index(0), EmptyOptionalSchemeReferenceNumber)
 
-  def viewAsString(): String = view(None, href, None, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, EmptyOptionalSchemeReferenceNumber, Message("messages__addressFor", "test company name"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyAddressController" when {
 

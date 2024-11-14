@@ -23,7 +23,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{FeatureToggle, Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

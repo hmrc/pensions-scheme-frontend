@@ -20,12 +20,11 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider
 import identifiers.AdviserNameId
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.adviserName
 
@@ -45,7 +44,7 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None)(fakeRequest, messages).toString
 
   "AdviserName Controller" must {
 

@@ -19,7 +19,7 @@ package identifiers.register.establishers.partnership
 import base.SpecBase
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
+import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
@@ -64,7 +64,7 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
   }
 
   "cya" when {
-    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(index, flag = true), Some(PsaId("A0000000")))
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(Index(0), flag = true), Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {

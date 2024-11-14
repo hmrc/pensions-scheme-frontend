@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

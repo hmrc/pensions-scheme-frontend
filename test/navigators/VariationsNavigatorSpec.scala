@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
-import models.{SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -36,8 +36,8 @@ class VariationsNavigatorSpec
   private val srn      = Some(srnValue)
 
   private def variationsTaskList = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
-  private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(srn)
-  private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(srn)
+  private def stillChanges       = controllers.register.routes.StillNeedDetailsController.onPageLoad(OptionalSchemeReferenceNumber(srn))
+  private def declaration        = controllers.routes.VariationDeclarationController.onPageLoad(OptionalSchemeReferenceNumber(srn))
 
   private val complete = UserAnswers()
     .set(BenefitsSecuredByInsuranceId)(false)

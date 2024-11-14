@@ -113,7 +113,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit( NormalMode, index(4), establisherKind, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(data).onSubmit( NormalMode, Index(4), establisherKind, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(EstablisherNameId(4), personName.copy(isDeleted = true))
@@ -130,7 +130,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher company on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit( NormalMode, index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(data).onSubmit( NormalMode, Index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
@@ -139,7 +139,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher company on a POST if selected NO" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit( NormalMode, index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequestForCancel)
+      val result = controller(data).onSubmit( NormalMode, Index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(CompanyDetailsId(Index(1)))
@@ -147,7 +147,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
     "delete the establisher partnership on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit( NormalMode, index(2), EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(data).onSubmit( NormalMode, Index(2), EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
@@ -156,7 +156,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher partnership on a POST if selected No" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit( NormalMode, index(2), EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber)(postRequestForCancel)
+      val result = controller(data).onSubmit( NormalMode, Index(2), EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber)(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnershipDetailsId(Index(2)))
@@ -177,7 +177,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(data).onSubmit( NormalMode, index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(data).onSubmit( NormalMode, Index(1), EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(
         hintText = Some(messages("messages__confirmDeleteEstablisher__companyHint")),

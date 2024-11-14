@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import models.person.PersonName
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -202,7 +202,7 @@ class PartnerNameControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
-      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
+      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber), eqTo(validData))(any(), any(), any())
     }
   }
 }

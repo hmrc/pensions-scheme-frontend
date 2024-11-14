@@ -60,7 +60,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(),
@@ -84,7 +84,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
@@ -113,19 +113,19 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private def establisherAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.AddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.AddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def establisherAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.AddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.AddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def establisherPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.PreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.PreviousAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = UserAnswers().
-    establishersIndividualName(index, PersonName("First", "Last")).
-    establishersIndividualAddress(index, address).
-    establishersIndividualAddressYears(index, addressYearsUnderAYear).
-    establishersIndividualPreviousAddress(index, previousAddress)
+    establishersIndividualName(Index(0), PersonName("First", "Last")).
+    establishersIndividualAddress(Index(0), address).
+    establishersIndividualAddressYears(Index(0), addressYearsUnderAYear).
+    establishersIndividualPreviousAddress(Index(0), previousAddress)
 
   def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)

@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -32,10 +32,10 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
   private val trusteePartnership = PartnershipDetails("partnership Name")
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
 
-  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)
+  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)
 
   def viewAsString(): String = view(
-    None, onwardRoute, trusteePartnership.name, None)(fakeRequest, messages).toString
+    None, onwardRoute, trusteePartnership.name, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipDetailsController" when {
 
@@ -44,10 +44,10 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(Index(0), trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

@@ -161,8 +161,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
 
       val data =
         UserAnswers()
-          .establishersCompanyPreviousAddress(index, existingAddress)
-          .establishersIndividualPreviousAddressList(index, selectedAddress)
+          .establishersCompanyPreviousAddress(Index(0), existingAddress)
+          .establishersIndividualPreviousAddressList(Index(0), selectedAddress)
           .dataRetrievalAction
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(

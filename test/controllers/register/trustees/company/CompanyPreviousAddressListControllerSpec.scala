@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.inject.bind
 import play.api.libs.json._
 import play.api.test.CSRFTokenHelper.addCSRFToken

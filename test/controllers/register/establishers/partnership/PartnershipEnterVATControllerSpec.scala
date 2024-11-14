@@ -66,7 +66,7 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   private val partnershipName = "test partnership name"
   val form = new EnterVATFormProvider()(partnershipName)
   val firstIndex = Index(0)
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

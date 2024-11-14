@@ -75,7 +75,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
   val generateTestHarnessForAllowAccessSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))

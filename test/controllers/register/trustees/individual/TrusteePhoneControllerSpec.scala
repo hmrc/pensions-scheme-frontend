@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -64,7 +64,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
         Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
         Message("messages__enterPhoneNumber", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString

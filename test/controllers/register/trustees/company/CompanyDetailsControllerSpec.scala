@@ -22,7 +22,7 @@ import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.FeatureToggleName.SchemeRegistration
-import models.{CompanyDetails, FeatureToggle, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -70,7 +70,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)
 
   def viewAsString(form: Form[_] = form): String =
-    view(form, NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber, submitUrl, None)(fakeRequest, messages).toString
+    view(form, NormalMode, firstIndex, None, submitUrl, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     TrusteesId.toString -> Json.arr(

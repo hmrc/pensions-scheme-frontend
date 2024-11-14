@@ -21,7 +21,8 @@ import controllers.actions.FakeDataRetrievalAction
 import identifiers.Identifier
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
-import models.{Mode, NormalMode, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, UpdateMode}
+import org.apache.pekko.http.scaladsl.model.Uri.Empty
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
@@ -50,7 +51,7 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
 
           rowNoValue(ConfirmDeleteEstablisherId)(addEstablisher(NormalMode))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
@@ -64,9 +65,9 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
           row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(UpdateMode)),
           row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(UpdateMode)),
 
-          rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(None))
+          rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(EmptyOptionalSchemeReferenceNumber))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 }
@@ -77,15 +78,15 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
-  private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, None, 0)
+  private def companyDetails(mode: Mode) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def individualName(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, 0, None)
+  private def individualName(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNameController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def partnershipDetails(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, None)
+  private def partnershipDetails(mode: Mode) = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def establisherKind(mode: Mode) = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, 0, None)
+  private def establisherKind(mode: Mode) = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, None)
+  private def addEstablisher(mode: Mode) = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 
-  private def taskList(mode: Mode) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, None)
+  private def taskList(mode: Mode) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 }

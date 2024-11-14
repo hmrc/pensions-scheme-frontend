@@ -48,7 +48,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails).
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(Index(0), partnershipDetails).
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
@@ -111,7 +111,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+              val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
@@ -130,7 +130,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,

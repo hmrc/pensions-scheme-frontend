@@ -69,7 +69,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceInsurance.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceInsurance.save(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), FakeIdentifier, "foobar") map { result =>
         result mustEqual json
       }
     }
@@ -79,7 +79,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceEstAndTrustees.save(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), FakeIdentifier, "foobar") map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -91,7 +91,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
 
 
       recoverToSucceededIf[testServiceEstAndTrustees.MissingSrnNumber.type] {
-        testServiceEstAndTrustees.save(UpdateMode, None, FakeIdentifier, "foobar")
+        testServiceEstAndTrustees.save(UpdateMode, EmptyOptionalSchemeReferenceNumber, FakeIdentifier, "foobar")
       }
 
     }
@@ -118,7 +118,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.save(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.save(UpdateMode, Some(srn), FakeIdentifier, "foobar") map { result =>
+      testServiceNotAnnotated.save(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), FakeIdentifier, "foobar") map { result =>
         result mustEqual json
       }
     }
@@ -145,7 +145,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), json) map { result =>
         result mustEqual json
       }
     }
@@ -155,7 +155,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceNotAnnotated.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceNotAnnotated.upsert(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -185,7 +185,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.upsert(any(), any())(any(), any()))
         .thenReturn(Future(json))
 
-      testServiceInsurance.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceInsurance.upsert(UpdateMode, OptionalSchemeReferenceNumber(OptionalSchemeReferenceNumber(Some(srn))), json) map { result =>
         result mustEqual json
       }
     }
@@ -195,7 +195,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.upsert(UpdateMode, Some(srn), json) map { result =>
+      testServiceEstAndTrustees.upsert(UpdateMode, OptionalSchemeReferenceNumber(OptionalSchemeReferenceNumber(Some(srn))), json) map { result =>
         result mustEqual Json.obj()
       }
     }
@@ -228,7 +228,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(updateConnector.remove(any(), any())(any(), any()))
         .thenReturn(Future(updatedJson))
 
-      testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), FakeIdentifier) map {
         _ mustEqual updatedJson
       }
     }
@@ -237,7 +237,7 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
       when(lockConnector.lock(any(), any())(any(), any()))
         .thenReturn(Future(SchemeLock))
 
-      testServiceEstAndTrustees.remove(UpdateMode, Some(srn), FakeIdentifier) map {
+      testServiceEstAndTrustees.remove(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)), FakeIdentifier) map {
         _ mustEqual Json.obj()
       }
     }

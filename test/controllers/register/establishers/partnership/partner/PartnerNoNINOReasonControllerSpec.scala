@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNoNINOReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}

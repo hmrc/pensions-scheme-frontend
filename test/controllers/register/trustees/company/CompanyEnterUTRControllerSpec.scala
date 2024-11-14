@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, SchemeReferenceNumber}
+import models.{CheckUpdateMode, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -84,7 +84,7 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

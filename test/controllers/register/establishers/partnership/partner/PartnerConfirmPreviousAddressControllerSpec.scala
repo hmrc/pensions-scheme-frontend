@@ -64,7 +64,7 @@ class PartnerConfirmPreviousAddressControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndex = 0
   val partnerIndex = 0
-  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("srn"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))
   private val view = injector.instanceOf[confirmPreviousAddress]
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =

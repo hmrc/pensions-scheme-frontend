@@ -48,7 +48,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
-        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(UpdateMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -141,7 +141,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     schemeName = Some("Test Scheme"),
     returnOverview = returnOverview,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 =  Message("checkYourAnswers.hs.title")

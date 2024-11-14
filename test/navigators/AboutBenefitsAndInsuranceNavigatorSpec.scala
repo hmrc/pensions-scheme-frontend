@@ -55,7 +55,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           row(InsurerSelectAddressId)(someTolerantAddress, checkYouAnswers()),
           row(InsurerConfirmAddressId)(someAddress, checkYouAnswers())
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation ,EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -73,7 +73,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           row(InsurancePolicyNumberId)(someStringValue, checkYouAnswers()),
           row(InsurerConfirmAddressId)(someAddress, checkYouAnswers())
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation ,EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
@@ -82,7 +82,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           ("Id", "UserAnswers", "Next Page"),
           row(InsurancePolicyNumberId)(someStringValue, insurerPostcode(CheckUpdateMode))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation ,EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckUpdateMode" must {
@@ -97,7 +97,7 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
           row(InsurerSelectAddressId)(someTolerantAddress, anyMoreChanges),
           row(InsurerConfirmAddressId)(someAddress, anyMoreChanges)
         )
-      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation ,EmptyOptionalSchemeReferenceNumber)
     }
 
   }
@@ -110,12 +110,12 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
 
   private def occupationalPension: Call                               = OccupationalPensionSchemeController.onPageLoad(NormalMode)
   private def typesofBenefits: Call                                   = TypeOfBenefitsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
-  private def moneyPurchaseBenefits(mode: Mode = NormalMode): Call    = MoneyPurchaseBenefitsController.onPageLoad(mode, None)
+  private def moneyPurchaseBenefits(mode: Mode = NormalMode): Call    = MoneyPurchaseBenefitsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
   private def benefitsSecured: Call                                   = BenefitsSecuredByInsuranceController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
-  private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(mode, None)
-  private def policyNumber(mode: Mode = NormalMode): Call             = InsurancePolicyNumberController.onPageLoad(mode, None)
-  private def insurerPostcode(mode: Mode = NormalMode): Call          = InsurerEnterPostcodeController.onPageLoad(mode, None)
-  private def insurerAddressList(mode: Mode = NormalMode): Call       = InsurerSelectAddressController.onPageLoad(mode, None)
-  private def checkYouAnswers(mode: Mode = NormalMode): Call          = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode, None)
-  private def anyMoreChanges: Call                                    = controllers.routes.AnyMoreChangesController.onPageLoad(None)
+  private def insuranceCompanyName(mode: Mode): Call                  = InsuranceCompanyNameController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def policyNumber(mode: Mode = NormalMode): Call             = InsurancePolicyNumberController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def insurerPostcode(mode: Mode = NormalMode): Call          = InsurerEnterPostcodeController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def insurerAddressList(mode: Mode = NormalMode): Call       = InsurerSelectAddressController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def checkYouAnswers(mode: Mode = NormalMode): Call          = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def anyMoreChanges: Call                                    = controllers.routes.AnyMoreChangesController.onPageLoad(EmptyOptionalSchemeReferenceNumber)
 }

@@ -101,7 +101,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
 
@@ -125,7 +125,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), postUrl = submitUrl(UpdateMode), hideButton = true,

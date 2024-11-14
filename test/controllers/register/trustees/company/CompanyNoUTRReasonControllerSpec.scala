@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.company.CompanyNoUTRReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -36,7 +36,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
   "NoCompanyEnterUTRControllerSpec" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -45,7 +45,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "valid reason"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -56,7 +56,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -79,7 +79,7 @@ object CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
   val form = formProvider("messages__reason__error_utrRequired", companyName)
 
   val viewmodel = ReasonViewModel(
-    postCall = routes.CompanyNoUTRReasonController.onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber),
+    postCall = routes.CompanyNoUTRReasonController.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoUTR", companyName)
   )

@@ -65,7 +65,7 @@ object CompanyEnterVATControllerSpec extends CompanyEnterVATControllerSpec {
 
   val form = new EnterVATFormProvider()("test company")
   val firstIndex = Index(0)
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

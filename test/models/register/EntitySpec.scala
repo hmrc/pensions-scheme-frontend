@@ -28,7 +28,7 @@ import identifiers.register.trustees.partnership.{PartnershipDetailsId => Truste
 import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
-import models.{NormalMode, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, UpdateMode}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -50,7 +50,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct edit link when the director is incomplete" in {
-      val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(NormalMode, 0, 1, None).url
+      val expectedEditLink = controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(NormalMode, 0, 1, EmptyOptionalSchemeReferenceNumber).url
       directorEntity.editLink(NormalMode, EmptyOptionalSchemeReferenceNumber)  mustBe Some(expectedEditLink)
     }
 
@@ -96,7 +96,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Partnership, None).url
+      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber).url
       partnershipEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
@@ -121,7 +121,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Company, None).url
+      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber).url
       companyEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
@@ -146,7 +146,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Indivdual, None).url
+      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Indivdual, EmptyOptionalSchemeReferenceNumber).url
       individualEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
@@ -190,17 +190,17 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Partnership, None).url
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Partnership, EmptyOptionalSchemeReferenceNumber).url
       partnershipEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
 
     "dont have delete link with update mode" in {
-      partnershipEntity.deleteLink(UpdateMode, None) mustBe None
+      partnershipEntity.deleteLink(UpdateMode, EmptyOptionalSchemeReferenceNumber) mustBe None
     }
 
     "have delete link with update mode" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Partnership, None).url
-      partnershipEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, None) mustBe Some(expectedDeleteLink)
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Partnership, EmptyOptionalSchemeReferenceNumber).url
+      partnershipEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -227,17 +227,17 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
 
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, None).url
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Company, EmptyOptionalSchemeReferenceNumber).url
       companyEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
 
     "dont have delete link with update mode" in {
-      companyEntity.deleteLink(UpdateMode, None) mustBe None
+      companyEntity.deleteLink(UpdateMode, EmptyOptionalSchemeReferenceNumber) mustBe None
     }
 
     "have delete link with update mode" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Company, None).url
-      companyEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, None) mustBe Some(expectedDeleteLink)
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(UpdateMode, 1, TrusteeKind.Company, EmptyOptionalSchemeReferenceNumber).url
+      companyEntity.copy(noOfRecords = 2).deleteLink(UpdateMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }
 
@@ -263,7 +263,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, None).url
+      val expectedDeleteLink = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, 1, TrusteeKind.Individual, EmptyOptionalSchemeReferenceNumber).url
       individualEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }

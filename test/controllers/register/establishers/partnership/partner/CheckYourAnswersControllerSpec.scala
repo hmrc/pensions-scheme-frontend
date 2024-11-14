@@ -81,7 +81,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersYes.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, EmptyOptionalSchemeReferenceNumber), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsYes(NormalMode, EmptyOptionalSchemeReferenceNumber), EmptyOptionalSchemeReferenceNumber,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -91,7 +91,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(partnerAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, EmptyOptionalSchemeReferenceNumber), None,
+        contentAsString(result) mustBe viewAsString(NormalMode, answerRowsNo(NormalMode, EmptyOptionalSchemeReferenceNumber), EmptyOptionalSchemeReferenceNumber,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -163,12 +163,12 @@ object CheckYourAnswersControllerSpec extends SpecBase {
 
   private def answerRowWithAddNino: AnswerRow = AnswerRow(Message("messages__enterNINO", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
-      routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some(SchemeReferenceNumber("srn"))).url,
+      routes.PartnerEnterNINOController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))).url,
       Some(Message("messages__visuallyhidden__dynamic_national_insurance_number", personName.fullName)))))
 
   private def answerRowWithAddUtr: AnswerRow = AnswerRow(Message("messages__enterUTR", personName.fullName), Seq("site.not_entered"), answerIsMessageKey = true,
     Some(Link("site.add",
-      routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, Some(SchemeReferenceNumber("srn"))).url,
+      routes.PartnerEnterUTRController.onPageLoad(Mode.checkMode(UpdateMode), firstIndex, firstIndex, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))).url,
       Some(Message("messages__visuallyhidden__dynamic_unique_taxpayer_reference", personName.fullName)))))
 
   private def answerRowsYes(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(

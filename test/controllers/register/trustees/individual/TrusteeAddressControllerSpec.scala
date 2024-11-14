@@ -25,7 +25,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeNameId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.i18n.Messages
 import play.api.inject.bind

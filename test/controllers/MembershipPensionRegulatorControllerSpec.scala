@@ -18,12 +18,11 @@ package controllers
 
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.membershipPensionRegulator
 
@@ -45,7 +44,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
       view
     )
 
-  def viewAsString(): String = view(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
+  def viewAsString(): String = view(NormalMode, None)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 

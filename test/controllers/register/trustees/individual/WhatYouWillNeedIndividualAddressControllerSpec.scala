@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import viewmodels.Message
@@ -42,7 +42,7 @@ class WhatYouWillNeedIndividualAddressControllerSpec extends ControllerSpecBase 
   private def href: Call = controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onSubmit(NormalMode, index = 0, EmptyOptionalSchemeReferenceNumber)
 
   private def viewAsString(): String =
-    view(None, href, None, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
+    view(None, href, EmptyOptionalSchemeReferenceNumber, "Test Name", Message("messages__theTrustee"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualAddressController" when {
 

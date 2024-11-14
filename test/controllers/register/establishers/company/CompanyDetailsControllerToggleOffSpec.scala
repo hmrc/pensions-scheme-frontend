@@ -55,7 +55,7 @@ class CompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with Befo
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, navigator,
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber,
+  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, EmptyOptionalSchemeReferenceNumber, 0), EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   private val validData = Json.obj(

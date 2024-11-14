@@ -51,7 +51,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
     )
 
   def viewAsString(mode: Mode): String = {
-    val href = EstablisherDOBController.onPageLoad(mode, 0, None)
+    val href = EstablisherDOBController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
     view(None, href, EmptyOptionalSchemeReferenceNumber, establisherName)(fakeRequest, messages).toString
   }
 

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import models.{CheckUpdateMode, Index, Mode, SchemeReferenceNumber}
+import models.{CheckUpdateMode, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -95,7 +95,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex: Index = Index(0)
-  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(

@@ -49,7 +49,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
     "on Page load in Normal Mode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressNormal,
@@ -59,7 +59,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
+          .onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
       )
 
     }
@@ -67,7 +67,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
     "on Page load in UpdateMode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressUpdate, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
@@ -77,7 +77,7 @@ class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBas
 
       "return OK and the correct view with partial answers" in {
         val request = FakeDataRequest(partialAnswers)
-        val result  = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result  = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
@@ -113,15 +113,15 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
     routes.PartnershipHasBeenTradingController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers
-    .establisherPartnershipDetails(index, PartnershipDetails(partnershipName))
-    .establisherPartnershipAddress(index, address)
-    .establisherPartnershipAddressYears(index, addressYearsUnderAYear)
-    .establisherPartnershipTradingTime(index, hasBeenTrading = true)
-    .establishersPartnershipPreviousAddress(index, previousAddress)
+    .establisherPartnershipDetails(Index(0), PartnershipDetails(partnershipName))
+    .establisherPartnershipAddress(Index(0), address)
+    .establisherPartnershipAddressYears(Index(0), addressYearsUnderAYear)
+    .establisherPartnershipTradingTime(Index(0), hasBeenTrading = true)
+    .establishersPartnershipPreviousAddress(Index(0), previousAddress)
 
   private val partialAnswers = emptyAnswers
-    .establisherPartnershipDetails(index, PartnershipDetails(partnershipName))
-    .establisherPartnershipAddress(index, address)
+    .establisherPartnershipDetails(Index(0), PartnershipDetails(partnershipName))
+    .establisherPartnershipAddress(Index(0), address)
     .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =

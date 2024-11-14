@@ -22,7 +22,7 @@ import forms.HasBeenTradingFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership._
 import models.address.{Address, TolerantAddress}
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +41,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   private val srn = None
 
   val viewModel = CommonFormWithHintViewModel(
-    controllers.register.establishers.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, index, OptionalSchemeReferenceNumber(srn)),
+    controllers.register.establishers.partnership.routes.PartnershipHasBeenTradingController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__partnership_trading_time__title"),
     heading = Message("messages__hasBeenTrading__h1", "test partnership name"),
     hint = None
@@ -86,7 +86,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
   "PartnershipHasBeenTradingController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -95,7 +95,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -106,7 +106,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -115,7 +115,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
     "clean up previous address, if user changes answer from yes to no" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
-      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = true)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 
@@ -127,7 +127,7 @@ class PartnershipHasBeenTradingControllerSpec extends ControllerSpecBase {
 
     "not clean up for previous address, if user changes answer from no to yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller(getEstablisherPartnershipDataWithPreviousAddress(hasBeenTrading = false)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

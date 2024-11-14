@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures

@@ -22,7 +22,7 @@ import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
 import models.FeatureToggleName.SchemeRegistration
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, FeatureToggle, NormalMode}
+import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, FeatureToggle, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -126,7 +126,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber).url)
       }
     }
 
@@ -140,7 +140,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+          Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber).url)
       }
     }
   }
@@ -193,7 +193,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber).url)
 
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
@@ -245,7 +245,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
         val result = controller.onSubmit(index)(request)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, None).url)
+        redirectLocation(result) mustBe Some(controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber).url)
         verify(mockDataPrefillService, never).copySelectedDirectorsToTrustees(any(), any())
         (jsonCaptor.getValue \ "test").asOpt[String] mustBe None
       }

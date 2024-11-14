@@ -57,35 +57,35 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
         Table(
           ("Id", "UserAnswers", "Next Page"),
           row(PartnershipDetailsId(index))(partnershipDetails, establisherTasklist(index)),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage( NormalMode, index, EmptyOptionalSchemeReferenceNumber))
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber))
         )
 
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForEstablisherPartnership, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForEstablisherPartnership, EmptyOptionalSchemeReferenceNumber)
     }
 
     "CheckMode" must {
       val navigationForCheckModeEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Expected next page"),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckMode, index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index, EmptyOptionalSchemeReferenceNumber))
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckMode, Index(0), EmptyOptionalSchemeReferenceNumber))
         )
 
       behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigationForCheckModeEstablisherPartnership, EmptyOptionalSchemeReferenceNumber)
@@ -96,16 +96,16 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
         Table(
           ("Id", "UserAnswers", "Expected next page"),
           row(PartnershipDetailsId(index))(partnershipDetails, addEstablisherPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(UpdateMode, index, OptionalSchemeReferenceNumber(srn)))
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipEnterUTRId(index))(someRefValue, hasVatPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)))
         )
 
       behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherPartnership, OptionalSchemeReferenceNumber(srn))
@@ -115,19 +115,19 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
       val navigationForCheckUpdateEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Expected next page"),
-          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipHasUTRId(index))(value = true, PartnershipEnterUTRController.onPageLoad(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipHasUTRId(index))(value = false, PartnershipNoUTRReasonController.onPageLoad(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipEnterUTRId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
           row(PartnershipEnterUTRId(index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipNoUTRReasonId(index))(someStringValue, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+          row(PartnershipHasVATId(index))(value = true, PartnershipEnterVATController.onPageLoad(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasVATId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
           row(PartnershipEnterVATId(index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
           row(PartnershipEnterPAYEId(index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers))
         )
 
       behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateEstablisherPartnership, OptionalSchemeReferenceNumber(srn))
@@ -149,9 +149,9 @@ object EstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), OptionalSchemeReferenceNumber(srn))
 
   private def hasVatPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
+    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
 
   private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
+    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
 }
 

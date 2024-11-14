@@ -59,7 +59,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-          val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(),
@@ -83,7 +83,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn),
@@ -114,19 +114,19 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private def trusteeAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.TrusteeAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def trusteeAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.TrusteeAddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteeAddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private def trusteePreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
-    routes.TrusteePreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+    routes.TrusteePreviousAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = UserAnswers().
-    trusteeName(index, PersonName("First", "Last")).
-    trusteesAddress(index, address).
-    trusteesIndividualAddressYears(index, addressYearsUnderAYear).
-    trusteesPreviousAddress(index, previousAddress)
+    trusteeName(Index(0), PersonName("First", "Last")).
+    trusteesAddress(Index(0), address).
+    trusteesIndividualAddressYears(Index(0), addressYearsUnderAYear).
+    trusteesPreviousAddress(Index(0), previousAddress)
 
   def submitUrl(index: Int): Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 

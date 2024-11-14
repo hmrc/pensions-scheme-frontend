@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

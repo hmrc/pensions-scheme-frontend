@@ -54,8 +54,8 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private val fullAnswers = UserAnswers().trusteePartnershipDetails(index, partnershipDetails).
-    trusteePartnershipEmail(index, email = "test@test.com").trusteePartnershipPhone(index, phone = "1234")
+  private val fullAnswers = UserAnswers().trusteePartnershipDetails(Index(0), partnershipDetails).
+    trusteePartnershipEmail(Index(0), email = "test@test.com").trusteePartnershipPhone(Index(0), phone = "1234")
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
@@ -105,7 +105,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
             Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
+              val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
@@ -123,7 +123,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerToggleOffSpec extends C
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,

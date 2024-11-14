@@ -117,7 +117,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe OK
 
@@ -127,10 +127,10 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn) = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), srn = OptionalSchemeReferenceNumber(srn),
             title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
             h1 = Message("messages__contactDetailsFor", "test company"))
         }

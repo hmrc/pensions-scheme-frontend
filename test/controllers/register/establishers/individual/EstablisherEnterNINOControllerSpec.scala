@@ -80,7 +80,7 @@ class EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired page when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(alreadySubmittedData))
-      val result          = controller(getRelevantData).onPageLoad( NormalMode, index(2), None)(fakeRequest)
+      val result          = controller(getRelevantData).onPageLoad( NormalMode, Index(2), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -141,7 +141,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): String = {
     val vm = NinoViewModel(
-      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
+      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
       title = messages("messages__enterNINO", messages("messages__theIndividual")),
       heading = messages("messages__enterNINO", establisherName),
       hint = messages("messages__common__nino_hint"),

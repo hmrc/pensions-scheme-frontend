@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeNameId}
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json

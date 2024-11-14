@@ -25,7 +25,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.{PartnerNameId, PartnerPreviousAddressId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues

@@ -45,7 +45,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListEstablishers)

@@ -52,7 +52,7 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "CheckMode" must {
@@ -69,7 +69,7 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "UpdateMode" must {
@@ -97,16 +97,16 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
         ("Id", "UserAnswers", "Next page"),
         row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
         row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PartnershipAddressListId(index))(someTolerantAddress, isThisPreviousAddressPage(srn)),
+        row(PartnershipAddressListId(index))(someTolerantAddress, isThisPreviousAddressPage(OptionalSchemeReferenceNumber(srn))),
         row(PartnershipAddressId(index))(someAddress, cyaAddressPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PartnershipAddressId(index))(someAddress, isThisPreviousAddressPage(srn)),
+        row(PartnershipAddressId(index))(someAddress, isThisPreviousAddressPage(OptionalSchemeReferenceNumber(srn))),
         row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
         row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
         row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(srn)),
+        row(PartnershipPreviousAddressListId(index))(someTolerantAddress, AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn))),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
-        row(PartnershipPreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(srn))
+        row(PartnershipPreviousAddressId(index))(someAddress, AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)))
       )
 
     behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, OptionalSchemeReferenceNumber(srn))
@@ -120,20 +120,20 @@ object EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers
   private val srn = Some(SchemeReferenceNumber("srn"))
   private val newEstablisherUserAnswers: UserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
 
-  private def addressYearsPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def addressYearsPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
-  private def addressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def addressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipAddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
   private def previousAddressPostcodeLookupPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
-    PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+    PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
-  private def cyaAddressPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def cyaAddressPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = CheckYourAnswersPartnershipAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
-  private def isThisPreviousAddressPage(srn: OptionalSchemeReferenceNumber): Call = PartnershipConfirmPreviousAddressController.onPageLoad(index, OptionalSchemeReferenceNumber(srn))
+  private def isThisPreviousAddressPage(srn: OptionalSchemeReferenceNumber): Call = PartnershipConfirmPreviousAddressController.onPageLoad(Index(0), OptionalSchemeReferenceNumber(srn))
 
-  private def previousAddressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipPreviousAddressListController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def previousAddressListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipPreviousAddressListController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 
-  private def hasBeenTradingPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipHasBeenTradingController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
+  private def hasBeenTradingPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = PartnershipHasBeenTradingController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
 }
 
 

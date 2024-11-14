@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers._
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -43,7 +43,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(ContractOrPolicyNumberId)(someStringValue, cyaPage),
           row(DeclarationId)(true, successPage)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -53,7 +53,7 @@ class RACDACNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(RACDACNameId)(someStringValue, cyaPage),
           row(ContractOrPolicyNumberId)(someStringValue, cyaPage)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 }

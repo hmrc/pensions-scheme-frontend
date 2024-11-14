@@ -53,7 +53,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
       "return OK and the correct view with full answers" in {
 
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
 
@@ -67,7 +67,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(
@@ -79,7 +79,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
       "return OK and the correct view with partial answers" in {
         val request = FakeDataRequest(partialAnswersForAddLink)
-        val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(srn))(request)
+        val result = controller(partialAnswersForAddLink.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(companyAddressSectionWithAddLink, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
@@ -92,7 +92,7 @@ class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase wi
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad( NormalMode, index, EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
+          .onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
       )
     }
   }
@@ -105,7 +105,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val companyName = "Test company Name"
-  val srn: OptionalSchemeReferenceNumber = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
@@ -113,23 +113,23 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private val emptyAnswers = UserAnswers()
   private val mockFeatureToggle = mock[FeatureToggleService]
 
-  private def companyAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def companyAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressYearsController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
-  private def companyTradingTimeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
+  private def companyTradingTimeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.HasBeenTradingCompanyController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def companyPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyPreviousAddressController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn)).url
+  private def companyPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyPreviousAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers.
-    trusteesCompanyDetails(index, CompanyDetails(companyName)).
-    trusteesCompanyAddress(index, address).
-    trusteesCompanyAddressYears(index, addressYearsUnderAYear).
-    trusteeCompanyTradingTime(index, hasBeenTrading = true).
-    trusteesCompanyPreviousAddress(index, previousAddress)
+    trusteesCompanyDetails(Index(0), CompanyDetails(companyName)).
+    trusteesCompanyAddress(Index(0), address).
+    trusteesCompanyAddressYears(Index(0), addressYearsUnderAYear).
+    trusteeCompanyTradingTime(Index(0), hasBeenTrading = true).
+    trusteesCompanyPreviousAddress(Index(0), previousAddress)
 
   private val partialAnswersForAddLink = emptyAnswers.
-    trusteesCompanyDetails(index, CompanyDetails(companyName)).
-    trusteesCompanyAddress(index, address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
+    trusteesCompanyDetails(Index(0), CompanyDetails(companyName)).
+    trusteesCompanyAddress(Index(0), address).set(CompanyConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   def postUrl: Call = PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 

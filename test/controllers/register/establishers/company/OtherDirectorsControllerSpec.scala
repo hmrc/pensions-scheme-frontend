@@ -76,7 +76,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
     view(
       form,
       NormalMode,
-      index,
+      Index(0),
       None,
       postCall(NormalMode, EmptyOptionalSchemeReferenceNumber, index),
       EmptyOptionalSchemeReferenceNumber

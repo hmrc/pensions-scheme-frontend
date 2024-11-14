@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode, person}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, person}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json

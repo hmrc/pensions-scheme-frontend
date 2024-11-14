@@ -74,7 +74,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, phonePage(NormalMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(NormalMode))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -106,7 +106,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, cyaContactDetailsPage(CheckMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(CheckMode))
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
@@ -141,7 +141,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, phonePage(UpdateMode)),
           row(CompanyPhoneId(0))(someStringValue, cyaContactDetailsPage(UpdateMode))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckUpdateMode" must {
@@ -183,7 +183,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
           row(CompanyEmailId(0))(someStringValue, anyMoreChangesPage()),
           row(CompanyPhoneId(0))(someStringValue, anyMoreChangesPage())
         )
-      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 }
@@ -204,48 +204,48 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
     UserAnswers(uaToggle)
   }
 
-  private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, None)
+  private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 
   private def trusteeTaskListPage(index: Int): Call =  PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, None, 0)
+  private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, None)
+  private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, None)
+  private def hasCompanyUtrPage(mode: Mode): Call = HasCompanyUTRController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def hasCompanyVatPage(mode: Mode): Call = HasCompanyVATController.onPageLoad(mode, 0, None)
+  private def hasCompanyVatPage(mode: Mode): Call = HasCompanyVATController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, None)
+  private def hasCompanyPayePage(mode: Mode): Call = HasCompanyPAYEController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, None, 0)
+  private def utrPage(mode: Mode): Call = CompanyEnterUTRController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, None)
+  private def noUtrPage(mode: Mode): Call = CompanyNoUTRReasonController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, None)
+  private def vatPage(mode: Mode): Call = CompanyEnterVATController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, None)
+  private def payePage(mode: Mode): Call = CompanyEnterPAYEController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, None)
+  private def cyaPage(mode: Mode): Call = CheckYourAnswersCompanyDetailsController.onPageLoad(journeyMode(mode), 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def cyaAddressPage(mode: Mode): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), 0, None)
+  private def cyaAddressPage(mode: Mode): Call = CheckYourAnswersCompanyAddressController.onPageLoad(journeyMode(mode), 0, EmptyOptionalSchemeReferenceNumber)
 
   private def cyaContactDetailsPage(mode: Mode): Call =
-    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, None)
+    CheckYourAnswersCompanyContactDetailsController.onPageLoad(journeyMode(mode), 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, None)
+  private def selectAddressPage(mode: Mode): Call = CompanyAddressListController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def addressYearsPage(mode: Mode): Call = CompanyAddressYearsController.onPageLoad(mode, 0, None)
+  private def addressYearsPage(mode: Mode): Call = CompanyAddressYearsController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def hasBeenTradingPage(mode: Mode): Call = HasBeenTradingCompanyController.onPageLoad(mode, 0, None)
+  private def hasBeenTradingPage(mode: Mode): Call = HasBeenTradingCompanyController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def previousAddressLookupPage(mode: Mode): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, None)
+  private def previousAddressLookupPage(mode: Mode): Call = CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def selectPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressListController.onPageLoad(mode, 0, None)
+  private def selectPreviousAddressPage(mode: Mode): Call = CompanyPreviousAddressListController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, None)
+  private def phonePage(mode: Mode): Call = CompanyPhoneController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, None)
+  private def isThisPreviousAddressPage: Call = CompanyConfirmPreviousAddressController.onPageLoad(0, EmptyOptionalSchemeReferenceNumber)
 
   val navigator: Navigator = injector.instanceOf[TrusteesCompanyNavigator]
 }
