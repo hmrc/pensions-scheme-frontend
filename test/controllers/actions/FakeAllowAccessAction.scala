@@ -22,7 +22,7 @@ import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import org.scalatestplus.mockito.MockitoSugar

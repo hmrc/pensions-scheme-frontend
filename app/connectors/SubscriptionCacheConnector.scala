@@ -18,18 +18,20 @@ package connectors
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import uk.gov.hmrc.http.StringContextOps
+
 import javax.inject.Singleton
-import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 @Singleton
 class SubscriptionCacheConnector @Inject()(
                                             override val config: FrontendAppConfig,
-                                            override val http: WSClient
+                                            override val httpClientV2: HttpClientV2
                                           ) extends CacheConnector {
 
   override protected def url(id: String) =
-    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id"
+    url"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id"
 
   override protected def lastUpdatedUrl(id: String) =
-    s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
+    url"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme-subscription/$id/lastUpdated"
 }
