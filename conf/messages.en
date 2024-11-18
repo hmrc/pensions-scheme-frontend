@@ -66,10 +66,10 @@ messages__common__postcode_lookup__enter_postcode = You can {0} enter the addres
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__hasUtr__p1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’. <br><br> You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 
-messages__error__postcode = Enter a postcode
+messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
-messages__error__postcode_invalid = Enter a postcode in the correct format
+messages__error__postcode_invalid = Enter a full UK postcode
 messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
 messages__error__postcode_no_results = Postcode cannot be found
 
@@ -94,10 +94,10 @@ messages__error__address_line_1_length = The first line of address cannot be mor
 messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
 messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
 messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
-messages__error__address_line_1_invalid = The first line of the address contains invalid characters
-messages__error__address_line_2_invalid = The second line of the address contains invalid characters
-messages__error__address_line_3_invalid = The third line of the address contains invalid characters
-messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
+messages__error__address_line_1_invalid = The first line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_2_invalid = The second line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_3_invalid = The third line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_4_invalid = The fourth line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
@@ -239,7 +239,7 @@ messages__scheme_name__heading = What is the name of the scheme?
 
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
-messages__error__scheme_name_invalid = The scheme name contains invalid characters
+messages__error__scheme_name_invalid = The scheme name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
 messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
@@ -1897,7 +1897,7 @@ messages__visuallyhidden__racdac_name = the name of the RAC/DAC
 
 messages__error__racdac_name = Enter the name of the RAC/DAC
 messages__error__racdac_name_length = The RAC/DAC name cannot be more than 160 characters
-messages__error__racdac_name_invalid = The RAC/DAC name contains invalid characters
+messages__error__racdac_name_invalid = The RAC/DAC name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 messages__racdac_contract_or_policy_number__heading = What is {0}’s contract or policy number?
 messages__racdac_contract_or_policy_number__title = What is the RAC/DAC’s contract or policy number?

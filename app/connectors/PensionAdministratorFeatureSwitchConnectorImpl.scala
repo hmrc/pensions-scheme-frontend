@@ -20,19 +20,20 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)
+class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(httpClientV2: HttpClientV2, appConfig: FrontendAppConfig)
   extends FeatureSwitchConnector {
 
   override def toggleOn(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
 
-    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/toggle-on/$name"
+    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/toggle-on/${name}"
 
-    http.get(url).execute[HttpResponse].map { response =>
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
       response.status match {
         case NO_CONTENT => true
         case _ => false
@@ -42,33 +43,38 @@ class PensionAdministratorFeatureSwitchConnectorImpl @Inject()(http: HttpClientV
 
   override def toggleOff(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
 
-    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/toggle-off/$name"
+    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/toggle-off/${name}"
 
-    http.get(url).execute[HttpResponse].map { response =>
-      response.status match {
-        case NO_CONTENT => true
-        case _ => false
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case NO_CONTENT => true
+          case _ => false
+        }
       }
-    }
   }
 
   override def reset(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/reset/$name"
+    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/reset/${name}"
 
-    http.get(url).execute[HttpResponse].map { response =>
-      response.status match {
-        case NO_CONTENT => true
-        case _ => false
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case NO_CONTENT => true
+          case _ => false
+        }
       }
-    }
   }
 
   override def get(name: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
-    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/get/$name"
+    val url = url"${appConfig.pensionsAdministratorUrl}/pension-administrator/test-only/get/${name}"
 
-    http.get(url).execute[HttpResponse].map { value =>
-      val currentValue = value.json.as[Boolean]
-      Option(currentValue)
+    httpClientV2.get(url)
+      .execute[HttpResponse].map { response =>
+      response.status match {
+        case OK => Some(response.json.as[Boolean])
+        case _ => None
+      }
     }.recoverWith {
       case _ =>
         Future.successful(None)

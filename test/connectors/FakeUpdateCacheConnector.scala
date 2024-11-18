@@ -17,9 +17,9 @@
 package connectors
 
 import base.SpecBase
-import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 object FakeUpdateCacheConnector extends SpecBase {
   def getConnector: UpdateSchemeCacheConnector =
-    new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+    new UpdateSchemeCacheConnector(frontendAppConfig, injector.instanceOf[HttpClientV2])
 }

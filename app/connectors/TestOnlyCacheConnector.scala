@@ -19,25 +19,21 @@ package connectors
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.CacheConnector.headers
-import play.api.libs.ws.WSClient
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TestOnlyCacheConnector @Inject()(
-                                        config: FrontendAppConfig,
-                                        http: WSClient
-                                      ) {
+class TestOnlyCacheConnector @Inject()(config: FrontendAppConfig, httpClientV2: HttpClientV2) {
 
-  def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
-    http
-      .url(url(collectionName))
-      .withHttpHeaders(headers(hc): _*)
-      .delete()
+  def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+    httpClientV2.delete(url(collectionName))
+      .setHeader(headers(hc): _*)
+      .execute[HttpResponse]
       .map(_ => Ok)
-  }
 
-  protected def url(collectionName: String) = s"${config.pensionsSchemeUrl}/test-only/$collectionName"
+  protected def url(collectionName: String) = url"${config.pensionsSchemeUrl}/test-only/$collectionName"
 }

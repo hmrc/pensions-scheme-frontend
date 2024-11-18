@@ -39,7 +39,7 @@ trait PensionAdministratorConnector {
 }
 
 @Singleton
-class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: FrontendAppConfig)
+class PensionAdministratorConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
   extends PensionAdministratorConnector {
 
   private val logger  = Logger(classOf[PensionAdministratorConnectorImpl])
@@ -48,7 +48,7 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: Fr
 
     val url = url"${config.pensionsAdministratorUrl + config.getPSAEmail}"
 
-    http.get(url).execute[HttpResponse].map { response =>
+    httpClientV2.get(url).execute[HttpResponse].map { response =>
       require(response.status == OK)
 
       response.body
@@ -65,7 +65,7 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClientV2, config: Fr
 
     val url = url"${config.pensionsAdministratorUrl + config.getPSAName}"
 
-    http.get(url).execute[HttpResponse].map { response =>
+    httpClientV2.get(url).execute[HttpResponse].map { response =>
       require(response.status == OK)
 
       response.body
