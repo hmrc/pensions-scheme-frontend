@@ -24,3 +24,7 @@ case class SchemeDetailsTaskListEntitySection(
                                                header: Option[Message],
                                                p1: Message*
                                              )
+
+object SchemeDetailsTaskListEntitySection {
+  val empty: SchemeDetailsTaskListEntitySection = SchemeDetailsTaskListEntitySection(None, Nil, None)
+}

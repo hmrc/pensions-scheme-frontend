@@ -145,36 +145,43 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
-  protected[utils] def trusteeSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String], index: Int)
-  : SchemeDetailsTaskListEntitySection = {
+  protected[utils] def trusteeSection(userAnswers: UserAnswers,
+                                      mode: Mode,
+                                      srn: Option[String],
+                                      index: Int
+                                     ): SchemeDetailsTaskListEntitySection = {
+
     val seqTrustees = userAnswers.allTrustees
 
-    if(index >= seqTrustees.size) {
+    if (seqTrustees.isEmpty || index >= seqTrustees.size) {
       throw new RuntimeException("INVALID-TRUSTEE")
     }
+
     val trustee = seqTrustees(index)
-    if (trustee.isDeleted) throw new RuntimeException("Trustee has been deleted.") else {
+    if (trustee.isDeleted) {
+      SchemeDetailsTaskListEntitySection.empty
+    } else {
       trustee.id match {
         case TrusteeCompanyDetailsId(_) =>
           SchemeDetailsTaskListEntitySection(
             None,
-            spokeCreationService.getTrusteeCompanySpokes(userAnswers, mode, srn, trustee.name, Some
-            (trustee.index)),
-            Some(trustee.name))
+            spokeCreationService.getTrusteeCompanySpokes(userAnswers, mode, srn, trustee.name, Some(trustee.index)),
+            Some(trustee.name)
+          )
 
         case TrusteeNameId(_) =>
           SchemeDetailsTaskListEntitySection(
             None,
-            spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, trustee.name, Some
-            (trustee.index)),
-            Some(trustee.name))
+            spokeCreationService.getTrusteeIndividualSpokes(userAnswers, mode, srn, trustee.name, Some(trustee.index)),
+            Some(trustee.name)
+          )
 
         case TrusteePartnershipDetailsId(_) =>
           SchemeDetailsTaskListEntitySection(
             None,
-            spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, trustee.name, Some
-            (trustee.index)),
-            Some(trustee.name))
+            spokeCreationService.getTrusteePartnershipSpokes(userAnswers, mode, srn, trustee.name, Some(trustee.index)),
+            Some(trustee.name)
+          )
         case _ =>
           throw new RuntimeException("Unknown section id:" + trustee.id)
       }
