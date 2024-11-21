@@ -1,64 +1,5 @@
 # Pensions Scheme Frontend 
 
-## Info
-
-This service allows a pensions administrator, either an individual or an organisation, to register a new pension scheme and update an existing pension scheme (variation).
-
-
-
-This service has a corresponding back-end service, namely pensions-scheme.
-
-### Dependencies
- 
-| Service               | Link                                          |
-|-----------------------|-----------------------------------------------|
-| Pensions-scheme       | https://github.com/hmrc/pensions-scheme       |
-| Pension-administrator | https://github.com/hmrc/pension-administrator |
-| address-lookup        | https://github.com/hmrc/address-lookup        |
-| email                 | https://github.com/hmrc/email                 |
-| auth                  | https://github.com/hmrc/auth                  |
-
-### Endpoints used   
-
-| Service               | HTTP Method | Route                                  | Purpose                                                 |
-|-----------------------|-------------|----------------------------------------|---------------------------------------------------------|
-| Pensions-scheme       | GET         | /pensions-scheme/scheme                | Returns details of scheme                               |
-| Pensions-scheme       | POST        | /pensions-scheme/update-scheme         | Update scheme details                                   |
-| Pensions-scheme       | GET         | /pensions-scheme/is-psa-associated     | Check for associated schemes for a PSA                  | 
-| Pension-administrator | GET         | /pension-administrator/get-email       | Returns email address for a PSA                         | 
-| Pension-administrator | GET         | /pension-administrator/get-name        | Returns name of a PSA                                   | 
-| Pension-administrator | GET         | /pension-administrator/get-minimal-psa | Returns minimal PSA details from DES                    | 
-| address-lookup        | GET         | /v2/uk/addresses                       | Returns a list of addresses that match a given postcode | 
-| email                 | POST        | /hmrc/email                            | Sends an email to an email address                      | 
-
-## Running the service
-
-Service Manager: PODS_ALL
-
-Port: 8200
-
-Link: http://localhost:8200/register-pension-scheme
-
-Enrolment key: HMRC-PODS-ORG
-
-Identifier name: PsaID
-
-Example PSA ID: A2100005
-
-## Tests and prototype
-
-[View the prototype here](https://pods-prototype.herokuapp.com/page-list/page-list-scheme)
-
-| Repositories  | Link                                                            |
-|---------------|-----------------------------------------------------------------|
-| Journey tests | https://github.com/hmrc/pods-journey-tests                      |
-| Prototype     | https://pods-prototype.herokuapp.com/page-list/page-list-scheme |
-
-## Note on terminology
-The terms scheme reference number and submission reference number (SRN) are interchangeable within the PODS codebase; some downstream APIs use scheme reference number, some use submission reference number, probably because of oversight on part of the technical teams who developed these APIs. This detail means the same thing, the reference number that was returned from ETMP when the scheme details were submitted.
-
-
-
 - [Overview](#overview)
 - [Requirements](#requirements)
 - [Running the Service](#running-the-service)
@@ -72,11 +13,11 @@ The terms scheme reference number and submission reference number (SRN) are inte
 
 ## Overview
 
-This is the repository for *TEMPLATE* service. This service allows a user to *DO X, Y AND Z. Clarify any other points overviewing the service here*.
+This is the repository for Pensions Scheme Frontend service. This service allows a pensions administrator, either an individual or an organisation, to register a new pension scheme and update an existing pension scheme (variation).
 
-This service has a corresponding back-end microservice, namely *NAME BACKEND SERVICE* which integrates with *(E.G. HOD i.e DES/ETMP)*.
+This service has a corresponding back-end microservice, namely Pensions Scheme which integrates with *(E.G. HOD i.e DES/ETMP)*.
 
-**Associated Backend Link:** *INSERT LINK TO BACKEND HERE*
+**Associated Backend Link:** https://github.com/hmrc/pensions-scheme
 
 **Stubs:** https://github.com/hmrc/pensions-scheme-stubs
 
@@ -84,8 +25,6 @@ This service has a corresponding back-end microservice, namely *NAME BACKEND SER
 
 ## Requirements
 This service is written in Scala and Play, so needs at least a [JRE] to run.
-
-*VERIFY VERSIONS. VERSIONS CORRECT AS OF 20/11/2024*
 
 **Node version:** 16.20.2
 
@@ -95,7 +34,6 @@ This service is written in Scala and Play, so needs at least a [JRE] to run.
 
 
 ## Running the Service
-*VERIFY DETAILS. VERSIONS CORRECT AS OF 20/11/2024*
 **Service Manager Profile:** PODS_ALL
 
 **Port:** XXXX
@@ -106,7 +44,7 @@ This service is written in Scala and Play, so needs at least a [JRE] to run.
 In order to run the service, ensure Service Manager is installed (see [MDTP guidance](https://docs.tax.service.gov.uk/mdtp-handbook/documentation/developer-set-up/set-up-service-manager.html) if needed) and launch the relevant configuration by typing into the terminal:
 `sm2 --start PODS_ALL`
 
-To run the service locally, enter `sm2 --stop *REPONAMEHERE*`
+To run the service locally, enter `sm2 --stop PENSIONS_SCHEME_FRONTEND`
 
 In your terminal, navigate to the relevant directory and enter `sbt run`.
 
@@ -115,23 +53,6 @@ Access the Authority Wizard and login with the relevant enrolment details [here]
 
 ## Enrolments
 There are several different options for enrolling through the auth login stub. In order to enrol as a dummy user to access the platform for local development and testing purposes, the following details must be entered on the auth login page.
-
-
-In order to access the **Pension Practitioner dashboard** for local development, enter the following information: 
-
-**Redirect URL -** http://localhost:8204/manage-pension-schemes/dashboard 
-
-**GNAP Token -** NO 
-
-**Affinity Group -** Organisation 
-
-**Enrolment Key -** HMRC-PODSPP-ORG 
-
-**Identifier Name -** PspID 
-
-**Identifier Value -** 21000005
-
----
 
 For access to the **Pension Administrator dashboard** for local development, enter the following information: 
 
@@ -146,6 +67,22 @@ For access to the **Pension Administrator dashboard** for local development, ent
 **Identifier Name -** PsaID 
 
 **Identifier Value -** A2100005
+
+---
+
+In order to access the **Pension Practitioner dashboard** for local development, enter the following information: 
+
+**Redirect URL -** http://localhost:8204/manage-pension-schemes/dashboard 
+
+**GNAP Token -** NO 
+
+**Affinity Group -** Organisation 
+
+**Enrolment Key -** HMRC-PODSPP-ORG 
+
+**Identifier Name -** PspID 
+
+**Identifier Value -** 21000005
 
 ---
 
@@ -208,17 +145,25 @@ Add the following to application.conf of identity_verification_frontend:
 Eventually we might want to move to iv-stubs, but currently they don't support organisations. identity_verification_stub repository.
 
 ## Navigation
-The *TEMPLATE* Frontend integrates with the Manage Pension Schemes (MPS) service and uses various stubs available on [GitHub](https://github.com/hmrc/pensions-scheme-stubs). From the Authority Wizard page you will be redirected to the dashboard. Navigate to the appropriate area by accessing items listed within the service-specific tiles on the dashboard. On the *TEMPLATE* frontend, *WHAT CAN BE DONE ON THIS FRONTEND?*.
+The Pensions Scheme Frontend integrates with the Manage Pension Schemes (MPS) service and uses various stubs available on [GitHub](https://github.com/hmrc/pensions-scheme-stubs). From the Authority Wizard page you will be redirected to the dashboard. Navigate to the appropriate area by accessing items listed within the service-specific tiles on the dashboard. On the *TEMPLATE* frontend, *WHAT CAN BE DONE ON THIS FRONTEND?*.
 
 ## Dependencies
 There are multiple microservices that this service depends on. These are:
 
-*INSERT HERE IN TABLE*
+| Service               | Link                                          |
+|-----------------------|-----------------------------------------------|
+| Pensions-scheme       | https://github.com/hmrc/pensions-scheme       |
+| Pension-administrator | https://github.com/hmrc/pension-administrator |
+| address-lookup        | https://github.com/hmrc/address-lookup        |
+| email                 | https://github.com/hmrc/email                 |
+| auth                  | https://github.com/hmrc/auth                  |
 
 ## Service Documentation
 [To Do]
 Include relevant links or details to any additional, service-specific documents (e.g., stubs, testing protocols) when available.
 
+## Note on terminology
+The terms scheme reference number and submission reference number (SRN) are interchangeable within the PODS codebase; some downstream APIs use scheme reference number, some use submission reference number, probably because of oversight on part of the technical teams who developed these APIs. This detail means the same thing, the reference number that was returned from ETMP when the scheme details were submitted.
 
 ## License
 This code is open source software Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at:
