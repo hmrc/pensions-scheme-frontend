@@ -57,7 +57,7 @@ class DeclarationControllerSpec
 
   "onPageLoad" must {
     "return OK and the correct view " in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
@@ -66,7 +66,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to you must contact HMRC page when deceased flag is true" in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
@@ -74,7 +74,7 @@ class DeclarationControllerSpec
       redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
     }
     "redirect to you must update your address page when rls flag is true" in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = true)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 

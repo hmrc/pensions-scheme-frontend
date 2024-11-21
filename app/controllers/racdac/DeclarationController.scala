@@ -74,8 +74,8 @@ class DeclarationController @Inject()(
   private def redirects(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Option[Result]] = {
     request.psaId match {
       case None => Future.successful(None)
-      case Some(psaId) =>
-        minimalPsaConnector.getMinimalFlags(psaId.id).map {
+      case Some(_) =>
+        minimalPsaConnector.getMinimalFlags().map {
           case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
           case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET", appConfig.psaUpdateContactDetailsUrl)))
           case _ => None
