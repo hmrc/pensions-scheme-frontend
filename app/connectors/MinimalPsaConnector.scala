@@ -32,8 +32,7 @@ import scala.util.Failure
 @ImplementedBy(classOf[MinimalPsaConnectorImpl])
 trait MinimalPsaConnector {
 
-  def getMinimalFlags(psaId: String
-                     )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
+  def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
 
   def getMinimalPsaDetails(psaId: String
                           )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
@@ -81,9 +80,9 @@ class MinimalPsaConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: Fron
     }
   }
 
-  override def getMinimalFlags(psaId: String)
+  override def getMinimalFlags()
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] = {
-    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+    val psaHc = hc.withExtraHeaders("loggedInAsPsa" -> "true")
     val url = url"${config.minimalPsaDetailsUrl}"
 
     httpClientV2.get(url)(psaHc)

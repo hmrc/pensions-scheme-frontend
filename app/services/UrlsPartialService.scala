@@ -211,10 +211,9 @@ class UrlsPartialService @Inject()(
         Future.successful(Seq.empty[OverviewLink])
     }
 
-  def checkIfSchemeCanBeRegistered(psaId: String)
-                                  (implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+  def checkIfSchemeCanBeRegistered()(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     for {
-      minimalFlags <- minimalPsaConnector.getMinimalFlags(psaId)
+      minimalFlags <- minimalPsaConnector.getMinimalFlags()
       result <- retrieveResult(request.userAnswers, minimalFlags)
     } yield result
 

@@ -78,7 +78,7 @@ class DataRetrievalImpl(
       case (true, Some(VarianceLock)) =>
         updateConnector.fetch(srn).flatMap {
           case Some(ua) =>
-            val optJs = addMinimalFlagsAndUpdateRepository(srn, ua, psaId, updateConnector.upsert(srn, _)).map(Some(_))
+            val optJs = addMinimalFlagsAndUpdateRepository(srn, ua, updateConnector.upsert(srn, _)).map(Some(_))
             createOptionalRequest(optJs, viewOnly = false)
           case _ =>
             lockConnector.releaseLock(psaId, srn).flatMap(_ => getRequestWithNoLock(srn, refresh, psaId))
@@ -118,7 +118,7 @@ class DataRetrievalImpl(
     if (refresh) {
       schemeDetailsConnector
         .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
-        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
+        .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, viewConnector.upsert(request.externalId, _)))
         .map(Some(_))
     } else {
       viewConnector.fetch(request.externalId)
@@ -126,10 +126,9 @@ class DataRetrievalImpl(
 
   private def addMinimalFlagsAndUpdateRepository[A](srn: String,
                                                     jsValue: JsValue,
-                                                    psaId: String,
                                                     upsertUserAnswers: JsValue => Future[JsValue])
                                                    (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+    minimalPsaConnector.getMinimalFlags().flatMap { minimalFlags =>
       val ua = UserAnswers(jsValue)
         .set(PsaMinimalFlagsId)(minimalFlags)
         .flatMap(
@@ -281,7 +280,7 @@ class RacdacDataRetrievalImpl(
 
     def refreshSchemeDetails: Future[Some[JsValue]] = schemeDetailsConnector
       .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
-      .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)).map(Some(_)))
+      .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, viewConnector.upsert(request.externalId, _)).map(Some(_)))
 
     id =>
       viewConnector.fetch(id) flatMap {
@@ -300,12 +299,11 @@ class RacdacDataRetrievalImpl(
       }
   }
 
-  private def addMinimalFlagsAndUpdateRepository[A](srn: String,
-                                                    jsValue: JsValue,
-                                                    psaId: String,
-                                                    upsertUserAnswers: JsValue => Future[JsValue])
-                                                   (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.getMinimalFlags(psaId).flatMap { minimalFlags =>
+  private def addMinimalFlagsAndUpdateRepository(srn: String,
+                                                   jsValue: JsValue,
+                                                   upsertUserAnswers: JsValue => Future[JsValue])
+                                                  (implicit hc: HeaderCarrier): Future[JsValue] = {
+    minimalPsaConnector.getMinimalFlags().flatMap { minimalFlags =>
       val ua = UserAnswers(jsValue)
         .set(PsaMinimalFlagsId)(minimalFlags)
         .flatMap(_.set(SchemeSrnId)(srn)).asOpt.getOrElse(UserAnswers(jsValue))
