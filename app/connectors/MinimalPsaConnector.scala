@@ -34,11 +34,9 @@ trait MinimalPsaConnector {
 
   def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags]
 
-  def getMinimalPsaDetails(psaId: String
-                          )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
+  def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA]
 
-  def getPsaNameFromPsaID(psaId: String
-                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
+  def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]]
 }
 
 class MinimalPsaConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
@@ -46,9 +44,8 @@ class MinimalPsaConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: Fron
 
   private val logger  = Logger(classOf[MinimalPsaConnectorImpl])
 
-  override def getMinimalPsaDetails(psaId: String
-                                   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
-    val psaHc = hc.withExtraHeaders("psaId" -> psaId)
+  override def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] = {
+    val psaHc = hc.withExtraHeaders("loggedInAsPsa" -> "true")
     val url = url"${config.minimalPsaDetailsUrl}"
 
     httpClientV2.get(url)(psaHc)
@@ -69,9 +66,8 @@ class MinimalPsaConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: Fron
 
   val delimitedErrorMsg: String = "DELIMITED_PSAID"
 
-  override def getPsaNameFromPsaID(psaId: String)
-                                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
-    getMinimalPsaDetails(psaId).map { minimalDetails =>
+  override def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
+    getMinimalPsaDetails().map { minimalDetails =>
       (minimalDetails.individualDetails, minimalDetails.organisationName) match {
         case (Some(individual), None) => Some(individual.fullName)
         case (None, Some(org)) => Some(s"$org")

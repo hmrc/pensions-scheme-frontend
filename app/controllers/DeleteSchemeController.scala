@@ -82,8 +82,8 @@ class DeleteSchemeController @Inject()(
       case Some(data) =>
         val ua = UserAnswers(data)
         val schemeName = ua.get(SchemeNameId)
-        request.psaId.map { psaId =>
-          minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+        request.psaId.map { _ =>
+          minimalPsaConnector.getPsaNameFromPsaID().flatMap(_.map { psaName =>
             f(schemeName.getOrElse("messages__thisScheme"), psaName,
               "messages__deleteScheme__hint")
         }.getOrElse(sessionExpired))
