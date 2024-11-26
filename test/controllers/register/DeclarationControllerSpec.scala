@@ -371,10 +371,10 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
     override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
 
-    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
+    override def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
 
-    override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
+    override def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
       Future.successful(Some("psa name"))
   }
 }

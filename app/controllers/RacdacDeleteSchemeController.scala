@@ -78,8 +78,8 @@ class RacdacDeleteSchemeController @Inject()(
 
     request.userAnswers.map { ua =>
       val racDACSchemeName = ua.get(RACDACNameId)
-      request.psaId.map { psaId =>
-        minimalPsaConnector.getPsaNameFromPsaID(psaId.id).flatMap(_.map { psaName =>
+      request.psaId.map { _ =>
+        minimalPsaConnector.getPsaNameFromPsaID().flatMap(_.map { psaName =>
           f(racDACSchemeName.getOrElse("messages__thisScheme"), psaName,
             "messages__deleteScheme__hint")
         }.getOrElse(sessionExpired))

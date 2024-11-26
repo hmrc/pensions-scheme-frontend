@@ -186,7 +186,7 @@ class DeclarationController @Inject()(
                        (implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     logger.debug("Fetch email from API")
 
-    minimalPsaConnector.getMinimalPsaDetails(psaId.id) flatMap { minimalPsa =>
+    minimalPsaConnector.getMinimalPsaDetails() flatMap { minimalPsa =>
       emailConnector.sendEmail(
         emailAddress = minimalPsa.email,
         templateName = appConfig.emailTemplateId,

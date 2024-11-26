@@ -90,7 +90,7 @@ class DeclarationControllerSpec
         .thenReturn(Future.successful(schemeSubmissionResponse))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
-      when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
+      when(mockMinimalPsaConnector.getMinimalPsaDetails()(any(), any())).thenReturn(Future.successful(minimalPsa))
       doNothing.when(mockAuditService).sendEvent(any())(any(), any())
 
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)

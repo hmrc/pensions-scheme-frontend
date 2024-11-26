@@ -109,7 +109,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
-    connector.getMinimalPsaDetails(psaId) map {
+    connector.getMinimalPsaDetails() map {
       _ shouldBe MinimalPSA(email, isPsaSuspended = true, Some("test ltd"), None)
     }
   }
@@ -126,7 +126,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getMinimalPsaDetails(psaId)
+      connector.getMinimalPsaDetails()
     }
   }
 }
@@ -137,7 +137,6 @@ object MinimalPsaConnectorSpec extends OptionValues {
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  private val psaId = "test-psa-id"
   private val email = "test@test.com"
 
   private val validResponse =

@@ -51,7 +51,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)
-    when(minimalPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
+    when(minimalPsaConnector.getPsaNameFromPsaID()(any(), any())).thenReturn(Future.successful(Some(psaName)))
     super.beforeEach()
   }
 
