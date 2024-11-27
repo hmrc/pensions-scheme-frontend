@@ -21,6 +21,7 @@ import models.AdministratorOrPractitioner
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import play.api.libs.json.Json
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http._
 import utils.WireMockHelper
 
@@ -102,6 +103,35 @@ class SessionDataCacheConnectorSpec
         recoverToSucceededIf[HttpException] {
           connector.fetch(externalId)
         }
+    }
+  }
+
+  "removeAll" must {
+
+    "return Ok when the backend has successfully deleted the data (204 NO CONTENT)" in {
+      server.stubFor(
+        delete(urlEqualTo(sessionDataCacheUrl))
+          .willReturn(
+            noContent()
+          )
+      )
+
+      connector.removeAll(externalId).map {
+        _ mustBe Ok
+      }
+    }
+
+    "return Ok even when the backend responds with 404 NOT FOUND" in {
+      server.stubFor(
+        delete(urlEqualTo(sessionDataCacheUrl))
+          .willReturn(
+            notFound()
+          )
+      )
+
+      connector.removeAll(externalId).map {
+        _ mustBe Ok
+      }
     }
   }
 }

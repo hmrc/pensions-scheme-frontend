@@ -46,4 +46,13 @@ class LogoutControllerSpec extends ControllerSpecBase with Results with MockitoS
       verify(mockSessionDataCacheConnector, times(1)).removeAll(any())(any(), any())
     }
   }
+
+  "keepAlive action" should {
+    "return OK and the correct body" in {
+      val result = logoutController.keepAlive(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe "OK"
+    }
+  }
 }

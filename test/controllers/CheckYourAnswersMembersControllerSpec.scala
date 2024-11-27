@@ -37,6 +37,8 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode)
+        contentAsString(result) must include(messages("messages__current_members_cya_label", schemeName))
+        contentAsString(result) must include(messages("messages__future_members_cya_label", schemeName))
       }
 
       "return OK and NOT display submit button with return to tasklist when in update mode" in {
@@ -49,6 +51,13 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
+      }
+
+      "return OK with the correct heading and title for non-normal modes" in {
+        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) must include(messages("messages__membershipDetailsFor", schemeName))
       }
     }
   }
