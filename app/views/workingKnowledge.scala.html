@@ -28,6 +28,7 @@
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     input_yes_no: components.input_yes_no,
+    inset_text: components.inset_text,
     submit_button: components.submit_button
 )
 
@@ -47,12 +48,12 @@
 
         @components.paragraph_text(messages("messages__workingKnowledge__p2"), Some("p2"))
 
-        @components.paragraph_text(messages("messages__workingKnowledge__p3"), Some("p3"))
+        @inset_text(messages("messages__workingKnowledge__p3"), Some("p3"))
 
         @input_yes_no(
             field = form("value"),
             label = messages("messages__workingKnowledge__heading"),
-            labelClass = Some("govuk-visually-hidden")
+            labelClass = Some("govuk-label-hidden")
         )
 
         @submit_button("site.save_and_continue")
