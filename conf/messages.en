@@ -1261,6 +1261,7 @@ messages__schemeTaskList__status_visuallyHidden = This section is
 
 messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
 messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__h1 = Working knowledge of pensions
 messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
 messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
