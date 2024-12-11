@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requiredData).async {
       implicit request =>
 
-        val directorAnswerSection = anwerSection(companyIndex, directorIndex, mode, srn)
+        val directorAnswerSection = answerSection(companyIndex, directorIndex, mode, srn)
 
         val isNew = isNewItem(mode, request.userAnswers, IsNewDirectorId(companyIndex, directorIndex))
 
@@ -79,7 +79,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(vm)))
     }
 
-  private def anwerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])(implicit request:DataRequest[AnyContent]) = {
+  private def answerSection(companyIndex: Index, directorIndex: Index, mode: Mode, srn: Option[String])(implicit request:DataRequest[AnyContent]) = {
 
     AnswerSection(None,
       Seq(

@@ -23,7 +23,7 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import models.register.Establisher
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode, NormalMode}
+import models.{FeatureToggleName, Mode, NormalMode, UpdateMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
-import views.html.register.establishers.{addEstablisher, addEstablisherOld}
+import views.html.register.establishers.{addEstablisher, addEstablisherOld, otherEstablishers}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -62,7 +62,11 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
         case (true, NormalMode) =>
           val completeEstablishers = establishers.filter(_.isCompleted)
           val incompleteEstablishers = establishers.filterNot(_.isCompleted)
-          status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
+          status(view(form, mode, request.viewOnly, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
+        case (_, NormalMode) =>
+          val completeEstablishers = establishers.filter(_.isCompleted)
+          val incompleteEstablishers = establishers.filterNot(_.isCompleted)
+          status(view(form, mode, request.viewOnly, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
         case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
       }
     }
@@ -75,15 +79,18 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
         renderPage(establishers, mode, srn, formProvider(establishers), Ok)
     }
 
-  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
-    andThen requireData).async {
-    implicit request =>
+  def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           renderPage(establishers, mode, srn, formWithErrors, BadRequest),
-        value =>
-          Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
+        {
+          case None if establishers.length >= appConfig.maxEstablishers =>
+            Future.successful(Redirect(navigator.nextPage(AddEstablisherId(Some(false)), mode, request.userAnswers, srn)))
+          case value =>
+            Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
+        }
       )
-  }
+    }
 }
