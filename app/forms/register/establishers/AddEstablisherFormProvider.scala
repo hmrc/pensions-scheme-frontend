@@ -20,6 +20,7 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.{Form, Forms}
 
+
 class AddEstablisherFormProvider @Inject() extends Mappings {
 
   def apply(establishers: Seq[_]): Form[Option[Boolean]] = {
@@ -27,7 +28,11 @@ class AddEstablisherFormProvider @Inject() extends Mappings {
       Form(
         "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
       )
-    } else {
+    } else if (establishers.length >= 10) {
+      Form(
+        "value" -> Forms.optional(boolean("site.no"))
+      ).fill(Some(false))
+  } else {
       Form(
         "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
           .verifying("messages__addEstablisher_error__selection", _.isDefined)

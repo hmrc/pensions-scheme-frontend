@@ -323,7 +323,14 @@ messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must add at least one establisher.
 messages__establishers__add_limit = You have added the maximum number of establishers
+messages__establishers_lede = You must tell us about all your establishers. You can add up to 10 using this service.
 messages__establishers__add_header = Establisher name
+messages__addEstablishers_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+
+messages__otherEstablishers__title = Do you need to tell us about other establishers?
+messages__otherEstablishers__heading = Do you need to tell us about other establishers?
+messages__otherEstablishers__lede = You do not have to add them now. We may contact you if we need this information.
+messages__otherEstablishers__error__required = Select yes if you need to tell us about other establishers
 
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
