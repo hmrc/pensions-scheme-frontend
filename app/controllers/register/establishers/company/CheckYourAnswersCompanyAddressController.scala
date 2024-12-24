@@ -16,18 +16,17 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils._
 import utils.annotations.{EstablishersCompany, NoSuspendedCheck}
@@ -38,8 +37,7 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                         override val messagesApi: MessagesApi,
+class CheckYourAnswersCompanyAddressController @Inject()(override val messagesApi: MessagesApi,
                                                          authenticate: AuthAction,
                                                          getData: DataRetrievalAction,
                                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
@@ -49,8 +47,7 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
                                                          userAnswersService: UserAnswersService,
                                                          allowChangeHelper: AllowChangeHelper,
                                                          val controllerComponents: MessagesControllerComponents,
-                                                         val view: checkYourAnswers,
-                                                         featureToggleService: FeatureToggleService
+                                                         val view: checkYourAnswers
                                                         )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -70,14 +67,13 @@ class CheckYourAnswersCompanyAddressController @Inject()(appConfig: FrontendAppC
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__addressFor", Message("messages__theCompany"))
 
-        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-          (isEnabled, mode) match {
-            case (true, NormalMode) =>
-              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+        val saveURL = mode match {
+            case NormalMode =>
+              Future.successful(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index))
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+              Future.successful(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
           }
-        }
+
         saveURL.flatMap { url =>
           val vm = CYAViewModel(
             answerSections = answerSections,

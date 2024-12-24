@@ -20,30 +20,19 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.company._
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
-import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers, _}
+import services.FakeUserAnswersService
+import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import org.mockito.Mockito._
-
-import scala.concurrent.Future
 
 class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersCompanyDetailsControllerSpec._
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "Check Your Answers Company Details Controller " when {
     "when in registration journey" must {
@@ -130,7 +119,6 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   private val vat = "vat"
   private val paye = "paye"
   private val reason = "reason"
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers().set(CompanyDetailsId(0))(CompanyDetails(companyName)).asOpt.value
 
@@ -306,8 +294,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
       FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

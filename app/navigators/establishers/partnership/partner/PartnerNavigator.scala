@@ -24,7 +24,6 @@ import controllers.routes.SessionExpiredController
 import identifiers.Identifier
 import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{AddPartnersId, OtherPartnersId, partner}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.journeyMode
 import models._
 import navigators.AbstractNavigator
@@ -73,11 +72,8 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     (mode, ua.get(AddPartnersId(estIndex))) match {
       case (UpdateMode, Some(false)) =>
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
-      case (NormalMode, Some(false)) => (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-          case Some(true) =>
+      case (NormalMode, Some(false)) =>
             controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(estIndex)
-          case _ => controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
-        }
       case _ if ua.allPartnersAfterDelete(estIndex).lengthCompare(appConfig.maxPartners) >= 0 =>
         controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, estIndex, srn)
       case _ =>

@@ -20,31 +20,18 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.partnership.PartnershipConfirmPreviousAddressId
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
-import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-import org.mockito.Mockito._
-
-import scala.concurrent.Future
 
 class CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
   import CheckYourAnswersPartnershipAddressControllerSpec._
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(),any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
-
 
   "Check Your Answers Partnership Address Controller " when {
     "on Page load in Normal Mode" must {
@@ -103,7 +90,6 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private val previousAddress        = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   private def partnershipAddressRoute(mode: Mode, srn: Option[String]) =
     routes.PartnershipAddressController.onPageLoad(mode, Index(index), srn).url
   private def partnershipAddressYearsRoute(mode: Mode, srn: Option[String]) =
@@ -201,8 +187,7 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
       fakeCountryOptions,
       allowChangeHelper,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = postUrl,

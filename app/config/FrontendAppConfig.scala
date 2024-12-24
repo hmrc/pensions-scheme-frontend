@@ -32,8 +32,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
                                   servicesConfig: ServicesConfig) {
   def localFriendlyUrl(uri:String):String = loadConfig("host") + uri
 
-  def featureToggleUrl(toggle:String) : String =
-    s"${servicesConfig.baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.featureToggle").format(toggle)}"
   lazy val managePensionsSchemeOverviewUrl: Call = Call("GET", loadConfig("urls.manage-pensions-frontend" +
     ".schemesOverview"))
 

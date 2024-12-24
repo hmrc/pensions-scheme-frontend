@@ -21,23 +21,18 @@ import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-
-import scala.concurrent.Future
 
 class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
@@ -46,7 +41,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val srn = Some("test-srn")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrlUpdateMode(mode: Mode, srn: Option[String]): Call =
     controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
@@ -87,8 +81,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       allowChangeHelper,
       FakeUserAnswersService,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(index), title: Message, h1: Message): String =
@@ -108,13 +101,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   private val fullAnswers = UserAnswers().set(CompanyEmailId(0))("test@test.com").flatMap(_.set(CompanyPhoneId(0))("12345"))
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("test company"))).asOpt.value
-
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "CheckYourAnswersCompanyContactDetailsController" when {
 

@@ -21,12 +21,12 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{EstablishersCompany, OldEstablishersCompany}
 import utils.{Enumerable, UserAnswers}
@@ -47,8 +47,7 @@ class CompanyDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
-                                          val view: companyDetails,
-                                          featureToggleService: FeatureToggleService
+                                          val view: companyDetails
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -71,11 +70,9 @@ class CompanyDetailsController @Inject()(
         value =>
           userAnswersService.save(mode, srn, CompanyDetailsId(index), value).flatMap {
             json =>
-              featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-                (isEnabled, mode) match {
-                  case (true, NormalMode) => Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
-                  case _ => Redirect(oldNavigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn))
-                }
+              mode match {
+                case NormalMode => Future.successful(Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn)))
+                case _ => Future.successful(Redirect(oldNavigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json), srn)))
               }
           }
       )

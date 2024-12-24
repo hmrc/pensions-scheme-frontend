@@ -21,19 +21,15 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.FeatureToggleName.SchemeRegistration
-import models.requests.DataRequest
-
 import javax.inject.Inject
-import models.{FeatureToggleName, Index, Mode}
+import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Enumerable, UserAnswers}
+import utils.Enumerable
 import views.html.register.trustees.partnership.partnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,8 +45,7 @@ class PartnershipDetailsController @Inject()(
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              val view: partnershipDetails,
-                                              featureToggleService: FeatureToggleService
+                                              val view: partnershipDetails
                                             )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
@@ -77,20 +72,11 @@ class PartnershipDetailsController @Inject()(
           request.userAnswers.upsert(PartnershipDetailsId(index))(value) {
             answers =>
               userAnswersService.upsert(mode, srn, answers.json).flatMap { _ =>
-                tempToggleAmend(request.userAnswers.setOrException(PartnershipDetailsId(index))(value)).map { updatedUA =>
+                Future.successful(request.userAnswers.setOrException(PartnershipDetailsId(index))(value)).map { updatedUA =>
                   Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, updatedUA, srn))
                 }
               }
           }
       )
-  }
-
-  //TODO: Remove whole method once toggle is removed
-  private def tempToggleAmend(ua: UserAnswers)(implicit request: DataRequest[AnyContent]): Future[UserAnswers] = {
-    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { toggleValue =>
-      val uaAsJsObject = ua.json.as[JsObject]
-      val updatedJson = uaAsJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue)
-      UserAnswers(updatedJson)
-    }
   }
 }

@@ -20,24 +20,18 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.UserAnswers
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-
-import scala.concurrent.Future
 
 class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
@@ -91,14 +85,6 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
       )
     )(fakeRequest, messages).toString
 
-  private val mockFeatureToggleService = mock[FeatureToggleService]
-
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
-
   "CheckYourAnswersContactDetailsController" when {
 
     "on a GET" must {
@@ -106,9 +92,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         "Normal Mode" in {
 
           val bindings = modules(fullAnswers.dataRetrievalAction)
-          val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)
-          )
+          val ftBinding: Seq[GuiceableModule] = Seq()
 
           running(_.overrides((bindings ++ ftBinding): _*)) {
             app =>
@@ -125,7 +109,6 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
         "Update Mode" in {
 
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)

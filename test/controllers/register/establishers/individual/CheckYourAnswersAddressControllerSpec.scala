@@ -19,44 +19,32 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
 import models.person.PersonName
-import org.mockito.Mockito._
 import navigators.Navigator
-import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers.{contentAsString, running, status, _}
-import services.FeatureToggleService
+import play.api.test.Helpers._
+import utils._
 import utils.annotations.NoSuspendedCheck
-import utils.{AllowChangeHelper, CountryOptions, Enumerable, FakeCountryOptions, FakeNavigator, UserAnswers, _}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
-
-import scala.concurrent.Future
 
 class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
   import CheckYourAnswersAddressControllerSpec._
 
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
           val app = applicationBuilder(
-            fullAnswers.dataRetrievalAction,
-            extraModules = Seq(bind[FeatureToggleService].toInstance(mockFeatureToggleService))
+            fullAnswers.dataRetrievalAction
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
@@ -72,7 +60,6 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
         "Update Mode" in {
 
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
@@ -159,7 +146,6 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

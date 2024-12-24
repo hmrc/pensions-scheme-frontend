@@ -19,14 +19,13 @@ package controllers
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import identifiers.{SchemeNameId, UKBankAccountId}
+import identifiers.SchemeNameId
 import models.AuthEntity.PSA
 import models._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
 import play.api.mvc._
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
@@ -41,7 +40,6 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                             getData: DataRetrievalAction,
                                             @TaskList allowAccess: AllowAccessActionProvider,
                                             val controllerComponents: MessagesControllerComponents,
-                                            featureToggleService: FeatureToggleService,
                                             val oldView: oldPsaTaskList,
                                             val viewRegistration: psaTaskListRegistration,
                                             hsTaskListHelperRegistration: HsTaskListHelperRegistration,
@@ -75,13 +73,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
         (srn, request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
-            featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-              case true =>
-                Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
-              case _ =>
-                dataCacheConnector.save(request.externalId, UKBankAccountId, false)
-                Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
-            }
+            Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName)))
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
           case (Some(_), answers, sn) =>

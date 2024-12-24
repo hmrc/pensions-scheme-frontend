@@ -23,12 +23,12 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.{EstablishersIndividualDetails, OldEstablishersIndividualDetails}
@@ -50,8 +50,7 @@ class EstablisherNameController @Inject()(
                                            requireData: DataRequiredAction,
                                            formProvider: PersonNameFormProvider,
                                            val controllerComponents: MessagesControllerComponents,
-                                           val view: personName,
-                                           featureToggleService: FeatureToggleService
+                                           val view: personName
                                          )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
@@ -73,13 +72,10 @@ class EstablisherNameController @Inject()(
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
           value => {
             userAnswersService.save(mode, srn, EstablisherNameId(index), value).flatMap {
-              cacheMap =>
-                featureToggleService.get(FeatureToggleName.SchemeRegistration).map{ featureToggle =>
-                  (featureToggle.isEnabled, mode) match {
-                  case (true, NormalMode) =>
-                    Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
-                  case _ => Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn))
-                  }
+              cacheMap => mode match {
+                case NormalMode =>
+                  Future.successful(Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn)))
+                case _ => Future.successful(Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn)))
                 }
             }
           }

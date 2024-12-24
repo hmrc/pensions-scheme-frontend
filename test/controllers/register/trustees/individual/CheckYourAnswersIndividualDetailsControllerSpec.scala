@@ -20,22 +20,18 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.individual._
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models.person.PersonName
-import org.mockito.Mockito._
-import models.{NormalMode, _}
-import org.mockito.ArgumentMatchers.any
+import models._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
   import CheckYourAnswersIndividualDetailsControllerSpec._
@@ -87,12 +83,6 @@ class CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase
       }
      }
   }
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 }
 
 object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
@@ -109,7 +99,6 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private val nino = "nino"
   private val utr = "utr"
   private val reason = "reason"
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers()
   private def trusteeDob(mode: Mode, srn: Option[String]) =
@@ -235,8 +224,7 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
   private val view = injector.instanceOf[checkYourAnswers]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 allowChangeHelper: AllowChangeHelper = ach,
-                 isToggleOn: Boolean = false): CheckYourAnswersIndividualDetailsController =
+                 allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersIndividualDetailsController =
     new CheckYourAnswersIndividualDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -246,11 +234,10 @@ object CheckYourAnswersIndividualDetailsControllerSpec extends ControllerSpecBas
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       allowChangeHelper,
-  new DataRequiredActionImpl,
+      new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,

@@ -23,7 +23,6 @@ import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.partnership._
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import navigators.AbstractNavigator
@@ -42,11 +41,7 @@ class TrusteesPartnershipDetailsNavigator @Inject()(val dataCacheConnector: User
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: Option[String]): PartialFunction[Identifier, Call] = {
-    case PartnershipDetailsId(index) => // TODO: Remove Json code below when SchemeRegistration toggle is removed
-      (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-        case Some(true) => trusteeTaskList(index)
-        case _ => AddTrusteeController.onPageLoad(mode, srn)
-      }
+    case PartnershipDetailsId(index) => trusteeTaskList(index)
     case id@PartnershipHasUTRId(index) =>
       booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case PartnershipEnterUTRId(index) if mode == NormalMode => hasVat(mode, index, srn)

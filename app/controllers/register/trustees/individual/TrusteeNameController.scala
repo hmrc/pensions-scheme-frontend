@@ -22,20 +22,18 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.trustees.individual.routes._
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
-import models.FeatureToggleName.SchemeRegistration
 
 import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{FeatureToggleName, Index, Mode}
+import models.{Index, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Enumerable, UserAnswers}
+import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -51,7 +49,6 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
                                       requireData: DataRequiredAction,
                                       formProvider: PersonNameFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
-                                      featureToggleService: FeatureToggleService,
                                       val view: personName
                                      )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -81,19 +78,10 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
         value =>
           userAnswersService.save(mode, srn, TrusteeNameId(index), value).flatMap { _ =>
-            tempToggleAmend(request.userAnswers.set(TrusteeNameId(index))(value).asOpt.getOrElse(request.userAnswers)).map{ updatedUA =>
+            Future.successful(request.userAnswers.set(TrusteeNameId(index))(value).asOpt.getOrElse(request.userAnswers)).map{ updatedUA =>
             Redirect(navigator.nextPage(TrusteeNameId(index), mode, updatedUA, srn))
             }
           }
       )
-  }
-
-  //TODO: Remove whole method once toggle is removed
-  private def tempToggleAmend(ua: UserAnswers)(implicit  request: DataRequest[AnyContent]): Future[UserAnswers] = {
-    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { toggleValue =>
-      val uaAsJsObject = ua.json.as[JsObject]
-      val updatedJson = uaAsJsObject ++ Json.obj(SchemeRegistration.asString -> toggleValue)
-      UserAnswers(updatedJson)
-    }
   }
 }

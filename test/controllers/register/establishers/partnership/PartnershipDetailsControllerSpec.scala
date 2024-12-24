@@ -21,21 +21,16 @@ import controllers.actions._
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.FeatureToggleName.SchemeRegistration
 import models._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.establishers.partnership.partnershipDetails
-
-import scala.concurrent.Future
 
 class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar{
 
@@ -50,11 +45,10 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
   private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[partnershipDetails]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, 0, None), None)(fakeRequest, messages).toString
@@ -67,12 +61,6 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
       )
     )
   )
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "PartnershipDetails Controller" must {
 

@@ -21,21 +21,16 @@ import controllers.actions._
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.FeatureToggleName.SchemeRegistration
-import models.{FeatureToggle, Index, NormalMode, PartnershipDetails}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import models.{Index, NormalMode, PartnershipDetails}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.trustees.partnership.partnershipDetails
-
-import scala.concurrent.Future
 
 class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
   appRunning()
@@ -47,7 +42,6 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
   private val firstIndex: Index = Index(0)
   val invalidIndex: Index = Index(3)
   val schemeName = "Test Scheme Name"
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val view = injector.instanceOf[partnershipDetails]
 
@@ -55,8 +49,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
     new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
@@ -80,11 +73,6 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
 
   )
 
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "TrusteeDetails Controller" must {
 

@@ -30,7 +30,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
+import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
 import utils.{Enumerable, UserAnswers}
@@ -52,8 +52,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val checkBoxView: dataPrefillCheckbox,
                                                 val radioView: dataPrefillRadio,
-                                                config: FrontendAppConfig,
-                                                featureToggleService: FeatureToggleService
+                                                config: FrontendAppConfig
                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits {
 
@@ -91,25 +90,19 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
-          featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-            case true =>
-              val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-              if (seqTrustee.isEmpty) {
-                Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                  .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
-              } else {
-                renderView(Ok,
-                  seqTrustee,
-                  getFormAsEither(seqTrustee, establisherIndex),
-                  establisherIndex,
-                  companyName,
-                  schemeName
-                )
-              }
-            case _ =>
+            val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+            if (seqTrustee.isEmpty) {
               Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
-          }.flatten
+            } else {
+              renderView(Ok,
+                seqTrustee,
+                getFormAsEither(seqTrustee, establisherIndex),
+                establisherIndex,
+                companyName,
+                schemeName
+              )
+            }
         }
     }
 

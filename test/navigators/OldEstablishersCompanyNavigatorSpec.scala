@@ -23,22 +23,16 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
-import services.FeatureToggleService
 import utils.{Enumerable, UserAnswers}
-
-import scala.concurrent.Future
 
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
@@ -47,15 +41,7 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
 
   import OldEstablishersCompanyNavigatorSpec._
 
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
-
-
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-  }
 
   "EstablishersCompanyNavigator" when {
 
@@ -98,7 +84,6 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
           rowNoValue(CompanyEnterPAYEId(0))(isDormant(NormalMode)),
           rowNoValue(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
           rowNoValueNewEstablisher(CompanyAddressListId(0))(companyAddressYears(NormalMode)),
-          row(AddCompanyDirectorsId(0))(false, taskList(NormalMode), ua = Some(addOneCompanyDirectors)),
           row(TrusteeAlsoDirectorId(0))(-1, directorName(NormalMode, 0)),
           row(TrusteeAlsoDirectorId(0))(1, addCompanyDirectors(0, NormalMode),
             ua = Some(addOneCompanyDirectorsTrusteeAlsoDirector)),

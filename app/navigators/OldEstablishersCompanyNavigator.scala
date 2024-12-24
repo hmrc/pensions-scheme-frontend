@@ -25,7 +25,6 @@ import controllers.routes._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import utils.UserAnswers
@@ -267,13 +266,8 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             }
           } else {
-            if (mode == CheckMode || mode == NormalMode) { // TODO: Remove Json code below when SchemeRegistration toggle is removed
-              (answers.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-                case Some(true) =>
-                  controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
-                case _ =>
-                  PsaSchemeTaskListController.onPageLoad(mode, srn)
-              }
+            if (mode == CheckMode || mode == NormalMode) {
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
             } else {
               AnyMoreChangesController.onPageLoad(srn)
             }

@@ -21,9 +21,8 @@ import controllers.register.trustees.individual.routes.TrusteeNameController
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
-import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{FeatureToggle, Index, NormalMode}
+import models.{Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -36,7 +35,7 @@ import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
@@ -48,7 +47,6 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
   import TrusteeNameControllerSpec._
 
   private val view = injector.instanceOf[personName]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   def viewAsString(form: Form[_] = form): String = view(
     form,
@@ -58,15 +56,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "Test"), ("lastName", "Name"))
 
-  private val extraModules: Seq[GuiceableModule] = Seq(
-    bind[FeatureToggleService].toInstance(mockFeatureToggleService)
-  )
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
+  private val extraModules: Seq[GuiceableModule] = Seq()
 
   "TrusteeNameController" must {
     "return OK and the correct view for a GET" in {
