@@ -95,6 +95,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   }
 
   "onPageLoad when only one trustee" must {
+    val srn = Some("S2400000041")
     "return Ok and the correct view on a GET request" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqOneTrustee)
@@ -102,7 +103,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, srn, establisherIndex = 0)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -120,11 +121,11 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, srn, establisherIndex = 0)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(NormalMode, establisherIndex, 0, None).url)
+          .onPageLoad(NormalMode, establisherIndex, 0, srn).url)
       }
     }
   }
