@@ -18,10 +18,6 @@ package identifiers.register.establishers
 
 import identifiers._
 
-case class AddEstablisherId(addAnother: Option[Boolean]) extends Identifier {
-  override def toString: String = "addEstablisher"
-}
-
-case object AddEstablisherId extends TypedIdentifier[Boolean] {
-  override def toString: String = "addEstablisher"
+case object MoreThanTenEstablishersId extends TypedIdentifier[Boolean] {
+  override def toString: String = "moreThanTenEstablishers"
 }

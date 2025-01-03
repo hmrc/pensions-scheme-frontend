@@ -23,10 +23,12 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import models.register.Establisher
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode, NormalMode, UpdateMode}
+import models.{FeatureToggleName, Mode, NormalMode}
 import navigators.Navigator
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,27 +49,27 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          featureToggleService: FeatureToggleService,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: addEstablisher,
-                                         val addEstablisherOldview: addEstablisherOld
+                                         val addEstablisherOldView: addEstablisherOld
                                         )(implicit val ec: ExecutionContext)
   extends FrontendBaseController with Retrievals with I18nSupport {
+
+  private val logger = Logger(classOf[AddEstablisherController])
+
+  private val form = formProvider()
 
   private def renderPage(
                           establishers: Seq[Establisher[_]],
                           mode: Mode,
                           srn: Option[String],
-                          form: Form[Option[Boolean]], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+                          form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
       (isEnabled, mode) match {
         case (true, NormalMode) =>
           val completeEstablishers = establishers.filter(_.isCompleted)
           val incompleteEstablishers = establishers.filterNot(_.isCompleted)
-          status(view(form, mode, request.viewOnly, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
-        case (_, NormalMode) =>
-          val completeEstablishers = establishers.filter(_.isCompleted)
-          val incompleteEstablishers = establishers.filterNot(_.isCompleted)
-          status(view(form, mode, request.viewOnly, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
-        case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
+          status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
+        case _ => status(addEstablisherOldView(form, mode, establishers, existingSchemeName, srn))
       }
     }
   }
@@ -76,21 +78,33 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
-        renderPage(establishers, mode, srn, formProvider(establishers), Ok)
+        renderPage(establishers, mode, srn, form, Ok)
     }
 
   def onSubmit(mode: Mode, srn: Option[String]): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
-      val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
-      formProvider(establishers).bindFromRequest().fold(
-        formWithErrors =>
-          renderPage(establishers, mode, srn, formWithErrors, BadRequest),
-        {
-          case None if establishers.length >= appConfig.maxEstablishers =>
-            Future.successful(Redirect(navigator.nextPage(AddEstablisherId(Some(false)), mode, request.userAnswers, srn)))
-          case value =>
-            Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers, srn)))
-        }
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+
+        val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
+
+        if (establishers.isEmpty || establishers.lengthCompare(appConfig.maxEstablishers) >= 0)
+          Future.successful(Redirect(navigator.nextPage(AddEstablisherId, mode, request.userAnswers, srn)))
+        else {
+          form.bindFromRequest().fold(
+            formWithErrors => {
+              renderPage(establishers, mode, srn, formWithErrors, BadRequest)
+            },
+            value =>
+              request.userAnswers.set(AddEstablisherId)(value).fold(
+                errors => {
+                  logger.error("Unable to set user answer", JsResultException(errors))
+                  Future.successful(InternalServerError)
+                },
+                userAnswers =>
+                  Future.successful(Redirect(navigator.nextPage(AddEstablisherId, mode, request.userAnswers, srn)))
+              )
       )
     }
+}
+
 }

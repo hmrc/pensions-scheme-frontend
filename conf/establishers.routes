@@ -28,6 +28,13 @@ POST        /:index/establisher-type                                 controllers
 GET         /:index/:mode/establisher-type/:srn                      controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode,index:Index, srn: Option[String])
 POST        /:index/:mode/establisher-type/:srn                      controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode,index:Index, srn: Option[String])
 
+GET         /other-establishers                                      controllers.register.establishers.MoreThanTenEstablishersController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
+POST        /other-establishers                                      controllers.register.establishers.MoreThanTenEstablishersController.onSubmit(mode: Mode = NormalMode, srn: Option[String] = None)
+GET         /change/other-establishers                               controllers.register.establishers.MoreThanTenEstablishersController.onPageLoad(mode: Mode = CheckMode, srn: Option[String] = None)
+POST        /change/other-establishers                               controllers.register.establishers.MoreThanTenEstablishersController.onSubmit(mode: Mode = CheckMode, srn: Option[String] = None)
+GET         /:mode/other-establishers/:srn                           controllers.register.establishers.MoreThanTenEstablishersController.onPageLoad(mode: Mode, srn: Option[String])
+POST        /:mode/other-establishers/:srn                           controllers.register.establishers.MoreThanTenEstablishersController.onSubmit(mode: Mode, srn: Option[String])
+
 GET         /:index/company/already-deleted                          controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode = NormalMode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String] = None)
 GET         /:index/company/:mode/already-deleted/:srn               controllers.register.establishers.AlreadyDeletedController.onPageLoad(mode: Mode,index: Index, establisherKind: EstablisherKind = EstablisherKind.Company, srn: Option[String])
 

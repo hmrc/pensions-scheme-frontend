@@ -23,20 +23,8 @@ import play.api.data.{Form, Forms}
 
 class AddEstablisherFormProvider @Inject() extends Mappings {
 
-  def apply(establishers: Seq[_]): Form[Option[Boolean]] = {
-    if (establishers.isEmpty) {
-      Form(
-        "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
-      )
-    } else if (establishers.length >= 10) {
-      Form(
-        "value" -> Forms.optional(boolean("site.no"))
-      ).fill(Some(false))
-  } else {
-      Form(
-        "value" -> Forms.optional(boolean("messages__addEstablisher_error__selection"))
-          .verifying("messages__addEstablisher_error__selection", _.isDefined)
-      )
-    }
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__addEstablisher_error__selection")
+    )
 }

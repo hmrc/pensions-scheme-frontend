@@ -29,11 +29,11 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_],mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[_],mode: Mode, index: Index, schemeName: Option[String], submitUrl: Call, srn:Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__otherEstablishers__title"))) {
 
-    @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
+    @formHelper(action = submitUrl, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))

@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import controllers.register.establishers.routes
+@import controllers.register.establishers.routes._
 @import config.FrontendAppConfig
 @import models.Mode
 @import models.register.Establisher
@@ -36,45 +36,47 @@
 @(
     form: Form[_],
     mode: Mode,
-    viewOnly: Boolean,
     completeEstablishers: Seq[Establisher[_]],
     incompleteEstablishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String],
+    srn: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @allEstablishers = @{ completeEstablishers ++ incompleteEstablishers }
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
 
-    @formHelper(action = routes.AddEstablisherController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
+    @formHelper(action = AddEstablisherController.onSubmit(mode, srn), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
         @components.heading(
-            headingKey=messages("messages__establishers__add__title"), true
+            headingKey=messages("messages__establishers__add__title")
         )
 
         @if(allEstablishers.isEmpty) {
+
             @components.paragraph_text(messages("messages__establishers__add_hint"))
+
             @submit_button("site.continue", true)
+
         } else {
 
-            @if(allEstablishers.size < appConfig.maxEstablishers) {
-                @add_entity_list(allEstablishers, mode, srn, messages("messages__establishers__add_header"))
-
-                @input_yes_no(
-                    field = form("value"),
-                    label = messages("messages__establishers__add_legend_more"),
-                    hint = Some(messages("messages__establishers_lede"))
-                )
-            } else {
-                @add_entity_list(allEstablishers, mode, srn, messages("messages__establishers__add_header"))
-                @components.paragraph_text(messages("messages__establishers__add_limit"))
-                @components.paragraph_text(messages("messages__addEstablishers_tell_us_if_you_have_more"))
+            @if(incompleteEstablishers.nonEmpty) {
+                @add_entity_list(incompleteEstablishers, mode, srn, messages("messages__schemeTaskList__incomplete"))
             }
+
+            @if(completeEstablishers.nonEmpty) {
+                @add_entity_list(completeEstablishers, mode, srn, messages("messages__schemeTaskList__completed"))
+            }
+
+            @input_yes_no(
+                field = form("value"),
+                label = messages("messages__establishers__add_legend_more"),
+                hint = Some(messages("messages__establishers_lede"))
+            )
 
             @submit_button("site.save_and_continue", true)
 

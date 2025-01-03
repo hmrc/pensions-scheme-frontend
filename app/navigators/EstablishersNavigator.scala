@@ -19,9 +19,11 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
+import controllers.routes.{AnyMoreChangesController, PsaSchemeTaskListController}
+import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId, MoreThanTenEstablishersId}
 import models.register.establishers.EstablisherKind
 import models.{CheckMode, Mode, NormalMode, UpdateMode}
+import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -38,6 +40,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
                        srn: Option[String]): Option[NavigateTo] =
     from.id match {
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers, mode, srn)
+      case MoreThanTenEstablishersId => redirectToAnyMoreChanges(PsaSchemeTaskListController.onPageLoad(mode, srn), mode, srn)
       case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteEstablisherId =>
         mode match {
@@ -48,6 +51,14 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
         }
       case _ => None
     }
+
+  private def redirectToAnyMoreChanges(normalModeRoutes: Call, mode: Mode, srn: Option[String]): Option[NavigateTo] = {
+    if (mode == CheckMode || mode == NormalMode) {
+      NavigateTo.dontSave(normalModeRoutes)
+    } else {
+      NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
+    }
+  }
 
   private def addEstablisherRoutes(value: Option[Boolean],
                                    answers: UserAnswers,
