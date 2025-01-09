@@ -38,7 +38,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
@@ -368,13 +368,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
-    override def getMinimalFlags(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
+    override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
 
-    override def getMinimalPsaDetails(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
+    override def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
 
-    override def getPsaNameFromPsaID(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
+    override def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
       Future.successful(Some("psa name"))
   }
 }

@@ -27,21 +27,24 @@
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
-    entity_list: components.entity_list,
     input_yes_no: components.input_yes_no,
     govukErrorSummary: GovukErrorSummary,
-    submit_button: components.submit_button
+    submit_button: components.submit_button,
+    add_entity_list: components.add_entity_list_v2
 )
 
 @(
     form: Form[_],
-    directors: Seq[DirectorEntity],
+    completeDirectors: Seq[DirectorEntity],
+    incompleteDirectors: Seq[DirectorEntity],
     schemeName: Option[String],
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
     srn: Option[SchemeReferenceNumber]
 )(implicit request: Request[_], messages: Messages)
+
+@directors = @{ completeDirectors ++ incompleteDirectors }
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addCompanyDirectors__heading"))){
 
@@ -60,7 +63,13 @@
             @submit_button("messages__addCompanyDirectors_add_director")
         } else {
 
-            @entity_list(directors, viewOnly, mode, srn, messages("messages__addCompanyDirectors__heading"))
+            @if(incompleteDirectors.nonEmpty) {
+                @add_entity_list(incompleteDirectors, mode, srn, messages("messages__addCompanyDirectors__incomplete"))
+            }
+
+            @if(completeDirectors.nonEmpty) {
+                @add_entity_list(completeDirectors, mode, srn, messages("messages__addCompanyDirectors__completed"))
+            }
 
             @if(!viewOnly){
                 @if(directors.size < appConfig.maxDirectors) {

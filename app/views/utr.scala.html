@@ -30,6 +30,11 @@
 
 @(form: Form[_], viewmodel: UTRViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
+@hintHtml = {
+<p class="govuk-!-margin-top-0">@messages("messages__companyUtr__guidance1")</p>
+<p>@messages("messages__companyUtr__guidance2")</p>
+}
+
 @layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {
@@ -38,16 +43,14 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(messages(viewmodel.heading), true)
-
-        @components.paragraph_text(messages("messages__companyUtr__guidance1"))
-
-        @components.paragraph_text(messages("messages__companyUtr__guidance2"))
-
         @input_text(
             field = form("utr"),
-            label = messages(viewmodel.title),
-            labelClass = Some("govuk-visually-hidden"),
+            label = messages(viewmodel.heading),
+            headingIsLegend = true,
+            labelClass = Some("govuk-label--l"),
+            hint = Some(
+                messages("messages__companyUtr__guidance1") + "<br><br>" + messages("messages__companyUtr__guidance2")
+            ),
             numericField = true
         )
 

@@ -17,9 +17,9 @@
 package connectors
 
 import base.SpecBase
-import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 object FakeReadOnlyCacheConnector extends SpecBase {
   def getConnector: SchemeDetailsReadOnlyCacheConnector =
-    new SchemeDetailsReadOnlyCacheConnector(frontendAppConfig, injector.instanceOf[WSClient])
+    new SchemeDetailsReadOnlyCacheConnector(frontendAppConfig, injector.instanceOf[HttpClientV2])
 }

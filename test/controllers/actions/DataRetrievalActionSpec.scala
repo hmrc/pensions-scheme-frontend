@@ -95,7 +95,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     reset(lockRepoConnector)
     reset(schemeDetailsConnector)
     reset(minimalPsaConnector)
-    when(minimalPsaConnector.getMinimalFlags(any())(any(), any()))
+    when(minimalPsaConnector.getMinimalFlags()(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
     when(updateCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))

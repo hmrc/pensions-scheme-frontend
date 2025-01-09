@@ -23,13 +23,13 @@ import models.requests.OptionalDataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class FakeAllowAccessAction(srn: Option[SchemeReferenceNumber],
                             pensionsSchemeConnector: PensionsSchemeConnector,
@@ -49,7 +49,12 @@ case class FakeAllowAccessProvider(srn: Option[SchemeReferenceNumber] = None,
                                   ) extends AllowAccessActionProvider with MockitoSugar {
 
   private val errorHandler = new FrontendErrorHandler {
-    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html = Html("")
+    implicit protected val ec: ExecutionContext = ExecutionContext.global
+
+    override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
+                                      (implicit request: RequestHeader): Future[Html] = {
+      Future.successful(Html(""))
+    }
 
     override def messagesApi: MessagesApi = ???
   }
