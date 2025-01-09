@@ -129,7 +129,7 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
 
 object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
   private lazy val index = 0
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
   private val newTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(true).asOpt.value
   private val existingTrusteeUserAnswers = UserAnswers().set(IsTrusteeNewId(index))(false).asOpt.value
   private val partnershipDetails = PartnershipDetails("test partnership")
@@ -140,16 +140,16 @@ object TrusteesPartnershipDetailsNavigatorSpec extends OptionValues {
     UserAnswers(uaWithToggle)
   }
 
-  private def addTrusteesPage(mode: Mode, srn: Option[String]): Call =
+  private def addTrusteesPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
     AddTrusteeController.onPageLoad(Mode.journeyMode(mode), srn)
 
   private def TrusteesTaskListPage(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def hasVatPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
-  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 }
 

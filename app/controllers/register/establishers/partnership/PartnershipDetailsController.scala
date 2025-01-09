@@ -34,6 +34,7 @@ import views.html.register.establishers.partnership.partnershipDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PartnershipDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
@@ -54,7 +55,7 @@ class PartnershipDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
@@ -63,7 +64,7 @@ class PartnershipDetailsController @Inject()(
         Future.successful(Ok(view(formWithData, mode, index, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

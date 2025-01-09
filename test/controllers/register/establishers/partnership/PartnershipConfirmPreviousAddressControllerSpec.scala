@@ -62,7 +62,7 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)
   val index = 0
-  val srn = Some("srn")
+  val srn = Some(SchemeReferenceNumber("srn"))
 
   private val view = injector.instanceOf[confirmPreviousAddress]
 

@@ -20,6 +20,7 @@ import models.AddressYears
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
+import models.SchemeReferenceNumber
 
 case class AddressYearsViewModel(
                                   postCall: Call,
@@ -28,5 +29,5 @@ case class AddressYearsViewModel(
                                   legend: Message,
                                   subHeading: Option[Message] = None,
                                   inputs: Seq[InputOption] = AddressYears.options,
-                                  srn: Option[String] = None
+                                  srn: Option[SchemeReferenceNumber] = None
                                 )

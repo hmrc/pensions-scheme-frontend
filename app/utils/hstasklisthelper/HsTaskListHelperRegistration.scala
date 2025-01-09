@@ -34,6 +34,7 @@ import viewmodels._
 
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
+import models.SchemeReferenceNumber
 
 class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
   spokeCreationService) {
@@ -45,7 +46,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
   private def createFormattedDate(dt: LastUpdated, daysToAdd: Int): String =
     new Timestamp(dt.timestamp).toLocalDateTime.plusDays(daysToAdd).format(formatter)
 
-  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+  override def taskList(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[SchemeReferenceNumber],
                         lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
 
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
@@ -65,7 +66,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  def taskListToggleOff(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String],
+  def taskListToggleOff(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[SchemeReferenceNumber],
                         lastUpdatedDate: Option[LastUpdated]): SchemeDetailsTaskList = {
     val expiryDate = lastUpdatedDate.map(createFormattedDate(_, appConfig.daysDataSaved))
     SchemeDetailsTaskList(
@@ -84,7 +85,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  def taskListEstablisher(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
+  def taskListEstablisher(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[SchemeReferenceNumber], establisherIndex: Int): SchemeDetailsTaskListEstablishers = {
     val section = establisherSection(answers, NormalMode, srn, establisherIndex)
     val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
     SchemeDetailsTaskListEstablishers(
@@ -96,7 +97,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  def taskListTrustee(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[String], trusteeIndex: Int): SchemeDetailsTaskListTrustees = {
+  def taskListTrustee(answers: UserAnswers, viewOnly: Option[Boolean], srn: Option[SchemeReferenceNumber], trusteeIndex: Int): SchemeDetailsTaskListTrustees = {
     val section = trusteeSection(answers, NormalMode, srn, trusteeIndex)
     val totalCompletedSections = section.entities.count(_.isCompleted.contains(true))
     SchemeDetailsTaskListTrustees(
@@ -108,7 +109,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  protected[utils] def establisherSection(userAnswers: UserAnswers, mode: Mode, srn: Option[String], index: Int)
+  protected[utils] def establisherSection(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber], index: Int)
   : SchemeDetailsTaskListEntitySection = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
 
@@ -147,10 +148,8 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   protected[utils] def trusteeSection(userAnswers: UserAnswers,
                                       mode: Mode,
-                                      srn: Option[String],
-                                      index: Int
-                                     ): SchemeDetailsTaskListEntitySection = {
-
+                                      srn: Option[SchemeReferenceNumber],
+                                      index: Int): SchemeDetailsTaskListEntitySection = {
     val seqTrustees = userAnswers.allTrustees
 
     if (seqTrustees.isEmpty || index >= seqTrustees.size) {
@@ -198,19 +197,19 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
 
   private[utils] def addEstablisherHeader(userAnswers: UserAnswers,
                                           mode: Mode,
-                                          srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+                                          srn: Option[SchemeReferenceNumber]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokes(userAnswers,
       mode, srn, viewOnly = false), None))
   }
 
   private[utils] def addEstablisherHeaderToggleOff(userAnswers: UserAnswers,
                                                    mode: Mode,
-                                                   srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+                                                   srn: Option[SchemeReferenceNumber]): Option[SchemeDetailsTaskListEntitySection] = {
     Some(SchemeDetailsTaskListEntitySection(None, spokeCreationService.getAddEstablisherHeaderSpokesToggleOff(userAnswers,
       mode, srn, viewOnly = false), None))
   }
 
-  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[String]): Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addTrusteeHeader(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber]): Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokes(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes => Some(
@@ -218,7 +217,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
-  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: Option[String])
+  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: Option[SchemeReferenceNumber])
   : Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None

@@ -30,6 +30,7 @@ import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class AlreadyDeletedController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -42,7 +43,7 @@ class AlreadyDeletedController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -52,7 +53,7 @@ class AlreadyDeletedController @Inject()(
 
     }
 
-  private def vm(mode: Mode, establisherIndex: Index, partnerName: String, srn: Option[String]) =
+  private def vm(mode: Mode, establisherIndex: Index, partnerName: String, srn: Option[SchemeReferenceNumber]) =
     AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__partner_title"),
     partnerName,

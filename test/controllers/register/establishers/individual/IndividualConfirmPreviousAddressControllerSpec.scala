@@ -64,7 +64,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
   val countryOptions = new CountryOptions(environment, frontendAppConfig)
   val schemeName = "Test Scheme Name"
   val index = 0
-  val srn = Some("srn")
+  val srn = Some(SchemeReferenceNumber("srn"))
 
   private val view = injector.instanceOf[confirmPreviousAddress]
 

@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
@@ -39,8 +40,8 @@ trait PensionsSchemeConnector {
   def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
                          )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean = true
-                         )(implicit headerCarrier: HeaderCarrier,
+  def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean = true)
+                         (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]]
 }
 
@@ -92,11 +93,11 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
       }
   }
 
-  def checkForAssociation(userId: String, srn: String, isPsa: Boolean
-                         )(implicit headerCarrier: HeaderCarrier,
+  def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean)
+                         (implicit headerCarrier: HeaderCarrier,
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
     val headers: Seq[(String, String)] =
-      Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn), ("Content-Type", "application/json"))
+      Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn.id), ("Content-Type", "application/json"))
     val url = url"${config.checkAssociationUrl}"
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 

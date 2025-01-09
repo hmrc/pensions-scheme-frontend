@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -59,7 +59,7 @@ class TrusteeDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
 
   private val postCall = routes.TrusteeDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,

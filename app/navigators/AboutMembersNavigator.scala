@@ -22,6 +22,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
 import models.{CheckMode, Members, NormalMode}
 import utils.{Enumerable, UserAnswers}
+import models.SchemeReferenceNumber
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       appConfig: FrontendAppConfig
@@ -75,7 +76,7 @@ class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 }

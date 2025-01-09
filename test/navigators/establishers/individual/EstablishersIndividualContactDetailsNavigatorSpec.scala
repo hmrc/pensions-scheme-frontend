@@ -89,9 +89,9 @@ class EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Ma
 object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(value = true).asOpt.value
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def cyaContactDetailsPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
     CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

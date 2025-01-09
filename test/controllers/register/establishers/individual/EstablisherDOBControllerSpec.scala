@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -58,7 +58,7 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,

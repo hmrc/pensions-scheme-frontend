@@ -92,7 +92,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
 
   private val establisherName = "test first name test last name"
 
-  private val srn                       = Some("srn")
+  private val srn                       = Some(SchemeReferenceNumber("srn"))
   private val schemeName                = "Test Scheme Name"
   private val formProvider              = new NINOFormProvider()
   private val form                      = formProvider(establisherName)
@@ -139,7 +139,7 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[String]): String = {
+  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): String = {
     val vm = NinoViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, srn),
       title = messages("messages__enterNINO", messages("messages__theIndividual")),

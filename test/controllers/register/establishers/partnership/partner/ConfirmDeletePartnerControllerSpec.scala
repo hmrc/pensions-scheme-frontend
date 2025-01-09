@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
-import models.{Index, NormalMode, PartnershipDetails, UpdateMode}
+import models.{Index, NormalMode, PartnershipDetails, SchemeReferenceNumber, UpdateMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.AnyContentAsFormUrlEncoded
@@ -86,7 +86,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     "never delete the partner on a POST if selected No in UpdateMode" in {
       FakeUserAnswersService.reset()
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(UpdateMode, establisherIndex, partnerIndex, Some("S123"))(postRequestForCancle)
+      val result = controller(data).onSubmit(UpdateMode, establisherIndex, partnerIndex, Some(SchemeReferenceNumber("S123")))(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(PartnerNameId(establisherIndex, partnerIndex))

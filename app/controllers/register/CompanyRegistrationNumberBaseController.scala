@@ -33,6 +33,7 @@ import viewmodels.CompanyRegistrationNumberViewModel
 import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 trait CompanyRegistrationNumberBaseController extends FrontendBaseController with Retrievals with I18nSupport {
 
@@ -40,11 +41,11 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected val formProvider: CompanyRegistrationNumberFormProvider = new CompanyRegistrationNumberFormProvider()
 
-  def postCall: (Mode, Option[String], Index) => Call
+  def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue]
 
-  def get(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+  def get(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index, viewModel: CompanyRegistrationNumberViewModel,
           companyName: String)
          (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
@@ -58,7 +59,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
 
   protected def form(name: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] = formProvider(name)
 
-  def post(mode: Mode, srn: Option[String], index: Index, viewModel: CompanyRegistrationNumberViewModel,
+  def post(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index, viewModel: CompanyRegistrationNumberViewModel,
            companyName: String)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(companyName).bindFromRequest().fold(

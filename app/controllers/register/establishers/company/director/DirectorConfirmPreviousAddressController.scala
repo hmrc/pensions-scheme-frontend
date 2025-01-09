@@ -34,6 +34,7 @@ import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class DirectorConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
@@ -57,7 +58,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map { vm =>
@@ -65,7 +66,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, directorIndex, srn).retrieve.map { vm =>
@@ -74,7 +75,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
         }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Int, directorIndex: Int, srn: Option[String]) =
+  private def viewmodel(mode: Mode, establisherIndex: Int, directorIndex: Int, srn: Option[SchemeReferenceNumber]) =
     Retrieval(
       implicit request =>
         (directorName(establisherIndex, directorIndex) and ExistingCurrentAddressId(establisherIndex, directorIndex))

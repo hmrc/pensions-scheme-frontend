@@ -23,7 +23,7 @@
     button_link: components.button_link
 )
 
-@(schemeName: Option[String], srn: Option[String], href: Call)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], srn: Option[SchemeReferenceNumber], href: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = messages("messages__variationDeclaration__title")) {
 

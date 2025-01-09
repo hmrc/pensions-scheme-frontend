@@ -33,6 +33,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
@@ -62,7 +63,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode,
                         establisherIndex: Index,
                         directorIndex: Index,
-                        srn: Option[String]): Retrieval[CommonFormWithHintViewModel] =
+                        srn: Option[SchemeReferenceNumber]): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map {
@@ -77,7 +78,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {

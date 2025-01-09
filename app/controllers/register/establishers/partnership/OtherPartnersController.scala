@@ -33,6 +33,7 @@ import utils.UserAnswers
 import views.html.register.establishers.partnership.otherPartners
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class OtherPartnersController @Inject()(
                                          appConfig: FrontendAppConfig,
@@ -51,7 +52,7 @@ class OtherPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>
@@ -63,7 +64,7 @@ class OtherPartnersController @Inject()(
 
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>

@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, Mode, NormalMode}
+import models.{CompanyDetails, Index, Mode, NormalMode, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -58,9 +58,9 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       controllerComponents,
       view)
 
-  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.DirectorDOBController.onSubmit
+  private val postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.DirectorDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, directorIndex, srn),
       srn = srn,

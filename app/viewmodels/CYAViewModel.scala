@@ -17,6 +17,7 @@
 package viewmodels
 
 import play.api.mvc.Call
+import models.SchemeReferenceNumber
 
 case class CYAViewModel(
                          answerSections: Seq[Section],
@@ -24,7 +25,7 @@ case class CYAViewModel(
                          schemeName: Option[String],
                          returnOverview: Boolean,
                          hideEditLinks: Boolean,
-                         srn: Option[String],
+                         srn: Option[SchemeReferenceNumber],
                          hideSaveAndContinueButton: Boolean,
                          title: Message,
                          h1: Message,

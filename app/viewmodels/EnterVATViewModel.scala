@@ -17,6 +17,7 @@
 package viewmodels
 
 import play.api.mvc.Call
+import models.SchemeReferenceNumber
 
 case class EnterVATViewModel(
                               postCall: Call,
@@ -24,5 +25,5 @@ case class EnterVATViewModel(
                               heading: Message,
                               hint: Message,
                               subHeading: Option[Message] = None,
-                              srn: Option[String] = None
+                              srn: Option[SchemeReferenceNumber] = None
                             )

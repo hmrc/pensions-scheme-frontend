@@ -37,6 +37,7 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipPreviousAddressController @Inject()(
                                                       val appConfig: FrontendAppConfig,
@@ -59,7 +60,7 @@ class PartnershipPreviousAddressController @Inject()(
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -70,7 +71,7 @@ class PartnershipPreviousAddressController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       PartnershipDetailsId(index).retrieve.map {
@@ -84,7 +85,7 @@ class PartnershipPreviousAddressController @Inject()(
       }
   }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String], name: String)
+  private def viewmodel(index: Int, mode: Mode, srn: Option[SchemeReferenceNumber], name: String)
                        (implicit request: DataRequest[AnyContent]): ManualAddressViewModel =
     ManualAddressViewModel(
       postCall(mode, Index(index), srn),

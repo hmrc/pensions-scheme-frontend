@@ -23,6 +23,7 @@ import identifiers.VariationDeclarationId
 import identifiers.register._
 import models.NormalMode
 import utils.UserAnswers
+import models.SchemeReferenceNumber
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -50,11 +51,11 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case _ => None
     }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = (from.id, srn) match {
+  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = (from.id, srn) match {
     case (VariationDeclarationId, Some(validSrn)) => NavigateTo.dontSave(controllers.register.routes
       .SchemeVariationsSuccessController.onPageLoad(validSrn))
     case _ => None
   }
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
 }

@@ -32,6 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class EstablisherHasNINOController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
@@ -47,14 +48,14 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
                                             (implicit val executionContext: ExecutionContext)
   extends HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         get(EstablisherHasNINOId(index), form(details.fullName), viewModel(mode, index, srn, details.fullName))
       }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.individual.routes.EstablisherHasNINOController.onSubmit(mode,
         index, srn),
@@ -67,7 +68,7 @@ class EstablisherHasNINOController @Inject()(override val appConfig: FrontendApp
   private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
     formProvider("messages__genericHasNino__error__required", establisherName)
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async { implicit request =>
       EstablisherNameId(index).retrieve.map { details =>
         post(EstablisherHasNINOId(index), mode, form(details.fullName), viewModel(mode, index, srn, details.fullName))

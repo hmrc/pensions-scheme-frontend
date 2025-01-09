@@ -29,6 +29,7 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,
@@ -41,7 +42,7 @@ class WhatYouWillNeedPartnershipAddressController @Inject()(val appConfig: Front
                                                            )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {

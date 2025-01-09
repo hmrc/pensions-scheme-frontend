@@ -19,7 +19,7 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{CheckUpdateMode, Index, NormalMode, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -85,7 +85,7 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
 
   val form = new PayeFormProvider()("test partnership name")
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn = Some(SchemeReferenceNumber("S123"))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

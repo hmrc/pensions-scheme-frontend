@@ -233,7 +233,7 @@ class HsTaskListHelperVariationsSpec extends AnyWordSpec with Matchers with Mock
 
 object HsTaskListHelperVariationsSpec extends SpecBase with Matchers with OptionValues with DataCompletionHelper with JsonFileReader {
   private val schemeName = "scheme"
-  private val srn = Some("test-srn")
+  private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
 
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value
   private val beforeYouStartLinkText = Message("messages__schemeTaskList__scheme_info_link_text", schemeName)

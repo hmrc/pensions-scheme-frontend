@@ -29,6 +29,7 @@ import views.html.pspTaskList
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PspSchemeTaskListController @Inject()(
                                              override val messagesApi: MessagesApi,
@@ -43,7 +44,7 @@ class PspSchemeTaskListController @Inject()(
 
   private def sessionExpired:Result = Redirect(controllers.routes.SessionExpiredController.onPageLoad)
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSP)) andThen getData(srn)
     andThen allowAccessAction(Some(srn), allowPsa = true, allowPsp = true)) {
     implicit request =>
 

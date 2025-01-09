@@ -22,6 +22,7 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
+import models.SchemeReferenceNumber
 import models.register.SchemeSubmissionResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentCaptor
@@ -47,7 +48,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private lazy val onwardRoute = frontendAppConfig.managePensionsSchemeOverviewUrl
 
-  val submissionReferenceNumber = "XX123456789132"
+  val submissionReferenceNumber = SchemeReferenceNumber("XX123456789132")
 
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 

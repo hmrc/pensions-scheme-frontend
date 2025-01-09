@@ -32,6 +32,7 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
@@ -47,7 +48,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
                                            )(implicit val executionContext: ExecutionContext) extends
   HasReferenceNumberController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -56,7 +57,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String] = None): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -65,7 +66,7 @@ class PartnershipHasUTRController @Inject()(override val appConfig: FrontendAppC
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], partnershipName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], partnershipName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = routes.PartnershipHasUTRController.onSubmit(mode, index, srn),
       title = Message("messages__hasUTR", Message("messages__thePartnership")),

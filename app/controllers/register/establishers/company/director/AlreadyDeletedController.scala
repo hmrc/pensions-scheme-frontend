@@ -30,6 +30,7 @@ import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class AlreadyDeletedController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -42,7 +43,7 @@ class AlreadyDeletedController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(srn = srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { details =>
@@ -51,7 +52,7 @@ class AlreadyDeletedController @Inject()(
 
     }
 
-  private def vm(establisherIndex: Index, directorName: String, srn: Option[String]) = AlreadyDeletedViewModel(
+  private def vm(establisherIndex: Index, directorName: String, srn: Option[SchemeReferenceNumber]) = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__director_title"),
     directorName,
     controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn,

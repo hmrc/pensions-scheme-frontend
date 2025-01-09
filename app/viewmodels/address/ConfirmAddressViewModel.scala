@@ -19,6 +19,7 @@ package viewmodels.address
 import models.address.Address
 import play.api.mvc.Call
 import viewmodels.Message
+import models.SchemeReferenceNumber
 
 case class ConfirmAddressViewModel(
                                     postCall: Call,
@@ -27,7 +28,7 @@ case class ConfirmAddressViewModel(
                                     hint: Option[Message] = None,
                                     address: Address,
                                     name: String,
-                                    srn: Option[String] = None
+                                    srn: Option[SchemeReferenceNumber] = None
                                   ) {
 
 }

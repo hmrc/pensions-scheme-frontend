@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode, PartnershipDetails}
+import models.{Index, Mode, NormalMode, PartnershipDetails, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -59,9 +59,9 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       view
     )
 
-  private val postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
+  private val postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, partnerIndex, srn),
       srn = srn,

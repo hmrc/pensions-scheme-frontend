@@ -32,6 +32,7 @@ import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class TrusteeEnterNINOController @Inject()(
                                             val appConfig: FrontendAppConfig,
@@ -50,7 +51,7 @@ class TrusteeEnterNINOController @Inject()(
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController
     .onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val fullNameOption: Either[Future[Result], String] =
@@ -62,7 +63,7 @@ class TrusteeEnterNINOController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       val fullNameOption: Either[Future[Result], String] =
@@ -74,7 +75,7 @@ class TrusteeEnterNINOController @Inject()(
       }
   }
 
-  private def viewmodel(fullName: String, index: Index, mode: Mode, srn: Option[String]
+  private def viewmodel(fullName: String, index: Index, mode: Mode, srn: Option[SchemeReferenceNumber]
                        )(implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),

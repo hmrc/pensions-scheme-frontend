@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
-import models.{CompanyDetails, Index, NormalMode, UpdateMode}
+import models.{CompanyDetails, Index, NormalMode, SchemeReferenceNumber, UpdateMode}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.AnyContentAsFormUrlEncoded
@@ -85,7 +85,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     "never delete the director on a POST if selected No in UpdateMode" in {
       FakeUserAnswersService.reset()
       val data   = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(establisherIndex, directorIndex, UpdateMode, Some("S123"))(postRequestForCancel)
+      val result = controller(data).onSubmit(establisherIndex, directorIndex, UpdateMode, Some(SchemeReferenceNumber("S123")))(postRequestForCancel)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verifyNot(DirectorNameId(establisherIndex, directorIndex))

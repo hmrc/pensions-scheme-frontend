@@ -36,6 +36,7 @@ import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class PartnerDOBController @Inject()(
                                       val appConfig: FrontendAppConfig,
@@ -53,7 +54,7 @@ class PartnerDOBController @Inject()(
 
   val form: Form[LocalDate] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(
@@ -64,7 +65,7 @@ class PartnerDOBController @Inject()(
         )
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         post(
@@ -75,7 +76,7 @@ class PartnerDOBController @Inject()(
         )
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String], token: Message)
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber], token: Message)
                        (implicit request: DataRequest[AnyContent]): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, establisherIndex, partnerIndex, srn),
@@ -84,5 +85,5 @@ class PartnerDOBController @Inject()(
     )
   }
 
-  private def postCall: (Mode, Index, Index, Option[String]) => Call = routes.PartnerDOBController.onSubmit
+  private def postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.PartnerDOBController.onSubmit
 }

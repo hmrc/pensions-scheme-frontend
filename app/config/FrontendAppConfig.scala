@@ -17,13 +17,12 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import controllers.routes
 import models.ReportTechnicalIssue
 import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.{Configuration, Mode, Environment}
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

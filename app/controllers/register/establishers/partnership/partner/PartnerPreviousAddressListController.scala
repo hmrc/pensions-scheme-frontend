@@ -34,6 +34,7 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class PartnerPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,
@@ -51,14 +52,14 @@ class PartnerPreviousAddressListController @Inject()(
   extends AddressListController
     with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, partnerIndex, srn).map(get)
 
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, partnerIndex, srn).map { vm =>
@@ -73,7 +74,7 @@ class PartnerPreviousAddressListController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String])
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber])
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (PartnerNameId(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex,

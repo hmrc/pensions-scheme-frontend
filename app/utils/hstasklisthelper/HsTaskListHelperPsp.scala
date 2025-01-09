@@ -24,7 +24,7 @@ import viewmodels._
 
 class HsTaskListHelperPsp {
 
-  def taskList(answers: UserAnswers, srn: String): PspTaskList =
+  def taskList(answers: UserAnswers, srn: SchemeReferenceNumber): PspTaskList =
     PspTaskList(
       answers.get(SchemeNameId).getOrElse(""),
       srn,
@@ -37,7 +37,7 @@ class HsTaskListHelperPsp {
 
   private def name(ua: UserAnswers): String = ua.get(SchemeNameId).getOrElse("")
 
-  private def beforeYouStartSection(ua: UserAnswers, srn: String)
+  private def beforeYouStartSection(ua: UserAnswers, srn: SchemeReferenceNumber)
   : SchemeDetailsTaskListEntitySection =
     SchemeDetailsTaskListEntitySection(None,
       Seq(EntitySpoke(TaskListLink(
@@ -47,7 +47,7 @@ class HsTaskListHelperPsp {
       Some(Message("messages__schemeTaskList__scheme_information_link_text"))
     )
 
-  private def aboutSection(ua: UserAnswers, srn: String)
+  private def aboutSection(ua: UserAnswers, srn: SchemeReferenceNumber)
   : SchemeDetailsTaskListEntitySection =
     SchemeDetailsTaskListEntitySection(None,
       Seq(EntitySpoke(TaskListLink(

@@ -31,6 +31,7 @@ import viewmodels.{CompanyRegistrationNumberViewModel, Message}
 import views.html.register.companyRegistrationNumber
 
 import scala.concurrent.ExecutionContext
+import models.SchemeReferenceNumber
 
 class CompanyEnterCRNController @Inject()(
                                            override val appConfig: FrontendAppConfig,
@@ -48,9 +49,9 @@ class CompanyEnterCRNController @Inject()(
 
   def identifier(index: Int): TypedIdentifier[ReferenceValue] = CompanyEnterCRNId(index)
 
-  def postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit
+  def postCall: (Mode, Option[SchemeReferenceNumber], Index) => Call = routes.CompanyEnterCRNController.onSubmit
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -59,7 +60,7 @@ class CompanyEnterCRNController @Inject()(
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String)
+  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String)
   : CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__enterCRN", Message("messages__theCompany")),
@@ -68,7 +69,7 @@ class CompanyEnterCRNController @Inject()(
     )
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>

@@ -231,7 +231,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
   val timestamp: Long = System.currentTimeMillis
   private val psaId = "A0000000"
-  private val srn = "srn"
+  private val srn = SchemeReferenceNumber("srn")
   private val formatter = DateTimeFormatter.ofPattern("dd MMMM YYYY")
 
   private val deleteDate = LocalDate.now(ZoneOffset.UTC).plusDays(frontendAppConfig.daysDataSaved).format(formatter)
@@ -242,7 +242,7 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
   val schemeNameJsonOption: JsObject = Json.obj("schemeName" -> schemeName)
   val schemeNameRACDACJsonOption: JsObject = Json.obj("racdac" -> Json.obj(RACDACNameId.toString -> schemeName))
   val schemeSrnNumberOnlyData: JsObject =
-    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> srn))
+    Json.obj("submissionReferenceNumber" -> Json.obj("schemeReferenceNumber" -> "srn"))
 
 
 
@@ -281,9 +281,9 @@ object UrlsPartialServiceSpec extends SpecBase with MockitoSugar {
       Message("messages__schemeOverview__scheme_subscription_delete", schemeName))
   )
 
-  private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn),
+  private val variationLinks = Seq(OverviewLink("continue-variation", frontendAppConfig.viewUrl.format(srn.id),
     Message("messages__schemeOverview__scheme_variations_continue", schemeName, deleteDate)),
-    OverviewLink("delete-variation", frontendAppConfig.deleteVariationsUrl.format(srn),
+    OverviewLink("delete-variation", frontendAppConfig.deleteVariationsUrl.format(srn.id),
       Message("messages__schemeOverview__scheme_variations_delete", schemeName)))
 
   private val dataCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
