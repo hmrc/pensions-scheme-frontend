@@ -23,7 +23,7 @@ import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId, UKBankAccoun
 import matchers.JsonMatchers
 import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
+import org.mockito.ArgumentMatchers._
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar

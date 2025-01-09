@@ -16,7 +16,6 @@
 
 package models.register
 
-import models.SchemeReferenceNumber
 import play.api.libs.json.{Format, Json}
 
 case class SchemeSubmissionResponse(schemeReferenceNumber: String)
