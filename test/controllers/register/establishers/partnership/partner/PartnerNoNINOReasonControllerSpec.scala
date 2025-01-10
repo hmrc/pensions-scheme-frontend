@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNoNINOReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
@@ -37,13 +37,13 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__reason__error_ninoRequired", name)
   private val establisherIndex, partnerIndex = Index(0)
   private val srn = None
-  private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+  private val postCall = routes.PartnerNoNINOReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn))
 
   private val viewModel = ReasonViewModel(
     postCall = postCall,
     title = Message("messages__whyNoNINO", Message("messages__thePartner")),
     heading = Message("messages__whyNoNINO", name),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
   private val view = injector.instanceOf[reason]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerNoNINOReasonController =
@@ -66,7 +66,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
   "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -75,7 +75,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,7 +86,7 @@ class PartnerNoNINOReasonControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

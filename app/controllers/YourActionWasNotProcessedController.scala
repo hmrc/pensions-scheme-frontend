@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -25,7 +25,6 @@ import views.html.yourActionWasNotProcessed
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class YourActionWasNotProcessedController @Inject()(
                                                      override val messagesApi: MessagesApi,
@@ -37,7 +36,7 @@ class YourActionWasNotProcessedController @Inject()(
                                                    )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = {
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = {
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         val returnUrl = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)

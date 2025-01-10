@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.company.{CompanyConfirmPreviousAddressId, CompanyDetailsId, CompanyPreviousAddressId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +35,6 @@ import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,
@@ -54,7 +54,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -62,7 +62,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, index, srn).retrieve.map { vm =>
@@ -70,7 +70,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     }
 
-  private def viewmodel(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]) =
+  private def viewmodel(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         (CompanyDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.map {

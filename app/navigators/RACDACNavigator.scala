@@ -19,26 +19,25 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.annotations.Racdac
-import models.SchemeReferenceNumber
 
 class RACDACNavigator @Inject()(@Racdac val dataCacheConnector: UserAnswersCacheConnector) extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.ContractOrPolicyNumberController.onPageLoad(NormalMode))
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
     case DeclarationId => NavigateTo.dontSave(controllers.racdac.routes.SchemeSuccessController.onPageLoad())
     case _ => None
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
-    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, None))
+    case RACDACNameId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
+    case ContractOrPolicyNumberId => NavigateTo.dontSave(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
     case _ => None
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

@@ -55,36 +55,36 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
   private val partnershipDetails = PartnershipDetails("Test partnership")
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private val fullAnswers = UserAnswers().trusteePartnershipDetails(index, partnershipDetails).
-    trusteePartnershipEmail(index, email = "test@test.com").trusteePartnershipPhone(index, phone = "1234")
+  private val fullAnswers = UserAnswers().trusteePartnershipDetails(Index(0), partnershipDetails).
+    trusteePartnershipEmail(Index(0), email = "test@test.com").trusteePartnershipPhone(Index(0), phone = "1234")
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def updateModeUrl(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def updateModeUrl(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
     Seq(AnswerSection(None,
       StringCYA[PartnershipEmailId](
         Some(messages("messages__enterEmail", partnershipDetails.name)),
         Some(messages("messages__visuallyhidden__dynamic_email_address", partnershipDetails.name))
       )().row(PartnershipEmailId(index))(
-        routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers) ++
+        routes.PartnershipEmailController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers) ++
 
         StringCYA[PartnershipPhoneId](
           Some(messages("messages__enterPhoneNumber", partnershipDetails.name)),
           Some(messages("messages__visuallyhidden__dynamic_phone_number", partnershipDetails.name))
         )().row(PartnershipPhoneId(index))(
-          routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), srn).url, fullAnswers)
+          routes.PartnershipPhoneNumberController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, fullAnswers)
     ))
   }
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(index),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(index),
                    hideButton: Boolean = false, title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -109,7 +109,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
             Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+              val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
               status(result) mustBe OK
 
               contentAsString(result) mustBe viewAsString(answerSection(NormalMode),
@@ -127,10 +127,10 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           running(_.overrides(ftBinding: _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
-              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, updateModeUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), updateModeUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
                 h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }

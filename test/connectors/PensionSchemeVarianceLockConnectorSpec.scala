@@ -47,7 +47,7 @@ class PensionSchemeVarianceLockConnectorSpec extends AsyncFlatSpec with Matchers
 
     val connector = injector.instanceOf[PensionSchemeVarianceLockConnectorImpl]
 
-    connector.lock(psaId, srn).map(schemeVariance =>
+    connector.lock(psaId, (srn)).map(schemeVariance =>
       schemeVariance shouldBe VarianceLock
     )
 

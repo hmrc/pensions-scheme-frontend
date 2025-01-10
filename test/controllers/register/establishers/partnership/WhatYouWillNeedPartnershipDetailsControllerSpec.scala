@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
@@ -31,12 +31,12 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
   private val index = 0
   private val establisherPartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad(NormalMode, index, None)
+  def onwardRoute: Call = routes.PartnershipHasUTRController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
 
   def viewAsString(): String = view(
-    None, onwardRoute, establisherPartnership.name, None)(fakeRequest, messages).toString
+    None, onwardRoute, establisherPartnership.name, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnershipDetailsController" when {
 
@@ -45,10 +45,10 @@ class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(index, establisherPartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().establisherPartnershipDetails(Index(0), establisherPartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

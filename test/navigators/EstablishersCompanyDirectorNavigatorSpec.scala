@@ -43,153 +43,153 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          rowNoValue(ConfirmDeleteDirectorId(0))(addCompanyDirectors(NormalMode, None)),
-          rowNoValue(CheckYourAnswersId(0, 0))(addCompanyDirectors(NormalMode, None)),
-          rowNoValue(DirectorAddressListId(0, 0))(directorAddressYears(NormalMode, None)),
-          rowNoValueNewDirector(DirectorAddressListId(0, 0))(directorAddressYears(NormalMode, None)),
-          rowNoValue(DirectorAddressId(0, 0))(directorAddressYears(NormalMode, None)),
-          rowNoValueNewDirector(DirectorAddressId(0, 0))(directorAddressYears(NormalMode, None)),
-          rowNoValue(DirectorNameId(0, 0))(directorDOB(NormalMode, None)),
-          rowNoValueNewDirector(DirectorNameId(0, 0))(directorDOB(NormalMode, None)),
-          rowNoValue(DirectorDOBId(0, 0))(directorHasNINO(NormalMode, None)),
-          rowNoValueNewDirector(DirectorDOBId(0, 0))(directorHasNINO(NormalMode, None)),
-          rowNoValue(DirectorEnterNINOId(0, 0))(directorHasUTR(NormalMode, None)),
-          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(directorAddressPostcode(NormalMode, None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(NormalMode, None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(NormalMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(NormalMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(NormalMode, None)),
-          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(NormalMode, None)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(NormalMode, None)),
-          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(NormalMode, None)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear, directorPreviousAddPostcode(NormalMode, None)),
-          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(NormalMode, None)),
-          rowNoValue(DirectorPreviousAddressListId(0, 0))(directorEmail(NormalMode, None)),
-          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(directorEmail(NormalMode, None)),
-          rowNoValue(DirectorPreviousAddressId(0, 0))(directorEmail(NormalMode, None)),
-          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(directorEmail(NormalMode, None)),
-          rowNoValue(DirectorPhoneNumberId(0, 0))(checkYourAnswers(NormalMode, None)),
-          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(checkYourAnswers(NormalMode, None)),
-          rowNoValue(DirectorEmailId(0, 0))(directorPhone(NormalMode, None)),
-          rowNoValueNewDirector(DirectorEmailId(0, 0))(directorPhone(NormalMode, None))
+          rowNoValue(ConfirmDeleteDirectorId(0))(addCompanyDirectors(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(CheckYourAnswersId(0, 0))(addCompanyDirectors(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorAddressListId(0, 0))(directorAddressYears(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorAddressListId(0, 0))(directorAddressYears(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorAddressId(0, 0))(directorAddressYears(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorAddressId(0, 0))(directorAddressYears(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorNameId(0, 0))(directorDOB(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorNameId(0, 0))(directorDOB(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorDOBId(0, 0))(directorHasNINO(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorDOBId(0, 0))(directorHasNINO(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorEnterNINOId(0, 0))(directorHasUTR(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(directorAddressPostcode(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear, directorPreviousAddPostcode(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressListId(0, 0))(directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressId(0, 0))(directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(directorEmail(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPhoneNumberId(0, 0))(checkYourAnswers(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(checkYourAnswers(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorEmailId(0, 0))(directorPhone(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorEmailId(0, 0))(directorPhone(NormalMode, EmptyOptionalSchemeReferenceNumber))
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          rowNoValue(DirectorNameId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorDOBId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckMode, None)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckMode, None)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckMode, None)),
-          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckMode, None)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = None)),
-          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = None)),
+          rowNoValue(DirectorNameId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorDOBId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
           row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear,
-                                            addressYearsLessThanTwelveEdit(NormalMode, addressYearsUnderAYear, srn = None)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(None)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckMode, None)),
-          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckMode, None)),
-          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, newDirector, srn = None)),
-          rowNoValue(DirectorEmailId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = None)),
-          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(NormalMode, newDirector, srn = None))
+                                            addressYearsLessThanTwelveEdit(NormalMode, addressYearsUnderAYear, srn = EmptyOptionalSchemeReferenceNumber)),
+          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(EmptyOptionalSchemeReferenceNumber)),
+          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValue(DirectorEmailId(0, 0))(exitJourney(NormalMode, emptyAnswers, srn = EmptyOptionalSchemeReferenceNumber)),
+          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(NormalMode, newDirector, srn = EmptyOptionalSchemeReferenceNumber))
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in UpdateMode" must {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          rowNoValue(ConfirmDeleteDirectorId(0))(anyMoreChanges(srn)),
-          rowNoValue(CheckYourAnswersId(0, 0))(addCompanyDirectors(UpdateMode, srn)),
-          rowNoValue(DirectorAddressYearsId(0, 0))(directorPreviousAddPostcode(UpdateMode, srn),
+          rowNoValue(ConfirmDeleteDirectorId(0))(anyMoreChanges(OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(CheckYourAnswersId(0, 0))(addCompanyDirectors(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorAddressYearsId(0, 0))(directorPreviousAddPostcode(UpdateMode, OptionalSchemeReferenceNumber(srn)),
                                                    ua = Some(directorNoExistingCurrentAddress)),
-          rowNoValue(DirectorAddressYearsId(0, 0))(directorPreviousAddPostcode(UpdateMode, srn), ua = Some(directorExistingCurrentAddress)),
-          rowNoValue(DirectorAddressListId(0, 0))(directorAddressYears(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorAddressListId(0, 0))(directorAddressYears(UpdateMode, srn)),
-          rowNoValue(DirectorAddressId(0, 0))(directorAddressYears(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorAddressId(0, 0))(directorAddressYears(UpdateMode, srn)),
-          rowNoValue(DirectorNameId(0, 0))(directorDOB(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorNameId(0, 0))(directorDOB(UpdateMode, srn)),
-          rowNoValue(DirectorDOBId(0, 0))(directorHasNINO(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorDOBId(0, 0))(directorHasNINO(UpdateMode, srn)),
-          rowNoValue(DirectorEnterNINOId(0, 0))(directorHasUTR(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(directorAddressPostcode(UpdateMode, srn)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(UpdateMode, srn)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(UpdateMode, srn)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(UpdateMode, srn)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(UpdateMode, srn)),
-          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(UpdateMode, srn)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(UpdateMode, srn)),
-          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(UpdateMode, srn)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear, directorPreviousAddPostcode(UpdateMode, srn)),
-          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(UpdateMode, srn)),
-          rowNoValue(DirectorPreviousAddressListId(0, 0))(directorEmail(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(directorEmail(UpdateMode, srn)),
-          rowNoValue(DirectorPreviousAddressId(0, 0))(directorEmail(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(directorEmail(UpdateMode, srn)),
-          rowNoValue(DirectorPhoneNumberId(0, 0))(checkYourAnswers(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(checkYourAnswers(UpdateMode, srn)),
-          rowNoValue(DirectorEmailId(0, 0))(directorPhone(UpdateMode, srn)),
-          rowNoValueNewDirector(DirectorEmailId(0, 0))(directorPhone(UpdateMode, srn))
+          rowNoValue(DirectorAddressYearsId(0, 0))(directorPreviousAddPostcode(UpdateMode, OptionalSchemeReferenceNumber(srn)), ua = Some(directorExistingCurrentAddress)),
+          rowNoValue(DirectorAddressListId(0, 0))(directorAddressYears(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorAddressListId(0, 0))(directorAddressYears(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorAddressId(0, 0))(directorAddressYears(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorAddressId(0, 0))(directorAddressYears(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorNameId(0, 0))(directorDOB(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorNameId(0, 0))(directorDOB(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorDOBId(0, 0))(directorHasNINO(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorDOBId(0, 0))(directorHasNINO(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorEnterNINOId(0, 0))(directorHasUTR(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(directorAddressPostcode(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear, directorPreviousAddPostcode(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressListId(0, 0))(directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressId(0, 0))(directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(directorEmail(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPhoneNumberId(0, 0))(checkYourAnswers(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(checkYourAnswers(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorEmailId(0, 0))(directorPhone(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorEmailId(0, 0))(directorPhone(UpdateMode, OptionalSchemeReferenceNumber(srn)))
         )
-      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, srn)
+      behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigation, OptionalSchemeReferenceNumber(srn))
     }
 
     "in CheckUpdateMode" must {
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          rowNoValue(DirectorAddressYearsId(0, 0))(addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress, srn),
+          rowNoValue(DirectorAddressYearsId(0, 0))(addressYearsLessThanTwelveEdit(UpdateMode, directorNoExistingCurrentAddress, OptionalSchemeReferenceNumber(srn)),
                                                    ua = Some(directorNoExistingCurrentAddress)),
-          rowNoValue(DirectorAddressYearsId(0, 0))(addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress, srn),
+          rowNoValue(DirectorAddressYearsId(0, 0))(addressYearsLessThanTwelveEdit(UpdateMode, directorExistingCurrentAddress, OptionalSchemeReferenceNumber(srn)),
                                                    ua = Some(directorExistingCurrentAddress)),
-          rowNoValue(DirectorAddressListId(0, 0))(confirmPreviousAddress(srn)),
-          rowNoValueNewDirector(DirectorAddressListId(0, 0))(checkYourAnswers(UpdateMode, srn)),
-          rowNoValue(DirectorAddressId(0, 0))(confirmPreviousAddress(srn)),
-          rowNoValueNewDirector(DirectorAddressId(0, 0))(checkYourAnswers(UpdateMode, srn)),
-          rowNoValue(DirectorNameId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNoValue(DirectorDOBId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckUpdateMode, srn)),
-          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckUpdateMode, srn)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckUpdateMode, srn)),
-          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckUpdateMode, srn)),
-          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckUpdateMode, srn)),
-          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(UpdateMode, newDirector, srn = srn)),
+          rowNoValue(DirectorAddressListId(0, 0))(confirmPreviousAddress(OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorAddressListId(0, 0))(checkYourAnswers(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorAddressId(0, 0))(confirmPreviousAddress(OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorAddressId(0, 0))(checkYourAnswers(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorNameId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorNameId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorDOBId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorDOBId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorEnterNINOId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorNoUTRReasonId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasNINOId(0, 0))(true, directorNinoNew(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasNINOId(0, 0))(false, directorNinoReason(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasUTRId(0, 0))(true, directorWhatIsDirectorUTR(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorHasUTRId(0, 0))(false, directorWhyNoUTR(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorAddressPostcodeLookupId(0, 0))(directorAddressList(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          row(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNewDirector(DirectorAddressYearsId(0, 0))(AddressYears.OverAYear, exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
           row(DirectorAddressYearsId(0, 0))(AddressYears.UnderAYear,
-                                            addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear, srn = srn)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(srn)),
-          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckUpdateMode, srn)),
-          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckUpdateMode, srn)),
-          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn)),
-          rowNoValue(DirectorEmailId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn = srn)),
-          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(UpdateMode, newDirector, srn = srn))
+                                            addressYearsLessThanTwelveEdit(UpdateMode, addressYearsUnderAYear, srn =  OptionalSchemeReferenceNumber(srn))),
+          row(DirectorConfirmPreviousAddressId(0, 0))(true, anyMoreChanges(OptionalSchemeReferenceNumber(srn))),
+          row(DirectorConfirmPreviousAddressId(0, 0))(false, directorPreviousAddPostcode(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressPostcodeLookupId(0, 0))(directorPreviousAddList(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressListId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPreviousAddressListId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPreviousAddressId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPreviousAddressId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorPhoneNumberId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorPhoneNumberId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValue(DirectorEmailId(0, 0))(exitJourney(UpdateMode, emptyAnswers, srn =  OptionalSchemeReferenceNumber(srn))),
+          rowNoValueNewDirector(DirectorEmailId(0, 0))(exitJourney(UpdateMode, newDirector, srn =  OptionalSchemeReferenceNumber(srn)))
         )
-      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, srn)
+      behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigation, OptionalSchemeReferenceNumber(srn))
     }
   }
 }
@@ -211,77 +211,77 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
   private val directorIndex    = Index(0)
   private val newDirector      = UserAnswers(Json.obj()).set(IsNewDirectorId(establisherIndex, directorIndex))(true).asOpt.value
 
-  private def addressYearsLessThanTwelveEdit(mode: => Mode, userAnswers: => UserAnswers, srn: Option[SchemeReferenceNumber]) =
+  private def addressYearsLessThanTwelveEdit(mode: => Mode, userAnswers: => UserAnswers, srn: OptionalSchemeReferenceNumber) =
     (
       userAnswers.get(ExistingCurrentAddressId(establisherIndex, directorIndex)),
       checkMode(mode)
     ) match {
       case (None, CheckUpdateMode) =>
-        directorPreviousAddPostcode(checkMode(mode), srn)
+        directorPreviousAddPostcode(checkMode(mode), OptionalSchemeReferenceNumber(srn))
       case (_, CheckUpdateMode) =>
         confirmPreviousAddress(srn)
       case _ =>
-        directorPreviousAddPostcode(checkMode(mode), srn)
+        directorPreviousAddPostcode(checkMode(mode), OptionalSchemeReferenceNumber(srn))
     }
 
-  private def confirmPreviousAddress(srn: Option[SchemeReferenceNumber]) = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, srn)
+  private def confirmPreviousAddress(srn: OptionalSchemeReferenceNumber) = routes.DirectorConfirmPreviousAddressController.onPageLoad(0, 0, OptionalSchemeReferenceNumber(srn))
 
-  private def anyMoreChanges(srn: Option[SchemeReferenceNumber]) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
+  private def anyMoreChanges(srn: OptionalSchemeReferenceNumber) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: Option[SchemeReferenceNumber]) =
-    if (mode == NormalMode) checkYourAnswers(mode, srn)
+  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: OptionalSchemeReferenceNumber) =
+    if (mode == NormalMode) checkYourAnswers(mode, OptionalSchemeReferenceNumber(srn))
     else {
-      if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode, srn)
+      if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode, OptionalSchemeReferenceNumber(srn))
       else anyMoreChanges(srn)
     }
 
-  private def directorPhone(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorPhone(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorPhoneNumberController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorEmail(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorEmailController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorEmail(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorEmailController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorAddressPostcode(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorAddressPostcode(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorNinoNew(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorEnterNINOController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorNinoNew(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorEnterNINOController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorNinoReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorNinoReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorNoNINOReasonController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorAddressList(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorAddressList(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorAddressYears(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorAddressYears(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorPreviousAddPostcode(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorPreviousAddPostcode(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorPreviousAddList(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorPreviousAddList(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def checkYourAnswers(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, mode, srn)
+  private def checkYourAnswers(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex, mode, OptionalSchemeReferenceNumber(srn))
 
-  private def addCompanyDirectors(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, establisherIndex)
+  private def addCompanyDirectors(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn), establisherIndex)
 
-  private def directorWhatIsDirectorUTR(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorEnterUTRController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorWhatIsDirectorUTR(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorEnterUTRController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorWhyNoUTR(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorNoUTRReasonController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorWhyNoUTR(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorNoUTRReasonController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorHasUTR(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorHasUTRController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorHasUTR(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorHasUTRController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorDOB(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorDOB(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorDOBController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def directorHasNINO(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.DirectorHasNINOController.onPageLoad(mode, directorIndex, establisherIndex, srn)
+  private def directorHasNINO(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.DirectorHasNINOController.onPageLoad(mode, directorIndex, establisherIndex, OptionalSchemeReferenceNumber(srn))
 
   private val addressYearsUnderAYear: UserAnswers = UserAnswers(Json.obj())
     .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.UnderAYear)

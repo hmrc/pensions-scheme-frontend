@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, SchemeReferenceNumber}
+import models.{CheckUpdateMode, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -51,7 +51,7 @@ class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
         val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[TrusteeEnterUTRController]
-        val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
+        val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(request, messages).toString()
         }
@@ -68,7 +68,7 @@ class TrusteeEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("utr", "1234567890")))
         val controller = app.injector.instanceOf[TrusteeEnterUTRController]
-        val result = controller.onSubmit(CheckUpdateMode, firstIndex, srn)(request)
+        val result = controller.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -80,16 +80,16 @@ object TrusteeEnterUTRControllerSpec extends TrusteeEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex: Index = Index(0)
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: UTRViewModel = UTRViewModel(
-    routes.TrusteeEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.TrusteeEnterUTRController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__theIndividual").resolve),
     heading = Message("messages__enterUTR", "Test Name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }
 

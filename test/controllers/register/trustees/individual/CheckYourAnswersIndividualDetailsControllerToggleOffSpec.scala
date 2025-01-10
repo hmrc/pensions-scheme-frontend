@@ -50,20 +50,20 @@ class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controlle
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -72,22 +72,22 @@ class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controlle
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(allChangeLinksVariations, UpdateMode, srn, postUrlUpdateMode,
+          viewAsString(allChangeLinksVariations, UpdateMode, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
             title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
             h1 = Message("messages__detailsFor", trusteeName.fullName))
       }
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(allAddLinksVariations, UpdateMode, srn, postUrlUpdateMode,
+          viewAsString(allAddLinksVariations, UpdateMode, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
             title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
             h1 = Message("messages__detailsFor", trusteeName.fullName))
       }
@@ -98,11 +98,11 @@ class CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controlle
 object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   val name = "test name"
   val trusteeName: PersonName = PersonName("test", "name")
   val trusteeDob: LocalDate = LocalDate.now()
@@ -112,20 +112,20 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val emptyAnswers = UserAnswers()
-  private def trusteeDob(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeDOBController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasNino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def nino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
-  private def noNinoReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
-  private def hasUtr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def utr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
-  private def noUtrReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
+  private def trusteeDob(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeDOBController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
+  private def hasNino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeHasNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
+  private def nino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeEnterNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
+  private def noNinoReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeNoNINOReasonController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
+  private def hasUtr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeHasUTRController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
+  private def utr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeEnterUTRController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
+  private def noUtrReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.TrusteeNoUTRReasonController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers
     .set(TrusteeNameId(0))(trusteeName).flatMap(
@@ -145,9 +145,9 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
             _.set(TrusteeNoUTRReasonId(0))(reason)
           ))))).asOpt.value
 
-  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def postUrl: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
-  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
 
 
   private def allAddLinksVariations: Seq[AnswerSection] =
@@ -155,9 +155,9 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(trusteeDob)),
-        addLink(messages("messages__enterNINO", name), nino(UpdateMode, srn),
+        addLink(messages("messages__enterNINO", name), nino(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
-        addLink(messages("messages__enterUTR", name), utr(UpdateMode, srn),
+        addLink(messages("messages__enterUTR", name), utr(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name)))
     ))
 
@@ -171,38 +171,38 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, OptionalSchemeReferenceNumber(srn)), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_date_of_birth", name)),
-        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__enterNINO", name), nino(mode, srn), nino,
+        stringChangeLink(messages("messages__enterNINO", name), nino(mode, OptionalSchemeReferenceNumber(srn)), nino,
           messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
-        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__enterUTR", name), utr(mode, srn), utr,
+        stringChangeLink(messages("messages__enterUTR", name), utr(mode, OptionalSchemeReferenceNumber(srn)), utr,
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
     )
     )
 
 
-  private def allValuesNo(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, srn), DateHelper.formatDate(trusteeDob),
+        stringChangeLink(messages("messages__DOB__heading", name), trusteeDob(mode, OptionalSchemeReferenceNumber(srn)), DateHelper.formatDate(trusteeDob),
           messages("messages__visuallyhidden__dynamic_date_of_birth", name)),
-        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, OptionalSchemeReferenceNumber(srn)), value = false,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__whyNoNINO", name), noNinoReason(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoNINO", name), noNinoReason(mode, OptionalSchemeReferenceNumber(srn)), reason,
           messages("messages__visuallyhidden__dynamic_noNinoReason", name)),
-        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, OptionalSchemeReferenceNumber(srn)), value = false,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__whyNoUTR", name), noUtrReason(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoUTR", name), noUtrReason(mode, OptionalSchemeReferenceNumber(srn)), reason,
           messages("messages__visuallyhidden__dynamic_noUtrReason", name))
       )
     ))
@@ -254,7 +254,7 @@ object CheckYourAnswersIndividualDetailsControllerToggleOffSpec extends Controll
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl,
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(

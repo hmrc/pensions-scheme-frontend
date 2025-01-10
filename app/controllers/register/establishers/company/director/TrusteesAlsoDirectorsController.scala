@@ -88,7 +88,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     }
 
   def onPageLoad(establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
+    (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
           featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
@@ -96,7 +96,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
               val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
               if (seqTrustee.isEmpty) {
                 Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                  .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
+                  .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, EmptyOptionalSchemeReferenceNumber)))
               } else {
                 renderView(Ok,
                   seqTrustee,
@@ -108,14 +108,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
               }
             case _ =>
               Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, None)))
+                .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, EmptyOptionalSchemeReferenceNumber)))
           }.flatten
         }
     }
 
   //scalastyle:off method.length
   def onSubmit(establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, None) andThen allowAccess(None) andThen requireData).async {
+    (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
@@ -129,8 +129,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
                 }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
-                userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, None))
+                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
                 }
               case _ =>
                 renderView(BadRequest,
@@ -151,8 +151,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
                 }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
 
-                userAnswersService.upsert(NormalMode, None, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, None))
+                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
                 }
               case _ =>
                 renderView(BadRequest,

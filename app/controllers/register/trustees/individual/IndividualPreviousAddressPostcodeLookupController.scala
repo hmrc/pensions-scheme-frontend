@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +35,6 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig: FrontendAppConfig,
                                                                   override val messagesApi: MessagesApi,
@@ -57,13 +57,13 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
       TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve map get
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[SchemeReferenceNumber]): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         trusteeName(index).retrieve.map {
@@ -80,7 +80,7 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(val appConfig:
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       viewmodel(index, mode, srn).retrieve.map { vm =>

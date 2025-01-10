@@ -21,8 +21,9 @@ import controllers.EmailAddressController
 import controllers.actions._
 import forms.EmailFormProvider
 import identifiers.register.establishers.company.director.{DirectorEmailId, DirectorNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -51,7 +51,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {
@@ -63,7 +63,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
   private def viewModel(mode: Mode,
                         establisherIndex: Index,
                         directorIndex: Index,
-                        srn: Option[SchemeReferenceNumber]): Retrieval[CommonFormWithHintViewModel] =
+                        srn: OptionalSchemeReferenceNumber): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map {
@@ -78,7 +78,7 @@ class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, establisherIndex, directorIndex, srn).retrieve.map {

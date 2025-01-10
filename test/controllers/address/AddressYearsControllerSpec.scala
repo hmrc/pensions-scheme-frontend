@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
-import models.{AddressYears, NormalMode}
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
@@ -149,7 +149,7 @@ class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValue
         app =>
 
           when(userAnswersService.save[AddressYears, FakeIdentifier.type](
-            eqTo(NormalMode), eqTo(None),
+            eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber),
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(UserAnswers().json)
 

@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
-import models.{Mode, NormalMode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import utils.UserAnswers
@@ -25,7 +25,7 @@ import utils.UserAnswers
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeDataRetrievalAction(json: Option[JsValue], mode: Mode = NormalMode, viewOnly: Boolean = false) extends DataRetrievalAction {
-  override def apply(mode: Mode, srn: Option[SchemeReferenceNumber], refreshData: Boolean = false): DataRetrieval = new FakeDataRetrieval(json, mode, viewOnly)
+  override def apply(mode: Mode, srn: OptionalSchemeReferenceNumber, refreshData: Boolean = false): DataRetrieval = new FakeDataRetrieval(json, mode, viewOnly)
 }
 
 class FakeDataRetrieval(optionalJson: Option[JsValue], mode: Mode = NormalMode, viewOnly: Boolean = false) extends DataRetrieval {

@@ -31,19 +31,19 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
   private val index = 0
   private val srn = Some(SchemeReferenceNumber("srn"))
 
-  private def onwardRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = TrusteeEmailController.onPageLoad(mode, index, srn)
+  private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): String = view(
-    None, onwardRoute(mode, srn), srn, trusteeName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
+    None, onwardRoute(mode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), trusteeName.fullName, Message("messages__theIndividual"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedIndividualContactDetailsController" when {
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()
@@ -54,13 +54,13 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(index, trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
-          val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+          val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, srn)
+          contentAsString(result) mustBe viewAsString(UpdateMode, OptionalSchemeReferenceNumber(srn))
         }
       }
     }

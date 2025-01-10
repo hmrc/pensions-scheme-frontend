@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasPAYEFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterPAYEId, PartnershipHasPAYEId}
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
@@ -37,7 +37,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__partnershipHasPaye__error__required","test partnership name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasPAYE", Message("messages__thePartnership").resolve),
@@ -80,7 +80,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   "PartnershipHasPAYEController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -89,7 +89,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -100,7 +100,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
       val boundForm = form.bind(Map("hasPaye" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -109,7 +109,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
     "if user changes answer from yes to no then clean up should take place on utr number" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "false"))
-      val result = controller(getDataWithPaye).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getDataWithPaye).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipHasPAYEId(index), false)

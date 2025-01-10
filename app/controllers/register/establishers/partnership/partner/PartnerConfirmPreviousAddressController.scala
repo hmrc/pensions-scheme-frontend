@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.establishers.partnership.partner._
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,
@@ -53,7 +53,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map { vm =>
@@ -61,7 +61,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: Option[SchemeReferenceNumber]) =
+  private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex))
@@ -79,7 +79,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
         }
     )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map { vm =>

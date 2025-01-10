@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
-import models.{FeatureToggleName, Mode, NormalMode}
+import models.{FeatureToggleName, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.register.Trustee
 import models.requests.DataRequest
 import navigators.Navigator
@@ -37,7 +37,6 @@ import views.html.register.trustees._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
@@ -62,7 +61,7 @@ class AddTrusteeController @Inject()(
   private def renderPage(
                           trustees: Seq[Trustee[_]],
                           mode: Mode,
-                          srn: Option[SchemeReferenceNumber],
+                          srn: OptionalSchemeReferenceNumber,
                           form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
@@ -76,14 +75,14 @@ class AddTrusteeController @Inject()(
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val trustees = request.userAnswers.allTrusteesAfterDelete
         renderPage(trustees, mode, srn, form, Ok)
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
 

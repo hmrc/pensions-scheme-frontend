@@ -21,9 +21,10 @@ import controllers.actions._
 import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipNoUTRReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +35,6 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipNoUTRReasonController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
@@ -52,7 +52,7 @@ class PartnershipNoUTRReasonController @Inject()(
   Retrievals
   with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -61,7 +61,7 @@ class PartnershipNoUTRReasonController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -74,7 +74,7 @@ class PartnershipNoUTRReasonController @Inject()(
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider("messages__reason__error_utrRequired", companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], partnershipName: String): ReasonViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, partnershipName: String): ReasonViewModel =
     ReasonViewModel(
       postCall = routes.PartnershipNoUTRReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoUTR", Message("messages__thePartnership")),

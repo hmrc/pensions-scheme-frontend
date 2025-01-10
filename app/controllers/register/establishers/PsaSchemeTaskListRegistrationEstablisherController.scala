@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.SchemeNameId
 import models.AuthEntity.PSA
+import models.OptionalSchemeReferenceNumber.toSrn
 import models._
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,12 +48,12 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
                                                                   )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false) andThen allowAccess(srn)).async {
       implicit request =>
         val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
 
-        (srn, request.userAnswers, schemeNameOpt) match {
+        (toSrn(srn), request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) => handleValidRequest(userAnswers, schemeName, mode, srn, index)
           case (Some(_), _, _) => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
           case _ => Future.successful(Redirect(appConfig.managePensionsSchemeOverviewUrl))
@@ -60,7 +61,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
     }
 
 
-  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber], index: Int)
+  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int)
                                 (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     try {
       val taskList = hsTaskListHelperRegistration.taskListEstablisher(userAnswers, None, srn, index)
@@ -72,7 +73,7 @@ class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: Fr
     }
   }
 
-  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: Option[SchemeReferenceNumber])
+  private def renderOkResponse(taskList: SchemeDetailsTaskListEstablishers, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber)
                               (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     Future.successful(
       Ok(

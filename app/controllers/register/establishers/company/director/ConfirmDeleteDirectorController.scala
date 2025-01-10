@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -34,7 +35,6 @@ import utils.annotations.EstablishersCompanyDirector
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
@@ -51,7 +51,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                )(implicit val executionContext: ExecutionContext
                                                ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { director =>
@@ -75,7 +75,7 @@ class ConfirmDeleteDirectorController @Inject()(
 
   private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
-  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(establisherIndex: Index, directorIndex: Index, mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
 

@@ -52,20 +52,20 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesYes(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(allValuesNo(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -74,20 +74,20 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswers)
-        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allChangeLinksVariations, UpdateMode, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(allChangeLinksVariations, UpdateMode, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
           title = Message("messages__detailsFor", Message("messages__thePerson")),
           h1 = Message("messages__detailsFor", establisherName.fullName))
       }
 
       "return OK and the correct view with add links for values" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(allAddLinksVariations, UpdateMode, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(allAddLinksVariations, UpdateMode, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
           title = Message("messages__detailsFor", Message("messages__thePerson").resolve),
           h1 = Message("messages__detailsFor", establisherName.fullName))
       }
@@ -99,10 +99,10 @@ class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Cont
 object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val index = Index(0)
-  private val srn = Some(SchemeReferenceNumber("S123"))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   private val name = "test name"
   private val establisherName = PersonName("test", "name")
   private val establisherDob: LocalDate = LocalDate.now()
@@ -112,26 +112,26 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   private val emptyAnswers = UserAnswers()
 
-  private def dob(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherDOBController.onPageLoad(checkMode(mode), index, srn).url
+  private def dob(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherDOBController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasNino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), index, srn).url
+  private def hasNino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherHasNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def nino(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), index, srn).url
+  private def nino(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherEnterNINOController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def noNinoReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), index, srn).url
+  private def noNinoReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherNoNINOReasonController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasUtr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), 0, srn).url
+  private def hasUtr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherHasUTRController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def utr(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), 0, srn).url
+  private def utr(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherEnterUTRController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def noUtrReason(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
+  private def noUtrReason(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.EstablisherNoUTRReasonController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers
     .set(EstablisherNameId(0))(establisherName).flatMap(
@@ -153,7 +153,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   def postUrl: Call = controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
+  def postUrlUpdateMode: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
 
 
   private def allAddLinksVariations: Seq[AnswerSection] =
@@ -161,9 +161,9 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       None,
       Seq(
         stringLink(messages("messages__DOB__heading", name), DateHelper.formatDate(establisherDob)),
-        addLink(messages("messages__enterNINO", name), nino(UpdateMode, srn),
+        addLink(messages("messages__enterNINO", name), nino(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
-        addLink(messages("messages__enterUTR", name), utr(UpdateMode, srn),
+        addLink(messages("messages__enterUTR", name), utr(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
     ))
@@ -178,54 +178,54 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       )
     ))
 
-  private def allValuesYes(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesYes(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        stringChangeLink(messages("messages__DOB__heading", name), dob(mode, srn), DateHelper.formatDate(establisherDob),
+        stringChangeLink(messages("messages__DOB__heading", name), dob(mode, OptionalSchemeReferenceNumber(srn)), DateHelper.formatDate(establisherDob),
           messages("messages__visuallyhidden__dynamic_date_of_birth", name)),
-        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasNINO", name), hasNino(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasNino", name)),
-        stringChangeLink(messages("messages__enterNINO", name), nino(mode, srn), nino,
+        stringChangeLink(messages("messages__enterNINO", name), nino(mode, OptionalSchemeReferenceNumber(srn)), nino,
           messages("messages__visuallyhidden__dynamic_national_insurance_number", name)),
-        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasUTR", name), hasUtr(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", name)),
-        stringChangeLink(messages("messages__enterUTR", name), utr(mode, srn), utr,
+        stringChangeLink(messages("messages__enterUTR", name), utr(mode, OptionalSchemeReferenceNumber(srn)), utr,
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", name))
       )
     ))
 
 
-  private def allValuesNo(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def allValuesNo(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
         stringChangeLink(
           label = messages("messages__DOB__heading", name),
-          changeUrl = dob(mode, srn),
+          changeUrl = dob(mode, OptionalSchemeReferenceNumber(srn)),
           ansOrReason = DateHelper.formatDate(establisherDob),
           hiddenLabel = messages("messages__visuallyhidden__dynamic_date_of_birth", name)
         ),
         booleanChangeLink(
           label = messages("messages__hasNINO", name),
-          changeUrl = hasNino(mode, srn),
+          changeUrl = hasNino(mode, OptionalSchemeReferenceNumber(srn)),
           value = false,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_hasNino", name)
         ),
         stringChangeLink(
           label = messages("messages__whyNoNINO", name),
-          changeUrl = noNinoReason(mode, srn), ansOrReason = reason,
+          changeUrl = noNinoReason(mode, OptionalSchemeReferenceNumber(srn)), ansOrReason = reason,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_noNinoReason", name)
         ),
         booleanChangeLink(
           label = messages("messages__hasUTR", name),
-          changeUrl = hasUtr(mode, srn),
+          changeUrl = hasUtr(mode, OptionalSchemeReferenceNumber(srn)),
           value = false,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_hasUtr", name)
         ),
         stringChangeLink(
           label = messages("messages__whyNoUTR", name),
-          changeUrl = noUtrReason(mode, srn),
+          changeUrl = noUtrReason(mode, OptionalSchemeReferenceNumber(srn)),
           ansOrReason = reason,
           hiddenLabel = messages("messages__visuallyhidden__dynamic_noUtrReason", name)
         )
@@ -287,7 +287,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
 
   def viewAsString(answerSections: Seq[AnswerSection],
                    mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None,
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber,
                    postUrl: Call = postUrl,
                    title:Message, h1:Message): String =
     view(

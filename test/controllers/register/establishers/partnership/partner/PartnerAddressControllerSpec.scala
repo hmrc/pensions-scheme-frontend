@@ -20,12 +20,13 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.establishers.partnership.CheckYourAnswersPartnershipDetailsControllerSpec.index
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerNameId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
@@ -47,7 +48,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
   val establisherIndex: Index = Index(0)
   val partnerIndex: Index = Index(0)
 
-  private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+  private val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
 
   val partner: PersonName = PersonName("first", "last")
 
@@ -81,7 +82,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     countryOptions.options,
     title = Message("messages__common__confirmAddress__h1", Message("messages__thePartner")),
     heading = Message("messages__common__confirmAddress__h1", partner.fullName),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
@@ -90,13 +91,13 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
     "render manualAddress from GET request" in {
 
-      val postCall = routes.PartnerAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(partnerIndex), None)
+      val postCall = routes.PartnerAddressController.onSubmit( NormalMode, Index(establisherIndex), Index(partnerIndex), EmptyOptionalSchemeReferenceNumber)
       running(_.overrides(modules(retrieval) ++
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerAddressController]
 
-          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -112,7 +113,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, None)
+        val onwardCall = routes.PartnerAddressYearsController.onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
@@ -127,7 +128,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
           val controller = app.injector.instanceOf[PartnerAddressController]
 
-          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardCall.url
@@ -152,7 +153,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
         val controller = app.injector.instanceOf[PartnerAddressController]
 
-        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         fakeAuditService.reset()
 

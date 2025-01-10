@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.company.director.DirectorNameId
+
 import javax.inject.Inject
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,7 +31,6 @@ import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class AlreadyDeletedController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class AlreadyDeletedController @Inject()(
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(srn = srn) andThen requireData).async {
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { details =>
@@ -52,7 +52,7 @@ class AlreadyDeletedController @Inject()(
 
     }
 
-  private def vm(establisherIndex: Index, directorName: String, srn: Option[SchemeReferenceNumber]) = AlreadyDeletedViewModel(
+  private def vm(establisherIndex: Index, directorName: String, srn: OptionalSchemeReferenceNumber) = AlreadyDeletedViewModel(
     Message("messages__alreadyDeleted__director_title"),
     directorName,
     controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, srn,

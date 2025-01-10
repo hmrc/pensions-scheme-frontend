@@ -21,9 +21,10 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -35,7 +36,6 @@ import utils.UserAnswers
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class ConfirmDeletePartnerController @Inject()(
                                                 appConfig: FrontendAppConfig,
@@ -52,7 +52,7 @@ class ConfirmDeletePartnerController @Inject()(
                                               )(implicit val executionContext: ExecutionContext
                                               ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -75,7 +75,7 @@ class ConfirmDeletePartnerController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
@@ -107,7 +107,7 @@ class ConfirmDeletePartnerController @Inject()(
 
   private def form(name: String)(implicit messages: Messages): Form[Boolean] = formProvider(name)
 
-  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber]
+  def deletePartner(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: OptionalSchemeReferenceNumber
                    )(implicit request: DataRequest[AnyContent]): Option[Future[JsValue]] =
     request.userAnswers.get(PartnerNameId(establisherIndex, partnerIndex)).map { partner =>
       userAnswersService.save(mode, srn, PartnerNameId(establisherIndex, partnerIndex), partner.copy(isDeleted = true))

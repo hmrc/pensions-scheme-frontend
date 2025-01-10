@@ -20,15 +20,15 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
-import models.{Index, Mode, PartnershipDetails}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, PartnershipDetails, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedPartnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnershipDetailsController @Inject()(
                                                              val appConfig: FrontendAppConfig,
@@ -42,7 +42,7 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(
                                                            )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {

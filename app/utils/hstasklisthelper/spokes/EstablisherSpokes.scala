@@ -22,17 +22,16 @@ import controllers.register.establishers.individual.{routes => establisherIndivi
 import controllers.register.establishers.partnership.partner.{routes => establisherPartnershipPartnerRoutes}
 import controllers.register.establishers.partnership.{routes => establisherPartnershipRoutes}
 import models.Index.indexToInt
-import models.{Index, Mode, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import play.api.mvc.Call
 import utils.UserAnswers
 import viewmodels.Message
-import models.SchemeReferenceNumber
 
 case object EstablisherCompanyDetails extends DetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.WhatYouWillNeedCompanyDetailsController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -40,10 +39,10 @@ case object EstablisherCompanyDetails extends DetailsSpoke {
 }
 
 case object EstablisherCompanyAddress extends AddressSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.WhatYouWillNeedCompanyAddressController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.CheckYourAnswersCompanyAddressController.onPageLoad(mode, srn, index.getOrElse(Index(0)))
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -51,11 +50,11 @@ case object EstablisherCompanyAddress extends AddressSpoke {
 }
 
 case object EstablisherCompanyContactDetails extends ContactDetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.WhatYouWillNeedCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse
     (Index(0)))
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherCompanyRoutes.CheckYourAnswersCompanyContactDetailsController.onPageLoad(mode, srn, index.getOrElse
     (Index(0)))
 
@@ -65,14 +64,14 @@ case object EstablisherCompanyContactDetails extends ContactDetailsSpoke {
 
 case object EstablisherCompanyDirectors extends Spoke {
 
-  override def addLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def addLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
     Message("messages__schemeTaskList__add_directors", name),
     establisherCompanyDirectorRoutes.WhatYouWillNeedDirectorController.onPageLoad(mode, srn, index.getOrElse(Index(0)
     )).url
   )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn,
         registrationLinkText = "messages__schemeTaskList__continue_directors",
@@ -80,7 +79,7 @@ case object EstablisherCompanyDirectors extends Spoke {
     establisherCompanyRoutes.AddCompanyDirectorsController.onPageLoad(mode, srn, index.getOrElse(Index(0))).url
   )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def changeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
     dynamicLinkText(name, srn,
       registrationLinkText = "messages__schemeTaskList__change_directors",
@@ -92,11 +91,11 @@ case object EstablisherCompanyDirectors extends Spoke {
 }
 
 case object EstablisherIndividualDetails extends DetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.WhatYouWillNeedIndividualDetailsController.onPageLoad(mode, index.getOrElse(Index(0))
       , srn)
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.CheckYourAnswersDetailsController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -104,11 +103,11 @@ case object EstablisherIndividualDetails extends DetailsSpoke {
 }
 
 case object EstablisherIndividualAddress extends AddressSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.WhatYouWillNeedIndividualAddressController.onPageLoad(mode, index.getOrElse(Index(0))
       , srn)
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.CheckYourAnswersAddressController.onPageLoad(mode, index.getOrElse(Index(0)), srn)
 
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
@@ -116,11 +115,11 @@ case object EstablisherIndividualAddress extends AddressSpoke {
 }
 
 case object EstablisherIndividualContactDetails extends ContactDetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.WhatYouWillNeedIndividualContactDetailsController.onPageLoad(mode, index.getOrElse
     (Index(0)), srn)
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherIndividualRoutes.CheckYourAnswersContactDetailsController.onPageLoad(mode, index.getOrElse(Index(0)),
       srn)
 
@@ -129,11 +128,11 @@ case object EstablisherIndividualContactDetails extends ContactDetailsSpoke {
 }
 
 case object EstablisherPartnershipDetails extends DetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.WhatYouWillNeedPartnershipDetailsController.onPageLoad(mode, srn, index.getOrElse
     (Index(0)))
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.CheckYourAnswersPartnershipDetailsController.onPageLoad(mode, index.getOrElse(Index
     (0)), srn)
 
@@ -142,11 +141,11 @@ case object EstablisherPartnershipDetails extends DetailsSpoke {
 }
 
 case object EstablisherPartnershipAddress extends AddressSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.WhatYouWillNeedPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index
     (0)), srn)
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.CheckYourAnswersPartnershipAddressController.onPageLoad(mode, index.getOrElse(Index
     (0)), srn)
 
@@ -155,11 +154,11 @@ case object EstablisherPartnershipAddress extends AddressSpoke {
 }
 
 case object EstablisherPartnershipContactDetails extends ContactDetailsSpoke {
-  override def addLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def addLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.WhatYouWillNeedPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
     (Index(0)), srn)
 
-  override def changeLinkUrl(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): Call =
+  override def changeLinkUrl(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): Call =
     establisherPartnershipRoutes.CheckYourAnswersPartnershipContactDetailsController.onPageLoad(mode, index.getOrElse
     (Index(0)), srn)
 
@@ -169,14 +168,14 @@ case object EstablisherPartnershipContactDetails extends ContactDetailsSpoke {
 
 case object EstablisherPartnershipPartner extends Spoke {
 
-  override def addLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def addLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
     Message("messages__schemeTaskList__add_partners", name),
     establisherPartnershipPartnerRoutes.WhatYouWillNeedPartnerController.onPageLoad(mode, index.getOrElse(Index(0)),
       srn).url
   )
 
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def incompleteChangeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
       dynamicLinkText(name, srn,
         registrationLinkText = "messages__schemeTaskList__continue_partners",
@@ -184,7 +183,7 @@ case object EstablisherPartnershipPartner extends Spoke {
       establisherPartnershipRoutes.AddPartnersController.onPageLoad(mode, indexToInt(index.getOrElse(Index(0))), srn).url
     )
 
-  override def changeLink(name: String)(mode: Mode, srn: Option[SchemeReferenceNumber], index: Option[Index]): TaskListLink =
+  override def changeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
     TaskListLink(
     dynamicLinkText(name, srn,
       registrationLinkText = "messages__schemeTaskList__change_partners",

@@ -35,19 +35,19 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
 
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
 
-  private def onwardRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): Call = CompanyEmailController.onPageLoad(mode, srn, index)
+  private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = CompanyEmailController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn), index)
 
-  private def viewAsString(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): String = view(
-    None, onwardRoute(mode, srn), srn, establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
+  private def viewAsString(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): String = view(
+    None, onwardRoute(mode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), establisherName.companyName, Message("messages__theCompany"))(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyContactDetailsController" when {
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction): _*
+          modules(UserAnswers().establisherCompanyDetails(Index(0), establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()
@@ -58,13 +58,13 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().establisherCompanyDetails(index, establisherName).dataRetrievalAction): _*
+          modules(UserAnswers().establisherCompanyDetails(Index(0), establisherName).dataRetrievalAction): _*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
-          val result = controller.onPageLoad(UpdateMode, srn, index)(fakeRequest)
+          val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn), index)(fakeRequest)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(UpdateMode, srn)
+          contentAsString(result) mustBe viewAsString(UpdateMode, OptionalSchemeReferenceNumber(srn))
         }
       }
     }

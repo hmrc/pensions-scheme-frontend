@@ -23,7 +23,7 @@ import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import models.register.Establisher
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode, NormalMode}
+import models.{FeatureToggleName, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,7 +35,6 @@ import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -55,7 +54,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
   private def renderPage(
                           establishers: Seq[Establisher[_]],
                           mode: Mode,
-                          srn: Option[SchemeReferenceNumber],
+                          srn: OptionalSchemeReferenceNumber,
                           form: Form[Option[Boolean]], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
@@ -69,14 +68,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
         renderPage(establishers, mode, srn, formProvider(establishers), Ok)
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete(mode)

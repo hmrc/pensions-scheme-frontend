@@ -21,10 +21,11 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
+
 import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,7 +38,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class DirectorNameController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -54,7 +54,7 @@ class DirectorNameController @Inject()(
                                       )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](DirectorNameId(establisherIndex, directorIndex)) match {
@@ -65,7 +65,7 @@ class DirectorNameController @Inject()(
           existingSchemeName)))
     }
 
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
@@ -89,7 +89,7 @@ class DirectorNameController @Inject()(
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__director")
 
   private def viewmodel(mode: Mode, establisherIndex: Index,
-                        directorIndex: Index, srn: Option[SchemeReferenceNumber]) = CommonFormWithHintViewModel(
+                        directorIndex: Index, srn: OptionalSchemeReferenceNumber) = CommonFormWithHintViewModel(
     postCall = routes.DirectorNameController.onSubmit(mode, establisherIndex, directorIndex, srn),
     title = Message("messages__directorName__title"),
     heading = Message("messages__directorName__heading"),

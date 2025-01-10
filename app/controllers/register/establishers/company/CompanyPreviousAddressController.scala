@@ -22,10 +22,11 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+
 import javax.inject.Inject
 import models.address.Address
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +39,6 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
@@ -63,7 +63,7 @@ class CompanyPreviousAddressController @Inject()(
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__lede"
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -73,7 +73,7 @@ class CompanyPreviousAddressController @Inject()(
         }
     }
 
-  private def viewmodel(index: Int, srn: Option[SchemeReferenceNumber], mode: Mode, name: String)(implicit
+  private def viewmodel(index: Int, srn: OptionalSchemeReferenceNumber, mode: Mode, name: String)(implicit
                                                                                    request: DataRequest[AnyContent])
   : ManualAddressViewModel =
     ManualAddressViewModel(
@@ -84,7 +84,7 @@ class CompanyPreviousAddressController @Inject()(
       srn = srn
     )
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.map {

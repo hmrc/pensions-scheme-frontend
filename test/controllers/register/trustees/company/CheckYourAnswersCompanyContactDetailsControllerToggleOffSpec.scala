@@ -47,10 +47,10 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
 
   private val mockFeatureToggleService = mock[FeatureToggleService]
 
-  private def submitUrl(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def answerSection(mode: Mode, srn: Option[SchemeReferenceNumber] = None)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+  private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
     val userAnswers = request.userAnswers
     val cn = userAnswers.get(CompanyDetailsId(index)).map(_.companyName).value
 
@@ -59,13 +59,13 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
         Some(messages("messages__enterEmail", cn)),
         Some(messages("messages__visuallyhidden__dynamic_email_address", cn))
       )().row(CompanyEmailId(index))(
-        routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers) ++
+        routes.CompanyEmailController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, userAnswers) ++
 
         StringCYA[CompanyPhoneId](
           Some(messages("messages__enterPhoneNumber", cn)),
           Some(messages("messages__visuallyhidden__dynamic_phone_number", cn))
         )().row(CompanyPhoneId(index))(
-          routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), srn).url, userAnswers)
+          routes.CompanyPhoneController.onPageLoad(checkMode(mode), Index(index), OptionalSchemeReferenceNumber(srn)).url, userAnswers)
     ))
   }
 
@@ -93,7 +93,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
   }
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = submitUrl(), title: Message, h1: Message): String =
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), title: Message, h1: Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
@@ -117,7 +117,7 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe OK
 
@@ -127,10 +127,10 @@ class CheckYourAnswersCompanyContactDetailsControllerToggleOffSpec extends Contr
         }
         "Update Mode" in {
           implicit val request: DataRequest[AnyContent] = FakeDataRequest(fullAnswers)
-          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+          val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
           status(result) mustBe OK
-          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), postUrl = submitUrl(UpdateMode, srn), srn = srn,
+          contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), postUrl = submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), srn = OptionalSchemeReferenceNumber(srn),
             title = Message("messages__contactDetailsFor", Message("messages__theCompany").resolve),
             h1 = Message("messages__contactDetailsFor", "test company"))
         }

@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
@@ -39,15 +39,15 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
       controllerComponents
     )
 
-  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, None, index = Index(0))
+  lazy val href = controllers.register.establishers.company.routes.HasCompanyCRNController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = Index(0))
 
-  def viewAsString(): String = view(None, href, None, "test company name")(fakeRequest, messages).toString
+  def viewAsString(): String = view(None, href, EmptyOptionalSchemeReferenceNumber, "test company name")(fakeRequest, messages).toString
 
   "WhatYouWillNeedCompanyDetailsControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, Index(0))(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

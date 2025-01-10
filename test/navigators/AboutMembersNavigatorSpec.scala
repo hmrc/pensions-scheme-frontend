@@ -45,7 +45,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(futureMembers(NormalMode)),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
   }
 
   "in CheckMode" must {
@@ -61,7 +61,7 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
         rowNoValue(MembershipPensionRegulatorId)(cya),
         rowNoValue(FutureMembersId)(cya)
       )
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
   }
 }
 
@@ -69,5 +69,5 @@ object AboutMembersNavigatorSpec {
   private implicit def writes[A: Enumerable]: Writes[A] = Writes(value => JsString(value.toString))
   private def futureMembers(mode: Mode): Call              = controllers.routes.FutureMembersController.onPageLoad(mode)
   private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
-  private def cya: Call                                    = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, None)
+  private def cya: Call                                    = controllers.routes.CheckYourAnswersMembersController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 }

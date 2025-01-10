@@ -66,10 +66,10 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
   }
 
   def editTrusteeCompanyRoute(id: Int): String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, None).url
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, EmptyOptionalSchemeReferenceNumber).url
 
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, None).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(NormalMode, id, kind, EmptyOptionalSchemeReferenceNumber).url
 
   private val view = injector.instanceOf[addTrustee]
   private val oldView = injector.instanceOf[addTrusteeOld]
@@ -94,7 +94,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    oldView(form, NormalMode, trustees, None, None)(fakeRequest, messages).toString
+    oldView(form, NormalMode, trustees, None, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   private def validData = {
     Json.obj(
@@ -133,7 +133,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -153,7 +153,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -173,7 +173,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 
-      val result = trusteeController.onPageLoad(NormalMode, None)(fakeRequest)
+      val result = trusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       val view = asDocument(contentAsString(result))
 
@@ -183,7 +183,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
-      val result = controller().onSubmit(NormalMode, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -193,7 +193,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -205,14 +205,14 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm, allTrustees)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -220,7 +220,7 @@ class AddTrusteeControllerToggleOffSpec extends ControllerSpecBase with DataComp
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

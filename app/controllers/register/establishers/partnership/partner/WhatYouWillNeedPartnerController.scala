@@ -20,15 +20,15 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
 
 import scala.concurrent.Future
-import models.SchemeReferenceNumber
 
 class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
@@ -40,7 +40,7 @@ class WhatYouWillNeedPartnerController @Inject()(appConfig: FrontendAppConfig,
                                                  val view: whatYouWillNeed
                                                 ) extends FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber] = None): Action[AnyContent] = (authenticate() andThen
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>
       val partnerIndex = request.userAnswers.allPartners(index).size

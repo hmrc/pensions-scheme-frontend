@@ -20,7 +20,7 @@ import connectors.AddressLookupConnector
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -43,9 +43,9 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
-  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, None, firstIndex)
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex)
 
-  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, None, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -61,7 +61,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   private val view = injector.instanceOf[postcodeLookup]
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, None, firstIndex),
+    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex),
     manualInputCall = manualInputCall,
     title = Message("messages__establisherPostCode__title"),
     heading = Message("messages__establisherPostCode__h1", companyName)
@@ -71,7 +71,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
       app =>
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
-        val result = controller.onPageLoad(NormalMode, None, index = 0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result).removeAllNonces() mustBe view(form, viewModel, None)(fakeRequest, messages).toString
     }
@@ -88,7 +88,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
         val postRequest = fakeRequest.withFormUrlEncodedBody("postcode" -> validPostcode)
-        val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }

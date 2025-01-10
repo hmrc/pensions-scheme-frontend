@@ -18,7 +18,7 @@ package utils
 
 import identifiers.Identifier
 import models.requests.IdentifiedRequest
-import models.{Mode, NormalMode, SchemeReferenceNumber}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,13 +31,13 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
 
   def lastUserAnswers: Option[UserAnswers] = userAnswers
 
-  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: Option[SchemeReferenceNumber])
+  override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers, srn: OptionalSchemeReferenceNumber)
                        (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     userAnswers = Some(answers)
     desiredRoute
   }
 
-  override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[SchemeReferenceNumber])
+  override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: OptionalSchemeReferenceNumber)
                                (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] =
     Some(desiredRoute)
 }

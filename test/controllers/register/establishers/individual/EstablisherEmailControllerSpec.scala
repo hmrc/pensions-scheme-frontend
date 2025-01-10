@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherEmailController
 import forms.EmailFormProvider
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -50,11 +50,11 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
     view(
       form,
       CommonFormWithHintViewModel(
-        EstablisherEmailController.onSubmit(NormalMode, firstIndex, None),
+        EstablisherEmailController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__enterEmail", Message("messages__theIndividual").resolve),
         Message("messages__enterEmail", establisherName.fullName),
         Some(Message("messages__contact_details__hint", establisherName.fullName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString
@@ -66,7 +66,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[EstablisherEmailController]
-            val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -84,7 +84,7 @@ class EstablisherEmailControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[EstablisherEmailController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("email", email))
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

@@ -26,6 +26,7 @@ import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
 import models.person.PersonName
+import navigators.establishers.partnership.OldEstablisherPartnershipDetailsNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
@@ -45,124 +46,124 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(AddPartnersId(index))(false, taskListPage(NormalMode, None)),
-        row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, None), Some(addPartnersMoreThan10)),
-        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, None, partnerIndex = 1), Some(lessThan10Partners)),
-        row(PartnerNameId(index, index))(somePersonNameValue, dobPage(NormalMode, None)),
-        row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(NormalMode, None)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(NormalMode, None)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(NormalMode, None)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(NormalMode, None)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(NormalMode, None)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(NormalMode, None)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(NormalMode, None)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, postcodeLookupPage(NormalMode, None)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, postcodeLookupPage(NormalMode, None)),
-        row(PartnerAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), addressListPage(NormalMode, None)),
-        row(PartnerAddressListId(index, index))(someTolerantAddress, addressYearsPage(NormalMode, None)),
-        row(PartnerAddressId(index, index))(someAddress, addressYearsPage(NormalMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(NormalMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(NormalMode, None)),
-        row(PartnerPreviousAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), paAddressListPage(NormalMode, None)),
-        row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, emailPage(NormalMode, None)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(NormalMode, None)),
-        row(PartnerEmailId(index, index))(someStringValue, phonePage(NormalMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(NormalMode, None)),
-        row(OtherPartnersId(index))(false, taskListPage(NormalMode, None)),
-        row(OtherPartnersId(index))(true, taskListPage(NormalMode, None))
+        row(AddPartnersId(index))(false, taskListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, EmptyOptionalSchemeReferenceNumber), Some(addPartnersMoreThan10)),
+        row(AddPartnersId(index))(true, partnerNamePage(NormalMode, EmptyOptionalSchemeReferenceNumber, partnerIndex = 1), Some(lessThan10Partners)),
+        row(PartnerNameId(Index(0), index))(somePersonNameValue, dobPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerDOBId(Index(0), index))(LocalDate.now, hasNinoPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasNINOId(Index(0), index))(true, ninoPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasNINOId(Index(0), index))(false, whyNoNinoPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEnterNINOId(Index(0), index))(someRefValue, hasUtrPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerNoNINOReasonId(Index(0), index))(someStringValue, hasUtrPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasUTRId(Index(0), index))(true, utrPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasUTRId(Index(0), index))(false, whyNoUtrPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEnterUTRId(Index(0), index))(someRefValue, postcodeLookupPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerNoUTRReasonId(Index(0), index))(someStringValue, postcodeLookupPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressPostcodeLookupId(Index(0), index))(Seq(someTolerantAddress), addressListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressListId(Index(0), index))(someTolerantAddress, addressYearsPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressId(Index(0), index))(someAddress, addressYearsPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.OverAYear, emailPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPreviousAddressPostcodeLookupId(Index(0), index))(Seq(someTolerantAddress), paAddressListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPreviousAddressListId(Index(0), index))(someTolerantAddress, emailPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPreviousAddressId(Index(0), index))(someAddress, emailPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEmailId(Index(0), index))(someStringValue, phonePage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPhoneId(Index(0), index))(someStringValue, cyaPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(OtherPartnersId(index))(false, taskListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(OtherPartnersId(index))(true, taskListPage(NormalMode, EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, normalModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "CheckMode" must {
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckMode, None)),
-        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckMode, None)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckMode, None)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(CheckMode, None)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckMode, None)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckMode, None)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, None)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, cyaPage(CheckMode, None)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckMode, None)),
-        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckMode, None)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckMode, None))
+        row(PartnerNameId(Index(0), index))(somePersonNameValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerDOBId(Index(0), index))(LocalDate.now, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasNINOId(Index(0), index))(true, ninoPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasNINOId(Index(0), index))(false, whyNoNinoPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEnterNINOId(Index(0), index))(someRefValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerNoNINOReasonId(Index(0), index))(someStringValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasUTRId(Index(0), index))(true, utrPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerHasUTRId(Index(0), index))(false, whyNoUtrPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEnterUTRId(Index(0), index))(someRefValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerNoUTRReasonId(Index(0), index))(someStringValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressId(Index(0), index))(someAddress, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.OverAYear, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPreviousAddressId(Index(0), index))(someAddress, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerEmailId(Index(0), index))(someStringValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnerPhoneId(Index(0), index))(someStringValue, cyaPage(CheckMode, EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "UpdateMode" must {
     val updateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next page"),
-        row(AddPartnersId(index))(false, anyMoreChangesPage(srn)),
-        row(AddPartnersId(index))(true, otherPartnersPage(UpdateMode, srn), Some(addPartnersMoreThan10)),
-        row(AddPartnersId(index))(true, partnerNamePage(UpdateMode, srn, partnerIndex = 1), Some(lessThan10Partners)),
-        row(PartnerNameId(index, index))(somePersonNameValue, dobPage(UpdateMode, srn)),
-        row(PartnerDOBId(index, index))(LocalDate.now, hasNinoPage(UpdateMode, srn)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(UpdateMode, srn)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(UpdateMode, srn)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, hasUtrPage(UpdateMode, srn)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, hasUtrPage(UpdateMode, srn)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(UpdateMode, srn)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(UpdateMode, srn)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, postcodeLookupPage(UpdateMode, srn)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, postcodeLookupPage(UpdateMode, srn)),
-        row(PartnerAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), addressListPage(UpdateMode, srn)),
-        row(PartnerAddressListId(index, index))(someTolerantAddress, addressYearsPage(UpdateMode, srn)),
-        row(PartnerAddressId(index, index))(someAddress, addressYearsPage(UpdateMode, srn)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(UpdateMode, srn)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(UpdateMode, srn)),
-        row(PartnerPreviousAddressPostcodeLookupId(index, index))(Seq(someTolerantAddress), paAddressListPage(UpdateMode, srn)),
-        row(PartnerPreviousAddressListId(index, index))(someTolerantAddress, emailPage(UpdateMode, srn)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, emailPage(UpdateMode, srn)),
-        row(PartnerEmailId(index, index))(someStringValue, phonePage(UpdateMode, srn)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(UpdateMode, srn)),
-        row(OtherPartnersId(index))(false, anyMoreChangesPage(srn)),
-        row(OtherPartnersId(index))(true, anyMoreChangesPage(srn))
+        row(AddPartnersId(index))(false, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(AddPartnersId(index))(true, otherPartnersPage(UpdateMode, OptionalSchemeReferenceNumber(srn)), Some(addPartnersMoreThan10)),
+        row(AddPartnersId(index))(true, partnerNamePage(UpdateMode, OptionalSchemeReferenceNumber(srn), partnerIndex = 1), Some(lessThan10Partners)),
+        row(PartnerNameId(Index(0), index))(somePersonNameValue, dobPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerDOBId(Index(0), index))(LocalDate.now, hasNinoPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerHasNINOId(Index(0), index))(true, ninoPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerHasNINOId(Index(0), index))(false, whyNoNinoPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerEnterNINOId(Index(0), index))(someRefValue, hasUtrPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerNoNINOReasonId(Index(0), index))(someStringValue, hasUtrPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerHasUTRId(Index(0), index))(true, utrPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerHasUTRId(Index(0), index))(false, whyNoUtrPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerEnterUTRId(Index(0), index))(someRefValue, postcodeLookupPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerNoUTRReasonId(Index(0), index))(someStringValue, postcodeLookupPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressPostcodeLookupId(Index(0), index))(Seq(someTolerantAddress), addressListPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressListId(Index(0), index))(someTolerantAddress, addressYearsPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressId(Index(0), index))(someAddress, addressYearsPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.OverAYear, emailPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerPreviousAddressPostcodeLookupId(Index(0), index))(Seq(someTolerantAddress), paAddressListPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerPreviousAddressListId(Index(0), index))(someTolerantAddress, emailPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerPreviousAddressId(Index(0), index))(someAddress, emailPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerEmailId(Index(0), index))(someStringValue, phonePage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerPhoneId(Index(0), index))(someStringValue, cyaPage(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(OtherPartnersId(index))(false, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(OtherPartnersId(index))(true, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get)))))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, updateModeRoutes, OptionalSchemeReferenceNumber(srn))
   }
 
   "CheckUpdateMode" must {
     val checkUpdateModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next page"),
-        row(PartnerNameId(index, index))(somePersonNameValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerDOBId(index, index))(LocalDate.now, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerHasNINOId(index, index))(true, ninoPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerHasNINOId(index, index))(false, whyNoNinoPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerEnterNINOId(index, index))(someRefValue, anyMoreChangesPage(srn)),
-        row(PartnerNoNINOReasonId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerHasUTRId(index, index))(true, utrPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerHasUTRId(index, index))(false, whyNoUtrPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerEnterUTRId(index, index))(someRefValue, anyMoreChangesPage(srn)),
-        row(PartnerNoUTRReasonId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerAddressId(index, index))(someAddress, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerAddressId(index, index))(someAddress, isThisPaPage(CheckUpdateMode, srn)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerAddressYearsId(index, index))(value = AddressYears.OverAYear, emailPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerPreviousAddressId(index, index))(someAddress, anyMoreChangesPage(srn)),
-        row(PartnerEmailId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerEmailId(index, index))(someStringValue, anyMoreChangesPage(srn)),
-        row(PartnerPhoneId(index, index))(someStringValue, cyaPage(CheckUpdateMode, srn), Some(newPartnerUserAnswers)),
-        row(PartnerPhoneId(index, index))(someStringValue, anyMoreChangesPage(srn))
+        row(PartnerNameId(Index(0), index))(somePersonNameValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerDOBId(Index(0), index))(LocalDate.now, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerHasNINOId(Index(0), index))(true, ninoPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerHasNINOId(Index(0), index))(false, whyNoNinoPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerEnterNINOId(Index(0), index))(someRefValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerEnterNINOId(Index(0), index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(PartnerNoNINOReasonId(Index(0), index))(someStringValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerHasUTRId(Index(0), index))(true, utrPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerHasUTRId(Index(0), index))(false, whyNoUtrPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerEnterUTRId(Index(0), index))(someRefValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerEnterUTRId(Index(0), index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(PartnerNoUTRReasonId(Index(0), index))(someStringValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerAddressId(Index(0), index))(someAddress, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerAddressId(Index(0), index))(someAddress, isThisPaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.OverAYear, emailPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerPreviousAddressId(Index(0), index))(someAddress, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerPreviousAddressId(Index(0), index))(someAddress, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(PartnerEmailId(Index(0), index))(someStringValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerEmailId(Index(0), index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
+        row(PartnerPhoneId(Index(0), index))(someStringValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
+        row(PartnerPhoneId(Index(0), index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get)))))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, checkUpdateModeRoutes, OptionalSchemeReferenceNumber(srn))
   }
 }
 
@@ -184,64 +185,64 @@ object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
 
   private val lessThan10Partners = UserAnswers(validData(johnDoe))
   private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
-  private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(index, index))(value = true).asOpt.value
+  private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(Index(0), index))(value = true).asOpt.value
 
-  private def isThisPaPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerConfirmPreviousAddressController.onPageLoad(index, index, srn)
+  private def isThisPaPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerConfirmPreviousAddressController.onPageLoad(Index(0), index, OptionalSchemeReferenceNumber(srn))
 
-  private def otherPartnersPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, srn)
+  private def otherPartnersPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
 
-  private def taskListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  private def taskListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def partnerNamePage(mode: Mode, srn: Option[SchemeReferenceNumber], partnerIndex: Int): Call =
-    controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, srn)
+  private def partnerNamePage(mode: Mode, srn: OptionalSchemeReferenceNumber, partnerIndex: Int): Call =
+    controllers.register.establishers.partnership.partner.routes.PartnerNameController.onPageLoad(mode, index, partnerIndex, OptionalSchemeReferenceNumber(srn))
 
-  private def dobPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
-    PartnerDOBController.onPageLoad(mode, index, index, srn)
+  private def dobPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
+    PartnerDOBController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def hasNinoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerHasNINOController.onPageLoad(mode, index, index, srn)
+  private def hasNinoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerHasNINOController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def ninoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerEnterNINOController.onPageLoad(mode, index, index, srn)
+  private def ninoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerEnterNINOController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def whyNoNinoPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerNoNINOReasonController.onPageLoad(mode, index, index, srn)
+  private def whyNoNinoPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerNoNINOReasonController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def hasUtrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerHasUTRController.onPageLoad(mode, index, index, srn)
+  private def hasUtrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerHasUTRController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def utrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerEnterUTRController.onPageLoad(mode, index, index, srn)
+  private def utrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerEnterUTRController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def whyNoUtrPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerNoUTRReasonController.onPageLoad(mode, index, index, srn)
+  private def whyNoUtrPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerNoUTRReasonController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def cyaPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    CheckYourAnswersController.onPageLoad(journeyMode(mode), index, index, srn)
+  private def cyaPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    CheckYourAnswersController.onPageLoad(journeyMode(mode), index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def postcodeLookupPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
+  private def postcodeLookupPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerAddressPostcodeLookupController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def addressListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerAddressListController.onPageLoad(mode, index, index, srn)
+  private def addressListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerAddressListController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def paPostcodeLookupPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, index, index, srn)
+  private def paPostcodeLookupPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def paAddressListPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerPreviousAddressListController.onPageLoad(mode, index, index, srn)
+  private def paAddressListPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerPreviousAddressListController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def addressYearsPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerAddressYearsController.onPageLoad(mode, index, index, srn)
+  private def addressYearsPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerAddressYearsController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def emailPage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerEmailController.onPageLoad(mode, index, index, srn)
+  private def emailPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerEmailController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 
-  private def phonePage(mode: Mode,  srn: Option[SchemeReferenceNumber]): Call =
-    PartnerPhoneController.onPageLoad(mode, index, index, srn)
+  private def phonePage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+    PartnerPhoneController.onPageLoad(mode, index, index, OptionalSchemeReferenceNumber(srn))
 }
 
 

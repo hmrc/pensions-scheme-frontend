@@ -21,10 +21,11 @@ import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId}
+
 import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -53,7 +53,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
   private[controllers] val postCall = controllers.register.establishers.individual.routes
     .EstablisherEnterNINOController.onSubmit _
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map {
@@ -62,7 +62,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: Option[SchemeReferenceNumber])
+  private def viewmodel(personDetails: PersonName, index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): NinoViewModel =
     NinoViewModel(
       postCall(mode, Index(index), srn),
@@ -72,7 +72,7 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
       srn = srn
     )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map {

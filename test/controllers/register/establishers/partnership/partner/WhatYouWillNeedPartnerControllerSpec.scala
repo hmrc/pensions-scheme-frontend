@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership.partner
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes.PartnerNameController
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
@@ -42,15 +42,15 @@ class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with Mocki
       view
     )
 
-  private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, None)
+  private def href: Call = PartnerNameController.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)
 
-  private def viewAsString(): String = view(None, None, partnershipName, href)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, partnershipName, href)(fakeRequest, messages).toString
 
   "WhatYouWillNeedPartnerControllerSpec" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()

@@ -18,7 +18,7 @@
 
 @this()
 
-@(entities: Seq[Entity[_]], mode: Mode, srn: Option[SchemeReferenceNumber], entityNameHeader: String)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], mode: Mode, srn: OptionalSchemeReferenceNumber, entityNameHeader: String)(implicit messages: Messages)
 
 @changeLink(editLink: Option[String] , entity: Entity[_]) = {
     @if(entities.exists(_.editLink(mode, srn).isDefined)){

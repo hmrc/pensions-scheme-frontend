@@ -24,7 +24,7 @@ import controllers.behaviours.AddressControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -67,15 +67,15 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
   val viewmodel: ManualAddressViewModel = ManualAddressViewModel(
-    controller.postCall(NormalMode, firstIndex, None),
+    controller.postCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     countryOptions.options,
     Message(controller.title,Message("messages__theCompany")),
     Message(controller.heading, companyDetails.companyName)
   )
 
   behave like manualAddress(
-    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, None),
-    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, None),
+    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     CompanyAddressId(firstIndex),
     viewmodel
   )
@@ -103,7 +103,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
             "country" -> address.country))
 
         val controller = app.injector.instanceOf[CompanyAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) must be(SEE_OTHER)
         redirectLocation(result).value mustEqual onwardCall.url
@@ -144,7 +144,7 @@ class CompanyAddressControllerSpec extends AddressControllerBehaviours {
         fakeAuditService.reset()
 
         val controller = app.injector.instanceOf[CompanyAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         whenReady(result) {
           _ =>

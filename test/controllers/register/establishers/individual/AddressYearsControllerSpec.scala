@@ -22,7 +22,7 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
 import models.person.PersonName
-import models.{AddressYears, Index, NormalMode, UpdateMode}
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, UpdateMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -64,7 +64,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
 
   private lazy val viewModel =
     AddressYearsViewModel(
-      postCall = routes.AddressYearsController.onSubmit(NormalMode, firstIndex, None),
+      postCall = routes.AddressYearsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
       title = Message("messages__establisher_address_years__title", Message("messages__theIndividual")),
       heading = Message("messages__establisher_address_years__title", establisherName),
       legend = Message("messages__establisher_address_years__title", establisherName),
@@ -92,21 +92,21 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   "AddressYears Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustEqual OK
       contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 
     "redirect to session expired from a GET when the index is invalid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -114,7 +114,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted with over_a_year" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
-      val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(UpdateMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -122,7 +122,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted with under_a_year" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.tail.head.value))
-      val result = controller().onSubmit(UpdateMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(UpdateMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -130,20 +130,20 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }

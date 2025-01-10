@@ -21,9 +21,10 @@ import controllers.EnterVATController
 import controllers.actions._
 import forms.EnterVATFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,7 +34,6 @@ import viewmodels.{EnterVATViewModel, Message}
 import views.html.enterVATView
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -48,7 +48,7 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
                                               val view: enterVATView
                                              )(implicit val ec: ExecutionContext) extends EnterVATController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -57,7 +57,7 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
@@ -69,7 +69,7 @@ class PartnershipEnterVATController @Inject()(override val appConfig: FrontendAp
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]): Form[ReferenceValue] =
     formProvider(companyName)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): EnterVATViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): EnterVATViewModel = {
     EnterVATViewModel(
       postCall = routes.PartnershipEnterVATController.onSubmit(mode, index, srn),
       title = Message("messages__enterVAT", Message("messages__thePartnership")),

@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
@@ -129,7 +129,8 @@ class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSu
         Seq(address)
       }
 
-      when(userAnswersService.save(eqTo(NormalMode), eqTo(None), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any()))
+      when(userAnswersService.save(eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber),
+                                   eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any()))
       .thenReturn (Future.successful(Json.obj()))
 
       running(_.overrides(

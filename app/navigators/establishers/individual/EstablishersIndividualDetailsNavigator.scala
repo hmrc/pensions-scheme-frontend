@@ -36,9 +36,9 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
   import EstablishersIndividualDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherNameId(index) =>
       PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
@@ -58,12 +58,12 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherNameId(_) => AddEstablisherController.onPageLoad(mode, srn)
     case EstablisherDOBId(index) => EstablisherHasNINOController.onPageLoad(mode, index, srn)
@@ -77,10 +77,10 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
     case EstablisherUTRId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def checkUpdateModeRoutes(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def checkUpdateModeRoutes(mode: CheckUpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherDOBId(index) => CheckYourAnswersDetailsController.onPageLoad(journeyMode(mode), index, srn)
     case EstablisherEnterNINOId(index) if ua.get(IsEstablisherNewId(index)).getOrElse(false) =>
@@ -99,15 +99,15 @@ class EstablishersIndividualDetailsNavigator @Inject()(val dataCacheConnector: U
 }
 
 object EstablishersIndividualDetailsNavigator {
-  private def ninoPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = EstablisherEnterNINOController
+  private def ninoPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = EstablisherEnterNINOController
     .onPageLoad(mode, index, srn)
 
-  private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = EstablisherNoNINOReasonController
+  private def noNinoReasonPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = EstablisherNoNINOReasonController
     .onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = EstablisherEnterUTRController
+  private def utrPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = EstablisherEnterUTRController
     .onPageLoad(mode, index, srn)
 
-  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call = EstablisherNoUTRReasonController
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = EstablisherNoUTRReasonController
     .onPageLoad(mode, index, srn)
 }

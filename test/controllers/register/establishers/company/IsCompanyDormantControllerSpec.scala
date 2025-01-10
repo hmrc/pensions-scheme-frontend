@@ -22,7 +22,7 @@ import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import models.register.DeclarationDormant
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -55,7 +55,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
   val index = 0
   val companyName = "test company name"
-  def postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, None, index)
+  def postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)
 
   val validData: JsObject = Json.obj(
       EstablishersId.toString -> Json.arr(
@@ -72,7 +72,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
   "IsCompanyDormant Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -80,7 +80,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(DeclarationDormant.values.head))
     }
@@ -88,7 +88,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -98,7 +98,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -107,14 +107,14 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired" when {
       "no existing data is found" when {
         "GET" in {
-          val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
         }
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
-          val result = controller(dontGetAnyData).onSubmit(NormalMode, None, index)(postRequest)
+          val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -122,7 +122,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       }
       "scheme details cannot be retrieved" when {
         "GET" in {
-          val result = controller(getEmptyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+          val result = controller(getEmptyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -130,7 +130,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
 
-          val result = controller(getEmptyData).onSubmit(NormalMode, None, index)(postRequest)
+          val result = controller(getEmptyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

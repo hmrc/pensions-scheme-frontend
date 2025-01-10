@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -30,12 +30,12 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
   private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)
   private val view = injector.instanceOf[whatYouWillNeedContactDetails]
   def viewAsString(): String = view(
     None,
-    controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad(NormalMode, index, None),
-    None,
+    controllers.register.trustees.partnership.routes.PartnershipEmailController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber),
+    EmptyOptionalSchemeReferenceNumber,
     trusteePartnership.name,
     Message("messages__thePartnership")
     )(fakeRequest, messages).toString
@@ -47,10 +47,10 @@ class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerS
         running(_.overrides(
           bind[AuthAction].toInstance(FakeAuthAction),
           bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
-          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(index, trusteePartnership).dataRetrievalAction)
+          bind[DataRetrievalAction].toInstance(UserAnswers().trusteePartnershipDetails(Index(0), trusteePartnership).dataRetrievalAction)
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedPartnershipContactDetailsController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString()

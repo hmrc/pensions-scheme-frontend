@@ -22,7 +22,7 @@ import forms.PhoneFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -76,11 +76,11 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.CompanyPhoneController.onSubmit(NormalMode, None, firstIndex),
+        routes.CompanyPhoneController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex),
         Message("messages__enterPhoneNumber", Message("messages__theCompany").resolve),
         Message("messages__enterPhoneNumber", "test company name"),
         Some(Message("messages__contact_phone__hint", "test company name", schemeName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString
@@ -89,7 +89,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, None, firstIndex)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -99,7 +99,7 @@ class CompanyPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", "09090909090"))
-        val result = controller().onSubmit(NormalMode, None, firstIndex)(postRequest)
+        val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, firstIndex)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

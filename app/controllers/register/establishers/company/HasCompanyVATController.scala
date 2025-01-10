@@ -21,9 +21,10 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyVATId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -48,7 +48,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
                                         val controllerComponents: MessagesControllerComponents
                                        )(implicit val executionContext: ExecutionContext) extends HasReferenceNumberController {
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], companyName: String): CommonFormWithHintViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
       postCall = controllers.register.establishers.company.routes.HasCompanyVATController.onSubmit(mode, srn, index),
       title = Message("messages__hasVAT", Message("messages__theCompany")),
@@ -58,7 +58,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
 
   private def form(companyName: String)(implicit request: DataRequest[AnyContent]) = formProvider("messages__hasCompanyVat__error__required", companyName)
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {
@@ -67,7 +67,7 @@ class HasCompanyVATController @Inject()(override val appConfig: FrontendAppConfi
         }
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber] = None, index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map {

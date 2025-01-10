@@ -22,8 +22,9 @@ import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPhoneId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -51,7 +51,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
@@ -60,7 +60,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewModel(mode, srn, index).retrieve.map {
@@ -69,7 +69,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  private def viewModel(mode: Mode, srn: Option[SchemeReferenceNumber], index: Index): Retrieval[CommonFormWithHintViewModel] =
+  private def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Retrieval[CommonFormWithHintViewModel] =
     Retrieval {
       implicit request =>
         for {

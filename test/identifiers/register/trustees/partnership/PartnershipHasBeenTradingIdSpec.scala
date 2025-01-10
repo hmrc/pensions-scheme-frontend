@@ -19,7 +19,7 @@ package identifiers.register.trustees.partnership
 import base.SpecBase
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
+import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -63,7 +63,7 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
   }
 
   "cya" when {
-    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isTrusteeNew(index, flag = true), Some(PsaId("A0000000")))
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isTrusteeNew(Index(0), flag = true), Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {
@@ -104,6 +104,6 @@ object PartnershipHasBeenTradingIdSpec extends SpecBase {
     .value
 
   private val onwardUrl = "onwardUrl"
-  private val answers = UserAnswers().trusteePartnershipDetails(index, partnershipDetails).
-    trusteePartnershipTradingTime(index, hasBeenTrading = false)
+  private val answers = UserAnswers().trusteePartnershipDetails(Index(0), partnershipDetails).
+    trusteePartnershipTradingTime(Index(0), hasBeenTrading = false)
 }

@@ -21,22 +21,21 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
-import models.{CheckMode, Mode, NormalMode, UpdateMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import utils.{Enumerable, UserAnswers}
-import models.SchemeReferenceNumber
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                       config: FrontendAppConfig
                                      ) extends AbstractNavigator with Enumerable.Implicits {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, None)
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
   protected def routes(from: NavigateFrom,
                        mode: Mode,
-                       srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+                       srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case AddEstablisherId(value) => addEstablisherRoutes(value, from.userAnswers, mode, srn)
       case EstablisherKindId(index) => establisherKindRoutes(index, from.userAnswers, mode, srn)
@@ -53,7 +52,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def addEstablisherRoutes(value: Option[Boolean],
                                    answers: UserAnswers,
                                    mode: Mode,
-                                   srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = {
+                                   srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
     value match {
       case Some(false) =>
         NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
@@ -69,7 +68,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def establisherKindRoutes(index: Int,
                                     answers: UserAnswers,
                                     mode: Mode,
-                                    srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = {
+                                    srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
     answers.get(EstablisherKindId(index)) match {
       case Some(EstablisherKind.Company) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes
@@ -87,5 +86,5 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] = None
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

@@ -26,7 +26,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteePreviousAddressId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode, person}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, person}
 import navigators.Navigator
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
@@ -81,14 +81,14 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
             val controller = app.injector.instanceOf[TrusteePreviousAddressController]
 
             val viewmodel = ManualAddressViewModel(
-              controller.postCall(NormalMode, firstIndex, None),
+              controller.postCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
               countryOptions.options,
               Message("messages__common__confirmPreviousAddress__h1",Message("messages__theIndividual")),
               Message("messages__common__confirmPreviousAddress__h1", trusteeDetails.fullName)
             )
 
             val request = addCSRFToken(
-              FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, None))
+              FakeRequest(TrusteePreviousAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber))
                 .withHeaders("Csrf-Token" -> "nocheck")
             )
 
@@ -138,7 +138,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
                   "country" -> address.country))
 
               val controller = app.injector.instanceOf[TrusteePreviousAddressController]
-              val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+              val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
               status(result) must be(SEE_OTHER)
               redirectLocation(result).value mustEqual onwardRoute.url
@@ -179,7 +179,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with Scala
             fakeAuditService.reset()
 
             val controller = app.injector.instanceOf[TrusteePreviousAddressController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             whenReady(result) {
               _ =>

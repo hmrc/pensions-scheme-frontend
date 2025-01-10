@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{PartnerDOBId, PartnerNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode, PartnershipDetails, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -59,11 +59,11 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
       view
     )
 
-  private val postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.PartnerDOBController.onSubmit
+  private val postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.PartnerDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, partnerIndex, srn),
+      postCall = postCall(mode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )
@@ -71,9 +71,9 @@ class PartnerDOBControllerSpec extends ControllerSpecBase with DateOfBirthContro
   "PartnerDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
-      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, None, Message("messages__thePartner")),
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstPartnerIndex, EmptyOptionalSchemeReferenceNumber, Message("messages__thePartner")),
       mode = NormalMode,
       requiredData = getMandatoryPartner,
       validData = validData,

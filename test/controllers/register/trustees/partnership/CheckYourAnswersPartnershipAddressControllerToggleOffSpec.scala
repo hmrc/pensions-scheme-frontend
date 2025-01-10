@@ -50,7 +50,7 @@ class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Controll
     "on Page load in Normal Mode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(partnershipAddressNormal,
@@ -60,7 +60,7 @@ class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Controll
 
       behave like changeableController(
         controller(fullAnswers.dataRetrievalAction, _: AllowChangeHelper)
-          .onPageLoad(NormalMode, index, None)(FakeDataRequest(fullAnswers))
+          .onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(FakeDataRequest(fullAnswers))
       )
 
     }
@@ -68,20 +68,20 @@ class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Controll
     "on Page load in UpdateMode" must {
       "return OK and the correct view with full answers" in {
         val request = FakeDataRequest(fullAnswers)
-        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result  = controller(fullAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipAddressUpdate, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(partnershipAddressUpdate, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
           title = Message("messages__addressFor", Message("messages__thePartnership").resolve),
           h1 = Message("messages__addressFor", partnershipName))
       }
 
       "return OK and the correct view with partial answers" in {
         val request = FakeDataRequest(partialAnswers)
-        val result  = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result  = controller(partialAnswers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, srn, postUrlUpdateMode,
+        contentAsString(result) mustBe viewAsString(partnershipAddressUpdatePartial, OptionalSchemeReferenceNumber(srn), postUrlUpdateMode,
           title = Message("messages__addressFor", Message("messages__thePartnership").resolve),
           h1 = Message("messages__addressFor", partnershipName))
       }
@@ -92,7 +92,7 @@ class CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Controll
 
 object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   private val index                                       = Index(0)
@@ -105,71 +105,71 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
 
   private val emptyAnswers = UserAnswers()
   private val mockFeatureToggleService = mock[FeatureToggleService]
-  private def partnershipAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.PartnershipAddressController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipAddressYearsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.PartnershipAddressYearsController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipPreviousAddressRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.PartnershipPreviousAddressController.onPageLoad(mode, Index(index), srn).url
-  private def partnershipTradingTimeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]) =
-    routes.PartnershipHasBeenTradingController.onPageLoad(mode, Index(index), srn).url
+  private def partnershipAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.PartnershipAddressController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
+  private def partnershipAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.PartnershipAddressYearsController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
+  private def partnershipPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.PartnershipPreviousAddressController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
+  private def partnershipTradingTimeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+    routes.PartnershipHasBeenTradingController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = emptyAnswers
-    .trusteePartnershipDetails(index, PartnershipDetails(partnershipName))
-    .trusteePartnershipAddress(index, address)
-    .trusteePartnershipAddressYears(index, addressYearsUnderAYear)
-    .trusteePartnershipTradingTime(index, hasBeenTrading = true)
-    .trusteesPartnershipPreviousAddress(index, previousAddress)
+    .trusteePartnershipDetails(Index(0), PartnershipDetails(partnershipName))
+    .trusteePartnershipAddress(Index(0), address)
+    .trusteePartnershipAddressYears(Index(0), addressYearsUnderAYear)
+    .trusteePartnershipTradingTime(Index(0), hasBeenTrading = true)
+    .trusteesPartnershipPreviousAddress(Index(0), previousAddress)
 
   private val partialAnswers = emptyAnswers
-    .trusteePartnershipDetails(index, PartnershipDetails(partnershipName))
-    .trusteePartnershipAddress(index, address)
+    .trusteePartnershipDetails(Index(0), PartnershipDetails(partnershipName))
+    .trusteePartnershipAddress(Index(0), address)
     .set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
 
   private def postUrl: Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def postUrlUpdateMode: Call =
-    controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn)
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))
 
-  private def addressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  private def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", partnershipName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
-    Some(Link("site.change", partnershipAddressRoute(checkMode(mode), srn), Some(Message("messages__visuallyhidden__dynamic_address", partnershipName))))
+    Some(Link("site.change", partnershipAddressRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)), Some(Message("messages__visuallyhidden__dynamic_address", partnershipName))))
   )
 
-  private def addressYearsAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  private def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__trusteeAddressYears__heading", partnershipName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
-    Some(Link("site.change", partnershipAddressYearsRoute(checkMode(mode), srn),
+    Some(Link("site.change", partnershipAddressYearsRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
       Some(Message("messages__visuallyhidden__dynamic_addressYears", partnershipName))))
   )
 
-  def tradingTimeAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow = AnswerRow(
+  def tradingTimeAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__hasBeenTrading__h1", partnershipName),
     Seq("site.yes"),
     answerIsMessageKey = true,
-    Some(Link("site.change", partnershipTradingTimeRoute(checkMode(mode), srn),
+    Some(Link("site.change", partnershipTradingTimeRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
       Some(Message("messages__visuallyhidden__dynamic__hasBeenTrading", partnershipName))))
   )
 
-  private def previousAddressAnswerRow(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow =
+  private def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(
       Message("messages__previousAddressFor", partnershipName),
       UserAnswers().addressAnswer(previousAddress),
       answerIsMessageKey = false,
-      Some(Link("site.change", partnershipPreviousAddressRoute(checkMode(mode), srn),
+      Some(Link("site.change", partnershipPreviousAddressRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnershipName))))
     )
 
-  private def previousAddressAddLink(mode: Mode, srn: Option[SchemeReferenceNumber]): AnswerRow =
+  private def previousAddressAddLink(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow =
     AnswerRow(
       Message("messages__previousAddressFor", partnershipName),
       Seq("site.not_entered"),
       answerIsMessageKey = true,
-      Some(Link("site.add", partnershipPreviousAddressRoute(checkMode(mode), srn),
+      Some(Link("site.add", partnershipPreviousAddressRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
         Some(Message("messages__visuallyhidden__dynamic_previousAddress", partnershipName))))
     )
 
@@ -177,16 +177,16 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
     Seq(
       AnswerSection(None,
         Seq(
-          addressAnswerRow(NormalMode, None),
-          addressYearsAnswerRow(NormalMode, None),
-          tradingTimeAnswerRow(NormalMode, None),
-          previousAddressAnswerRow(NormalMode, None)
+          addressAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber),
+          addressYearsAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber),
+          tradingTimeAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber),
+          previousAddressAnswerRow(NormalMode, EmptyOptionalSchemeReferenceNumber)
         )))
 
   private def partnershipAddressUpdate: Seq[AnswerSection] =
-    Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAnswerRow(UpdateMode, srn))))
+    Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(UpdateMode, OptionalSchemeReferenceNumber(srn)))))
   private def partnershipAddressUpdatePartial: Seq[AnswerSection] =
-    Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, srn), previousAddressAddLink(UpdateMode, srn))))
+    Seq(AnswerSection(None, Seq(addressAnswerRow(UpdateMode, OptionalSchemeReferenceNumber(srn)), previousAddressAddLink(UpdateMode, OptionalSchemeReferenceNumber(srn)))))
 
   private val view = injector.instanceOf[checkYourAnswers]
 
@@ -206,7 +206,7 @@ object CheckYourAnswersPartnershipAddressControllerToggleOffSpec extends Control
       mockFeatureToggleService
     )
 
-  private def viewAsString(answerSections: Seq[AnswerSection], srn: Option[SchemeReferenceNumber] = None, postUrl: Call = postUrl,
+  private def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl,
                            title:Message, h1:Message): String =
     view(
       CYAViewModel(

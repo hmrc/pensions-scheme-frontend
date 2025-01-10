@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.racdac.ContractOrPolicyNumberFormProvider
 import identifiers.racdac.ContractOrPolicyNumberId
-import models.Mode
+import models.{EmptyOptionalSchemeReferenceNumber, Mode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,7 +53,7 @@ class ContractOrPolicyNumberController @Inject()(
     with controllers.Retrievals
 {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
     implicit request => {
       withRACDACName{ racdacName =>
         val form = formProvider(racdacName)
@@ -65,7 +65,7 @@ class ContractOrPolicyNumberController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
     implicit request =>
       withRACDACName { racdacName =>
         val form = formProvider(racdacName)

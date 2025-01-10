@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, Mode, NormalMode, SchemeReferenceNumber}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -58,11 +58,11 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
       controllerComponents,
       view)
 
-  private val postCall: (Mode, Index, Index, Option[SchemeReferenceNumber]) => Call = routes.DirectorDOBController.onSubmit
+  private val postCall: (Mode, Index, Index, OptionalSchemeReferenceNumber) => Call = routes.DirectorDOBController.onSubmit
 
-  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, establisherIndex, directorIndex, srn),
+      postCall = postCall(mode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )
@@ -70,9 +70,9 @@ class DirectorDOBControllerSpec extends ControllerSpecBase with DateOfBirthContr
   "DirectorDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
-      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, None, Message("messages__theDirector")),
+      get = data => controller(data).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber),
+      post = data => controller(data).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber),
+      viewModel = viewModel(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber, Message("messages__theDirector")),
       mode = NormalMode,
       requiredData = getMandatoryEstablisherCompanyDirectorWithDirectorName,
       validData = validData,

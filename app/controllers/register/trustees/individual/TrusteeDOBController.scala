@@ -17,14 +17,14 @@
 package controllers.register.trustees.individual
 
 import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.trustees.individual.{TrusteeDOBId, TrusteeNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -35,7 +35,6 @@ import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -52,14 +51,14 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
 
   val form: Form[LocalDate] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         get(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message("messages__theIndividual")
         ), mode)
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], token: String): DateOfBirthViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel = {
     DateOfBirthViewModel(
       postCall = postCall(mode, index, srn),
       srn = srn,
@@ -67,9 +66,9 @@ class TrusteeDOBController @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  private def postCall: (Mode, Index, Option[SchemeReferenceNumber]) => Call = routes.TrusteeDOBController.onSubmit
+  private def postCall: (Mode, Index, OptionalSchemeReferenceNumber) => Call = routes.TrusteeDOBController.onSubmit
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         post(TrusteeDOBId(index), TrusteeNameId(index), viewModel(mode, index, srn, Message

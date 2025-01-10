@@ -35,9 +35,9 @@ class OldEstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector
   import OldEstablisherPartnershipDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
@@ -56,12 +56,12 @@ class OldEstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier,
+  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier,
     Call] = {
     case PartnershipDetailsId(_) => addEstablisherPage(mode, srn)
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
@@ -74,10 +74,10 @@ class OldEstablisherPartnershipDetailsNavigator @Inject()(val dataCacheConnector
     case PartnershipEnterPAYEId(index) => cyaPage(mode, index, srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def checkUpdateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[SchemeReferenceNumber])
+  private def checkUpdateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case id@PartnershipHasUTRId(index) => booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index,
       srn))
@@ -98,28 +98,28 @@ object OldEstablisherPartnershipDetailsNavigator {
   private def isNewEstablisher(index: Int, ua: UserAnswers): Boolean =
     ua.get(IsEstablisherNewId(index)).getOrElse(false)
 
-  private def addEstablisherPage(mode: Mode, srn: Option[SchemeReferenceNumber]): Call =
+  private def addEstablisherPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.AddEstablisherController.onPageLoad(mode, srn)
 
-  private def hasVat(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def hasVat(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipHasVATController.onPageLoad(mode, index, srn)
 
-  private def cyaPage(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersPartnershipDetailsController.onPageLoad(journeyMode(mode), index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def utrPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipEnterUTRController.onPageLoad(mode, index, srn)
 
-  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def enterVat(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def enterVat(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipEnterVATController.onPageLoad(mode, index, srn)
 
-  private def hasPaye(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def hasPaye(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipHasPAYEController.onPageLoad(mode, index, srn)
 
-  private def payePage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def payePage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnershipEnterPAYEController.onPageLoad(mode, index, srn)
 }
 

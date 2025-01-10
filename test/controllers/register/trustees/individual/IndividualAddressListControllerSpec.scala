@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode, person}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, person}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -82,7 +82,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
           bind[DataRetrievalAction].toInstance(retrieval),
           bind(classOf[Navigator]).toInstance(fakeNavigator)
         )) { implicit app =>
-        val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+        val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -105,7 +105,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         )) { implicit app =>
               val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
               val controller = app.injector.instanceOf[IndividualAddressListController]
-              val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+              val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -122,11 +122,11 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
       val result = route(app, request).value
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
     }
 
   }
@@ -140,7 +140,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).toInstance(fakeNavigator)
       )) { implicit app =>
-      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0), None)))
+      val request = addCSRFToken(FakeRequest(routes.IndividualAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)))
       val result = route(app, request).value
 
       status(result) mustBe SEE_OTHER
@@ -160,7 +160,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
       val controller = app.injector.instanceOf[IndividualAddressListController]
-      val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+      val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -179,10 +179,10 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
       )) { implicit app =>
       val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("value", "0")))
       val controller = app.injector.instanceOf[IndividualAddressListController]
-      val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+      val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0), None).url)
+      redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber).url)
     }
 
   }
@@ -190,8 +190,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase {
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      postCall = routes.IndividualAddressListController.onSubmit(NormalMode, Index(0), None),
-      manualInputCall = routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0), None),
+      postCall = routes.IndividualAddressListController.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
+      manualInputCall = routes.TrusteeAddressController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber),
       addresses = addresses,
       title = messages("messages__trustee__individual__address__heading",  Message("messages__theIndividual").resolve),
       heading = messages("messages__trustee__individual__address__heading", trusteeName.fullName),

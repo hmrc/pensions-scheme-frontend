@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import audit.{TcmpAuditEvent, AuditService}
+import audit.{AuditService, TcmpAuditEvent}
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
@@ -24,25 +24,25 @@ import controllers.actions._
 import controllers.register.routes.DeclarationController
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
-import identifiers.{SchemeTypeId, TypeOfBenefitsId, MoneyPurchaseBenefitsId}
+import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
 import models.enumerations.SchemeJourneyType
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{TypeOfBenefits, PSAMinimalFlags, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport}
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Result, Call, Action}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{UserAnswers, Enumerable}
+import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
 import javax.inject.Inject
@@ -51,7 +51,6 @@ import uk.gov.hmrc.http.HttpErrorFunctions._
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import models.SchemeReferenceNumber
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -98,7 +97,7 @@ class DeclarationController @Inject()(
         if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
           showPage(Ok.apply)
         } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
         }
       }
   }
@@ -171,7 +170,7 @@ class DeclarationController @Inject()(
         Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
       })recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
-          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
         case _ =>
           Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       }

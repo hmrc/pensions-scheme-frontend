@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasPAYEId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -39,7 +39,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__partnershipHasPaye__error__required", partnershipDetails.name)
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasPAYEController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasPAYE", Message("messages__thePartnership").resolve),
@@ -47,7 +47,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
     hint = Some(Message("messages__hasPaye__p1")),
     formFieldName = Some("hasPaye")
   )
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(Index(0), partnershipDetails)
   private val view = injector.instanceOf[hasReferenceNumber]
   private def viewAsString(form: Form[_] = form): String =
     view(form, viewModel, schemeName)(fakeRequest, messages).toString
@@ -58,7 +58,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -69,7 +69,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasPAYEId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -87,7 +87,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -104,7 +104,7 @@ class PartnershipHasPAYEControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasPAYEController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("hasPaye", "invalid value"))
             val boundForm = form.bind(Map("hasPaye" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

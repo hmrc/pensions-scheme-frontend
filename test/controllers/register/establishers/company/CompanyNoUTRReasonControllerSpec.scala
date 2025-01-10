@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
-import models.{CompanyDetails, NormalMode, SchemeReferenceNumber}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -42,13 +42,13 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private val srn = Some(SchemeReferenceNumber("S123"))
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   val viewmodel = ReasonViewModel(
-    postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, srn, index = 0),
+    postCall = routes.CompanyNoUTRReasonController.onSubmit(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0),
     title = Message("messages__whyNoUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoUTR", companyName),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad
@@ -59,7 +59,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
-            val result = controller.onPageLoad(NormalMode, srn, index = 0)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
             status(result) mustBe OK
             contentAsString(result) mustBe view(form, viewmodel, None)(fakeRequest, messages).toString
         }
@@ -71,7 +71,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(data):_*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
-            val result = controller.onPageLoad(NormalMode, srn, index = 0)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
             status(result) mustBe OK
             contentAsString(result) mustBe view(form.fill(value = "no reason"), viewmodel, None)(fakeRequest, messages).toString
         }
@@ -87,7 +87,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "123456789"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -101,7 +101,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
-            val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+            val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
             status(result) mustBe BAD_REQUEST
         }
       }

@@ -21,9 +21,10 @@ import controllers.actions._
 import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeNoNINOReasonId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +35,6 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
@@ -51,7 +51,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   Retrievals
   with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
@@ -60,7 +60,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { name =>
@@ -73,7 +73,7 @@ class TrusteeNoNINOReasonController @Inject()(val appConfig: FrontendAppConfig,
   private def form(name: String)(implicit request: DataRequest[AnyContent]): Form[String] =
     formProvider ("messages__reason__error_ninoRequired", name)
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber], name: String): ReasonViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, name: String): ReasonViewModel = {
     ReasonViewModel(
       postCall = routes.TrusteeNoNINOReasonController.onSubmit(mode, index, srn),
       title = Message("messages__whyNoNINO", Message("messages__theIndividual")),

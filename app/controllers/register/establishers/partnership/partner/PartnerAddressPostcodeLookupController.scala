@@ -22,8 +22,9 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerAddressPostcodeLookupId, PartnerNameId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -34,7 +35,6 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.ExecutionContext
-import models.SchemeReferenceNumber
 
 class PartnerAddressPostcodeLookupController @Inject()(
                                                         override val appConfig: FrontendAppConfig,
@@ -54,13 +54,13 @@ class PartnerAddressPostcodeLookupController @Inject()(
 
   protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve map get
     }
 
-  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: Option[SchemeReferenceNumber])
+  private def viewmodel(establisherIndex: Index, partnerIndex: Index, mode: Mode, srn: OptionalSchemeReferenceNumber)
   : Retrieval[PostcodeLookupViewModel] =
     Retrieval(
       implicit request =>
@@ -77,7 +77,7 @@ class PartnerAddressPostcodeLookupController @Inject()(
         }
     )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(establisherIndex, partnerIndex, mode, srn).retrieve.map(

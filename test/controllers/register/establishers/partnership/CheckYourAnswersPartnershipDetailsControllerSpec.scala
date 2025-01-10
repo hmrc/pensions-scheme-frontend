@@ -50,20 +50,20 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in registration journey" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes())
-        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersYes().dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(NormalMode, index, None)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, None),
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(NormalMode, EmptyOptionalSchemeReferenceNumber),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -72,22 +72,22 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
     "when in variations journey with existing establisher" must {
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val request = FakeDataRequest(fullAnswersYes(false))
-        val result = controller(fullAnswersYes(false).dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswersYes(false).dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAllExistingAnswers, UpdateMode, srn,
+          viewAsString(partnershipDetailsAllExistingAnswers, UpdateMode, OptionalSchemeReferenceNumber(srn),
             title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
             h1 = Message("messages__detailsFor", partnershipName))
       }
 
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val request = FakeDataRequest(fullAnswersNo)
-        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(fullAnswersNo.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
         contentAsString(result) mustBe
-          viewAsString(partnershipDetailsAddLinksValues, UpdateMode, srn,
+          viewAsString(partnershipDetailsAddLinksValues, UpdateMode, OptionalSchemeReferenceNumber(srn),
             title = Message("messages__detailsFor", Message("messages__thePartnership").resolve),
             h1 = Message("messages__detailsFor", partnershipName))
       }
@@ -98,10 +98,10 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       "return OK and the correct view with full answers when user has answered yes to all questions" in {
         val answers = fullAnswersYes().set(IsEstablisherNewId(0))(true).asOpt.value
         val request = FakeDataRequest(answers)
-        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, srn), mode = UpdateMode, srn = srn,
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllValues(UpdateMode, OptionalSchemeReferenceNumber(srn)), mode = UpdateMode, srn = OptionalSchemeReferenceNumber(srn),
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -109,10 +109,10 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
       "return OK and the correct view with full answers when user has answered no to all questions" in {
         val answers = fullAnswersNo.set(IsEstablisherNewId(0))(true).asOpt.value
         val request = FakeDataRequest(answers)
-        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, index, srn)(request)
+        val result = controller(answers.dataRetrievalAction).onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, srn), mode = UpdateMode, srn = srn,
+        contentAsString(result) mustBe viewAsString(partnershipDetailsAllReasons(UpdateMode, OptionalSchemeReferenceNumber(srn)), mode = UpdateMode, srn = srn,
           title = Message("checkYourAnswers.hs.heading"),
           h1 = Message("checkYourAnswers.hs.heading"))
       }
@@ -124,18 +124,18 @@ class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBas
 object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with Enumerable.Implicits
   with ControllerAllowChangeBehaviour with OptionValues {
 
-  def onwardRoute(mode: Mode = NormalMode, srn: Option[SchemeReferenceNumber] = None): Call = {
+  def onwardRoute(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call = {
     if (mode == NormalMode) {
       controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
     } else {
-      controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+      controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
     }
   }
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index: Index = Index(0)
   val testSchemeName = "Test Scheme Name"
-  val srn: Option[SchemeReferenceNumber] = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
   val partnershipName = "test partnership name"
 
   private val utr = "utr"
@@ -145,26 +145,26 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
 
   private val emptyAnswers = UserAnswers().set(PartnershipDetailsId(0))(PartnershipDetails(partnershipName)).asOpt.value
 
-  private def hasPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), index, srn).url
+  private def hasPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipHasUTRController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), index, srn).url
+  private def partnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipEnterUTRController.onPageLoad(checkMode(mode), Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def noPartnershipUTRRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, srn).url
+  private def noPartnershipUTRRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipNoUTRReasonController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasPartnershipVatRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, srn).url
+  private def hasPartnershipVatRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipHasVATController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipEnterVATRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, srn).url
+  private def partnershipEnterVATRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipEnterVATController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def hasPartnershipPayeRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, srn).url
+  private def hasPartnershipPayeRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipHasPAYEController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
-  private def partnershipPayeVariationsRoute(mode: Mode, srn: Option[SchemeReferenceNumber]): String =
-    routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, srn).url
+  private def partnershipPayeVariationsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PartnershipEnterPAYEController.onPageLoad(checkMode(mode), 0, OptionalSchemeReferenceNumber(srn)).url
 
   private def fullAnswersYes(isEditable: Boolean = true) = emptyAnswers
     .set(PartnershipHasUTRId(0))(value = true).flatMap(
@@ -187,30 +187,30 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     Seq(AnswerSection(
       None,
       Seq(
-        addLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(UpdateMode, srn),
+        addLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName)),
-        addLink(messages("messages__enterVAT", partnershipName), partnershipEnterVATRoute(UpdateMode, srn),
+        addLink(messages("messages__enterVAT", partnershipName), partnershipEnterVATRoute(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)),
-        addLink(messages("messages__enterPAYE", partnershipName), partnershipPayeVariationsRoute(UpdateMode, srn),
+        addLink(messages("messages__enterPAYE", partnershipName), partnershipPayeVariationsRoute(UpdateMode, OptionalSchemeReferenceNumber(srn)),
           messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       )
     ))
 
-  private def partnershipDetailsAllValues(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def partnershipDetailsAllValues(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        booleanChangeLink(messages("messages__hasUTR", partnershipName), hasPartnershipUTRRoute(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasUTR", partnershipName), hasPartnershipUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(mode, srn), utr,
+        stringChangeLink(messages("messages__enterUTR", partnershipName), partnershipUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), utr,
           messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", partnershipName)),
-        booleanChangeLink(messages("messages__hasVAT", partnershipName), hasPartnershipVatRoute(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasVAT", partnershipName), hasPartnershipVatRoute(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),
-        stringChangeLink(messages("messages__enterVAT", partnershipName), partnershipEnterVATRoute(mode, srn), vat,
+        stringChangeLink(messages("messages__enterVAT", partnershipName), partnershipEnterVATRoute(mode, OptionalSchemeReferenceNumber(srn)), vat,
           messages("messages__visuallyhidden__dynamic_vat_number", partnershipName)),
-        booleanChangeLink(messages("messages__hasPAYE", partnershipName), hasPartnershipPayeRoute(mode, srn), value = true,
+        booleanChangeLink(messages("messages__hasPAYE", partnershipName), hasPartnershipPayeRoute(mode, OptionalSchemeReferenceNumber(srn)), value = true,
           messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName)),
-        stringChangeLink(messages("messages__enterPAYE", partnershipName), partnershipPayeVariationsRoute(mode, srn), paye,
+        stringChangeLink(messages("messages__enterPAYE", partnershipName), partnershipPayeVariationsRoute(mode, OptionalSchemeReferenceNumber(srn)), paye,
           messages("messages__visuallyhidden__dynamic_paye_reference", partnershipName))
       )
     ))
@@ -226,17 +226,17 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     ))
 
 
-  private def partnershipDetailsAllReasons(mode: Mode, srn: Option[SchemeReferenceNumber]): Seq[AnswerSection] =
+  private def partnershipDetailsAllReasons(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerSection] =
     Seq(AnswerSection(
       None,
       Seq(
-        booleanChangeLink(messages("messages__hasUTR", partnershipName), hasPartnershipUTRRoute(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasUTR", partnershipName), hasPartnershipUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), value = false,
           messages("messages__visuallyhidden__dynamic_hasUtr", partnershipName)),
-        stringChangeLink(messages("messages__whyNoUTR", partnershipName), noPartnershipUTRRoute(mode, srn), reason,
+        stringChangeLink(messages("messages__whyNoUTR", partnershipName), noPartnershipUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), reason,
           messages("messages__visuallyhidden__dynamic_noUtrReason", partnershipName)),
-        booleanChangeLink(messages("messages__hasVAT", partnershipName), hasPartnershipVatRoute(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasVAT", partnershipName), hasPartnershipVatRoute(mode, OptionalSchemeReferenceNumber(srn)), value = false,
           messages("messages__visuallyhidden__dynamic_hasVat", partnershipName)),
-        booleanChangeLink(messages("messages__hasPAYE", partnershipName), hasPartnershipPayeRoute(mode, srn), value = false,
+        booleanChangeLink(messages("messages__hasPAYE", partnershipName), hasPartnershipPayeRoute(mode, OptionalSchemeReferenceNumber(srn)), value = false,
           messages("messages__visuallyhidden__dynamic_hasPaye", partnershipName))
       )
     ))
@@ -286,11 +286,11 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
     )
 
   def viewAsString(answerSections: Seq[AnswerSection], mode: Mode = NormalMode,
-                   srn: Option[SchemeReferenceNumber] = None, title:Message, h1:Message): String =
+                   srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, title:Message, h1:Message): String =
     view(
       CYAViewModel(
         answerSections = answerSections,
-        href =  onwardRoute(mode, srn),
+        href =  onwardRoute(mode, OptionalSchemeReferenceNumber(srn)),
         schemeName = None,
         returnOverview = false,
         hideEditLinks = false,

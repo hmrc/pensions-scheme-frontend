@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -47,7 +47,7 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(EstablishedCountryId)(someStringValue, workingKnowledgePage),
           rowNoValue(DeclarationDutiesId)(checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
 
     "in CheckMode" must {
@@ -61,7 +61,7 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(EstablishedCountryId)(someStringValue, checkYourAnswersPage),
           rowNoValue(DeclarationDutiesId)(checkYourAnswersPage)
         )
-      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, None)
+      behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation, EmptyOptionalSchemeReferenceNumber)
     }
   }
 }
@@ -72,5 +72,5 @@ object BeforeYouStartNavigatorSpec {
   private val haveAnyTrusteesCheckPage: Call = HaveAnyTrusteesController.onPageLoad(CheckMode)
   private val establishedCountryPage: Call   = EstablishedCountryController.onPageLoad(NormalMode)
   private val workingKnowledgePage: Call     = WorkingKnowledgeController.onPageLoad(NormalMode)
-  private val checkYourAnswersPage: Call     = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None)
+  private val checkYourAnswersPage: Call     = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 }

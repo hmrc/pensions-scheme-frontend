@@ -23,7 +23,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{FeatureToggle, Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -74,7 +74,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
-      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -88,7 +88,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
-      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onPageLoad(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
 
@@ -116,7 +116,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -131,7 +131,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "01"), ("lastName", "?&^%$£"))
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(postRequest)
+      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -143,7 +143,7 @@ class TrusteeNameControllerSpec extends ControllerSpecBase with GuiceOneAppPerSu
 
       val controller = app.injector.instanceOf[TrusteeNameController]
 
-      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, None)(fakeRequest)
+      val result = controller.onSubmit(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe BAD_REQUEST
 
@@ -163,7 +163,7 @@ object TrusteeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
 
 
   private val viewmodel = CommonFormWithHintViewModel(
-    TrusteeNameController.onSubmit(NormalMode, firstTrusteeIndex, None),
+    TrusteeNameController.onSubmit(NormalMode, firstTrusteeIndex, EmptyOptionalSchemeReferenceNumber),
     Message("messages__trusteeName__title"),
     Message("messages__trusteeName__heading")
   )

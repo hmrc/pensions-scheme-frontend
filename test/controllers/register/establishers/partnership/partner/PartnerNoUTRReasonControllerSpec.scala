@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNoUTRReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -34,7 +34,7 @@ class PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   "PartnerNoUTRReasonController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -44,7 +44,7 @@ class PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
       val validData = validPartnerData("noUtrReason" -> "new reason")
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill("new reason"))
     }
@@ -52,7 +52,7 @@ class PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "new reason"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -62,7 +62,7 @@ class PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
     "return a Bad Request when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", ""))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
     }
@@ -80,12 +80,12 @@ object PartnerNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val partnerIndex = Index(0)
   private val srn = None
   private val postCall =
-    controllers.register.establishers.partnership.partner.routes.PartnerNoUTRReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+    controllers.register.establishers.partnership.partner.routes.PartnerNoUTRReasonController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = ReasonViewModel(
     postCall,
     title = Message("messages__whyNoUTR", Message("messages__thePartner")),
     heading = Message("messages__whyNoUTR", "first last"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
   private val view = injector.instanceOf[reason]
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryPartner): PartnerNoUTRReasonController =

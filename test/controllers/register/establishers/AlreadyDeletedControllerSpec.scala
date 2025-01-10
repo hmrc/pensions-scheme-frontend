@@ -19,7 +19,7 @@ package controllers.register.establishers
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import models.register.establishers.EstablisherKind
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import viewmodels.{AlreadyDeletedViewModel, Message}
@@ -27,7 +27,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val establisherIndex = Index(0)
 
@@ -57,28 +57,28 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   "AlreadyDeleted Establisher Controller" must {
 
     "return OK and the correct view for a GET for an individual" in {
-      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisher).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("Test Name")
     }
 
     "return OK and the correct view for a GET for a company" in {
-      val result = controller(getMandatoryEstablisherCompany).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisherCompany).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Company, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test company name")
     }
 
     "return OK and the correct view for a GET for a partnership" in {
-      val result = controller(getMandatoryEstablisherPartnership).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, None)(fakeRequest)
+      val result = controller(getMandatoryEstablisherPartnership).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Partnership, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test partnership name")
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, EstablisherKind.Indivdual, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

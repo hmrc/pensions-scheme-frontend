@@ -23,7 +23,7 @@ import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{FeatureToggleName, Index, Mode, NormalMode}
+import models.{FeatureToggleName, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,7 +37,6 @@ import views.html.personName
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class EstablisherNameController @Inject()(
                                            val appConfig: FrontendAppConfig,
@@ -56,7 +55,7 @@ class EstablisherNameController @Inject()(
                                          )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
         val preparedForm = request.userAnswers.get[PersonName](EstablisherNameId(index)) match {
@@ -66,7 +65,7 @@ class EstablisherNameController @Inject()(
         Ok(view(preparedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
@@ -89,7 +88,7 @@ class EstablisherNameController @Inject()(
 
   private def form(implicit request: DataRequest[AnyContent]) = formProvider("messages__error__establisher")
 
-  private def viewmodel(mode: Mode, index: Index, srn: Option[SchemeReferenceNumber]): CommonFormWithHintViewModel =
+  private def viewmodel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): CommonFormWithHintViewModel =
     CommonFormWithHintViewModel(
     postCall = routes.EstablisherNameController.onSubmit(mode, index, srn),
     title = Message("messages__individualName__title"),

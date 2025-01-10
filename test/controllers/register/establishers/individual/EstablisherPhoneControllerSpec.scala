@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherPhoneController
 import forms.PhoneFormProvider
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
@@ -51,11 +51,11 @@ class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSuga
     view(
       form,
       CommonFormWithHintViewModel(
-        EstablisherPhoneController.onSubmit(NormalMode, firstIndex, None),
+        EstablisherPhoneController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__enterPhoneNumber", Message("messages__theIndividual").resolve),
         Message("messages__enterPhoneNumber", establisherName.fullName),
         Some(Message("messages__contact_details__hint", establisherName.fullName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString
@@ -67,7 +67,7 @@ class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSuga
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[EstablisherPhoneController]
-            val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -85,7 +85,7 @@ class EstablisherPhoneControllerSpec extends ControllerSpecBase with MockitoSuga
           app =>
             val controller = app.injector.instanceOf[EstablisherPhoneController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("phone", phone))
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

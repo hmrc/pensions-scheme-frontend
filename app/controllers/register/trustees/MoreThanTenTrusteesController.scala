@@ -21,8 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.trustees.MoreThanTenTrusteesId
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +35,6 @@ import utils.annotations.Trustees
 import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class MoreThanTenTrusteesController @Inject()(
                                                appConfig: FrontendAppConfig,
@@ -53,7 +53,7 @@ class MoreThanTenTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
@@ -61,7 +61,7 @@ class MoreThanTenTrusteesController @Inject()(
         Future.successful(Ok(view(updatedForm, mode, existingSchemeName, submitUrl, srn)))
     }
 
-  def onSubmit(mode: Mode, srn: Option[SchemeReferenceNumber]): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

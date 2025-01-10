@@ -55,18 +55,18 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]]
   }
 
-  class TestAllowAccessAction(srn: Option[SchemeReferenceNumber],
+  class TestAllowAccessAction(srn: OptionalSchemeReferenceNumber,
                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionMain(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
 
   }
 
-  class TestAllowAccessActionTaskList(srn: Option[SchemeReferenceNumber],
+  class TestAllowAccessActionTaskList(srn: OptionalSchemeReferenceNumber,
                                       psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionTaskList(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
 
-  class TestAllowAccessActionNoSuspendedCheck(srn: Option[SchemeReferenceNumber],
+  class TestAllowAccessActionNoSuspendedCheck(srn: OptionalSchemeReferenceNumber,
                                               psc: PensionsSchemeConnector = pensionsSchemeConnector) extends AllowAccessActionNoSuspendedCheck(srn, psc, errorHandler) with TestHarness {
     def test[A](request: OptionalDataRequest[A]): Future[Option[Result]] = super.filter(request)
   }
@@ -75,7 +75,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
   val generateTestHarnessForAllowAccessTaskList: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionTaskList(_, _)
   val generateTestHarnessForAllowAccessSuspendedCheck: (Option[String], PensionsSchemeConnector) => TestHarness = new TestAllowAccessActionNoSuspendedCheck(_, _)
 
-  val srn = Some(SchemeReferenceNumber("S123"))
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   val suspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> true))
   val notSuspendedUserAnswers = UserAnswers(Json.obj(IsPsaSuspendedId.toString -> false))
@@ -110,7 +110,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       val futureResult = generateTestHarnessForAllowAccessMain(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
-      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
     }
   }
 
@@ -148,7 +148,7 @@ class AllowAccessActionSpec extends SpecBase with ScalaFutures with MockitoSugar
       val futureResult = generateTestHarnessForAllowAccessSuspendedCheck(srn, pensionsSchemeConnector)
         .test(OptionalDataRequest(fakeRequest, "id", None, PsaId("A0000000")))
 
-      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn).url))
+      assertEqual(futureResult, Some(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url))
     }
   }
 

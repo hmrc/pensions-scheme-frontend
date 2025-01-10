@@ -19,10 +19,9 @@ package controllers
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.{BankAccountDetailsId, SchemeNameId, UKBankAccountId}
 import models.register._
-import models.{BankAccountDetails, CheckMode, Link, NormalMode}
+import models.{BankAccountDetails, CheckMode, EmptyOptionalSchemeReferenceNumber, Link, NormalMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-
 import utils.FakeCountryOptions
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -59,7 +58,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  private val postUrl = routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   val bankDetails = BankAccountDetails(SortCode("34", "45", "67"), "test account number")
 
@@ -100,7 +99,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     schemeName = Some("Test Scheme Name"),
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

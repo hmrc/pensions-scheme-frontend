@@ -20,7 +20,7 @@ import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
 import identifiers.SchemeNameId
-import models.Mode
+import models.{EmptyOptionalSchemeReferenceNumber, Mode}
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form
@@ -56,7 +56,7 @@ class SchemeNameController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber)) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v => form.fill(v))
       Ok(view(preparedForm, mode, existingSchemeName.getOrElse("")))

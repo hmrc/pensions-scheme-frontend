@@ -19,7 +19,7 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
-import models.SchemeReferenceNumber
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.libs.json._
 import play.api.test.Helpers._
 import views.html.register.cannotMakeChanges
@@ -40,11 +40,11 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
     new CannotMakeChangesController(frontendAppConfig, messagesApi,
       FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view, FakeAllowAccessProvider())
 
-  def viewAsString(): String = view(srn, Some(schemeName))(fakeRequest, messages).toString
+  def viewAsString(): String = view(OptionalSchemeReferenceNumber(srn), Some(schemeName))(fakeRequest, messages).toString
 
   "CannotMakeChanges Controller" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(srn)(fakeRequest)
+      val result = controller().onPageLoad(OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }

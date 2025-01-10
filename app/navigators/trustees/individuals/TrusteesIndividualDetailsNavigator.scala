@@ -37,14 +37,14 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   import TrusteesIndividualDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
-                                       srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier, Call] = {
+                                       srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case TrusteeNameId(index) =>
       // TODO: Remove Json code below when SchemeRegistration toggle is removed
       (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
@@ -54,17 +54,17 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case TrusteeDOBId(index) if mode == NormalMode =>
       hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case id@TrusteeHasNINOId(index) =>
       booleanNav(id, ua, ninoPage(mode, index, srn), noNinoReasonPage(mode, index, srn))
     case TrusteeEnterNINOId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeEnterNINOId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeNoNINOReasonId(index) if mode == NormalMode =>
       trusteeHasUtrPage(mode, index, srn)
     case TrusteeNoNINOReasonId(index) =>
-      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case id@TrusteeHasUTRId(index) =>
       booleanNav(id, ua, utrPage(mode, index, srn), noUtrReasonPage(mode, index, srn))
     case TrusteeNoUTRReasonId(index) =>
@@ -73,12 +73,12 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
       cyaIndividualDetailsPage(mode, index, srn)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
   private def updateModeRoutes(mode: UpdateMode.type,
                                ua: UserAnswers,
-                               srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier, Call] = {
+                               srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case TrusteeNameId(_) => AddTrusteeController.onPageLoad(mode, srn)
     case TrusteeDOBId(index) => hasNinoPage(mode, index, srn)
     case id@TrusteeHasNINOId(index) =>
@@ -90,12 +90,12 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
     case TrusteeUTRId(index) => cyaIndividualDetailsPage(mode, index, srn)
   }
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[SchemeReferenceNumber]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
 
   private def checkUpdateModeRoute(mode: CheckUpdateMode.type,
                                    ua: UserAnswers,
-                                   srn: Option[SchemeReferenceNumber]): PartialFunction[Identifier, Call] = {
+                                   srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case TrusteeDOBId(index) => cyaIndividualDetailsPage(mode, index, srn)
     case TrusteeEnterNINOId(index) if ua.get(IsTrusteeNewId(index)).getOrElse(false) =>
       cyaIndividualDetailsPage(mode, index, srn)
@@ -112,27 +112,27 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
 }
 
 object TrusteesIndividualDetailsNavigator {
-  private def hasNinoPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def hasNinoPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeHasNINOController.onPageLoad(mode, index, srn)
 
   private def trusteeTaskList(index: Int): Call =
     controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
 
-  private def ninoPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def ninoPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeEnterNINOController.onPageLoad(mode, index, srn)
 
-  private def trusteeHasUtrPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def trusteeHasUtrPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeHasUTRController.onPageLoad(mode, index, srn)
 
-  private def noNinoReasonPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def noNinoReasonPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeNoNINOReasonController.onPageLoad(mode, index, srn)
 
-  private def utrPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def utrPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeEnterUTRController.onPageLoad(mode, index, srn)
 
-  private def noUtrReasonPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def noUtrReasonPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     TrusteeNoUTRReasonController.onPageLoad(mode, index, srn)
 
-  private def cyaIndividualDetailsPage(mode: Mode, index: Int, srn: Option[SchemeReferenceNumber]): Call =
+  private def cyaIndividualDetailsPage(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersIndividualDetailsController.onPageLoad(journeyMode(mode), index, srn)
 }

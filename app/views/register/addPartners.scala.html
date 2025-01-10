@@ -42,7 +42,7 @@
     schemeName: Option[String],
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[SchemeReferenceNumber]
+    srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @partners = @{ completePartners ++ incompletePartners }
