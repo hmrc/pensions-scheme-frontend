@@ -64,12 +64,12 @@ messages__common__establisher = establisher
 messages__common__postcode_lookup__enter_postcode = You can {0} enter the address manually{1}.
 
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
-messages__hasUtr__p1 = This is a 10-digit or 13-digit number. You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+messages__hasUtr__p1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’. <br><br> You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 
-messages__error__postcode = Enter a postcode
+messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postcode cannot be more than 8 characters
 messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
-messages__error__postcode_invalid = Enter a postcode in the correct format
+messages__error__postcode_invalid = Enter a full UK postcode
 messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
 messages__error__postcode_no_results = Postcode cannot be found
 
@@ -94,10 +94,10 @@ messages__error__address_line_1_length = The first line of address cannot be mor
 messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
 messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
 messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
-messages__error__address_line_1_invalid = The first line of the address contains invalid characters
-messages__error__address_line_2_invalid = The second line of the address contains invalid characters
-messages__error__address_line_3_invalid = The third line of the address contains invalid characters
-messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
+messages__error__address_line_1_invalid = The first line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_2_invalid = The second line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_3_invalid = The third line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_4_invalid = The fourth line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
@@ -131,9 +131,9 @@ messages__common__address_years__partner = the partner
 messages__common__address_years__person = the person
 messages__theEstablisher = the establisher
 messages__common__address_years__trustee = the trustee
-messages__common_partnershipUtr__title = What is the UTR for the partnership?
+messages__common_partnershipUtr__title = What is the Unique Taxpayer Reference (UTR) for the partnership?
 
-messages__common_partnershipUtr__title = What is the UTR for the partnership?
+messages__common_partnershipUtr__title = What is the Unique Taxpayer Reference (UTR) for the partnership?
 messages__common_partnershipPaye__title = What is the employer PAYE reference for the partnership?
 messages__common_partnershipVat__title = What is the VAT registration number for the partnership?
 
@@ -239,7 +239,7 @@ messages__scheme_name__heading = What is the name of the scheme?
 
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
-messages__error__scheme_name_invalid = The scheme name contains invalid characters
+messages__error__scheme_name_invalid = The scheme name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
 messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
@@ -349,8 +349,8 @@ messages__establishers__add__opt__partnership=Partnership
 messages__establishers__add_legend = What kind of scheme establisher are you adding?
 
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
-messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
-messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
+messages__establisher__no_sautr = Tell us why the establisher does not have a Self Assessment Unique Taxpayer Reference number (SAUTR)
+messages__error__has_sautr_establisher = Select yes if the establisher has a Self Assessment Unique Taxpayer Reference number (SAUTR)
 messages__establisher__sa_utr = Self Assessment Unique Taxpayer Reference number
 
 messages__establisher_individual_contact_details__title = Enter the scheme establisher’s contact details
@@ -467,9 +467,9 @@ messages__establisher_individual_dob_cya_label = Date of birth
 messages__establisher_individual_nino_question_cya_label = Does the establisher have a National Insurance number?
 messages__establisher_individual_nino_cya_label = National Insurance number
 messages__establisher_individual_nino_reason_cya_label = Why the establisher does not have a National Insurance number?
-messages__establisher_individual_utr_question_cya_label = Does the establisher have a Unique Taxpayer Reference number (UTR)?
+messages__establisher_individual_utr_question_cya_label = Does the establisher have a Unique Taxpayer Reference (UTR) number?
 messages__establisher_individual_utr_cya_label = Unique Taxpayer Reference number
-messages__establisher_individual_utr_reason_cya_label = Why the establisher does not have a Unique Taxpayer Reference number?
+messages__establisher_individual_utr_reason_cya_label = Why the establisher does not have a Unique Taxpayer Reference (UTR) number?
 messages__establisher_individual_email_cya_label = Email address
 messages__establisher_individual_phone_cya_label = Phone number
 messages__establisher_individual_address_cya_label = Address
@@ -514,11 +514,11 @@ messages__company__cya__vat = VAT registration number (optional)
 messages__company__cya__paye_ern = PAYE employer reference number
 messages__company__cya__crn_yes_no = Does the scheme establisher have a Company Registration number?
 messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number?
-messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
+messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference (UTR) number?
 messages__company__cya__vat_yes_no = Does the scheme establisher have a VAT registration number?
 messages__company__cya__paye_yes_no = Does the scheme establisher have a PAYE employer reference number?
 messages__cya__utr = UTR
-messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number?
+messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference (UTR) number?
 messages__company__cya__dormant = Has {0} been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
@@ -539,6 +539,8 @@ messages__addCompanyDirectors_lede = You must tell us about all your directors. 
 messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+messages__addCompanyDirectors__completed = Completed
+messages__addCompanyDirectors__incomplete = Incomplete
 
 messages__director_address_years__title = Has {0} used this address for at least 1 year?
 messages__director_address_years__heading = Has {0} used this address for at least 1 year?
@@ -546,12 +548,12 @@ messages__director_address_years__cya = Has the director used this address for a
 messages__director_address_years__form_error = Select yes if {0} has used this address for at least 1 year
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
-messages__director_sautr = Unique Taxpayer Reference number
+messages__director_sautr = Unique Taxpayer Reference (UTR) number
 messages__director_no_sautr = Tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
-messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference number
+messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference (UTR) number
 messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
-messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
-messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
+messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference (UTR) number
+messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference (UTR) number
 
 messages__director__cya__details_heading = Company director details
 messages__director__cya__contact__details_heading = Contact details for director
@@ -560,8 +562,8 @@ messages__director__cya__dob = What is {0}’s date of birth?
 messages__visuallyhidden__cya__dob = What is the director’s date of birth?
 messages__director__cya__nino__fallback = Does the director have a National Insurance number?
 messages__director__cya__nino_reason__fallback = Why the director does not have a National Insurance number?
-messages__director__cya__utr = Unique Taxpayer Reference number
-messages__director__cya__utr_no_reason = Why does {0} not have a UTR?
+messages__director__cya__utr = Unique Taxpayer Reference (UTR) number
+messages__director__cya__utr_no_reason = Why does {0} not have a Unique Taxpayer Reference (UTR)?
 messages__director__cya__utr_no_reason__fallback = Why the director does not have a Self Assessment Unique Taxpayer Reference number?
 messages__director__cya__address_years = Has {0} been at their address for at least 1 year?
 messages__director__cya__address_years__fallback = How long has the director lived at this address?
@@ -618,8 +620,8 @@ messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Com
 messages__checkYourAnswers__trustees__company__crn_no_reason = Why the trustee does not have a Company Registration number?
 messages__checkYourAnswers__trustees__company__vat = Does the trustee have a VAT registration number?
 messages__checkYourAnswers__trustees__company__paye = Does the trustee have a PAYE employer reference number?
-messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
-messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference number
+messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference (UTR) number?
+messages__checkYourAnswers__trustees__company__utr_no_reason = Why the trustee does not have a Unique Taxpayer Reference (UTR) number
 
 messages__checkYourAnswers__establishers__company__number = Company number
 
@@ -707,16 +709,16 @@ messages__individualPostCodeLookup__title = What is the trustee’s postcode?
 messages__individualPostCodeLookup__heading = What is {0}’s postcode?
 
 messages__trustee_individual_previous_address__heading = What was {0}’s previous postcode?
-messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference number
+messages__trustee_individual_utr_cya_label = Unique Taxpayer Reference (UTR) number
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__hint = An SAUTR is issued by HMRC for Self assessment.
-messages__trustee__uniqueTaxReference__reason__no_utr = Tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__reason__no_utr = Tell us why the trustee does not have a Unique Taxpayer Reference (UTR)
 messages__trustee__uniqueTaxReference__checkYourAnswersLabel = Unique Tax Reference
 messages__trustee__uniqueTaxReference__error__required = Select yes if the trustee has a SAUTR
-messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Tax Reference number
-messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Tax Reference (UTR) number
+messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a Unique Taxpayer Reference (UTR)
 messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
 
 messages__trusteeAddressYears__title = Has {0} used this address for at least 1 year?
@@ -728,8 +730,8 @@ messages__trustee_individual_nino_reason_cya_label = Why the trustee does not ha
 messages__trusteeNino_question_cya_label = Does the trustee have a National Insurance number?
 messages__trusteeNino_nino_cya_label = National Insurance number
 messages__trusteeNino_reason_cya_label = Reason
-messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpayer Reference number?
-messages__trustee_individual_utr_reason_cya_label = Why the trustee does not have a Unique Taxpayer Reference number?
+messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpayer Reference (UTR) number?
+messages__trustee_individual_utr_reason_cya_label = Why the trustee does not have a Unique Taxpayer Reference (UTR) number?
 
 messages__trusteePreviousAddress__title = Trustee’s address
 messages__trusteePreviousAddress__heading = Trustee’s address
@@ -934,12 +936,12 @@ messages__partnershipName__title = What is the partnership’s name?
 messages__partnershipName__heading = What is the partnership’s name?
 
 messages__partnership_has_utr__title = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
-messages__partnership_utr_hint_format=A Unique Taxpayer Reference number is 10 numbers.
-messages__hint__no_utr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference number
-messages__error__has_utr_partnership=Select whether the partnership has a UTR
-messages__error__utr=Enter a UTR
-messages__error__utr_no_utr=Enter a reason for not having a UTR
-messages__error__no_utr_length=Enter a reason for not having a UTR using 160 characters or less
+messages__partnership_utr_hint_format = A Unique Taxpayer Reference (UTR) number is 10 numbers.
+messages__hint__no_utr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference (UTR) number
+messages__error__has_utr_partnership = Select whether the partnership has a Unique Taxpayer Reference (UTR)
+messages__error__utr= Enter a Unique Taxpayer Reference (UTR)
+messages__error__utr_no_utr = Enter a reason for not having a Unique Taxpayer Reference (UTR)
+messages__error__no_utr_length = Enter a reason for not having a Unique Taxpayer Reference (UTR) using 160 characters or less
 
 messages__partnership__checkYourAnswers__partnership_details = Partnership details
 messages__partnership__checkYourAnswers__partnership_contact_details = Partnership contact details
@@ -962,6 +964,8 @@ messages__addPartners_add_more = Do you want to add another partner?
 messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using this service.
 messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
+messages__addPartners__completed = Completed
+messages__addPartners__incomplete = Incomplete
 
 messages__establishers__secondaryHeading = Establishers for {0}
 messages__trustees__secondaryHeading = Trustees for {0}
@@ -980,7 +984,7 @@ messages__partnerDetails__title = Enter the partner’s details
 messages__partnerDetails__heading = Enter the partner’s details
 
 messages__partner_has_sautr__title = Does the partner have a Self Assessment Unique Taxpayer Reference number?
-messages__partner_sautr = Unique Taxpayer Reference number
+messages__partner_sautr = Unique Taxpayer Reference (UTR) number
 messages__partner_no_sautr = Tell us why the partner does not have a Self Assessment Unique Taxpayer Reference number
 messages__partnership__sautr_hint_what = This is issued by HMRC for Self Assessment.
 messages__error__has_sautr_partner = Select yes if the partner has a Unique Taxpayer Reference number
@@ -1053,7 +1057,7 @@ messages__psaSchemeDetails__insurance_company_address = Insurance company addres
 
 messages__psaSchemeDetails__individual_date_of_birth = Date of birth
 messages__psaSchemeDetails__individual_nino = National Insurance number
-messages__psaSchemeDetails__individual_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__individual_utr = Unique Taxpayer Reference (UTR)
 messages__psaSchemeDetails__individual_address = Address
 messages__psaSchemeDetails__individual_less_than_12months = How long has the company been at this address
 messages__psaSchemeDetails__individual_previous_address = Previous address
@@ -1063,7 +1067,7 @@ messages__psaSchemeDetails__individual_phone = Contact phone number
 messages__psaSchemeDetails__company_vat = VAT number
 messages__psaSchemeDetails__company_paye = Employer PAYE reference number
 messages__psaSchemeDetails__company_crn = Company registration number
-messages__psaSchemeDetails__company_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__company_utr = Unique Taxpayer Reference (UTR)
 messages__psaSchemeDetails__company_address = Company‘s contact address
 messages__psaSchemeDetails__company_less_than_12months = How long has the company been at this address
 messages__psaSchemeDetails__company_previous_address = Previous address
@@ -1072,7 +1076,7 @@ messages__psaSchemeDetails__company_phone = Company’s phone number
 
 messages__psaSchemeDetails__partnership_vat = VAT number
 messages__psaSchemeDetails__partnership_paye = Employer PAYE reference number
-messages__psaSchemeDetails__partnership_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__partnership_utr = Unique Taxpayer Reference (UTR)
 messages__psaSchemeDetails__partnership_address = Partnership‘s contact address
 messages__psaSchemeDetails__partnership_less_than_12months = How long has the partnership been at this address
 messages__psaSchemeDetails__partnership_previous_address = Previous address
@@ -1110,9 +1114,9 @@ messages__visuallyhidden__establisher__vat_yes_no = Change whether the establish
 messages__visuallyhidden__establisher__paye_yes_no = Change whether the establisher has a PAYE employer reference number
 messages__visuallyhidden__establisher__nino_no = Change why the establisher does not have a National Insurance number
 messages__visuallyhidden__establisher__nino = the establisher’s National Insurance number
-messages__visuallyhidden__establisher__utr_yes_no = whether the establisher has a Unique Taxpayer Reference number
-messages__visuallyhidden__establisher__utr_no = why the establisher does not have a Unique Taxpayer Reference number
-messages__visuallyhidden__establisher__utr = the establisher’s Unique Taxpayer Reference number
+messages__visuallyhidden__establisher__utr_yes_no = whether the establisher has a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__establisher__utr_no = why the establisher does not have a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__establisher__utr = the establisher’s Unique Taxpayer Reference (UTR) number
 messages__visuallyhidden__establisher__vat_number = the establisher’s VAT registration number
 messages__visuallyhidden__establisher__paye_number = the establisher’s PAYE employer reference number
 messages__visuallyhidden__establisher__crn_yes_no = whether the establisher has a Company Registration number
@@ -1130,18 +1134,18 @@ messages__visuallyhidden__companyPayeRef = whether company has an employer PAYE 
 messages__visuallyhidden__hasCompanyNumber = whether company has a company number
 messages__visuallyhidden__companyNumber = company number
 messages__visuallyhidden__noCompanyNumberReason = reason why company has no company number
-messages__visuallyhidden__companyUTR = UTR
-messages__visuallyhidden__noCompanyUTRReason = reason why company has no UTR
+messages__visuallyhidden__companyUTR = Unique Taxpayer Reference (UTR)
+messages__visuallyhidden__noCompanyUTRReason = reason why company has no Unique Taxpayer Reference (UTR)
 messages__visuallyhidden__companyVat = VAT registration number
 messages__visuallyhidden__companyPaye = Employer PAYE reference
-messages__visuallyhidden__establisher__utr = the establisher’s UTR
+messages__visuallyhidden__establisher__utr = the establisher’s Unique Taxpayer Reference (UTR)
 
 messages__visuallyhidden__director__nino_yes_no = whether the director has a National Insurance number
 messages__visuallyhidden__director__nino_no = why the director does not have a National Insurance number
 messages__visuallyhidden__director__nino = the director’s National Insurance number
-messages__visuallyhidden__director__utr_yes_no = whether the director has a Unique Taxpayer Reference number
-messages__visuallyhidden__director__utr_no = why the director does not have a Unique Taxpayer Reference number
-messages__visuallyhidden__director__utr = the director’s Unique Taxpayer Reference number
+messages__visuallyhidden__director__utr_yes_no = whether the director has a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__director__utr_no = why the director does not have a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__director__utr = the director’s Unique Taxpayer Reference (UTR) number
 messages__visuallyhidden__director__address = the director’s address
 messages__visuallyhidden__director__address_years = how long the director has been at their address
 messages__visuallyhidden__director__address_years_withName = how long {0} has been at their address
@@ -1153,9 +1157,9 @@ messages__visuallyhidden__partnership__vat_yes_no = whether the partnership has 
 messages__visuallyhidden__partnership__vat_number = the partnership’s VAT registration number
 messages__visuallyhidden__partnership__paye_yes_no = whether the partnership has a PAYE employer reference number
 messages__visuallyhidden__partnership__paye_number = the partnership’s PAYE employer reference number
-messages__visuallyhidden__partnership__utr_yes_no = whether the partnership has a Unique Taxpayer Reference number
-messages__visuallyhidden__partnership__utr_no = why the partnership does not have a Unique Taxpayer Reference number
-messages__visuallyhidden__partnership__utr = the partnership’s Unique Taxpayer Reference number
+messages__visuallyhidden__partnership__utr_yes_no = whether the partnership has a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__partnership__utr_no = why the partnership does not have a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__partnership__utr = the partnership’s Unique Taxpayer Reference (UTR) number
 messages__visuallyhidden__partnership__address = the partnership’s address
 messages__visuallyhidden__partnership__address_years = how long the partnership has been at their address
 messages__visuallyhidden__partnership__previous_address = the partnership’s previous address
@@ -1165,8 +1169,8 @@ messages__visuallyhidden__partnership__dormant = whether the partnership been do
 
 messages__visuallyhidden__dynamic_name = the name of {0}
 messages__visuallyhidden__dynamic_hasUtr = whether {0} has a Unique Taxpayer Reference (UTR)
-messages__visuallyhidden__dynamic_unique_taxpayer_reference = {0}’s UTR
-messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a UTR
+messages__visuallyhidden__dynamic_unique_taxpayer_reference = {0}’s Unique Taxpayer Reference (UTR)
+messages__visuallyhidden__dynamic_noUtrReason = the reason why {0} does not have a Unique Taxpayer Reference (UTR)
 messages__visuallyhidden__dynamic_hasVat = whether {0} is registered for VAT
 messages__visuallyhidden__dynamic_vat_number = {0}’s VAT registration number
 messages__visuallyhidden__dynamic_hasPaye = whether {0} has an employer PAYE reference
@@ -1192,7 +1196,7 @@ messages__visuallyhidden__dynamic_company__dormant = whether {0} has been dorman
 messages__visuallyhidden__dynamic__hasBeenTrading = whether {0} has been trading for at least 1 year
 
 
-messages__enterUTR = What is {0}’s UTR?
+messages__enterUTR = What is {0}’s Unique Taxpayer Reference (UTR)?
 messages__dynamic_whatIsPAYE = What is the employer PAYE reference for {0}?
 messages__dynamic_whatIsVAT = What is the VAT registration number for {0}?
 messages__dynamic_whatIsName = What is {0}’s name?
@@ -1203,9 +1207,9 @@ messages__dynamic_whatWasPreviousAddress = What was {0}’s previous address?
 messages__visuallyhidden__partner__nino_yes_no = whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = why the partner does not have a National Insurance number
 messages__visuallyhidden__partner__nino = the partner’s National Insurance number
-messages__visuallyhidden__partner__utr_yes_no = whether the partner has a Unique Taxpayer Reference number
-messages__visuallyhidden__partner__utr_no = why the partner does not have a Unique Taxpayer Reference number
-messages__visuallyhidden__partner__utr = the partner’s Unique Taxpayer Reference number
+messages__visuallyhidden__partner__utr_yes_no = whether the partner has a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__partner__utr_no = why the partner does not have a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__partner__utr = the partner’s Unique Taxpayer Reference (UTR) number
 messages__visuallyhidden__partner__address = the partner’s address
 messages__visuallyhidden__partner__address_years = how long the partner has been at their address
 messages__visuallyhidden__partner__previous_address = the partner’s previous address
@@ -1223,9 +1227,9 @@ messages__visuallyhidden__trustee__vat_yes_no = whether the trustee has a VAT re
 messages__visuallyhidden__trustee__paye_yes_no = whether the trustee has a PAYE employer reference number
 messages__visuallyhidden__trustee__crn_no = why the trustee does not have a Company Registration number
 messages__visuallyhidden__trustee__crn = the trustee’s Company Registration number
-messages__visuallyhidden__trustee__utr_yes_no = whether the trustee has a Unique Taxpayer Reference number
-messages__visuallyhidden__trustee__utr_no = why the trustee does not have a Unique Taxpayer Reference number
-messages__visuallyhidden__trustee__utr = the trustee’s Unique Taxpayer Reference number
+messages__visuallyhidden__trustee__utr_yes_no = whether the trustee has a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__trustee__utr_no = why the trustee does not have a Unique Taxpayer Reference (UTR) number
+messages__visuallyhidden__trustee__utr = the trustee’s Unique Taxpayer Reference (UTR) number
 messages__visuallyhidden__trustee__address = the trustee’s address
 messages__visuallyhidden__trustee__address_years = how long the trustee has been at their address
 messages__visuallyhidden__trustee__previous_address = the trustee’s previous address
@@ -1236,7 +1240,7 @@ messages__visuallyhidden__adviser__email_address = the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = the adviser’s phone number
 messages__visuallyhidden__adviser__address = the address for {0}
 
-messages__cya__utr = UTR for {0}
+messages__cya__utr = Unique Taxpayer Reference (UTR) for {0}
 messages__cya__vat = VAT registration number for {0}
 messages__cya__paye = Employer PAYE reference for {0}
 
@@ -1257,6 +1261,7 @@ messages__schemeTaskList__status_visuallyHidden = This section is
 
 messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
 messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__h1 = Working knowledge of pensions
 messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
 messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
@@ -1602,15 +1607,15 @@ messages__hasCompanyNumber__p1 = You can find this on the company’s certificat
 messages__hasCompanyNumber__error__required = Select yes if {0} has a company number
 
 messages__hasUTR = Does {0} have a Unique Taxpayer Reference (UTR)?
-messages__hasCompanyUtr__error__required = Select yes if the company has a UTR
+messages__hasCompanyUtr__error__required = Select yes if the company has a Unique Taxpayer Reference (UTR)
 
-messages__hasUTR__error__required = Select yes if the person has a UTR
+messages__hasUTR__error__required = Select yes if the person has a Unique Taxpayer Reference (UTR)
 
 messages__hasCompanyVat__p1 = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 messages__hasCompanyVat__error__required = Select yes if the {0} is registered for VAT
 
-messages__hasPersonUTR__title = Does the person have a UTR?
-messages__personUTR__title = What is the person’s UTR?
+messages__hasPersonUTR__title = Does the person have a Unique Taxpayer Reference (UTR)?
+messages__personUTR__title = What is the person’s Unique Taxpayer Reference (UTR)?
 
 messages__hasPersonNINO__title = Does the person have a National Insurance number?
 
@@ -1717,7 +1722,7 @@ messages__enterPAYE__error_required = Enter an employer PAYE reference
 
 messages__utr__error_required = Enter the Unique Taxpayer Reference (UTR)
 messages__utr__error_invalid = Enter the Unique Taxpayer Reference (UTR) in the correct format
-messages__companyUtr__guidance1 = This is a 10-digit or 13-digit number. It may also start or end with the letter ‘k’.
+messages__companyUtr__guidance1 = This is a 10-digit or 13-digit number. For example, 12345 67890. It may also start or end with the letter ‘k’.
 messages__companyUtr__guidance2 = You can find it on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 messages_utr__hint = For example, 12345 67890
 messages__utr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
@@ -1727,7 +1732,7 @@ messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NI
 messages__reason__error_maxLength = Reason must be 160 characters or less
 messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
 
-messages__whyPersonNoUTR = Why does the person not have a UTR?
+messages__whyPersonNoUTR = Why does the person not have a Unique Taxpayer Reference (UTR)?
 messages__whyNoNINO = Why does {0} not have a National Insurance number?
 
 messages__trustee_phone__title =  What is the company’s phone number?
@@ -1744,12 +1749,12 @@ messages__trusteeNoNinoReason__cya_fallback = Why does the trustee not have a Na
 messages__hasNINO = Does {0} have a National Insurance number?
 messages__genericHasNino__error__required = Select yes if {0} has a National Insurance number
 
-messages__hasDirectorUtr__cya_fallback = Does the director have a UTR?
+messages__hasDirectorUtr__cya_fallback = Does the director have a Unique Taxpayer Reference (UTR)?
 
-messages__noDirectorUtr__title = Why does the director not have a UTR?
-messages__noDirectorUtr__cya_fallback = Why does the director not have a UTR?
+messages__noDirectorUtr__title = Why does the director not have a Unique Taxpayer Reference (UTR)?
+messages__noDirectorUtr__cya_fallback = Why does the director not have a Unique Taxpayer Reference (UTR)?
 
-messages__whyNoUTR = Why does {0} not have a UTR?
+messages__whyNoUTR = Why does {0} not have a Unique Taxpayer Reference (UTR)?
 
 messages__establisherPostCode__title = What is the establisher’s postcode?
 messages__establisherPostCode__h1 = What is {0}’s postcode?
@@ -1776,7 +1781,7 @@ messages__establisher__type__h1 = What kind of establisher are you adding?
 
 messages__trustee__cya__dob = What is {0}’s date of birth?
 
-messages__hasUtr__partnership_error_required = Select yes if the partnership has a UTR
+messages__hasUtr__partnership_error_required = Select yes if the partnership has a Unique Taxpayer Reference (UTR)
 
 messages__hasPAYE = Does {0} have an employer PAYE reference?
 messages__hasPaye__p1 = This is a 3 digit tax office number, a forward slash, and a tax office employer reference, like 123/AB456. It may be called ‘Employer PAYE reference’ or ‘PAYE reference’. It will be on letters from HMRC about PAYE.
@@ -1804,7 +1809,7 @@ messages__whatYouWillNeedContact__item2 = contact phone number
 
 messages__partnerName__title = What is the partner’s name?
 messages__partnerName__heading = What is the partner’s name?
-messages__hasPartnerUtr__title = Does the partner have a UTR?
+messages__hasPartnerUtr__title = Does the partner have a Unique Taxpayer Reference (UTR)?
 
 messages__partnerName__cya = Partner’s name
 messages__informationFor_heading = {0}’s information
@@ -1893,7 +1898,7 @@ messages__visuallyhidden__racdac_name = the name of the RAC/DAC
 
 messages__error__racdac_name = Enter the name of the RAC/DAC
 messages__error__racdac_name_length = The RAC/DAC name cannot be more than 160 characters
-messages__error__racdac_name_invalid = The RAC/DAC name contains invalid characters
+messages__error__racdac_name_invalid = The RAC/DAC name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 messages__racdac_contract_or_policy_number__heading = What is {0}’s contract or policy number?
 messages__racdac_contract_or_policy_number__title = What is the RAC/DAC’s contract or policy number?

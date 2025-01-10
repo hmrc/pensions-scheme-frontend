@@ -59,7 +59,9 @@ class AddCompanyDirectorsController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      Future.successful(Ok(view(form, directors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
+      val completeDirectors = directors.filter(_.isCompleted)
+      val incompleteDirectors = directors.filterNot(_.isCompleted)
+      Future.successful(Ok(view(form, completeDirectors, incompleteDirectors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
         mode, srn)))
   }
 
@@ -67,7 +69,8 @@ class AddCompanyDirectorsController @Inject()(
     srn) andThen requireData).async {
     implicit request =>
       val directors = request.userAnswers.allDirectorsAfterDelete(index)
-
+      val completeDirectors = directors.filter(_.isCompleted)
+      val incompleteDirectors = directors.filterNot(_.isCompleted)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))
       }
@@ -78,7 +81,8 @@ class AddCompanyDirectorsController @Inject()(
               BadRequest(
                 view(
                   formWithErrors,
-                  directors,
+                  completeDirectors,
+                  incompleteDirectors,
                   existingSchemeName,
                   postCall(mode, srn, index),
                   request.viewOnly,

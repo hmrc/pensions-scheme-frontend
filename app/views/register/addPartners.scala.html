@@ -30,19 +30,22 @@
     govukErrorSummary: GovukErrorSummary,
     inset_text: components.inset_text,
     input_yes_no: components.input_yes_no,
-    entity_list: components.entity_list,
-    submit_button: components.submit_button
+    submit_button: components.submit_button,
+    add_entity_list: components.add_entity_list_v2
 )
 
 @(
     form: Form[_],
-    partners: Seq[Partner[_]],
+    completePartners: Seq[Partner[_]],
+    incompletePartners: Seq[Partner[_]],
     postUrl: Call,
     schemeName: Option[String],
     viewOnly: Boolean,
     mode: Mode,
     srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
+
+@partners = @{ completePartners ++ incompletePartners }
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__addPartners__heading"))){
 
@@ -64,7 +67,14 @@
 
         } else {
 
-            @entity_list(partners, viewOnly, mode, srn, messages("messages__addPartners__heading"))
+            @if(incompletePartners.nonEmpty) {
+                @add_entity_list(incompletePartners, mode, srn, messages("messages__addPartners__incomplete"))
+            }
+
+            @if(completePartners.nonEmpty) {
+                @add_entity_list(completePartners, mode, srn, messages("messages__addPartners__completed"))
+            }
+
 
             @if(!viewOnly){
 

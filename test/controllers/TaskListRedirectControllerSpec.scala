@@ -36,7 +36,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   import TaskListRedirectControllerSpec._
 
   override protected def beforeEach(): Unit = {
-    when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+    when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
   }
 
@@ -56,7 +56,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PsaMinimalFlag has isDeceased flag as True and rlsFlag as false" must {
     "return REDIRECT to youMustContactHMRCUrl" in {
       val psaMinimalFlags = PSAMinimalFlags(false, true, false)
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -67,7 +67,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
   "PsaMinimalFlag has isDeceased flag as false and rlsFlag as true" must {
     "return REDIRECT to psaUpdateContactDetailsUrl" in {
       val psaMinimalFlags = PSAMinimalFlags(true, false, true)
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
       val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe SEE_OTHER

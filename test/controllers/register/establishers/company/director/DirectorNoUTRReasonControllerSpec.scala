@@ -66,7 +66,36 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
     }
+
+    "render the same page with invalid error message when invalid characters are entered" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";]["))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
+    }
+
+    "render the same page with maxlength error message when invalid characters are entered" ignore {
+      val reason = "a"*161
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", reason))
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) must include(messages("messages__reason__error_maxLength"))
+    }
+
+    "render the same page with required error message when nothing is entered" ignore {
+      val postRequest = fakeRequest
+
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) must include(messages("messages__reason__error_utrRequired", directorName))
+    }
   }
+
 }
 
 object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
@@ -74,8 +103,9 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
+  private val name = "test director name"
   private val formProvider = new ReasonFormProvider()
-  private val form = formProvider("messages__reason__error_utrRequired", "test director name")
+  private val form = formProvider("messages__reason__error_utrRequired", name)
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None

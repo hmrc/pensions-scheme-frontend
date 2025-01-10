@@ -48,8 +48,8 @@ class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
 
   def checkIfSchemeCanBeRegistered: Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
-      request.psaId.map { psaId =>
-        urlsPartialService.checkIfSchemeCanBeRegistered(psaId.id)
+      request.psaId.map { _ =>
+        urlsPartialService.checkIfSchemeCanBeRegistered()
       }.getOrElse(throw PsaIdMissingException)
 
   }

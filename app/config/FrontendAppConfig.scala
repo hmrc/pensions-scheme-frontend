@@ -17,13 +17,12 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import controllers.routes
 import models.ReportTechnicalIssue
 import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.{Configuration, Mode, Environment}
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.domain.{PsaId, PspId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -51,9 +50,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val delimitedPsaUrl: String = loadConfig("urls.manage-pensions-frontend.delimitedPsa")
   lazy val managePensionsYourPensionSchemesUrl: String = loadConfig("urls.manage-pensions-frontend.yourPensionSchemes")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
-  lazy val googleTagManagerIdAvailable: Boolean = runModeConfiguration.underlying.getBoolean(s"google-tag-manager" +
-    s".id-available")
-  lazy val googleTagManagerId: String = loadConfig(s"google-tag-manager.id")
   lazy val pensionsSchemeUrl = s"${servicesConfig.baseUrl("pensions-scheme")}"
   lazy val pensionsAdministratorUrl = s"${servicesConfig.baseUrl("pension-administrator")}"
   lazy val timeout: String = loadConfig("session._timeoutSeconds")
@@ -68,7 +64,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val pensionPractitionerGovUkLink: String = runModeConfiguration.underlying.getString("urls" +
     ".pensionPractitionerGovUkLink")
   lazy val govUkLink: String = runModeConfiguration.underlying.getString("urls.govUkLink")
-  lazy val appealLink: String = runModeConfiguration.underlying.getString("urls.appealLink")
   lazy val pensionsRegulatorLink: String = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail: String = runModeConfiguration.underlying.getString("urls.get-psa-email")
   lazy val getPSAName: String = runModeConfiguration.underlying.getString("urls.get-psa-name")
@@ -114,8 +109,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
   lazy val declareAsRACDACUrl: String = runModeConfiguration.underlying.getString("urls.partials.declareAsRACDAC")
 
   //FEATURES
-  lazy val languageTranslationEnabled: Boolean = runModeConfiguration.getOptional[Boolean]("features" +
-    ".welsh-translation").getOrElse(true)
   val reportAProblemNonJSUrl: String = getConfigString("contact-frontend.report-problem-url.non-js")
   val betaFeedbackUnauthenticatedUrl: String = getConfigString("contact-frontend.beta-feedback-url.unauthenticated")
   val reportTechnicalIssues = ReportTechnicalIssue(serviceId = "PODS", baseUrl = Some(reportAProblemNonJSUrl))
@@ -123,7 +116,6 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
 
-  def routeToSwitchLanguage: String => Call = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 
   protected def mode: Mode = environment.mode
 

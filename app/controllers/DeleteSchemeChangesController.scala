@@ -53,8 +53,8 @@ class DeleteSchemeChangesController @Inject()(
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       request.psaId match {
-        case Some(psaId) =>
-          getSchemeName(srn, psaId.id) { (psaName, schemeName) =>
+        case Some(_) =>
+          getSchemeName(srn) { (psaName, schemeName) =>
             Future.successful(Ok(view(form, schemeName, postCall(srn), psaName)))
           }
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
@@ -62,9 +62,9 @@ class DeleteSchemeChangesController @Inject()(
       }
   }
 
-      private def getSchemeName(srn: SchemeReferenceNumber, psaId: String)(block: (String, String) => Future[Result])
-                               (implicit hc: HeaderCarrier): Future[Result] =
-        minimalPsaConnector.getPsaNameFromPsaID(psaId).flatMap { psaName =>
+      private def getSchemeName(srn: SchemeReferenceNumber)(block: (String, String) => Future[Result])
+                               (implicit hc: HeaderCarrier): Future[Result] = {
+        minimalPsaConnector.getPsaNameFromPsaID().flatMap { psaName =>
           updateConnector.fetch(srn).flatMap { data =>
             (data, psaName) match {
 
@@ -78,11 +78,12 @@ class DeleteSchemeChangesController @Inject()(
             }
           }
         }
+      }
 
       def onSubmit(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
         implicit request =>
           request.psaId.map { psaId =>
-            getSchemeName(srn, psaId.id) { (psaName, schemeName) =>
+            getSchemeName(srn) { (psaName, schemeName) =>
               form.bindFromRequest().fold(
                 (formWithErrors: Form[_]) =>
                   Future.successful(BadRequest(view(formWithErrors, schemeName, postCall(srn), psaName))),

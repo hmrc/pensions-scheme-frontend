@@ -40,24 +40,81 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
 
   "CompanyNoCRNReasonController" must {
 
-    "render the view correctly on a GET request" in {
-      running(_.overrides(
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
-        bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
-        bind[UserAnswersService].toInstance(FakeUserAnswersService)
-      )) {
-        implicit app =>
-          val request = addCSRFToken(FakeRequest())
-          val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
+    "GET Request" must {
+      "render the view correctly on a GET request" in {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        )) {
+          implicit app =>
+            val request = addCSRFToken(FakeRequest())
+            val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
+            val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
+            status(result) mustBe OK
+            contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
+      }
     }
 
-    "redirect to the next page on a POST request" in {
+    "POST Request" must {
+      "redirect to the next page on a POST request" in {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        )) {
+          implicit app =>
+            val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))
+            val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
+            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result) mustBe Some(onwardRoute.url)
+        }
+      }
+    }
+
+    "POST Request with errors" must {
+      "render the same page with invalid error message when invalid characters are entered" in {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        )) {
+          implicit app =>
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";][")))
+          val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
+          val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+
+          status(result) mustBe BAD_REQUEST
+          contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
+        }
+      }
+
+      "render the same page with required error message when nothing is entered" in {
+        running(_.overrides(
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
+          bind(classOf[Navigator]).toInstance(new FakeNavigator(onwardRoute)),
+          bind[UserAnswersService].toInstance(FakeUserAnswersService)
+        )) {
+          implicit app =>
+            val request = addCSRFToken(FakeRequest())
+            val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
+            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+
+            status(result) mustBe BAD_REQUEST
+            contentAsString(result) must include(messages("messages__error__no_company_number", companyName))
+        }
+      }
+
+      "render the same page with maxlength error message when invalid characters are entered" in {
+      val reason = "a" * 161
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
@@ -65,13 +122,14 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         bind[UserAnswersService].toInstance(FakeUserAnswersService)
       )) {
         implicit app =>
-        val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))
-        val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
+          val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", reason)))
+          val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
+          val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
 
-        status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
+          status(result) mustBe BAD_REQUEST
+          contentAsString(result) must include(messages("messages__error__no_company_number_maxlength"))
+      }
+    }
     }
 
   }
@@ -80,7 +138,8 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
 
 object CompanyNoCRNReasonControllerSpec extends CompanyNoCRNReasonControllerSpec {
 
-  val form = new NoCompanyNumberFormProvider()("test company name")
+  val companyName = "test company name"
+  val form = new NoCompanyNumberFormProvider()(companyName)
   val firstIndex: Index = Index(0)
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad

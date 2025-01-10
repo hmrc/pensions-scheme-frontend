@@ -42,7 +42,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
   override protected def beforeEach(): Unit = {
     reset(fakeHsTaskListHelperRegistration)
     reset(mockUserAnswersCacheConnector)
-    when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+    when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
     when(mockFeatureToggleService.get(any())(any(), any()))
       .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))

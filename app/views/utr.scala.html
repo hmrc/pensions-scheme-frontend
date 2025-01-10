@@ -38,16 +38,14 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(messages(viewmodel.heading), true)
-
-        @components.paragraph_text(messages("messages__companyUtr__guidance1"))
-
-        @components.paragraph_text(messages("messages__companyUtr__guidance2"))
-
         @input_text(
             field = form("utr"),
-            label = messages(viewmodel.title),
-            labelClass = Some("govuk-visually-hidden"),
+            label = messages(viewmodel.heading),
+            headingIsLegend = true,
+            labelClass = Some("govuk-label--l"),
+            hint = Some(
+                messages("messages__companyUtr__guidance1") + "<br><br>" + messages("messages__companyUtr__guidance2")
+            ),
             numericField = true
         )
 

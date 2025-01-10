@@ -137,5 +137,24 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       app.stop()
     }
+
+    "return a Bad Request with invalid chars error message when invalid chars is submitted" in {
+      val app = applicationBuilder(getMandatoryTrustee).build()
+
+      val controller = app.injector.instanceOf[TrusteeNoUTRReasonController]
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("noUtrReason", "<>?:-{}<>,/.,/;#\";]["))
+
+      val boundForm = form.bind(Map("noUtrReason" -> "<>?:-{}<>,/.,/;#\";]["))
+
+      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+
+      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) must include(messages("messages__reason__error_utrRequired", "Test Name"))
+      app.stop()
+    }
+
   }
 }

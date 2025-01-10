@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.google.inject.{Inject, Singleton, ImplementedBy}
+import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
 import models.enumerations.SchemeJourneyType
 import models.register.SchemeSubmissionResponse
@@ -24,8 +24,9 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{HttpClient, HttpResponse, HeaderCarrier}
-import utils.{UserAnswers, HttpResponseHelper}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 import models.SchemeReferenceNumber
@@ -33,12 +34,11 @@ import models.SchemeReferenceNumber
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
-                    (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[SchemeSubmissionResponse]
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
+                    )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
   def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean = true)
                          (implicit headerCarrier: HeaderCarrier,
@@ -46,43 +46,51 @@ trait PensionsSchemeConnector {
 }
 
 @Singleton
-class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig)
+class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig)
   extends PensionsSchemeConnector with HttpResponseHelper {
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name)
-                    (implicit hc: HeaderCarrier,
-                     ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
+                    )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
-    val url = config.registerSchemeUrl(schemeJourneyType)
+    val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
+    val headers = Seq("psaId" -> psaId)
 
-    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId)).map { response =>
-      response.status match {
-        case OK =>
-          val json = Json.parse(response.body)
+    httpClientV2.post(url)
+      .withBody(answers.json)
+      .setHeader(headers:_ *)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK =>
+            val json = Json.parse(response.body)
 
-          json.validate[SchemeSubmissionResponse] match {
-            case JsSuccess(value, _) => value
-            case JsError(errors) => throw JsResultException(errors)
-          }
-        case _ =>
-          handleErrorResponse("POST", url)(response)
+            json.validate[SchemeSubmissionResponse] match {
+              case JsSuccess(value, _) => value
+              case JsError(errors) => throw JsResultException(errors)
+            }
+          case _ =>
+            handleErrorResponse("POST", url.toString)(response)
+        }
       }
-    }
   }
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+                         )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    val url = config.updateSchemeDetailsUrl
-    http.POST[JsValue, HttpResponse](url, answers.json, Seq("psaId" -> psaId, "pstr" -> pstr)).map { response =>
-      response.status match {
-        case OK => Right(())
-        case _ =>
-          handleErrorResponse("POST", url)(response)
+    val url = url"${config.updateSchemeDetailsUrl}"
+    val headers = Seq("psaId" -> psaId, "pstr" -> pstr)
+
+    httpClientV2.post(url)
+      .withBody(answers.json)
+      .setHeader(headers:_ *)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case OK => Right(())
+          case _ =>
+            handleErrorResponse("POST", url.toString)(response)
+        }
       }
-    }
   }
 
   def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean)
@@ -90,23 +98,25 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
                           ec: ExecutionContext, request: RequestHeader): Future[Either[HttpResponse, Boolean]] = {
     val headers: Seq[(String, String)] =
       Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn.id), ("Content-Type", "application/json"))
-
+    val url = url"${config.checkAssociationUrl}"
     implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
 
-    http.GET[HttpResponse](config.checkAssociationUrl)(implicitly, hc, implicitly).map { response =>
-      response.status match {
-        case OK =>
-          val json = Json.parse(response.body)
+    httpClientV2.get(url)(hc)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            val json = Json.parse(response.body)
 
-          json.validate[Boolean] match {
-            case JsSuccess(value, _) => Right(value)
-            case JsError(errors) => throw JsResultException(errors)
-          }
-        case _ =>
-          logger.error(response.body)
-          Left(response)
+            json.validate[Boolean] match {
+              case JsSuccess(value, _) => Right(value)
+              case JsError(errors) => throw JsResultException(errors)
+            }
+          case _ =>
+            logger.error(response.body)
+            Left(response)
+        }
       }
-    }
   }
 }
 

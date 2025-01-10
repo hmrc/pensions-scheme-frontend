@@ -69,7 +69,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
     reset(fakeMinPsaConnector)
     when(fakeCacheConnector.fetch(eqTo(srn))(any(), any())).thenReturn(Future.successful(Some(Json.obj(
       "schemeName" -> schemeName))))
-    when(fakeMinPsaConnector.getPsaNameFromPsaID(any())(any(), any())).thenReturn(Future.successful(Some(psaName)))
+    when(fakeMinPsaConnector.getPsaNameFromPsaID()(any(), any())).thenReturn(Future.successful(Some(psaName)))
   }
 
   "DeleteScheme Controller" must {

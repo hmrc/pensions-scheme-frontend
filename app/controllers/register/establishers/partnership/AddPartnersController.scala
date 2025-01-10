@@ -59,7 +59,9 @@ class AddPartnersController @Inject()(
       implicit request =>
         retrievePartnershipName(index) { _ =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(view(form, partners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly,
+          val completePartners = partners.filter(_.isCompleted)
+          val incompletePartners = partners.filterNot(_.isCompleted)
+          Future.successful(Ok(view(form, completePartners, incompletePartners, postUrl(index, mode, srn), existingSchemeName, request.viewOnly,
             mode, srn)))
         }
     }
@@ -68,6 +70,8 @@ class AddPartnersController @Inject()(
     srn) andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
+      val completePartners = partners.filter(_.isCompleted)
+      val incompletePartners = partners.filterNot(_.isCompleted)
       if (partners.isEmpty || partners.lengthCompare(appConfig.maxPartners) >= 0) {
         Future.successful(Redirect(navigator.nextPage(AddPartnersId(index), mode, request.userAnswers, srn)))
       }
@@ -81,7 +85,8 @@ class AddPartnersController @Inject()(
                   BadRequest(
                     view(
                       formWithErrors,
-                      partners,
+                      completePartners,
+                      incompletePartners,
                       postUrl(index, mode, srn),
                       existingSchemeName,
                       request.viewOnly,

@@ -21,10 +21,11 @@ import config.FrontendAppConfig
 import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,22 +38,27 @@ case object EmailNotSent extends EmailStatus
 
 @ImplementedBy(classOf[EmailConnectorImpl])
 trait EmailConnector {
-  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psaId: PsaId, callbackUrl: String)
-               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
+  def sendEmail(emailAddress: String,
+                templateName: String,
+                params: Map[String, String],
+                psaId: PsaId,
+                callbackUrl: String
+               )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
 }
 
 @Singleton
-class EmailConnectorImpl @Inject()(
-                                    http: HttpClient,
-                                    config: FrontendAppConfig
-                                  ) extends EmailConnector {
+class EmailConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendAppConfig) extends EmailConnector {
 
   private val logger  = Logger(classOf[EmailConnectorImpl])
 
-  lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
+  lazy val postUrl = url"${config.emailApiUrl}/hmrc/email"
 
-  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId, callbackUrl: String)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+  override def sendEmail(emailAddress: String,
+                         templateName: String,
+                         params: Map[String, String],
+                         psa: PsaId,
+                         callbackUrl: String
+                        )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
     val sendEmailReq = SendEmailRequest(
       to = List(emailAddress),
       templateId = templateName,
@@ -62,21 +68,21 @@ class EmailConnectorImpl @Inject()(
     )
 
     val jsonData = Json.toJson(sendEmailReq)
-
     logger.debug(s"Data to email: $jsonData for email address $emailAddress")
 
-    http.POST[JsValue, HttpResponse](postUrl, jsonData).map { response =>
-      response.status match {
-        case ACCEPTED =>
-          logger.info("Email sent successfully.")
-          EmailSent
-        case status =>
-          logger.warn(s"Email not sent. Failure with response status $status")
-          EmailNotSent
-      }
-    } recoverWith logExceptions
+    httpClientV2.post(postUrl)
+      .withBody(jsonData)
+      .execute[HttpResponse].map { response =>
+        response.status match {
+          case ACCEPTED =>
+            logger.info("Email sent successfully.")
+            EmailSent
+          case status =>
+            logger.warn(s"Email not sent. Failure with response status $status")
+            EmailNotSent
+        }
+      } recoverWith logExceptions
   }
-
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
     case t: Throwable =>

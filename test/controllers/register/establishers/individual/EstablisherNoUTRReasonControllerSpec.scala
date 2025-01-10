@@ -59,6 +59,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
   private def viewAsString(form: Form[_] = form): String = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "EstablisherNoUTRReasonController" must {
+
     "return OK and the correct view for a GET" in {
       val app = applicationBuilder(getMandatoryEstablisherIndividual).build()
 
@@ -135,6 +136,24 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
 
       contentAsString(result) mustBe viewAsString(boundForm)
 
+      app.stop()
+    }
+
+    "return a Bad Request with errors when invalid chars are submitted" in {
+      val app = applicationBuilder(getMandatoryEstablisherIndividual).build()
+
+      val controller = app.injector.instanceOf[EstablisherNoUTRReasonController]
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("noUtrReason", "<>?:-{}<>,/.,/;#\";]["))
+
+      val boundForm = form.bind(Map("noUtrReason" -> "<>?:-{}<>,/.,/;#\";]["))
+
+      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+
+      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) must include(messages("messages__reason__error_utrRequired", name))
       app.stop()
     }
   }

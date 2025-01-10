@@ -54,7 +54,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
-    connector.getMinimalFlags(psaId).map { minimalFlags =>
+    connector.getMinimalFlags().map { minimalFlags =>
       minimalFlags.isSuspended shouldBe true
       minimalFlags.isDeceased shouldBe true
       minimalFlags.rlsFlag shouldBe true
@@ -75,7 +75,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[JsResultException] {
-      connector.getMinimalFlags(psaId)
+      connector.getMinimalFlags()
     }
 
   }
@@ -92,7 +92,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[NotFoundException] {
-      connector.getMinimalFlags(psaId)
+      connector.getMinimalFlags()
     }
 
   }
@@ -109,7 +109,7 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
 
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
-    connector.getMinimalPsaDetails(psaId) map {
+    connector.getMinimalPsaDetails() map {
       _ shouldBe MinimalPSA(email, isPsaSuspended = true, Some("test ltd"), None)
     }
   }
@@ -126,18 +126,17 @@ class MinimalPsaConnectorSpec extends AsyncFlatSpec with Matchers with WireMockH
     val connector = injector.instanceOf[MinimalPsaConnectorImpl]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getMinimalPsaDetails(psaId)
+      connector.getMinimalPsaDetails()
     }
   }
 }
 
 object MinimalPsaConnectorSpec extends OptionValues {
 
-  private val minimalPsaDetailsUrl = "/pension-administrator/get-minimal-psa"
+  private val minimalPsaDetailsUrl = "/pension-administrator/get-minimal-details-self"
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  private val psaId = "test-psa-id"
   private val email = "test@test.com"
 
   private val validResponse =

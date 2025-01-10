@@ -36,7 +36,7 @@ import play.api.http.Status
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HttpReads.upstreamResponseMessage
+import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.{FakeNavigator, UserAnswers}
 import views.html.racdac.declaration
@@ -57,7 +57,7 @@ class DeclarationControllerSpec
 
   "onPageLoad" must {
     "return OK and the correct view " in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
@@ -66,7 +66,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to you must contact HMRC page when deceased flag is true" in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = true, rlsFlag = false)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
@@ -74,7 +74,7 @@ class DeclarationControllerSpec
       redirectLocation(result).value mustBe frontendAppConfig.youMustContactHMRCUrl
     }
     "redirect to you must update your address page when rls flag is true" in {
-      when(mockMinimalPsaConnector.getMinimalFlags(any())(any(), any()))
+      when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = true)))
       val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
@@ -90,7 +90,7 @@ class DeclarationControllerSpec
         .thenReturn(Future.successful(schemeSubmissionResponse))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
-      when(mockMinimalPsaConnector.getMinimalPsaDetails(any())(any(), any())).thenReturn(Future.successful(minimalPsa))
+      when(mockMinimalPsaConnector.getMinimalPsaDetails()(any(), any())).thenReturn(Future.successful(minimalPsa))
       doNothing.when(mockAuditService).sendEvent(any())(any(), any())
 
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)

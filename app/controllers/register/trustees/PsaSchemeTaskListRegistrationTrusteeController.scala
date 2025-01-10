@@ -32,6 +32,7 @@ import utils.annotations.TaskList
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import viewmodels.SchemeDetailsTaskListTrustees
 import views.html.register.trustees.psaTaskListRegistrationTrustees
+import controllers.register.trustees.routes.AddTrusteeController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -64,19 +65,32 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
         }
     }
 
-  private def handleValidRequest(userAnswers: UserAnswers, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index)
-                                (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
-    try {
-      val taskList = hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id)
-      renderOkResponse(taskList, schemeName, mode, srn)
-    } catch {
-      case e: RuntimeException if e.getMessage == "INVALID-TRUSTEE" =>
-        Future.successful(Redirect(controllers.register.routes.MemberNotFoundController.onTrusteesPageLoad()))
-    }
+  private def handleValidRequest(userAnswers: UserAnswers,
+                                 schemeName: String,
+                                 mode: Mode,
+                                 srn: Option[SchemeReferenceNumber],
+                                 index: Index
+                                )(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
+
+      try {
+        val seqTrustees = userAnswers.allTrustees
+        if (!(seqTrustees.isEmpty || index >= seqTrustees.size) && seqTrustees(index).isDeleted) {
+          Future.successful(Redirect(AddTrusteeController.onPageLoad(NormalMode, None)))
+        } else {
+          val taskList = hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id)
+          renderOkResponse(taskList, schemeName, mode, srn)
+        }
+      } catch {
+        case e: RuntimeException if e.getMessage == "INVALID-TRUSTEE" =>
+          Future.successful(Redirect(controllers.register.routes.MemberNotFoundController.onTrusteesPageLoad()))
+      }
   }
 
-  private def renderOkResponse(taskList: SchemeDetailsTaskListTrustees, schemeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber)
-                              (implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
+  private def renderOkResponse(taskList: SchemeDetailsTaskListTrustees,
+                               schemeName: String,
+                               mode: Mode,
+                               srn: Option[SchemeReferenceNumber]
+                              )(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
     Future.successful(
       Ok(
         viewRegistration(
