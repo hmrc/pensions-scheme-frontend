@@ -22,10 +22,8 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId}
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -35,6 +33,7 @@ import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class InsurerEnterPostcodeController @Inject()(val appConfig: FrontendAppConfig,

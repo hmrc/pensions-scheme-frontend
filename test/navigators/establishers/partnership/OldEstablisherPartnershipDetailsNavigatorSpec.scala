@@ -24,14 +24,12 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models.FeatureToggleName.SchemeRegistration
 import models._
-import navigators.establishers.partnership.OldEstablisherPartnershipDetailsNavigatorSpec.srn
-import navigators.trustees.individuals.TrusteesIndividualDetailsNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.prop._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import services.FeatureToggleService
 import utils.UserAnswers
@@ -108,8 +106,8 @@ class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Naviga
           row(PartnershipHasVATId(index))(value = false, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber((srn.get)))))),
           row(PartnershipEnterVATId(index))(someRefValue, PartnershipHasPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber((srn.get)))))),
           row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(UpdateMode, index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber((srn.get)))))),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(UpdateMode, index, None)),
-          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(UpdateMode, index, None))
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(UpdateMode, index, srn)),
+          row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(UpdateMode, index, srn))
         )
 
       behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherPartnership, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber((srn.get)))))
@@ -129,7 +127,7 @@ class OldEstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Naviga
           row(PartnershipEnterVATId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers)),
           row(PartnershipEnterVATId(index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
           row(PartnershipHasPAYEId(index))(value = true, PartnershipEnterPAYEController.onPageLoad(CheckUpdateMode, index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
-          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, index, None)),
+          row(PartnershipHasPAYEId(index))(value = false, cyaPartnershipDetailsPage(CheckUpdateMode, index, srn)),
           row(PartnershipEnterPAYEId(index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
           row(PartnershipEnterPAYEId(index))(someRefValue, cyaPartnershipDetailsPage(CheckUpdateMode, index, srn), Some(newEstablisherUserAnswers))
         )
@@ -147,13 +145,13 @@ object OldEstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
   private val partnershipDetails = PartnershipDetails("test partnership")
 
   private def addEstablisherPage(mode: Mode, srn: Option[String]): Call =
-    AddEstablisherController.onPageLoad(Mode.journeyMode(mode), OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))
+    AddEstablisherController.onPageLoad(Mode.journeyMode(mode), OptionalSchemeReferenceNumber(srn.map(SchemeReferenceNumber(_))))
 
   private def hasVatPage(mode: Mode, index: Index, srn: Option[String]): Call =
-    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))
+    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn.map(SchemeReferenceNumber(_))))
 
   private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: Option[String]): Call =
-    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))
+    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn.map(SchemeReferenceNumber(_))))
 }
 
 

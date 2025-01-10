@@ -96,7 +96,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<>?:-{}<>,/.,/;#\";]["))
         val boundForm = form.bind(Map("value" -> "<>?:-{}<>,/.,/;#\";]["))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

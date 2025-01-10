@@ -20,7 +20,7 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider
 import identifiers.AdviserNameId
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
+import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

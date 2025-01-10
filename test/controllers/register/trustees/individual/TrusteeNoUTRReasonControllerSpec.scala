@@ -147,7 +147,7 @@ class TrusteeNoUTRReasonControllerSpec extends ControllerSpecBase with MockitoSu
 
       val boundForm = form.bind(Map("noUtrReason" -> "<>?:-{}<>,/.,/;#\";]["))
 
-      val result = controller.onSubmit(NormalMode, Index(0), None)(postRequest)
+      val result = controller.onSubmit(NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 

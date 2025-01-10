@@ -20,9 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import utils.UserAnswers
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.insurancePolicyNumber
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,

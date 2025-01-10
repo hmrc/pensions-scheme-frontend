@@ -22,10 +22,8 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers._
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.address.Address
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n._
@@ -37,6 +35,7 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class InsurerConfirmAddressController @Inject()(val appConfig: FrontendAppConfig,

@@ -24,7 +24,6 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier}
 import models._
 import models.person.PersonName
 import models.register.trustees.TrusteeKind
-import navigators.establishers.partnership.EstablisherPartnershipAddressNavigatorSpec.srn
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
@@ -131,7 +130,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
     controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
 
   private def trusteeKind(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))
+    controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
 
   private def taskList(mode: Mode, srn: OptionalSchemeReferenceNumber) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 

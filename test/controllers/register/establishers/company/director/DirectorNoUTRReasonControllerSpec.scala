@@ -70,7 +70,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "render the same page with invalid error message when invalid characters are entered" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";]["))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
@@ -80,7 +80,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       val reason = "a"*161
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", reason))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messages("messages__reason__error_maxLength"))
@@ -89,10 +89,10 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "render the same page with required error message when nothing is entered" ignore {
       val postRequest = fakeRequest
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages("messages__reason__error_utrRequired", directorName))
+      contentAsString(result) must include(messages("messages__reason__error_utrRequired", "first last"))
     }
   }
 

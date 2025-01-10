@@ -20,9 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -33,6 +31,7 @@ import utils.UserAnswers
 import utils.annotations.{AboutBenefitsAndInsurance, InsuranceService}
 import views.html.benefitsSecuredByInsurance
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfig,

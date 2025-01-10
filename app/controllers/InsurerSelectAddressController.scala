@@ -21,10 +21,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers._
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -34,6 +32,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class InsurerSelectAddressController @Inject()(override val appConfig: FrontendAppConfig,

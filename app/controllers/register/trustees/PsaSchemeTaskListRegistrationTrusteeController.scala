@@ -68,14 +68,14 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
   private def handleValidRequest(userAnswers: UserAnswers,
                                  schemeName: String,
                                  mode: Mode,
-                                 srn: Option[SchemeReferenceNumber],
+                                 srn: OptionalSchemeReferenceNumber,
                                  index: Index
                                 )(implicit request: OptionalDataRequest[AnyContent]): Future[Result] = {
 
       try {
         val seqTrustees = userAnswers.allTrustees
         if (!(seqTrustees.isEmpty || index >= seqTrustees.size) && seqTrustees(index).isDeleted) {
-          Future.successful(Redirect(AddTrusteeController.onPageLoad(NormalMode, None)))
+          Future.successful(Redirect(AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
         } else {
           val taskList = hsTaskListHelperRegistration.taskListTrustee(userAnswers, None, srn, index.id)
           renderOkResponse(taskList, schemeName, mode, srn)
@@ -96,7 +96,7 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
         viewRegistration(
           taskList,
           schemeName,
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, srn).url
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn)).url
         )
       )
     )

@@ -73,7 +73,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 
     "redirect to manage pensions scheme overview if scheme name is not present" in {
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithoutSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -81,7 +81,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 
     "redirect to manage pensions scheme overview if user answers are not present" in {
       val result = controller(new FakeDataRetrievalAction(None))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)

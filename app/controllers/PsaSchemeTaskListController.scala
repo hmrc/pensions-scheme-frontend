@@ -82,9 +82,9 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                 dataCacheConnector.save(request.externalId, UKBankAccountId, false)
                 Ok(oldView(hsTaskListHelperRegistration.taskListToggleOff(userAnswers, None, srn, date), schemeName))
             }
-          case (EmptyOptionalSchemeReferenceNumber, Some(userAnswers), Some(schemeName)) =>
+          case (OptionalSchemeReferenceNumber(Some(_)), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
-          case (EmptyOptionalSchemeReferenceNumber, answers, sn) =>
+          case (OptionalSchemeReferenceNumber(Some(_)), answers, sn) =>
             logger.warn(s"Loading PSA task list page: srn $srn found but user answers empty " +
               s"check is ${answers.isEmpty} and scheme name is $sn")
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

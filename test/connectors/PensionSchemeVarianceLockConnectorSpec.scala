@@ -17,7 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{OptionalSchemeReferenceNumber, PsaLock, SchemeReferenceNumber, SchemeVariance, VarianceLock}
+import models.{PsaLock, SchemeReferenceNumber, SchemeVariance, VarianceLock}
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status

@@ -18,7 +18,7 @@ package controllers
 
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
+import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call

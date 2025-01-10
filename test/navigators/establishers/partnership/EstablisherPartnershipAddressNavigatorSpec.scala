@@ -59,12 +59,12 @@ class EstablisherPartnershipAddressNavigatorSpec extends SpecBase with Matchers 
     val checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPostcodeLookupId(index))(Seq(someTolerantAddress), addressListPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
         row(PartnershipAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
         row(PartnershipAddressId(index))(someAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
-        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipAddressYearsId(index))(AddressYears.UnderAYear, hasBeenTradingPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
         row(PartnershipAddressYearsId(index))(AddressYears.OverAYear, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
-        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPreviousAddressPostcodeLookupId(index))(Seq(someTolerantAddress), previousAddressListPage(CheckMode, EmptyOptionalSchemeReferenceNumber)),
         row(PartnershipPreviousAddressListId(index))(someTolerantAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
         row(PartnershipPreviousAddressId(index))(someAddress, cyaAddressPage(NormalMode, EmptyOptionalSchemeReferenceNumber))
       )
