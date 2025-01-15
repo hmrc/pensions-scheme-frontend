@@ -16,9 +16,9 @@ POST        /change/number                           controllers.racdac.Contract
 GET         /declaration                             controllers.racdac.DeclarationController.onPageLoad()
 GET         /on-click-agree                          controllers.racdac.DeclarationController.onClickAgree()
 
-GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: Option[String] = None)
-GET         /:mode/check-your-answers/:srn           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: Option[String])
-GET         /check-your-answers/:srn                 controllers.racdac.CheckYourAnswersController.pspOnPageLoad(srn: String)
+GET         /check-your-answers                      controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+GET         /:mode/check-your-answers/:srn           controllers.racdac.CheckYourAnswersController.onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber)
+GET         /check-your-answers/:srn                 controllers.racdac.CheckYourAnswersController.pspOnPageLoad(srn: SchemeReferenceNumber)
 
 GET         /confirmation                            controllers.racdac.SchemeSuccessController.onPageLoad()
 POST        /confirmation                            controllers.racdac.SchemeSuccessController.onSubmit()

@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ReasonFormProvider
 import identifiers.register.establishers.company.director.DirectorNoUTRReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
@@ -34,7 +34,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   "DirectorNoUTRReasonController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -44,7 +44,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       val validData = validCompanyDirectorData("noUtrReason" -> "new reason")
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill("new reason"))
     }
@@ -52,7 +52,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "new reason"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -62,7 +62,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "return a Bad Request when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", ""))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
     }
@@ -70,7 +70,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "render the same page with invalid error message when invalid characters are entered" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";]["))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
@@ -80,7 +80,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       val reason = "a"*161
       val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", reason))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include(messages("messages__reason__error_maxLength"))
@@ -89,10 +89,10 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     "render the same page with required error message when nothing is entered" ignore {
       val postRequest = fakeRequest
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages("messages__reason__error_utrRequired", directorName))
+      contentAsString(result) must include(messages("messages__reason__error_utrRequired", "first last"))
     }
   }
 
@@ -109,13 +109,12 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.director.routes.DirectorNoUTRReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
-  val directorName = "first last"
+  private val postCall = controllers.register.establishers.company.director.routes.DirectorNoUTRReasonController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = ReasonViewModel(
     postCall,
     title = Message("messages__noDirectorUtr__title"),
-    heading = Message("messages__whyNoUTR", directorName),
-    srn = srn
+    heading = Message("messages__whyNoUTR", "first last"),
+    srn = EmptyOptionalSchemeReferenceNumber
   )
   private val view = injector.instanceOf[reason]
 

@@ -18,8 +18,9 @@ package controllers.register.establishers
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.register.establishers.company.CompanyEnterCRNControllerSpec.srn
 import identifiers.SchemeNameId
-import models.{EntitySpoke, NormalMode, TaskListLink}
+import models.{EmptyOptionalSchemeReferenceNumber, EntitySpoke, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -44,7 +45,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListEstablishers)
@@ -55,7 +56,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenReturn(schemeDetailsTaskListEstablishers)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+        .onPageLoad(NormalMode, 0, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -65,7 +66,7 @@ class PsaSchemeTaskListRegistrationEstablisherControllerSpec extends ControllerS
         .thenThrow(new RuntimeException("INVALID-ESTABLISHER"))
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.register.routes.MemberNotFoundController.onEstablishersPageLoad().url)
@@ -94,7 +95,7 @@ object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeT
   private val schemeDetailsTaskListEstablishers: SchemeDetailsTaskListEstablishers =
     SchemeDetailsTaskListEstablishers(
       h1 = h1,
-      srn = srn,
+      srn = EmptyOptionalSchemeReferenceNumber,
       establisher = entitySection,
       allComplete = true,
       statsSection = Some(StatsSection(
@@ -125,7 +126,7 @@ object PsaSchemeTaskListRegistrationEstablisherControllerSpec extends PsaSchemeT
     view(
       taskSections,
       schemeName,
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, None).url
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber).url
     )(fakeRequest, messages).toString
 }
 

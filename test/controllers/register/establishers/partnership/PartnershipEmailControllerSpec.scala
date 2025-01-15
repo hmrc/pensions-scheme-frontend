@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import forms.EmailFormProvider
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -49,11 +49,11 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, None),
+        routes.PartnershipEmailController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__enterEmail", Message("messages__thePartnership").resolve),
         Message("messages__enterEmail", establisherPartnershipDetails.name),
         Some(Message("messages__contact_email__hint", establisherPartnershipDetails.name, schemeName)),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       Some(schemeName)
     )(fakeRequest, messages).toString
@@ -65,7 +65,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipEmailController]
-            val result = controller.onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -83,7 +83,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipEmailController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("email", email))
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(postRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)

@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import identifiers.AnyMoreChangesId
-import models.UpdateMode
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import utils.Enumerable
 
 class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
@@ -30,7 +30,7 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
       case AnyMoreChangesId => from.userAnswers.get(AnyMoreChangesId) match {
         case Some(true) => NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))
@@ -44,6 +44,6 @@ class VariationsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConn
       case _ => None
     }
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
 }

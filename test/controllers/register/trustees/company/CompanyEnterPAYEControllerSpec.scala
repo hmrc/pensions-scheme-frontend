@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -52,7 +52,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[CompanyEnterPAYEController]
-          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
@@ -70,7 +70,7 @@ class CompanyEnterPAYEControllerSpec extends ControllerSpecBase with Matchers {
         implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
           val controller = app.injector.instanceOf[CompanyEnterPAYEController]
-          val result = controller.onSubmit(CheckUpdateMode, firstIndex, srn)(request)
+          val result = controller.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -85,12 +85,12 @@ object CompanyEnterPAYEControllerSpec extends CompanyEnterPAYEControllerSpec{
 
   val form = new PayeFormProvider()("test company name")
   val firstIndex: Index = Index(0)
-  val srn: Option[String] = Some("S123")
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: PayeViewModel = PayeViewModel(
-    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.CompanyEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterPAYE", Message("messages__theCompany").resolve),
     heading = Message("messages__enterPAYE", "test company name"),
     hint = Some(Message("messages__enterPAYE__hint")),

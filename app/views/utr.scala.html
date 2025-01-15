@@ -30,11 +30,6 @@
 
 @(form: Form[_], viewmodel: UTRViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
-@hintHtml = {
-<p class="govuk-!-margin-top-0">@messages("messages__companyUtr__guidance1")</p>
-<p>@messages("messages__companyUtr__guidance2")</p>
-}
-
 @layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, Symbol("autoComplete") -> "off", Symbol("novalidate") -> "novalidate") {

@@ -21,7 +21,8 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
-import models.Mode
+import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,7 @@ class AddPartnersController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         retrievePartnershipName(index) { _ =>
@@ -60,7 +61,7 @@ class AddPartnersController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Int, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(mode,
+  def onSubmit(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode,
     srn) andThen requireData).async {
     implicit request =>
       val partners = request.userAnswers.allPartnersAfterDelete(index)
@@ -99,7 +100,7 @@ class AddPartnersController @Inject()(
       }
   }
 
-  private def postUrl(index: Int, mode: Mode, srn: Option[String]): Call =
+  private def postUrl(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     routes.AddPartnersController.onSubmit(mode, index, srn)
 
 }

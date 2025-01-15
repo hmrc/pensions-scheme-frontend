@@ -20,6 +20,7 @@ import connectors.UpdateSchemeCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,7 +35,7 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   private val fakeUserAnswersCacheConnector = mock[UpdateSchemeCacheConnector]
 
   val schemeName = "scheme"
-  val srn = "srn"
+  val srn = SchemeReferenceNumber("srn")
 
   val validData: JsObject = Json.obj(
     SchemeNameId.toString -> schemeName
@@ -56,7 +57,7 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   def viewAsString(): String =
     view(
       Some(schemeName),
-      Some(srn)
+      OptionalSchemeReferenceNumber(Some(srn))
     )(fakeRequest, messages).toString
 
   appRunning()

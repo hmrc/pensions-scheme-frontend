@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.mockito._
@@ -71,8 +71,8 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   def viewAsString(form: Form[_] = form): String = view(
     form,
     PostcodeLookupViewModel(
-      routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex, None),
-      routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, None),
+      routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+      routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
       Message("messages__establisher_individual_previous_address__heading", Message("messages__theIndividual")),
       Message("messages__establisher_individual_previous_address__heading", establisherName),
       Some(establisherName)
@@ -84,7 +84,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   "PreviousAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -99,7 +99,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(invalidPostCode))(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))
 
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -113,7 +113,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(notFoundPostCode))
       (ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Nil))
 
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -125,7 +125,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(validPostCode))(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB")))))
 
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -134,21 +134,21 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", ""))
       val boundForm = form.bind(Map("postcode" -> ""))
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", "valid"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }

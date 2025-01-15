@@ -21,8 +21,9 @@ import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterUTRId}
+
 import javax.inject.Inject
-import models.{Index, Mode, ReferenceValue}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -46,7 +47,7 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
                                           val view: utr
                                          )(implicit val ec: ExecutionContext) extends UTRController {
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
@@ -57,7 +58,7 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
 
   private def form: Form[ReferenceValue] = formProvider()
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], companyName: String): UTRViewModel = {
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String): UTRViewModel = {
     UTRViewModel(
       postCall = routes.CompanyEnterUTRController.onSubmit(mode, srn, index),
       title = Message("messages__enterUTR", Message("messages__theCompany")),
@@ -67,7 +68,7 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
     )
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>

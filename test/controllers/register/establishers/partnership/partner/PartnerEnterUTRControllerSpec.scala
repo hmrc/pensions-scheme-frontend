@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -39,7 +39,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryPartner): _*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
-          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -53,7 +53,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -71,11 +71,11 @@ object PartnerEnterUTRControllerSpec extends PartnerEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn),
+    routes.PartnerEnterUTRController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__thePartner").resolve),
     heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val view = injector.instanceOf[utr]

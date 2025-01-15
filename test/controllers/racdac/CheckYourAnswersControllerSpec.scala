@@ -20,7 +20,7 @@ import connectors.PensionAdministratorConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
-import models.{CheckMode, Link, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Link, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -41,7 +41,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSuga
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
         when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-        val result = controller(racdacInfo).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(racdacInfo).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -116,7 +116,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     schemeName = None,
     returnOverview = true,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = false,
     title = Message("checkYourAnswers.hs.title"),
     h1 = Message("checkYourAnswers.hs.title")

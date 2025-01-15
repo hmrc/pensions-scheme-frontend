@@ -25,7 +25,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeNameId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.i18n.Messages
 import play.api.inject.bind
@@ -69,15 +69,15 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
   private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel: ManualAddressViewModel = ManualAddressViewModel(
-    postCall = controller.postCall(NormalMode, firstIndex, None),
+    postCall = controller.postCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     countryOptions = countryOptions.options,
     title = Messages("messages__common__confirmAddress__h1", Message("messages__theTrustee").resolve),
     heading = Messages("messages__common__confirmAddress__h1", personDetails.fullName)
   )
 
   behave like manualAddress(
-    routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, None),
-    routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, None),
+    routes.TrusteeAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+    routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     TrusteeAddressId(firstIndex),
     viewmodel
   )
@@ -105,7 +105,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
             "country" -> address.country))
 
         val controller = app.injector.instanceOf[TrusteeAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) must be(SEE_OTHER)
         redirectLocation(result).value mustEqual onwardCall.url
@@ -142,7 +142,7 @@ class TrusteeAddressControllerSpec extends AddressControllerBehaviours {
           ("postCode", address.postcode.get),
           "country" -> address.country))
         val controller = app.injector.instanceOf[TrusteeAddressController]
-        val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+        val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
         whenReady(result) {
           _ =>

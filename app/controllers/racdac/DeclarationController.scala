@@ -26,18 +26,18 @@ import identifiers.racdac._
 import identifiers.register.SubmissionReferenceNumberId
 import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
-import models.{PSAMinimalFlags, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, PSAMinimalFlags}
 import navigators.Navigator
 import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
-import uk.gov.hmrc.http.{UpstreamErrorResponse, HeaderCarrier}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
-import utils.{UserAnswers, Enumerable}
+import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
 
 import java.net.URLEncoder
@@ -83,7 +83,7 @@ class DeclarationController @Inject()(
     }
   }
 
-  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
     implicit request =>
       redirects.flatMap {
         case Some(result) => Future.successful(result)
@@ -98,7 +98,7 @@ class DeclarationController @Inject()(
       }
   }
 
-  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None) andThen requireData).async {
+  def onClickAgree: Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
     implicit request =>
       withRACDACName { schemeName =>
         val psaId: PsaId = request.psaId.getOrElse(throw MissingPsaId)

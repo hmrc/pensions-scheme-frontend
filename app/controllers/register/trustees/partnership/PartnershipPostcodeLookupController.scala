@@ -22,8 +22,9 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
+
 import javax.inject.Inject
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -54,13 +55,13 @@ class PartnershipPostcodeLookupController @Inject()(
   protected val form: Form[String] = formProvider()
   private val title: Message = "messages__partnershipPostcodeLookup__title"
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve map get
     }
 
-  private def viewmodel(index: Int, mode: Mode, srn: Option[String]): Retrieval[PostcodeLookupViewModel] =
+  private def viewmodel(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map {
@@ -76,7 +77,7 @@ class PartnershipPostcodeLookupController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {

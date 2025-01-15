@@ -28,7 +28,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
   override def taskList(
                          answers: UserAnswers,
                          viewOnlyOpt: Option[Boolean],
-                         srn: Option[String],
+                         srn: OptionalSchemeReferenceNumber,
                          lastUpdatedDate: Option[LastUpdated] = None
                        ): SchemeDetailsTaskList = {
     val viewOnly = viewOnlyOpt.getOrElse(false)
@@ -50,7 +50,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
 
   private[utils] def beforeYouStartSection(
                                             userAnswers: UserAnswers,
-                                            srn: Option[String]
+                                            srn: OptionalSchemeReferenceNumber
                                           ): SchemeDetailsTaskListEntitySection =
     SchemeDetailsTaskListEntitySection(
       isCompleted = None,
@@ -67,7 +67,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
   private[utils] def addEstablisherHeader(
                                            userAnswers: UserAnswers,
                                            mode: Mode,
-                                           srn: Option[String],
+                                           srn: OptionalSchemeReferenceNumber,
                                            viewOnly: Boolean
                                          ): Option[SchemeDetailsTaskListEntitySection] =
     if (userAnswers.allEstablishersAfterDelete(mode).isEmpty && viewOnly) {
@@ -92,7 +92,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
   private[utils] def addTrusteeHeader(
                                        userAnswers: UserAnswers,
                                        mode: Mode,
-                                       srn: Option[String],
+                                       srn: OptionalSchemeReferenceNumber,
                                        viewOnly: Boolean
                                      ): Option[SchemeDetailsTaskListEntitySection] =
     if (userAnswers.allTrusteesAfterDelete.isEmpty && viewOnly) {
@@ -107,7 +107,7 @@ class HsTaskListHelperVariations @Inject()(spokeCreationService: SpokeCreationSe
 
   private[utils] def declarationSection(
                                          userAnswers: UserAnswers,
-                                         srn: Option[String],
+                                         srn: OptionalSchemeReferenceNumber,
                                          viewOnly: Boolean
                                        ): Option[SchemeDetailsTaskListEntitySection] =
     if (viewOnly) {

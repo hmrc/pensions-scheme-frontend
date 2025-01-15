@@ -20,7 +20,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
 import org.scalatest.OptionValues
@@ -63,11 +63,11 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
 
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
-          val result = controller.onPageLoad(NormalMode, None)(request)
+          val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
 
           val viewModel = PostcodeLookupViewModel(
-            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, None),
-            routes.InsurerConfirmAddressController.onPageLoad(NormalMode, None),
+            routes.InsurerEnterPostcodeController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber),
+            routes.InsurerConfirmAddressController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber),
             Messages("messages__insurer_enter_postcode__h1", Messages("messages__theInsuranceCompany")),
             Messages("messages__insurer_enter_postcode__h1",insurerName),
             None
@@ -92,7 +92,7 @@ class InsurerEnterPostCodeControllerSpec extends ControllerSpecBase with ScalaFu
           implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody("postcode" -> validPostcode))
           val controller = app.injector.instanceOf[InsurerEnterPostcodeController]
-          val result = controller.onSubmit(NormalMode, None)(request)
+          val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
           }

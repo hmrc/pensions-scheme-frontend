@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.address.{AddressYearsController => GenericAddressYearController}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +50,7 @@ class AddressYearsController @Inject()(
                                       )(implicit val ec: ExecutionContext) extends GenericAddressYearController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { establisherName =>
@@ -61,7 +62,7 @@ class AddressYearsController @Inject()(
   private def form(establisherName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__establisher_address_years__formError", establisherName))
 
-  private def viewModel(mode: Mode, index: Index, establisherName: String, srn: Option[String]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, index: Index, establisherName: String, srn: OptionalSchemeReferenceNumber) = AddressYearsViewModel(
     postCall = routes.AddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__establisher_address_years__title", Message("messages__theIndividual")),
     heading = Message("messages__establisher_address_years__title", establisherName),
@@ -70,7 +71,7 @@ class AddressYearsController @Inject()(
     srn = srn
   )
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       EstablisherNameId(index).retrieve.map { establisherName =>

@@ -142,14 +142,14 @@ object NavigatorSpec {
         case _ => None
       }
 
-    override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =  from.id match {
+    override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =  from.id match {
       case `testExistId` => NavigateTo.dontSave(testExistUpdateModeCall)
       case `testSaveId` => NavigateTo.save(testSaveCall)
       case `testNotSaveId` => NavigateTo.dontSave(testNotSaveCall)
       case _ => None
     }
 
-    override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =  from.id match {
+    override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =  from.id match {
       case `testExistId` => NavigateTo.dontSave(testExistCheckUpdateModeCall)
       case _ => None
     }

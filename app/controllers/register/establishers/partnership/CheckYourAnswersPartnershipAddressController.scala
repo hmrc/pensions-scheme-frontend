@@ -25,9 +25,10 @@ import identifiers.register.establishers.partnership._
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -46,7 +47,8 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              implicit val countryOptions: CountryOptions,
                                                              allowChangeHelper: AllowChangeHelper,
                                                              val controllerComponents: MessagesControllerComponents,
-                                                             val view: checkYourAnswers
+                                                             val view: checkYourAnswers,
+                                                             featureToggleService: FeatureToggleService
                                                             )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -71,12 +73,14 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__addressFor", Message("messages__thePartnership"))
 
-        val saveURL = mode match {
-            case NormalMode =>
-              Future.successful(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index))
+        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
+          (isEnabled, mode) match {
+            case (true, NormalMode) =>
+              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
             case _ =>
-              Future.successful(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
+              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
           }
+        }
         saveURL.flatMap { url =>
           val vm = CYAViewModel(
             answerSections = answerSections,

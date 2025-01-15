@@ -25,7 +25,7 @@ import identifiers.register.establishers.individual._
 
 import javax.inject.Inject
 import models.Mode._
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,6 +38,7 @@ import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
+
 
 class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -54,7 +55,7 @@ class CheckYourAnswersDetailsController @Inject()(val appConfig: FrontendAppConf
                                                  )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         implicit val userAnswers: UserAnswers = request.userAnswers

@@ -19,7 +19,9 @@ package controllers
 import audit.{AuditService, TcmpAuditEvent}
 import connectors._
 import controllers.actions._
+import controllers.register.establishers.company.CompanyEnterCRNControllerSpec.srn
 import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
@@ -42,8 +44,8 @@ class VariationDeclarationControllerSpec
     with BeforeAndAfterEach {
 
   private val schemeName = "Test Scheme Name"
-  private val srnNumber = "S12345"
-  private val srn: Option[String] = Some(srnNumber)
+  private val srnNumber = SchemeReferenceNumber("S12345")
+  private val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(srnNumber))
 
   def postCall: Call = routes.VariationDeclarationController.onClickAgree(srn)
 
@@ -77,7 +79,7 @@ class VariationDeclarationControllerSpec
     reset(schemeDetailsConnector)
   }
 
-  private def viewAsString(): String = view(Some(schemeName), srn, postCall)(fakeRequest, messages).toString
+  private def viewAsString(): String = view(Some(schemeName), OptionalSchemeReferenceNumber(srn), postCall)(fakeRequest, messages).toString
 
   "VariationDeclarationController" must {
 

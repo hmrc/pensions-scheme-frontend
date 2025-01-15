@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers._
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                           appConfig: FrontendAppConfig) extends AbstractNavigator {
@@ -40,7 +40,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case AdviserAddressId =>
         NavigateTo.dontSave(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserCheckYourAnswersId =>
-        NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None))
+        NavigateTo.dontSave(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
       case _ => None
     }
   }
@@ -63,7 +63,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
     }
   }
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

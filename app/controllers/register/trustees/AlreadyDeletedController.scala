@@ -22,11 +22,12 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
+
 import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -48,7 +49,7 @@ class AlreadyDeletedController @Inject()(
   FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeName(index, trusteeKind, srn) match {
@@ -58,7 +59,7 @@ class AlreadyDeletedController @Inject()(
         }
     }
 
-  private def vm(index: Index, trusteeName: String, mode: Mode, srn: Option[String], schemeName: Option[String]) =
+  private def vm(index: Index, trusteeName: String, mode: Mode, srn: OptionalSchemeReferenceNumber, schemeName: Option[String]) =
     AlreadyDeletedViewModel(
     title = Message("messages__alreadyDeleted__trustee_title"),
     deletedEntity = trusteeName,
@@ -67,7 +68,7 @@ class AlreadyDeletedController @Inject()(
     schemeName = schemeName
   )
 
-  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: Option[String])
+  private def trusteeName(index: Index, trusteeKind: TrusteeKind, srn: OptionalSchemeReferenceNumber)
                          (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.map(_.companyName)

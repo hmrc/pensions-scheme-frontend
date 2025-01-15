@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.individual.TrusteeNoNINOReasonId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.FakeUserAnswersService
@@ -36,13 +36,13 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     val form = formProvider("messages__reason__error_ninoRequired", name)
     val index = Index(0)
     val srn = None
-    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, index, srn)
+    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
     title = Message("messages__whyNoNINO", Message("messages__theIndividual").resolve),
     heading = Message("messages__whyNoNINO", name),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
   private val view = injector.instanceOf[reason]
 
@@ -66,7 +66,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
     "TrusteeNoNinoReasonController" must {
 
       "return OK and the correct view for a GET" in {
-        val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+        val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -75,7 +75,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
       "redirect to the next page when valid data is submitted for true" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "reason"))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -86,7 +86,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)
@@ -96,7 +96,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "<>?:-{}<>,/.,/;#\";]["))
         val boundForm = form.bind(Map("value" -> "<>?:-{}<>,/.,/;#\";]["))
 
-        val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, index, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe viewAsString(boundForm)

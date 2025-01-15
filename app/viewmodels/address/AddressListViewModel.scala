@@ -19,6 +19,7 @@ package viewmodels.address
 import models.address.TolerantAddress
 import play.api.mvc.Call
 import viewmodels.Message
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class AddressListViewModel(
                                  postCall: Call,
@@ -28,6 +29,6 @@ case class AddressListViewModel(
                                  heading: Message = Message("messages__select_the_address__title"),
                                  selectAddress: Message = Message("messages__common__select_address"),
                                  selectAddressLink: Message = Message("messages__common__select_address_link"),
-                                 srn: Option[String] = None,
+                                 srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber,
                                  entityName: String
                                )

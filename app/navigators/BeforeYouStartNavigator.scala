@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.UserAnswers
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -69,9 +69,9 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   }
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, None))
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber))
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

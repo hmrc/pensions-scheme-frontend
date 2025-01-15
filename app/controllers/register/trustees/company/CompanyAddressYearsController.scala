@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{AddressYears, Index, Mode}
+import models.{AddressYears, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -49,7 +50,7 @@ class CompanyAddressYearsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends controllers.address
 .AddressYearsController {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {
@@ -58,7 +59,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         viewmodel(index, mode, srn).retrieve.map {
@@ -67,7 +68,7 @@ class CompanyAddressYearsController @Inject()(
         }
     }
 
-  private def viewmodel(index: Index, mode: Mode, srn: Option[String]): Retrieval[AddressYearsViewModel] =
+  private def viewmodel(index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber): Retrieval[AddressYearsViewModel] =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index.id).retrieve.map {

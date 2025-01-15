@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import models.{CheckUpdateMode, Index, Mode}
+import models.{CheckUpdateMode, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -54,7 +54,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
         val request = addCSRFToken(FakeRequest())
         val controller = app.injector.instanceOf[CompanyEnterCRNController]
-        val result = controller.onPageLoad(CheckUpdateMode, srn, firstIndex)(request)
+        val result = controller.onPageLoad(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex)(request)
 
           status(result) mustBe OK
           contentAsString(result) mustBe
@@ -62,7 +62,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
               viewModel(),
               form,
               None,
-              postCall(CheckUpdateMode, srn, firstIndex),
+              postCall(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex),
               srn
             )(request, messages).toString
 
@@ -80,7 +80,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
         app =>
         val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("companyRegistrationNumber", "1234567")))
         val controller = app.injector.instanceOf[CompanyEnterCRNController]
-        val result = controller.onSubmit(CheckUpdateMode, srn, firstIndex)(request)
+        val result = controller.onSubmit(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex)(request)
 
         status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -95,7 +95,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
   val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()(companyName)
   val firstIndex: Index = Index(0)
-  val srn: Option[String] = Some("S123")
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def viewModel(companyName: String = companyName): CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
@@ -105,7 +105,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
     )
   }
 
-  val postCall: (Mode, Option[String], Index) => Call = routes.CompanyEnterCRNController.onSubmit _
+  val postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyEnterCRNController.onSubmit _
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 

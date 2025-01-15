@@ -49,7 +49,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -62,7 +62,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
@@ -77,7 +77,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -92,7 +92,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
       "return OK and the correct view" in {
         when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, None)(fakeRequest)
+          .onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe psaTaskListRegistrationView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
@@ -101,7 +101,9 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, None)(fakeRequest)
+        when(mockFeatureToggleService.get(any())(any(), any()))
+          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -114,7 +116,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller().onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result).contains(messages("messages__scheme_details__title")) mustBe true
@@ -129,7 +131,7 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
 
-        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, srn)(fakeRequest)
+        val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -147,7 +149,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val srnValue = "S1000000456"
-  private val srn = Some(srnValue)
+  private val srn = Some(SchemeReferenceNumber(srnValue))
   private val schemeName = "test scheme"
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): PsaSchemeTaskListController =
@@ -178,7 +180,7 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val beforeYouStartHeader = Some(Message("messages__schemeTaskList__before_you_start_header"))
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
-    schemeName, None,
+    schemeName, EmptyOptionalSchemeReferenceNumber,
     beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
     about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
     workingKnowledge = None,

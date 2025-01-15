@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasVATId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -40,15 +40,15 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__vat__formError", partnershipDetails.name)
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasVATController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.establishers.partnership.routes.PartnershipHasVATController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__hasVAT", partnershipDetails.name),
     hint = None,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(Index(0), partnershipDetails)
   private val view = injector.instanceOf[hasReferenceNumber]
   private def viewAsString(form: Form[_] = form): String =
     view(form, viewModel, schemeName)(fakeRequest, messages).toString
@@ -59,7 +59,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -70,7 +70,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasVATId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -88,7 +88,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasVATController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -105,7 +105,7 @@ class PartnershipHasVATControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasVATController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
             val boundForm = form.bind(Map("value" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

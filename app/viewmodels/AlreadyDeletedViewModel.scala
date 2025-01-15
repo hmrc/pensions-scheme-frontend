@@ -17,11 +17,12 @@
 package viewmodels
 
 import play.api.mvc.Call
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class AlreadyDeletedViewModel(
                                     title: Message,
                                     deletedEntity: String,
                                     returnCall: Call,
-                                    srn: Option[String] = None,
+                                    srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber,
                                     schemeName: Option[String] = None
                                   )

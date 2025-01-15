@@ -22,7 +22,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.establishers.company.IsCompanyDormantId
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
 import navigators.Navigator
@@ -52,7 +52,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
 
   private val form: Form[DeclarationDormant] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
   (mode, srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
@@ -62,7 +62,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(mode: Mode, srn: Option[String], index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
     srn) andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) { companyName =>
@@ -87,7 +87,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def postCall(mode: Mode, srn: Option[String], index: Int): Call = routes.IsCompanyDormantController
+  private def postCall(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Call = routes.IsCompanyDormantController
     .onSubmit(mode, srn, index)
 
 }

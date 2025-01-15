@@ -244,7 +244,7 @@ object ConfirmPreviousAddressControllerSpec extends OptionValues {
     hint = Some("hint"),
     address = testAddress(line2),
     name = name,
-    srn = Some("S12345")
+    srn = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S12345")))
   )
 
   private def errorMessage(implicit messages: Messages) = Message("messages__confirmPreviousAddress__error", "Test name").resolve

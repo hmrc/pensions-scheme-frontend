@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.HasUTRFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasUTRId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
@@ -41,14 +41,14 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__hasUtr__partnership_error_required", partnershipDetails.name)
   private val index = Index(0)
   private val srn = None
-  private val fullAnswers = UserAnswers().establisherPartnershipDetails(index, partnershipDetails)
+  private val fullAnswers = UserAnswers().establisherPartnershipDetails(Index(0), partnershipDetails)
 
   private val viewModel = CommonFormWithHintViewModel(
-    postCall = routes.PartnershipHasUTRController.onSubmit(NormalMode, index, srn),
+    postCall = routes.PartnershipHasUTRController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__hasUTR", Message("messages__thePartnership").resolve),
     heading = Message("messages__hasUTR", partnershipDetails.name),
     hint = Some(Message("messages__hasUtr__p1")),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val view = injector.instanceOf[hasReferenceNumber]
@@ -62,7 +62,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString()
@@ -73,7 +73,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(fullAnswers.set(PartnershipHasUTRId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
-            val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+            val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) mustBe OK
             contentAsString(result) mustBe viewAsString(form.fill(value = false))
@@ -91,7 +91,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -108,7 +108,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
             val boundForm = form.bind(Map("value" -> "invalid value"))
-            val result = controller.onSubmit(NormalMode, index, None)(postRequest)
+            val result = controller.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) mustBe viewAsString(boundForm)

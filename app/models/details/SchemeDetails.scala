@@ -17,6 +17,7 @@
 package models.details
 
 import play.api.libs.json._
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class SchemeMemberNumbers(current: String, future: String)
 
@@ -30,7 +31,7 @@ object InsuranceCompany {
   implicit val formats: OFormat[InsuranceCompany] = Json.format[InsuranceCompany]
 }
 
-case class SchemeDetails(srn: Option[String],
+case class SchemeDetails(srn: OptionalSchemeReferenceNumber,
                          pstr: Option[String],
                          status: String,
                          name: String,

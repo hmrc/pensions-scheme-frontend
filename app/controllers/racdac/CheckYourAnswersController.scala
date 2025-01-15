@@ -19,18 +19,19 @@ package controllers.racdac
 import config.FrontendAppConfig
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-import identifiers.racdac.{RACDACNameId, ContractOrPolicyNumberId}
+import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.AuthEntity.PSP
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.DataRequest
-import models.{Mode, UpdateMode, CheckMode, NormalMode}
-import play.api.i18n.{MessagesApi, I18nSupport}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import utils.checkyouranswers.Ops._
-import utils.{UserAnswers, CountryOptions, Enumerable}
-import viewmodels.{AnswerSection, Message, CYAViewModel}
+import utils.{CountryOptions, Enumerable, UserAnswers}
+import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.racdac.checkYourAnswers
 
 import javax.inject.Inject
@@ -50,13 +51,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                           )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn, refreshData = true) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val returnLinkDetails: Future[(String, String)] =(mode, srn) match {
+        val returnLinkDetails: Future[(String, String)] =(mode, toSrn(srn)) match {
           case (UpdateMode, Some(srnNo)) =>
             lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo), schemeName))
+            Future.successful((appConfig.schemeDashboardUrl(request.psaId, None).format(srnNo.id), schemeName))
           case _ =>
             pensionAdministratorConnector.getPSAName.map { psaName =>
               (appConfig.managePensionsSchemeOverviewUrl.url, psaName)
@@ -68,11 +69,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         }
     }
 
-  def pspOnPageLoad(srn: String): Action[AnyContent] =
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
     (authenticate(Some(PSP)) andThen getPspData(srn) andThen requireData).async {
       implicit request =>
         lazy val schemeName = request.userAnswers.get(RACDACNameId).getOrElse(throw MissingSchemeNameException)
-        Future.successful(Ok(view(vm(UpdateMode), schemeName, appConfig.schemeDashboardUrl(None, request.pspId).format(srn))))
+        Future.successful(Ok(view(vm(UpdateMode), schemeName, appConfig.schemeDashboardUrl(None, request.pspId).format(srn.id))))
     }
 
   def vm(mode: Mode)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
@@ -96,7 +97,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       schemeName = schemeName,
       returnOverview = true,
       hideEditLinks = request.viewOnly,
-      srn = None,
+      srn = EmptyOptionalSchemeReferenceNumber,
       hideSaveAndContinueButton = request.viewOnly,
       title = h1,
       h1 = h1

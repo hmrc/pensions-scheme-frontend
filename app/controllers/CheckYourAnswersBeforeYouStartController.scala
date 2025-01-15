@@ -22,6 +22,7 @@ import models.AdministratorOrPractitioner.Practitioner
 
 import javax.inject.Inject
 import models.AuthEntity.PSP
+import models.OptionalSchemeReferenceNumber.toSrn
 import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,20 +49,20 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
   FrontendBaseController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
 
         Future.successful(Ok(view(vm(mode, srn))))
     }
 
-    def pspOnPageLoad(srn: String): Action[AnyContent] =
-      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(Some(srn), allowPsa = true, allowPsp = true) andThen requireData).async {
+    def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(OptionalSchemeReferenceNumber(Some(srn)), allowPsa = true, allowPsp = true) andThen requireData).async {
         implicit request =>
-          Future.successful(Ok(view(vm(UpdateMode, Some(srn)))))
+          Future.successful(Ok(view(vm(UpdateMode, OptionalSchemeReferenceNumber(Some(srn))))))
       }
 
-  private def vm(mode: Mode, srn: Option[String])(implicit request: DataRequest[AnyContent]): CYAViewModel = {
+  private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers
 
     val beforeYouStart = AnswerSection(
@@ -76,7 +77,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
     val heading = (titleOrHeading: Message) =>
       if (mode == NormalMode) Message("checkYourAnswers.hs.title") else titleOrHeading
 
-    val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, srn) match {
+    val returnToTaskListCall:Option[Call] = (request.administratorOrPractitioner, toSrn(srn)) match {
       case (Practitioner, Some(srn)) => Option(controllers.routes.PspSchemeTaskListController.onPageLoad(srn))
       case _ => None
     }

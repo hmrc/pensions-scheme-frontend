@@ -20,7 +20,7 @@ import base.SpecBase
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Link, NormalMode, UpdateMode}
+import models.{Index, Link, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -55,38 +55,38 @@ class DirectorPreviousAddressIdSpec extends SpecBase {
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
-        DirectorPreviousAddressId(index, index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        DirectorPreviousAddressId(Index(0), index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
       }
     }
 
     "in update mode" when {
       "for new director" must {
         "return answer row with change links" in {
-          val answersNew = answers.set(IsNewDirectorId(index, index))(value = true).asOpt.value
+          val answersNew = answers.set(IsNewDirectorId(Index(0), index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
 
-          DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+          DirectorPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
       }
       "for existing director" must {
         "return answer row with change links if there is a previous address" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
-          DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+          DirectorPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = userAnswersWithName.set(DirectorConfirmPreviousAddressId(index, index))(value = false).asOpt.value
+          val answersWithNoIsThisPreviousAddress = userAnswersWithName.set(DirectorConfirmPreviousAddressId(Index(0), index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
-          DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
+          DirectorPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
         }
 
         "return no answer row if there is no previous address and `is this previous address` is yes" in {
-          val answersWithYesIsThisPreviousAddress = UserAnswers().set(DirectorConfirmPreviousAddressId(index, index))(value = true).asOpt.value
+          val answersWithYesIsThisPreviousAddress = UserAnswers().set(DirectorConfirmPreviousAddressId(Index(0), index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, Some(PsaId("A0000000")))
 
-          DirectorPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+          DirectorPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
         }
       }
     }
@@ -122,5 +122,5 @@ object DirectorPreviousAddressIdSpec extends OptionValues {
       .asOpt
       .value
 
-  private val answers: UserAnswers = userAnswersWithName.set(DirectorPreviousAddressId(index, index))(address).asOpt.value
+  private val answers: UserAnswers = userAnswersWithName.set(DirectorPreviousAddressId(Index(0), index))(address).asOpt.value
 }

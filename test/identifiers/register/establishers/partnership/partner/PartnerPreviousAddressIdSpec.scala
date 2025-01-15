@@ -20,7 +20,7 @@ import base.SpecBase
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Link, NormalMode, UpdateMode}
+import models.{Index, Link, NormalMode, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -56,42 +56,42 @@ class PartnerPreviousAddressIdSpec extends SpecBase {
       "return answers rows with change links" in {
         val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
-        PartnerPreviousAddressId(index, index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
+        PartnerPreviousAddressId(Index(0), index).row(onwardUrl, NormalMode)(request, implicitly) must equal(answerRowWithChangeLink)
       }
     }
 
     "in update mode" when {
       "for new partner" must {
         "return answer row with change links" in {
-          val answersNew = answers.set(IsNewPartnerId(index, index))(value = true).asOpt.value
+          val answersNew = answers.set(IsNewPartnerId(Index(0), index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersNew, Some(PsaId("A0000000")))
 
-          PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+          PartnerPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
       }
       "for existing partner" must {
         "return answer row with change links if there is a previous address" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers, Some(PsaId("A0000000")))
 
-          PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
+          PartnerPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithChangeLink)
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
           val answersWithNoIsThisPreviousAddress = UserAnswers().
-            partnerName(index, index, partnerName).
-            set(PartnerConfirmPreviousAddressId(index, index))(value = false).asOpt.value
+            partnerName(Index(0), Index(0), partnerName).
+            set(PartnerConfirmPreviousAddressId(Index(0), index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
-          PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
+          PartnerPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(answerRowWithAddLink)
         }
 
         "return no answer row if there is no previous address and `is this previous address` is yes" in {
           val answersWithYesIsThisPreviousAddress = UserAnswers().
-            partnerName(index, index, partnerName).
-            set(PartnerConfirmPreviousAddressId(index, index))(value = true).asOpt.value
+            partnerName(Index(0), Index(0), partnerName).
+            set(PartnerConfirmPreviousAddressId(Index(0), index))(value = true).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithYesIsThisPreviousAddress, Some(PsaId("A0000000")))
 
-          PartnerPreviousAddressId(index, index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
+          PartnerPreviousAddressId(Index(0), index).row(onwardUrl, UpdateMode)(request, implicitly) must equal(Nil)
         }
       }
     }
@@ -121,6 +121,6 @@ object PartnerPreviousAddressIdSpec extends OptionValues {
 
   private val onwardUrl = "onwardUrl"
 
-  private val answers: UserAnswers = UserAnswers().partnerName(index, index, partnerName).
-    set(PartnerPreviousAddressId(index, index))(address).asOpt.value
+  private val answers: UserAnswers = UserAnswers().partnerName(Index(0), Index(0), partnerName).
+    set(PartnerPreviousAddressId(Index(0), index))(address).asOpt.value
 }

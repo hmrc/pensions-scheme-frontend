@@ -38,41 +38,41 @@ class TrusteesIndividualAddressNavigator @Inject()(
   import TrusteesIndividualAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
-                                       srn: Option[String]): PartialFunction[Identifier, Call] = {
+                                       srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index) =>
-      IndividualAddressListController.onPageLoad(mode, index, None)
+      IndividualAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualAddressListId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressId(index) if mode == NormalMode =>
-      TrusteeAddressYearsController.onPageLoad(mode, index, None)
+      TrusteeAddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteeAddressYearsId(index) =>
-      trusteeAddressYearsRoutes(mode, ua, index, None)
+      trusteeAddressYearsRoutes(mode, ua, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualPreviousAddressPostCodeLookupId(index) =>
-      TrusteePreviousAddressListController.onPageLoad(mode, index, None)
+      TrusteePreviousAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case TrusteePreviousAddressListId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
     case TrusteePreviousAddressId(index) =>
-      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, None)
+      CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, EmptyOptionalSchemeReferenceNumber)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: Option[String]): PartialFunction[Identifier,
+  private def updateModeRoutes(mode: VarianceMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier,
     Call] = {
     case IndividualPostCodeLookupId(index) =>
       IndividualAddressListController.onPageLoad(mode, index, srn)
@@ -98,15 +98,15 @@ class TrusteesIndividualAddressNavigator @Inject()(
 }
 
 object TrusteesIndividualAddressNavigator {
-  private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call =
+  private def cyaOrMoreChanges(ua: UserAnswers, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) => CheckYourAnswersIndividualAddressController.onPageLoad(mode, index, srn)
       case _ => moreChanges(srn)
     }
 
-  private def moreChanges(srn: Option[String]): Call = AnyMoreChangesController.onPageLoad(srn)
+  private def moreChanges(srn: OptionalSchemeReferenceNumber): Call = AnyMoreChangesController.onPageLoad(srn)
 
-  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: Option[String]): Call = {
+  private def trusteeAddressRoute(ua: UserAnswers, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call = {
     ua.get(IsTrusteeNewId(index)) match {
       case Some(true) =>
         CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
@@ -115,7 +115,7 @@ object TrusteesIndividualAddressNavigator {
     }
   }
 
-  private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: Option[String]): Call =
+  private def trusteeAddressYearsRoutes(mode: Mode, ua: UserAnswers, index: Int, srn: OptionalSchemeReferenceNumber): Call =
     ua.get(TrusteeAddressYearsId(index)) match {
       case Some(AddressYears.OverAYear) =>
         CheckYourAnswersIndividualAddressController.onPageLoad(journeyMode(mode), index, srn)
@@ -125,6 +125,6 @@ object TrusteesIndividualAddressNavigator {
         SessionExpiredController.onPageLoad
     }
 
-  private def previousAddressLookup(mode: Mode, index: Index, srn: Option[String]): Call =
+  private def previousAddressLookup(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
     IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index, srn)
 }

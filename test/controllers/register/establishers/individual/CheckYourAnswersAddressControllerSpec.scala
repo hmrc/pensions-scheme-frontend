@@ -48,7 +48,7 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
           ).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-          val result = controller.onPageLoad(NormalMode, index, None)(fakeRequest)
+          val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) mustBe OK
           contentAsString(result) mustBe viewAsString(answerSection(),
@@ -71,10 +71,10 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersAddressController]
-              val result = controller.onPageLoad(UpdateMode, index, srn)(fakeRequest)
+              val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
               status(result) mustBe OK
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, srn), srn, submitUrl(UpdateMode, srn), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
                 title = Message("messages__addressFor", Message("messages__thePerson")),
                 h1 = Message("messages__addressFor", establisherName))
               app.stop()
@@ -88,65 +88,66 @@ class CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Cont
 
 object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enumerable.Implicits with ControllerAllowChangeBehaviour {
 
-  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
   val index = Index(0)
-  val srn = Some("test-srn")
+  val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   val establisherName = "First Last"
 
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
-  private def establisherAddressRoute(mode: Mode, srn: Option[String]): String =
-    routes.AddressController.onPageLoad(mode, index, srn).url
+  private def establisherAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.AddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def establisherAddressYearsRoute(mode: Mode, srn: Option[String]): String =
-    routes.AddressYearsController.onPageLoad(mode, index, srn).url
+  private def establisherAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.AddressYearsController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
-  private def establisherPreviousAddressRoute(mode: Mode, srn: Option[String]): String =
-    routes.PreviousAddressController.onPageLoad(mode, index, srn).url
+  private def establisherPreviousAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String =
+    routes.PreviousAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
   private val fullAnswers = UserAnswers().
-    establishersIndividualName(index, PersonName("First", "Last")).
-    establishersIndividualAddress(index, address).
-    establishersIndividualAddressYears(index, addressYearsUnderAYear).
-    establishersIndividualPreviousAddress(index, previousAddress)
+    establishersIndividualName(Index(0), PersonName("First", "Last")).
+    establishersIndividualAddress(Index(0), address).
+    establishersIndividualAddressYears(Index(0), addressYearsUnderAYear).
+    establishersIndividualPreviousAddress(Index(0), previousAddress)
 
-  def submitUrl(mode: Mode = NormalMode, srn: Option[String] = None): Call =
+  def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
-  def addressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressFor", establisherName),
     UserAnswers().addressAnswer(address),
     answerIsMessageKey = false,
-    Some(Link("site.change", establisherAddressRoute(checkMode(mode), srn),
+    Some(Link("site.change", establisherAddressRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
       Some(Message("messages__visuallyhidden__dynamic_address", establisherName)))
     ))
 
-  def addressYearsAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def addressYearsAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__addressYears", establisherName),
     Seq(s"messages__common__$addressYearsUnderAYear"),
     answerIsMessageKey = true,
-    Some(Link("site.change", establisherAddressYearsRoute(checkMode(mode), srn),
+    Some(Link("site.change", establisherAddressYearsRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
       Some(Message("messages__visuallyhidden__dynamic_addressYears", establisherName))))
   )
 
-  def previousAddressAnswerRow(mode: Mode, srn: Option[String]): AnswerRow = AnswerRow(
+  def previousAddressAnswerRow(mode: Mode, srn: OptionalSchemeReferenceNumber): AnswerRow = AnswerRow(
     Message("messages__previousAddressFor", establisherName),
     UserAnswers().addressAnswer(previousAddress),
     answerIsMessageKey = false,
-    Some(Link("site.change", establisherPreviousAddressRoute(checkMode(mode), srn),
+    Some(Link("site.change", establisherPreviousAddressRoute(checkMode(mode), OptionalSchemeReferenceNumber(srn)),
       Some(Message("messages__visuallyhidden__dynamic_previousAddress", establisherName))))
   )
 
-  def answerSection(mode: Mode = NormalMode, srn: Option[String] = None): Seq[AnswerSection] = Seq(AnswerSection(None,
-    if (mode == NormalMode) Seq(addressAnswerRow(mode, srn), addressYearsAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))
-    else Seq(addressAnswerRow(mode, srn), previousAddressAnswerRow(mode, srn))))
+  def answerSection(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = Seq(AnswerSection(None,
+    if (mode == NormalMode) Seq(addressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), addressYearsAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)))
+    else Seq(addressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-  def viewAsString(answerSections: Seq[AnswerSection], srn: Option[String] = None, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  private val mockFeatureToggleService = mock[FeatureToggleService]
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(
       answerSections = answerSections,

@@ -45,9 +45,9 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
       val userAnswers = UserAnswers().setOrException(IsRacDacId)(true)
       when(mockSchemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(userAnswers))
-      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, srn).url)
+      redirectLocation(result) mustBe Some(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn)).url)
 
 
     }
@@ -58,7 +58,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
       val psaMinimalFlags = PSAMinimalFlags(false, true, false)
       when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
-      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(appConfig.youMustContactHMRCUrl)
     }
@@ -69,7 +69,7 @@ class TaskListRedirectControllerSpec extends ControllerSpecBase with BeforeAndAf
       val psaMinimalFlags = PSAMinimalFlags(true, false, true)
       when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
         .thenReturn(Future.successful(psaMinimalFlags))
-      val result = controller.onPageLoad(UpdateMode, srn)(fakeRequest)
+      val result = controller.onPageLoad(UpdateMode, OptionalSchemeReferenceNumber(srn))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(appConfig.psaUpdateContactDetailsUrl)
     }
@@ -82,7 +82,7 @@ object TaskListRedirectControllerSpec extends ControllerSpecBase with MockitoSug
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val mockSchemeDetailsConnector: SchemeDetailsConnector = mock[SchemeDetailsConnector]
 
-  private val srn = Some("srn")
+  private val srn = Some(SchemeReferenceNumber("srn"))
 
   private def controller: TaskListRedirectController =
     new TaskListRedirectController(

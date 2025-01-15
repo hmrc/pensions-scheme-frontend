@@ -19,7 +19,7 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -52,7 +52,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
         app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, srn)(request)
+          val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
         }
@@ -71,7 +71,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
           val request =
             addCSRFToken(FakeRequest().withFormUrlEncodedBody(("paye", "123456789")))
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
-          val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+          val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -85,12 +85,12 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
 
   val form = new PayeFormProvider()("test partnership name")
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = PayeViewModel(
-    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterPAYEController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterPAYE", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterPAYE", "test partnership name"),
     hint = Some(Message("messages__enterPAYE__hint")),

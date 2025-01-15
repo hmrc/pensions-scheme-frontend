@@ -22,7 +22,7 @@ import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, NormalMode}
+import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -125,7 +125,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(NormalMode, establisherIndex, 0, srn).url)
+          .onPageLoad(NormalMode, establisherIndex, 0, EmptyOptionalSchemeReferenceNumber).url)
       }
     }
   }

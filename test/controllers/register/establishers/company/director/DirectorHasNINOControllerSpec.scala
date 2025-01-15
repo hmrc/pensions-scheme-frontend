@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.company.director.DirectorHasNINOId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
 
   "DirectorHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -45,7 +45,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
       val validData = validCompanyDirectorData("hasNino" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -53,7 +53,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -64,7 +64,7 @@ class DirectorHasNINOControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -83,7 +83,7 @@ object DirectorHasNINOControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, srn)
+  private val postCall = controllers.register.establishers.company.director.routes.DirectorHasNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__theDirector")),

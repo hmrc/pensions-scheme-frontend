@@ -21,7 +21,7 @@
     govukTable : GovukTable
 )
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: Option[String], tableCaption: String)(implicit messages: Messages)
+@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: OptionalSchemeReferenceNumber, tableCaption: String)(implicit messages: Messages)
 
 @edit(entity: Entity[_], editLink: String) = {
     <a id="person-@{entity.index}-edit" class="govuk-link" href="@editLink">

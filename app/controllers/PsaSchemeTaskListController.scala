@@ -60,7 +60,7 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   private val logger  = Logger(classOf[PsaSchemeTaskListController])
 
-  def onPageLoad(mode: Mode, srn: Option[String]): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = true)
     andThen allowAccess(srn)).async {
     implicit request =>
       val lastUpdatedDate: Future[Option[LastUpdated]] = mode match {
@@ -73,10 +73,10 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
         (srn, request.userAnswers, schemeNameOpt) match {
           case (None, Some(userAnswers), Some(schemeName)) =>
-            Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName)))
+            Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
           case (Some(_), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
-          case (Some(_), answers, sn) =>
+          case (OptionalSchemeReferenceNumber(Some(_)), answers, sn) =>
             logger.warn(s"Loading PSA task list page: srn $srn found but user answers empty " +
               s"check is ${answers.isEmpty} and scheme name is $sn")
             Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

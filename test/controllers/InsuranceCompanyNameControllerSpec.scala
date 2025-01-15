@@ -21,13 +21,12 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.insuranceCompanyName
 
@@ -44,11 +43,11 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
-  private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, None)
+  private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[insuranceCompanyName]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, Some(schemeName), postCall, None)(fakeRequest, messages).toString()
+    view(form, NormalMode, Some(schemeName), postCall, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -71,14 +70,14 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def saveAction(cache: UserAnswersService): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode, None)
+    controller(cache = cache).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   "InsuranceCompanyName Controller" must {
 

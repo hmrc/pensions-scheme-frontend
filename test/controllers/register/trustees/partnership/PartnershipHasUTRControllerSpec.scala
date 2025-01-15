@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
@@ -37,7 +37,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   private val form = formProvider("messages__hasUtr__partnership_error_required","test partnership name")
   private val index = Index(0)
   private val srn = None
-  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onSubmit(NormalMode, index, srn)
+  private val postCall = controllers.register.trustees.partnership.routes.PartnershipHasUTRController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasUTR", Message("messages__thePartnership").resolve),
@@ -80,7 +80,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
   "PartnershipHasUTRController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -89,7 +89,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -100,7 +100,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -109,7 +109,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
     "if user changes answer from yes to no then clean up should take place on utr number" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(getDataWithUtr(hasUtrValue = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getDataWithUtr(hasUtrValue = true)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(PartnershipHasUTRId(index), false)
@@ -119,7 +119,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
     "if user changes answer from no to yes then clean up should take place on no utr reason" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getDataWithUtr(hasUtrValue = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getDataWithUtr(hasUtrValue = false)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
 

@@ -19,16 +19,16 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.MoreThanTenTrusteesId
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.libs.json._
 import play.api.test.Helpers._
-
 import views.html.register.stillNeedDetails
 
 class StillNeedDetailsControllerSpec extends ControllerSpecBase {
   appRunning()
 
   val schemeName = "Test Scheme Name"
-  val srn = "A2343243"
+  val srn = SchemeReferenceNumber("A2343243")
   val validData: JsObject = Json.obj(
     MoreThanTenTrusteesId.toString -> false
   )
@@ -38,11 +38,11 @@ class StillNeedDetailsControllerSpec extends ControllerSpecBase {
     new StillNeedDetailsController(messagesApi,
       FakeAuthAction, dataRetrievalAction, controllerComponents, view)
 
-  def viewAsString(): String = view(Some(srn), Some(schemeName))(fakeRequest, messages).toString
+  def viewAsString(): String = view(OptionalSchemeReferenceNumber(Some(srn)), Some(schemeName))(fakeRequest, messages).toString
 
   "StillNeedDetails Controller" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(Some(srn))(fakeRequest)
+      val result = controller().onPageLoad(OptionalSchemeReferenceNumber(Some(srn)))(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }

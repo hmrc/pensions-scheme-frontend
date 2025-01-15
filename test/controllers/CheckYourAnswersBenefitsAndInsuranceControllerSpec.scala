@@ -35,7 +35,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onPageLoad() is called" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -44,7 +44,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onPageLoad() is called with UpdateMode with less data" must {
       "return OK and the correct view" in {
-        val result = controller(updateData).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(updateData).onPageLoad(UpdateMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringWithLessData(UpdateMode)
@@ -53,20 +53,20 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
 
     "onPageLoad() is called with UpdateMode" must {
       "return OK and the correct view" in {
-        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(UpdateMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode, hideSaveAndContinueButton = true)
       }
 
       "NOT display submit button with return to tasklist when in update mode" in {
-        val result = controller(data).onPageLoad(UpdateMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(UpdateMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertNotRenderedById(asDocument(contentAsString(result)), "submit")
       }
 
       "display submit button with return to tasklist when in normal mode" in {
-        val result = controller(data).onPageLoad(NormalMode, None)(fakeRequest)
+        val result = controller(data).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
         status(result) mustBe OK
         assertRenderedById(asDocument(contentAsString(result)), "submit")
       }
@@ -79,7 +79,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   private val insuranceCompanyName = "Test company Name"
   private val policyNumber = "Test policy number"
 
-  private def postUrl(mode: Mode) = routes.PsaSchemeTaskListController.onPageLoad(mode, None)
+  private def postUrl(mode: Mode) = routes.PsaSchemeTaskListController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 
   private val insurerAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
   private val data = UserAnswers().schemeName(schemeName).investmentRegulated(true).occupationalPensionScheme(true).
@@ -112,7 +112,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq(policyNumber),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
@@ -125,7 +125,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
           insurerAddress.postcode.get,
           "Country of GB"),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompanyName)))))
     )
   )
@@ -137,14 +137,14 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__insurance_policy_number_cya_label", insuranceCompanyName),
         Seq("site.not_entered"),
         answerIsMessageKey = true,
-        Some(Link("site.add", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.add", routes.InsurancePolicyNumberController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__insurance_policy_number", insuranceCompanyName))))
       ),
       AnswerRow(
         messages("messages__addressFor", insuranceCompanyName),
         Seq("site.not_entered"),
         answerIsMessageKey = true,
-        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.add", routes.InsurerConfirmAddressController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__insurer_confirm_address", insuranceCompanyName)))))
     )
   )
@@ -177,21 +177,21 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
         messages("messages__type_of_benefits_cya_label", schemeName),
         Seq(s"messages__type_of_benefits__${TypeOfBenefits.Defined}"),
         answerIsMessageKey = true,
-        Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", controllers.routes.TypeOfBenefitsController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__type_of_benefits_change", schemeName))))
       ),
       AnswerRow(
         messages("securedBenefits.checkYourAnswersLabel", schemeName),
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", routes.BenefitsSecuredByInsuranceController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__securedBenefits", schemeName))))
       ),
       AnswerRow(
         messages("insuranceCompanyName.checkYourAnswersLabel"),
         Seq(insuranceCompanyName),
         answerIsMessageKey = false,
-        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), None).url,
+        Some(Link("site.change", routes.InsuranceCompanyNameController.onPageLoad(checkMode(mode), EmptyOptionalSchemeReferenceNumber).url,
           Some(messages("messages__visuallyhidden__insuranceCompanyName"))))
       )
     )
@@ -206,7 +206,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     schemeName = Some(schemeName),
     returnOverview = false,
     hideEditLinks = false,
-    srn = None,
+    srn = EmptyOptionalSchemeReferenceNumber,
     hideSaveAndContinueButton = hideSaveAndContinueButton,
     title = heading(Message("messages__theScheme").resolve, mode),
     h1 = heading(schemeName, mode)

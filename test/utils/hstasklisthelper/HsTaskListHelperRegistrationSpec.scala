@@ -54,7 +54,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val name = "scheme name 1"
       val userAnswers = userAnswersWithSchemeName.schemeName(name)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(Nil)
-      helper.taskList(userAnswers, None, None, None).h1 mustBe name
+      helper.taskList(userAnswers, None, EmptyOptionalSchemeReferenceNumber, None).h1 mustBe name
     }
   }
 
@@ -74,7 +74,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       val expectedAboutSection = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader)
       when(mockSpokeCreationService.getAboutSpokes(any(), any(), any(), any(), any())).thenReturn(expectedAboutSpoke)
 
-      helper.aboutSection(userAnswers, NormalMode, None) mustBe expectedAboutSection
+      helper.aboutSection(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe expectedAboutSection
     }
   }
 
@@ -102,7 +102,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         testEstablishersEntitySpoke, None)
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokes(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
-      helper.addEstablisherHeader(userAnswers, NormalMode, None).value mustBe expectedAddEstablisherHeader
+      helper.addEstablisherHeader(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber).value mustBe expectedAddEstablisherHeader
     }
   }
 
@@ -116,7 +116,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
         testTrusteeEntitySpoke, None)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokes(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      helper.addTrusteeHeader(userAnswers, NormalMode, None).value mustBe expectedAddTrusteesHeader
+      helper.addTrusteeHeader(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber).value mustBe expectedAddTrusteesHeader
     }
   }
 
@@ -133,7 +133,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
-      val result = helper.establishersSection(userAnswers, NormalMode, None)
+      val result = helper.establishersSection(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber)
 
       result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),
         SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 2 last 2")),
@@ -154,7 +154,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
       when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
 
-      val result = helper.trusteesSection(userAnswers, NormalMode, None)
+      val result = helper.trusteesSection(userAnswers, NormalMode, EmptyOptionalSchemeReferenceNumber)
 
       result mustBe Seq(SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         SchemeDetailsTaskListEntitySection(None, testIndividualEntitySpoke, Some("first 3 last 3")),
@@ -205,11 +205,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
       when(mockSpokeCreationService.getEstablisherIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
 
-      val result = helper.taskListEstablisher(userAnswers, None, None, 5)
+      val result = helper.taskListEstablisher(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 5)
 
       result mustBe SchemeDetailsTaskListEstablishers(
         h1 = "scheme",
-        srn = None,
+        srn = EmptyOptionalSchemeReferenceNumber,
         establisher = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 4, None))
@@ -223,11 +223,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
 
-      val result = helper.taskListEstablisher(userAnswers, None, None, 1)
+      val result = helper.taskListEstablisher(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 1)
 
       result mustBe SchemeDetailsTaskListEstablishers(
         h1 = "scheme",
-        srn = None,
+        srn = EmptyOptionalSchemeReferenceNumber,
         establisher = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 4, None))
@@ -242,7 +242,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
 
       val exception = intercept[RuntimeException] {
-        helper.taskListEstablisher(userAnswers, None, None, 2)
+        helper.taskListEstablisher(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 2)
       }
 
       assert(exception.getMessage == "INVALID-ESTABLISHER")
@@ -264,11 +264,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getTrusteePartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke)
       when(mockSpokeCreationService.getTrusteeIndividualSpokes(any(), any(), any(), any(), any())).thenReturn(testIndividualEntitySpoke)
 
-      val result = helper.taskListTrustee(userAnswers, None, None, 5)
+      val result = helper.taskListTrustee(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 5)
 
       result mustBe SchemeDetailsTaskListTrustees(
         h1 = "scheme",
-        srn = None,
+        srn = EmptyOptionalSchemeReferenceNumber,
         trustee = SchemeDetailsTaskListEntitySection(None, testPartnershipEntitySpoke, Some("test partnership 5")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 3, None))
@@ -282,11 +282,11 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
 
       when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
 
-      val result = helper.taskListTrustee(userAnswers, None, None, 1)
+      val result = helper.taskListTrustee(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 1)
 
       result mustBe SchemeDetailsTaskListTrustees(
         h1 = "scheme",
-        srn = None,
+        srn = EmptyOptionalSchemeReferenceNumber,
         trustee = SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 1")),
         allComplete = false,
         statsSection = Some(StatsSection(0, 3, None))
@@ -301,7 +301,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getTrusteeCompanySpokes(any(), any(), any(), any(), any())).thenReturn(testCompanyEntitySpoke)
 
       val exception = intercept[RuntimeException] {
-        helper.taskListTrustee(userAnswers, None, None, 2)
+        helper.taskListTrustee(userAnswers, None, EmptyOptionalSchemeReferenceNumber, 2)
       }
 
       assert(exception.getMessage == "INVALID-TRUSTEE")
@@ -322,10 +322,10 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getAddEstablisherHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testEstablishersEntitySpoke)
 
       val lastUpdatedDate = Instant.now(Clock.fixed(Instant.parse("2022-09-05T00:00:00Z"), ZoneOffset.UTC)).toEpochMilli
-      val result = helper.taskListToggleOff(userAnswers, None, None, Some(LastUpdated(lastUpdatedDate)))
+      val result = helper.taskListToggleOff(userAnswers, None, EmptyOptionalSchemeReferenceNumber, Some(LastUpdated(lastUpdatedDate)))
 
       result mustBe SchemeDetailsTaskList(
-        schemeName, None,
+        schemeName, EmptyOptionalSchemeReferenceNumber,
         beforeYouStart = SchemeDetailsTaskListEntitySection(None, expectedBeforeYouStartSpoke, beforeYouStartHeader),
         about = SchemeDetailsTaskListEntitySection(None, expectedAboutSpoke, aboutHeader),
         workingKnowledge = None,
@@ -364,7 +364,7 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       when(mockSpokeCreationService.getEstablisherPartnershipSpokes(any(), any(), any(), any(), any())).thenReturn(testPartnershipEntitySpoke2)
       when(mockSpokeCreationService.getAddTrusteeHeaderSpokesToggleOff(any(), any(), any(), any())).thenReturn(testTrusteeEntitySpoke)
 
-      val result = helper.taskListToggleOff(userAnswers, None, None, None)
+      val result = helper.taskListToggleOff(userAnswers, None, EmptyOptionalSchemeReferenceNumber, None)
 
       result.establishers mustBe Seq(
         SchemeDetailsTaskListEntitySection(None, testCompanyEntitySpoke, Some("test company 0")),

@@ -22,9 +22,10 @@ import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerAddressYearsId, PartnerNameId}
+
 import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +50,7 @@ class PartnerAddressYearsController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends AddressYearsController with
   Retrievals {
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { partnerDetails =>
@@ -62,7 +63,7 @@ class PartnerAddressYearsController @Inject()(
     new AddressYearsFormProvider()(Message("messages__partner_address_years__formError", partnerName))
 
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName: String,
-                        srn: Option[String]) = AddressYearsViewModel(
+                        srn: OptionalSchemeReferenceNumber) = AddressYearsViewModel(
     postCall = routes.PartnerAddressYearsController.onSubmit(mode, establisherIndex, partnerIndex, srn),
     title = Message("messages__partner_address_years__title", Message("messages__common__address_years__partner")),
     heading = Message("messages__partner_address_years__heading", partnerName),
@@ -71,7 +72,7 @@ class PartnerAddressYearsController @Inject()(
     srn = srn
   )
 
-  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { partnerDetails =>

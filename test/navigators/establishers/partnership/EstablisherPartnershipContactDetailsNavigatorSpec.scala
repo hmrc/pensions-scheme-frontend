@@ -24,6 +24,7 @@ import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
 import models._
+import navigators.establishers.partnership.EstablisherPartnershipAddressNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
@@ -43,46 +44,46 @@ class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Ma
     def navigationForNewEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(NormalMode, index, None)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherPartnership, None)
+    behave like navigatorWithRoutesForMode(NormalMode)(navigator, navigationForNewEstablisherPartnership, EmptyOptionalSchemeReferenceNumber)
   }
 
   "CheckMode" must {
     def checkModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(NormalMode, index, None)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(NormalMode, index, None))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber))
       )
 
-    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, None)
+    behave like navigatorWithRoutesForMode(CheckMode)(navigator, checkModeRoutes, EmptyOptionalSchemeReferenceNumber)
   }
 
   "UpdateMode" must {
     def navigationForUpdateModeEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(UpdateMode, index, srn)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(UpdateMode, index, srn))
+        row(PartnershipEmailId(index))(someStringValue, PartnershipPhoneNumberController.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)))
       )
 
-    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherPartnership, srn)
+    behave like navigatorWithRoutesForMode(UpdateMode)(navigator, navigationForUpdateModeEstablisherPartnership, OptionalSchemeReferenceNumber(srn))
   }
 
   "CheckUpdateMode" must {
     def navigationForCheckUpdateModeEstablisherPartnership: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Expected next page"),
-        row(PartnershipEmailId(index))(someStringValue, cyaPage(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(PartnershipEmailId(index))(someStringValue, anyMoreChangesPage(srn)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(UpdateMode, index, srn), Some(newEstablisherUserAnswers)),
-        row(PartnershipPhoneNumberId(index))(someStringValue, anyMoreChangesPage(srn))
+        row(PartnershipEmailId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(PartnershipEmailId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn))),
+        row(PartnershipPhoneNumberId(index))(someStringValue, cyaPage(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn)), Some(newEstablisherUserAnswers)),
+        row(PartnershipPhoneNumberId(index))(someStringValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(srn)))
       )
 
-    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeEstablisherPartnership, srn)
+    behave like navigatorWithRoutesForMode(CheckUpdateMode)(navigator, navigationForCheckUpdateModeEstablisherPartnership, OptionalSchemeReferenceNumber(srn))
   }
 
 }
@@ -90,10 +91,10 @@ class EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Ma
 object EstablisherPartnershipContactDetailsNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with Generators {
   private lazy val index            = 0
   private val newEstablisherUserAnswers = UserAnswers().set(IsEstablisherNewId(index))(true).asOpt.value
-  private val srn                   = Some("srn")
+  private val srn                   = Some(SchemeReferenceNumber("srn"))
 
-  private def cyaPage(mode: Mode, index: Index, srn: Option[String]): Call =
-    CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
+  private def cyaPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
+    CheckYourAnswersPartnershipContactDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
 
 }
 

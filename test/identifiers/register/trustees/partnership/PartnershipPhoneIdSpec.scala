@@ -18,7 +18,7 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import models.requests.DataRequest
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
+import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -39,7 +39,7 @@ class PartnershipPhoneIdSpec extends SpecBase {
       s"in ${mode.toString} mode" must {
         "return answers rows with change links" in {
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
-            UserAnswers().trusteePartnershipDetails(index, partnershipDetails).trusteePartnershipPhone(index, phone), Some(PsaId("A0000000")))
+            UserAnswers().trusteePartnershipDetails(Index(0), partnershipDetails).trusteePartnershipPhone(Index(0), phone), Some(PsaId("A0000000")))
 
 
           PartnershipPhoneId(0).row(onwardUrl, mode)(request, implicitly) must equal(Seq(

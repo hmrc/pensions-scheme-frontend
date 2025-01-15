@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerHasNINOId
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -35,7 +35,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
 
   "PartnerHasNINOController" must {
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -45,7 +45,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
       val validData = validPartnerData("hasNino" -> false)
 
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, None)(fakeRequest)
+      val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form = form.fill(value = false))
     }
@@ -53,7 +53,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -64,7 +64,7 @@ class PartnerHasNINOControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -83,7 +83,7 @@ object PartnerHasNINOControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val partnerIndex = Index(0)
   private val srn = None
-  private val postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, srn)
+  private val postCall = controllers.register.establishers.partnership.partner.routes.PartnerHasNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, OptionalSchemeReferenceNumber(srn))
   private val viewModel = CommonFormWithHintViewModel(
     postCall,
     title = Message("messages__hasNINO", Message("messages__thePartner")),

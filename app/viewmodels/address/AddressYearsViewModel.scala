@@ -16,7 +16,7 @@
 
 package viewmodels.address
 
-import models.AddressYears
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
@@ -28,5 +28,5 @@ case class AddressYearsViewModel(
                                   legend: Message,
                                   subHeading: Option[Message] = None,
                                   inputs: Seq[InputOption] = AddressYears.options,
-                                  srn: Option[String] = None
+                                  srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber
                                 )

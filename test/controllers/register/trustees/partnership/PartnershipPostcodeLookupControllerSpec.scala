@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.address.TolerantAddress
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
@@ -63,7 +63,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
         implicit app =>
           val request = addCSRFToken(FakeRequest())
           val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
-          val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+          val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
       }
@@ -84,7 +84,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with Sc
             val request = addCSRFToken(FakeRequest()
               .withFormUrlEncodedBody("postcode" -> validPostcode))
             val controller = app.injector.instanceOf[PartnershipPostcodeLookupController]
-            val result = controller.onSubmit(NormalMode, Index(0), None)(request)
+            val result = controller.onSubmit( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)(request)
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
         }
@@ -107,8 +107,8 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
   val address: TolerantAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel: PostcodeLookupViewModel = PostcodeLookupViewModel(
-    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, None),
-    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, None),
+    postCall = routes.PartnershipPostcodeLookupController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+    manualInputCall = routes.PartnershipAddressController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__partnershipPostcodeLookup__title"),
     heading = Message("messages__partnershipPostcodeLookup__heading", partnershipDetails.name),
     subHeading = Some(partnershipDetails.name)

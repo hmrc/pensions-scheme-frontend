@@ -20,7 +20,7 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import navigators.Navigator
@@ -102,7 +102,7 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
     )
   }
 
-  private def removePostCodeLookupAddress(mode: Mode, srn: Option[String],
+  private def removePostCodeLookupAddress(mode: Mode, srn: OptionalSchemeReferenceNumber,
                                           postCodeLookupId: TypedIdentifier[Seq[TolerantAddress]])
                                          (implicit request: DataRequest[AnyContent]): Future[JsValue] = {
     if (request.userAnswers.get(postCodeLookupId).nonEmpty) {

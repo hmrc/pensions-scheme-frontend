@@ -24,7 +24,7 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +49,7 @@ class PartnershipAddressYearsController @Inject()(
                                                  )(implicit val ec: ExecutionContext) extends AddressYearsController
   with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { partnershipDetails =>
@@ -58,7 +58,7 @@ class PartnershipAddressYearsController @Inject()(
         }
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { partnershipDetails =>
@@ -70,7 +70,7 @@ class PartnershipAddressYearsController @Inject()(
   private def form(partnershipName: String)(implicit request: DataRequest[AnyContent]) =
     new AddressYearsFormProvider()(Message("messages__partnershipAddressYears__error", partnershipName))
 
-  private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: Option[String]) = AddressYearsViewModel(
+  private def viewModel(mode: Mode, index: Index, partnershipName: String, srn: OptionalSchemeReferenceNumber) = AddressYearsViewModel(
     postCall = routes.PartnershipAddressYearsController.onSubmit(mode, index, srn),
     title = Message("messages__partnershipAddressYears__title", Message("messages__thePartnership")),
     heading = Message("messages__partnershipAddressYears__heading", partnershipName),

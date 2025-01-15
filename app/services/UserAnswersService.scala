@@ -29,6 +29,7 @@ import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId, CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId, TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
+import models.OptionalSchemeReferenceNumber.toSrn
 import models.address.Address
 import models.requests.DataRequest
 import models.{Mode, _}
@@ -42,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait UserAnswersService {
 
-  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
                                       (implicit fmt: Format[A],
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier,
@@ -54,7 +55,7 @@ trait UserAnswersService {
     }
   }
 
-  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A,
+  def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A,
                                        changeId: TypedIdentifier[Boolean])
                                       (implicit fmt: Format[A],
                                        ec: ExecutionContext,
@@ -74,7 +75,7 @@ trait UserAnswersService {
     }
   }
 
-  def remove[I <: TypedIdentifier[_]](mode: Mode, srn: Option[String], id: I)
+  def remove[I <: TypedIdentifier[_]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier,
@@ -85,18 +86,18 @@ trait UserAnswersService {
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
     }
 
-  def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
+  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                               request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
       case NormalMode | CheckMode => subscriptionCacheConnector.upsert(request.externalId, value)
       case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.upsert(_, value))
     }
 
-  private def lockAndCall(srn: Option[String], f: String => Future[JsValue])(implicit
+  private def lockAndCall(srn: OptionalSchemeReferenceNumber, f: String => Future[JsValue])(implicit
                                                                              ec: ExecutionContext,
                                                                              hc: HeaderCarrier,
                                                                              request: DataRequest[AnyContent]
-  ): Future[JsValue] = (srn, request.psaId) match {
+  ): Future[JsValue] = (toSrn(srn), request.psaId) match {
     case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
       case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
       case _ => Future(Json.obj())
@@ -106,7 +107,7 @@ trait UserAnswersService {
     case _ => Future.failed(MissingPsaId)
   }
 
-  def upsert(mode: Mode, srn: Option[String], value: JsValue,
+  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue,
              changeId: TypedIdentifier[Boolean])(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                  request: DataRequest[AnyContent]): Future[JsValue] =
     mode match {
@@ -180,12 +181,12 @@ class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val
                                                               override val appConfig: FrontendAppConfig
                                                              ) extends UserAnswersService {
 
-  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =
     save(mode, srn, id, value, EstablishersOrTrusteesChangedId)
 
-  override def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
+  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                                        request: DataRequest[AnyContent])
   : Future[JsValue] =
     upsert(mode, srn, value, EstablishersOrTrusteesChangedId)
@@ -198,12 +199,12 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
                                                 override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                                 override val appConfig: FrontendAppConfig
                                                ) extends UserAnswersService {
-  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: Option[String], id: I, value: A)
+  override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
                                                (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
                                                 request: DataRequest[AnyContent]): Future[JsValue] =
     save(mode, srn, id, value, InsuranceDetailsChangedId)
 
-  override def upsert(mode: Mode, srn: Option[String], value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
+  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
                                                                        request: DataRequest[AnyContent])
   : Future[JsValue] =
     upsert(mode, srn, value, InsuranceDetailsChangedId)

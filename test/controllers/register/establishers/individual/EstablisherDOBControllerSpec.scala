@@ -23,7 +23,7 @@ import forms.DOBFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
 import models.person.PersonName
-import models.{Index, Mode, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -58,9 +58,9 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
 
   private val postCall = routes.EstablisherDOBController.onSubmit _
 
-  private def viewModel(mode: Mode, index: Index, srn: Option[String], token: String): DateOfBirthViewModel =
+  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, token: String): DateOfBirthViewModel =
     DateOfBirthViewModel(
-      postCall = postCall(mode, index, srn),
+      postCall = postCall(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
       srn = srn,
       token = token
     )
@@ -68,9 +68,9 @@ class EstablisherDOBControllerSpec extends ControllerSpecBase with DateOfBirthCo
   "EstablisherDOB Controller" must {
 
     behave like dateOfBirthController(
-      get = data => controller(data).onPageLoad(NormalMode, 0, None),
-      post = data => controller(data).onSubmit(NormalMode, 0, None),
-      viewModel = viewModel(NormalMode, index, None, Message("messages__theIndividual")),
+      get = data => controller(data).onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber),
+      post = data => controller(data).onSubmit(NormalMode, 0, EmptyOptionalSchemeReferenceNumber),
+      viewModel = viewModel( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber, Message("messages__theIndividual")),
       mode = NormalMode,
       requiredData = getMandatoryEstablisher,
       validData = validData,

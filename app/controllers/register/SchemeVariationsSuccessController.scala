@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import connectors.UpdateSchemeCacheConnector
 import controllers.Retrievals
 import controllers.actions._
+
 import javax.inject.Inject
-import models.UpdateMode
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,12 +41,12 @@ class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController
   with I18nSupport with Retrievals {
 
-  def onPageLoad(srn: String): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, Some(srn))).async {
+  def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, OptionalSchemeReferenceNumber(Some(srn)))).async {
     implicit request =>
       val schemeName = existingSchemeName
       cacheConnector.removeAll(srn).map { _ =>
         Ok(
-          view(schemeName, Some(srn)
+          view(schemeName,  OptionalSchemeReferenceNumber(Some(srn))
           )
         )
       }

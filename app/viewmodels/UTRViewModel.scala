@@ -17,11 +17,12 @@
 package viewmodels
 
 import play.api.mvc.Call
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class UTRViewModel(
                          postCall: Call,
                          title: Message,
                          heading: Message,
                          hint: Message,
-                         srn: Option[String] = None
+                         srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber
                        )

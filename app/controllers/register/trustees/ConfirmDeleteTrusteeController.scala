@@ -41,6 +41,7 @@ import utils.annotations.Trustees
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.SchemeReferenceNumber
 
 class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -57,7 +58,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController
   with I18nSupport with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
@@ -92,7 +93,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
     }
   }
 
-  def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: Option[String]): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index, trusteeKind: TrusteeKind, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeKind match {
@@ -107,7 +108,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
             }
           case Partnership =>
             PartnershipDetailsId(index).retrieve.map { partnershipDetails =>
-              updateTrusteeKind(partnershipDetails.name, trusteeKind, index, None, Some(partnershipDetails), None,
+              updateTrusteeKind(partnershipDetails.name, trusteeKind, trusteeIndex = index, None, Some(partnershipDetails), None,
                 srn, mode)
             }
         }
@@ -119,7 +120,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 companyDetails: Option[CompanyDetails],
                                 partnershipDetails: Option[PartnershipDetails],
                                 trusteeDetails: Option[PersonName],
-                                srn: Option[String],
+                                srn: OptionalSchemeReferenceNumber,
                                 mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form(name).bindFromRequest().fold(
       (formWithErrors: Form[_]) =>

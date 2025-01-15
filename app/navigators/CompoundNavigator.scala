@@ -18,7 +18,7 @@ package navigators
 
 import com.google.inject.Inject
 import identifiers.Identifier
-import models.Mode
+import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.IdentifiedRequest
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends 
   override def nextPageOptional(id: Identifier,
                                 mode: Mode,
                                 userAnswers: UserAnswers,
-                                srn: Option[String])
+                                srn: OptionalSchemeReferenceNumber)
                                (implicit ex: IdentifiedRequest,
                                 ec: ExecutionContext, hc: HeaderCarrier): Option[Call] = {
     navigators.asScala.foldRight(Option.empty[Call]) {

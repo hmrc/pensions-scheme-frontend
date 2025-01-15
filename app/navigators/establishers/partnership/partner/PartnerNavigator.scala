@@ -37,9 +37,9 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
   import PartnerNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, None), from.id)
+    navigateTo(normalAndUpdateModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: Option[String])
+  private def normalAndUpdateModeRoutes(mode: Mode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case AddPartnersId(estIndex) => addPartnerRoutes(mode, ua, estIndex, srn)
     case PartnerNameId(estIndex, partnerIndex) => dobPage(mode, estIndex, partnerIndex, srn)
@@ -68,7 +68,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case OtherPartnersId(_) => anyMoreChangesPage(srn)
   }
 
-  private def addPartnerRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, srn: Option[String]): Call = {
+  private def addPartnerRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, srn: OptionalSchemeReferenceNumber): Call = {
     (mode, ua.get(AddPartnersId(estIndex))) match {
       case (UpdateMode, Some(false)) =>
         controllers.routes.AnyMoreChangesController.onPageLoad(srn)
@@ -83,9 +83,9 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, None), from.id)
+    navigateTo(checkModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: Option[String])
+  private def checkModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case PartnerNameId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerDOBId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
@@ -108,13 +108,13 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerPhoneId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
   }
 
-  override protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(normalAndUpdateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] =
+  override protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(checkUpdateModeRoute(CheckUpdateMode, from.userAnswers, srn), from.id)
 
-  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: Option[String])
+  private def checkUpdateModeRoute(mode: CheckUpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case PartnerNameId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerDOBId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
@@ -156,76 +156,76 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 
 object PartnerNavigator {
 
-  def taskListPage(mode: Mode, srn: Option[String]): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+  def taskListPage(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
 
   private def isNewPartner(estIndex: Int, partnerIndex: Int, ua: UserAnswers): Boolean =
     ua.get(IsNewPartnerId(estIndex, partnerIndex)).getOrElse(false)
 
-  private def isThisPaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def isThisPaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(estIndex, partnerIndex, srn)
 
-  private def addPartnerPage(mode: Mode, estIndex: Int, srn: Option[String]): Call =
+  private def addPartnerPage(mode: Mode, estIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(mode, estIndex, srn)
 
-  private def dobPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def dobPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerDOBController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def hasNinoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def hasNinoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerHasNINOController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def ninoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def ninoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerEnterNINOController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def whyNoNinoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def whyNoNinoPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerNoNINOReasonController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def hasUtrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def hasUtrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerHasUTRController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def utrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def utrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerEnterUTRController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def whyNoUtrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def whyNoUtrPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerNoUTRReasonController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def postcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def postcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressPostcodeLookupController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def addressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def addressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressListController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def paAddressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def paAddressListPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerPreviousAddressListController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def addressYearsPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def addressYearsPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerAddressYearsController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def phonePage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def phonePage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerPhoneController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def partnerAddressYearsRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int,
-                                        srn: Option[String]): Call =
+                                        srn: OptionalSchemeReferenceNumber): Call =
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => emailPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
       case _ => SessionExpiredController.onPageLoad
     }
 
-  private def paPostcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def paPostcodeLookupPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerPreviousAddressPostcodeLookupController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
-  private def emailPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def emailPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerEmailController.onPageLoad(mode, estIndex, partnerIndex, srn)
 
   private def partnerAddressYearsEditRoutes(mode: Mode, ua: UserAnswers, estIndex: Int, partnerIndex: Int,
-                                            srn: Option[String]): Call =
+                                            srn: OptionalSchemeReferenceNumber): Call =
     ua.get(partner.PartnerAddressYearsId(estIndex, partnerIndex)) match {
       case Some(AddressYears.OverAYear) => cyaPage(mode, estIndex, partnerIndex, srn)
       case Some(AddressYears.UnderAYear) => paPostcodeLookupPage(mode, estIndex, partnerIndex, srn)
       case _ => SessionExpiredController.onPageLoad
     }
 
-  private def cyaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: Option[String]): Call =
+  private def cyaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     CheckYourAnswersController.onPageLoad(journeyMode(mode), estIndex, partnerIndex, srn)
 
 

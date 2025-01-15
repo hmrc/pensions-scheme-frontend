@@ -25,7 +25,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorNameId}
 import models.address.Address
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
@@ -47,7 +47,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
 
-  private val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+  private val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)
   private val director = PersonName("first", "last")
 
   private val countryOptions = new CountryOptions(
@@ -77,7 +77,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
     countryOptions.options,
     title = Message("messages__common__confirmAddress__h1", Message("messages__theDirector")),
     heading = Message("messages__common__confirmAddress__h1", director.fullName),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
@@ -87,13 +87,13 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   "Address Controller" must {
 
     "render manualAddress from GET request" in {
-      val postCall = routes.DirectorAddressController.onSubmit(NormalMode, Index(establisherIndex), Index(directorIndex), None)
+      val postCall = routes.DirectorAddressController.onSubmit( NormalMode, Index(establisherIndex), Index(directorIndex), EmptyOptionalSchemeReferenceNumber)
       running(_.overrides(modules(retrieval) ++
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorAddressController]
 
-          val result = controller.onPageLoad(NormalMode, establisherIndex, directorIndex, None)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           status(result) must be(OK)
 
@@ -108,7 +108,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
 
     "redirect to next page on POST request" which {
       "saves director address" in {
-        val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, None)
+        val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)
         running(_.overrides(modules(retrieval) ++
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
@@ -123,7 +123,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
 
           val controller = app.injector.instanceOf[DirectorAddressController]
 
-          val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardCall.url
@@ -149,7 +149,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
 
         val controller = app.injector.instanceOf[DirectorAddressController]
 
-        val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         fakeAuditService.reset()
 

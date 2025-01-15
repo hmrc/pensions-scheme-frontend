@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -40,7 +40,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
-          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -54,7 +54,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+          val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -72,11 +72,11 @@ object DirectorEnterUTRControllerSpec extends DirectorEnterUTRControllerSpec {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, srn),
+    routes.DirectorEnterUTRController.onSubmit(NormalMode, establisherIndex, directorIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterUTR", Message("messages__theDirector")),
     heading = Message("messages__enterUTR", "first last"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
   private val view = injector.instanceOf[utr]

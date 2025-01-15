@@ -18,7 +18,7 @@ package navigators
 
 import identifiers.Identifier
 import models.requests.{AuthenticatedRequest, IdentifiedRequest}
-import models.{Mode, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
@@ -35,7 +35,7 @@ class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 
   def navigator(call: Option[Call]): Navigator =
     new Navigator {
-      override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: Option[String])
+      override def nextPageOptional(id: Identifier, mode: Mode, userAnswers: UserAnswers, srn: OptionalSchemeReferenceNumber)
                                    (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Option[Call] =
         call
     }
@@ -59,7 +59,7 @@ class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 
       val compoundNavigator = new CompoundNavigator(navigators.asJava)
 
-      val result = compoundNavigator.nextPage(TestIdentifier, NormalMode, UserAnswers(), None)
+      val result = compoundNavigator.nextPage(TestIdentifier, NormalMode, UserAnswers(), EmptyOptionalSchemeReferenceNumber)
 
       result mustEqual Call("GET", "www.example.com/1")
     }

@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.EmailFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -61,11 +61,11 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     view(
       form,
       CommonFormWithHintViewModel(
-        routes.PartnerEmailController.onSubmit(NormalMode, firstIndex, firstIndex, None),
+        routes.PartnerEmailController.onSubmit(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber),
         Message("messages__enterEmail", Message("messages__thePartner")),
         Message("messages__enterEmail", "first last"),
         Some(Message("messages__contact_details__hint", "first last")),
-        None
+        EmptyOptionalSchemeReferenceNumber
       ),
       None
     )(fakeRequest, messages).toString
@@ -74,7 +74,7 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, None)(fakeRequest)
+        val result = controller().onPageLoad(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -84,7 +84,7 @@ class PartnerEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
     "on a POST" must {
       "redirect to relevant page" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("email", "test@test.com"))
-        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, None)(postRequest)
+        val result = controller().onSubmit(NormalMode, firstIndex, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

@@ -23,7 +23,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.mockito._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -102,8 +102,8 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     view(
       form,
       PostcodeLookupViewModel(
-        routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, None, index),
-        routes.CompanyPreviousAddressController.onPageLoad(NormalMode, None, index),
+        routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index),
+        routes.CompanyPreviousAddressController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index),
         Message("messages__establisherPreviousPostCode__title"),
         Message("messages__establisherPreviousPostCode__h1", companyName),
         Some(companyName)
@@ -114,7 +114,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   "CompanyPreviousAddressPostcodeLookup Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -123,7 +123,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     "not populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString()
     }
@@ -132,7 +132,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       val postRequest = fakeRequest.withFormUrlEncodedBody(("postcode", testAnswer))
       when(fakeAddressLookupConnector.addressLookupByPostCode(ArgumentMatchers.eq(testAnswer))(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Seq(fakeAddress(testAnswer))))
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -142,14 +142,14 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller().onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, None, index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -157,7 +157,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, None, index)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
 import models.person.PersonName
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -45,7 +45,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
   import DirectorNameControllerSpec._
 
   private val viewmodel = CommonFormWithHintViewModel(
-    routes.DirectorNameController.onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None),
+    routes.DirectorNameController.onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__directorName__title"),
     heading = Message("messages__directorName__heading"))
 
@@ -77,7 +77,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
   "DirectorName Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -99,7 +99,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PersonName("First Name", "Last Name")))
     }
@@ -116,7 +116,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -125,7 +125,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -147,7 +147,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "01", "lastName" -> "?&^%$£"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -169,21 +169,21 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
       val boundForm = form.bind(Map("firstName" -> "tencharactertencharactertencharacter", "lastName" -> "tencharactertencharactertencharacter"))
 
-      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe BAD_REQUEST
 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -201,9 +201,9 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex, firstDirectorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
       status(result) mustBe SEE_OTHER
-      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(None), eqTo(validData))(any(), any(), any())
+      verify(mockUserAnswersService, times(1)).upsert(eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber), eqTo(validData))(any(), any(), any())
     }
   }
 }

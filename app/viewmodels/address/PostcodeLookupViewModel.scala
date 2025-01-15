@@ -18,6 +18,7 @@ package viewmodels.address
 
 import play.api.mvc.Call
 import viewmodels.Message
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class PostcodeLookupViewModel(
                                     postCall: Call,
@@ -27,5 +28,5 @@ case class PostcodeLookupViewModel(
                                     subHeading: Option[Message] = None,
                                     enterPostcode: Message = Message
                                     ("messages__common__postcode_lookup__enter_postcode"),
-                                    srn: Option[String] = None
+                                    srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber
                                   )

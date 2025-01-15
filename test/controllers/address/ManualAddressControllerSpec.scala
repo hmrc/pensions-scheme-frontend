@@ -125,7 +125,7 @@ class ManualAddressControllerSpec extends SpecBase with Matchers with MockitoSug
     countryOptions,
     "title",
     "heading",
-    Some("secondary.header")
+    OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("secondary.header")))
   )
 
   "get" must {

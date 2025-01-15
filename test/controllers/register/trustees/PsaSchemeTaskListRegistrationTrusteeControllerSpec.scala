@@ -19,7 +19,7 @@ package controllers.register.trustees
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.SchemeNameId
-import models.{EntitySpoke, NormalMode, TaskListLink}
+import models.{EmptyOptionalSchemeReferenceNumber, EntitySpoke, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -44,7 +44,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .thenReturn(schemeDetailsTaskListTrustees)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(schemeDetailsTaskListTrustees)
@@ -55,7 +55,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .thenReturn(schemeDetailsTaskListTrustees)
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, Some("srn"))(fakeRequest)
+        .onPageLoad(NormalMode, 0, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
     }
@@ -65,7 +65,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
         .thenThrow(new RuntimeException("INVALID-TRUSTEE"))
 
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.register.routes.MemberNotFoundController.onTrusteesPageLoad().url)
@@ -73,7 +73,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 
     "redirect to manage pensions scheme overview if scheme name is not present" in {
       val result = controller(new FakeDataRetrievalAction(Some(userAnswersWithoutSchemeName.json)))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -81,7 +81,7 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 
     "redirect to manage pensions scheme overview if user answers are not present" in {
       val result = controller(new FakeDataRetrievalAction(None))
-        .onPageLoad(NormalMode, 0, None)(fakeRequest)
+        .onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
@@ -113,7 +113,7 @@ object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskL
   private val schemeDetailsTaskListTrustees: SchemeDetailsTaskListTrustees =
     SchemeDetailsTaskListTrustees(
       h1 = h1,
-      srn = srn,
+      srn = EmptyOptionalSchemeReferenceNumber,
       trustee = entitySection,
       allComplete = true,
       statsSection = Some(StatsSection(
@@ -144,7 +144,7 @@ object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskL
     view(
       taskSections,
       schemeName,
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None).url
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber).url
     )(fakeRequest, messages).toString
 }
 

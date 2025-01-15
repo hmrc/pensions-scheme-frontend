@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import forms.UTRFormProvider
-import models.{CheckUpdateMode, Index, NormalMode}
+import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -39,7 +39,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
     running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterUTRController]
-        val result = controller.onPageLoad(CheckUpdateMode, srn, index = 0)(fakeRequest)
+        val result = controller.onPageLoad(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
     }
@@ -53,7 +53,7 @@ class CompanyEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       app =>
         val controller = app.injector.instanceOf[CompanyEnterUTRController]
         val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))
-        val result = controller.onSubmit(NormalMode, None, index = 0)(postRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(postRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -65,18 +65,18 @@ object CompanyEnterUTRControllerSpec extends CompanyEnterUTRControllerSpec {
 
   val form = new UTRFormProvider()()
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   private val view = injector.instanceOf[utr]
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = UTRViewModel(
-    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, srn, firstIndex),
+    routes.CompanyEnterUTRController.onSubmit(CheckUpdateMode, OptionalSchemeReferenceNumber(srn), firstIndex),
     title = Message("messages__enterUTR", Message("messages__theCompany").resolve),
     heading = Message("messages__enterUTR", "test company name"),
     hint = Message("messages_utr__hint"),
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 }
 

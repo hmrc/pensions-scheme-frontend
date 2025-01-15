@@ -21,7 +21,7 @@
     panel: components.panel
 )
 
-@(schemeName:Option[String], srn:Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName:Option[String], srn: OptionalSchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
 
 @printThisPageLink = {<a id="print-this-page-link" class="govuk-link" href="#">@messages("site.printThisPage")</a>}
 

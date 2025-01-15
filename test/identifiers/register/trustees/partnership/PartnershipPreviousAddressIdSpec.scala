@@ -20,7 +20,7 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
 import models.requests.DataRequest
-import models.{Link, NormalMode, PartnershipDetails, UpdateMode}
+import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -75,7 +75,7 @@ class PartnershipPreviousAddressIdSpec extends SpecBase {
         }
 
         "return answer row with add link if there is no previous address and `is this previous address` is no" in {
-          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteePartnershipDetails(index, trusteeName).
+          val answersWithNoIsThisPreviousAddress = UserAnswers().trusteePartnershipDetails(Index(0), trusteeName).
             set(PartnershipConfirmPreviousAddressId(index))(value = false).asOpt.value
           val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answersWithNoIsThisPreviousAddress, Some(PsaId("A0000000")))
 
@@ -116,5 +116,5 @@ object PartnershipPreviousAddressIdSpec extends OptionValues {
 
   private val onwardUrl = "onwardUrl"
 
-  private val answers: UserAnswers = UserAnswers().trusteePartnershipDetails(index, trusteeName).set(PartnershipPreviousAddressId(index))(address).asOpt.value
+  private val answers: UserAnswers = UserAnswers().trusteePartnershipDetails(Index(0), trusteeName).set(PartnershipPreviousAddressId(index))(address).asOpt.value
 }

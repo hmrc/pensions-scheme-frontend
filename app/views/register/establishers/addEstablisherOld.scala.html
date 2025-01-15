@@ -34,7 +34,7 @@
     mode: Mode,
     establishers: Seq[Establisher[_]],
     schemeName: Option[String],
-    srn: Option[String]
+    srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {

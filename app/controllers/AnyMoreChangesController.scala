@@ -16,15 +16,11 @@
 
 package controllers
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
 import identifiers.AnyMoreChangesId
-import javax.inject.Inject
-import models.UpdateMode
+import models.{OptionalSchemeReferenceNumber, UpdateMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Variations
 import views.html.anyMoreChanges
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
@@ -51,13 +50,13 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
   private val form: Form[Boolean] = formProvider()
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
 
-  def onPageLoad(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
+  def onPageLoad(srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
     allowAccess(srn) andThen requireData).async {
     implicit request =>
       Future.successful(Ok(view(form, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn)))
   }
 
-  def onSubmit(srn: Option[String]): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
+  def onSubmit(srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
     requireData).async {
     implicit request =>
       form.bindFromRequest().fold(

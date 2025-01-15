@@ -41,7 +41,7 @@
     postCall: Call,
     viewOnly: Boolean,
     mode: Mode,
-    srn: Option[String]
+    srn: OptionalSchemeReferenceNumber
 )(implicit request: Request[_], messages: Messages)
 
 @directors = @{ completeDirectors ++ incompleteDirectors }

@@ -21,7 +21,9 @@ import controllers.actions._
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
@@ -52,7 +54,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
       view
     )
 
-  val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, None)
+  val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)
 
   def viewAsString(form: Form[_] = form): String = view(
     form,
@@ -60,7 +62,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
     firstIndex,
     None,
     submitUrl,
-    None
+    EmptyOptionalSchemeReferenceNumber
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
@@ -77,7 +79,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
   "TrusteeDetails Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -86,7 +88,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PartnershipDetails("test partnership name")))
     }
@@ -94,7 +96,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("partnershipName", "test partnership name"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -104,14 +106,14 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -119,7 +121,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

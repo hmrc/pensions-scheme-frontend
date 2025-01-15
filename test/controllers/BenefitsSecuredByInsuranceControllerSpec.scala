@@ -21,14 +21,13 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
-import models.NormalMode
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.benefitsSecuredByInsurance
 
@@ -40,11 +39,11 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
     SchemeNameId.toString -> "Test Scheme Name")).benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
-  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, None)
+  private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[benefitsSecuredByInsurance]
   private def viewAsString(form: Form[_]): Form[_] => String = form =>
-    view(form, NormalMode, Some("Test Scheme Name"), postCall, None)(fakeRequest, messages).toString()
+    view(form, NormalMode, Some("Test Scheme Name"), postCall, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString()
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -67,14 +66,14 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
     )
 
   private def onPageLoadAction(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, None)
+    controller(dataRetrievalAction, authAction).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def onSubmitAction(navigator: Navigator)(dataRetrievalAction: DataRetrievalAction,
                                                                              authAction: AuthAction): Action[AnyContent] =
-    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, None)
+    controller(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private def saveAction(cache: UserAnswersService): Action[AnyContent] =
-    controller(cache = cache).onSubmit(NormalMode, None)
+    controller(cache = cache).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   "Benefits secured by insurance Controller" when {
 

@@ -18,12 +18,11 @@ package controllers
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.data.Form
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.anyMoreChanges
 
@@ -35,7 +34,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   def date: String = LocalDate.now().plusDays(28).format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
-  val srn = Some("123")
+  val srn = Some(SchemeReferenceNumber("123"))
 
   def dateToCompleteDeclaration: String = LocalDate.now().plusDays(28).
     format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
@@ -56,12 +55,12 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[_] = form) = view(form, schemeName, dateToCompleteDeclaration,
-    postCall(srn), srn)(fakeRequest, messages).toString
+    postCall(OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn))(fakeRequest, messages).toString
 
   "AnyMoreChangesController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(srn)(fakeRequest)
+      val result = controller().onPageLoad(OptionalSchemeReferenceNumber(srn))(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -70,7 +69,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(srn)(postRequest)
+      val result = controller().onSubmit(OptionalSchemeReferenceNumber(srn))(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -80,7 +79,7 @@ class AnyMoreChangesControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(srn)(postRequest)
+      val result = controller().onSubmit(OptionalSchemeReferenceNumber(srn))(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

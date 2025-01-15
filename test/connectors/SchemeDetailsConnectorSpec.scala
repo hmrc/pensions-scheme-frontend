@@ -17,6 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.details._
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -231,10 +232,10 @@ object SchemeDetailsConnectorSpec {
   private val psaId = "0000"
   private val pspId = "0000"
   private val schemeIdType = "pstr"
-  private val idNumber = "00000000AA"
+  private val idNumber = SchemeReferenceNumber("00000000AA")
   private val schemeDetailsUrl = s"/pensions-scheme/scheme"
   private val pspSchemeDetailsUrl = s"/pensions-scheme/psp-scheme"
-  val mockSchemeDetails: SchemeDetails = SchemeDetails(Some("S9000000000"), Some("00000000AA"), "Open", "Benefits Scheme",
+  val mockSchemeDetails: SchemeDetails = SchemeDetails(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S9000000000"))), Some("00000000AA"), "Open", "Benefits Scheme",
     isMasterTrust = true, typeOfScheme = None, otherTypeOfScheme = None, hasMoreThanTenTrustees = false,
     members = SchemeMemberNumbers("0", "0"), isInvestmentRegulated = false, isOccupational = false, benefits = "AD",
     country = "GB", areBenefitsSecured = false, insuranceCompany = None)

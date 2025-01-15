@@ -22,7 +22,7 @@ import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyEnterCRNId, CompanyNoCRNReasonId, HasCompanyCRNId}
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -44,7 +44,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
   private val srn = None
 
   private val viewModel = CommonFormWithHintViewModel(
-    controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, index, srn),
+    controllers.register.trustees.company.routes.HasCompanyCRNController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__hasCRN", Message("messages__theCompany").resolve),
     heading = Message("messages__hasCRN", "test company name"),
     hint = Some(Message("messages__hasCompanyNumber__p1"))
@@ -88,7 +88,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
   "HasCompanyCRNController" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, index, None)(fakeRequest)
+      val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -97,7 +97,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
     "redirect to the next page when valid data is submitted for true" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -109,7 +109,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller().onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -118,7 +118,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
     "if user changes answer from yes to no then clean up should take place on crn number" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
-      val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = true)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = true)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(HasCompanyCRNId(index), false)
@@ -128,7 +128,7 @@ class HasCompanyCRNControllerSpec extends ControllerSpecBase with MockitoSugar w
     "if user changes answer from no to yes then clean up should take place on no crn reason" in {
       FakeUserAnswersService.reset()
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = false)).onSubmit(NormalMode, index, None)(postRequest)
+      val result = controller(getTrusteeCompanyPlusCrn(hasCrnValue = false)).onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersService.verify(HasCompanyCRNId(index), true)

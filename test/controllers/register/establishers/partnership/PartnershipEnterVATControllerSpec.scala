@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
-import models.{CheckUpdateMode, Index}
+import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -40,7 +40,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
       running(_.overrides(modules(getMandatoryEstablisherPartnership):_*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
-          val result = controller.onPageLoad(CheckUpdateMode, index = 0, srn)(fakeRequest)
+          val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
           status(result) mustBe OK
           contentAsString(result) mustBe view(form, viewModel, Some("pension scheme details"))(fakeRequest, messages).toString()
       }
@@ -54,7 +54,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("vat", "123456789"))
-          val result = controller.onSubmit(CheckUpdateMode, index = 0, None)(postRequest)
+          val result = controller.onSubmit(CheckUpdateMode, index = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -66,17 +66,17 @@ object PartnershipEnterVATControllerSpec extends PartnershipEnterVATControllerSp
   private val partnershipName = "test partnership name"
   val form = new EnterVATFormProvider()(partnershipName)
   val firstIndex = Index(0)
-  val srn = Some("S123")
+  val srn: OptionalSchemeReferenceNumber = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S123")))
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel = EnterVATViewModel(
-    routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, srn),
+    routes.PartnershipEnterVATController.onSubmit(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn)),
     title = Message("messages__enterVAT", Message("messages__thePartnership").resolve),
     heading = Message("messages__enterVAT", partnershipName),
     hint = Message("messages__enterVAT__hint", partnershipName),
     subHeading = None,
-    srn = srn
+    srn = OptionalSchemeReferenceNumber(srn)
   )
 
   private val view = injector.instanceOf[enterVATView]

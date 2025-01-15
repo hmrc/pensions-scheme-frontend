@@ -62,7 +62,7 @@ class CompanyHasBeenTradingIdSpec extends SpecBase {
   }
 
   "cya" when {
-    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(index, flag = true), Some(PsaId("A0000000")))
+    val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", answers.isEstablisherNew(Index(0), flag = true), Some(PsaId("A0000000")))
 
     Seq(NormalMode, UpdateMode).foreach { mode =>
       s"in ${mode.toString} mode" must {
@@ -102,6 +102,6 @@ object CompanyHasBeenTradingIdSpec extends SpecBase {
     .value
 
   private val onwardUrl = "onwardUrl"
-  private val answers = UserAnswers().establisherCompanyDetails(index, companyDetails).
-    establisherCompanyTradingTime(index, hasBeenTrading = false)
+  private val answers = UserAnswers().establisherCompanyDetails(Index(0), companyDetails).
+    establisherCompanyTradingTime(Index(0), hasBeenTrading = false)
 }

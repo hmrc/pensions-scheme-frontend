@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.NormalMode
+import models.{NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import utils.UserAnswers
 
 class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
@@ -50,7 +50,7 @@ class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCac
   private def checkYourAnswers: Option[NavigateTo] =
     NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
 
-  protected def updateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: Option[String]): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
 }

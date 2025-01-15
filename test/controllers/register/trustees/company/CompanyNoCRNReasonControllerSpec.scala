@@ -19,7 +19,7 @@ package controllers.register.trustees.company
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.register.NoCompanyNumberFormProvider
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind
@@ -51,7 +51,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
           implicit app =>
             val request = addCSRFToken(FakeRequest())
             val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-            val result = controller.onPageLoad(NormalMode, firstIndex, None)(request)
+            val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
             status(result) mustBe OK
             contentAsString(result) mustBe view(form, viewModel, None)(request, messages).toString()
@@ -70,7 +70,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
           implicit app =>
             val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "blaa")))
             val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -89,7 +89,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
           implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";][")))
           val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-          val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+          val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe BAD_REQUEST
           contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
@@ -106,7 +106,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
           implicit app =>
             val request = addCSRFToken(FakeRequest())
             val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
             status(result) mustBe BAD_REQUEST
             contentAsString(result) must include(messages("messages__error__no_company_number", companyName))
@@ -124,7 +124,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
         implicit app =>
           val request = addCSRFToken(FakeRequest().withFormUrlEncodedBody(("reason", reason)))
           val controller = app.injector.instanceOf[CompanyNoCRNReasonController]
-          val result = controller.onSubmit(NormalMode, firstIndex, None)(request)
+          val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe BAD_REQUEST
           contentAsString(result) must include(messages("messages__error__no_company_number_maxlength"))
@@ -145,10 +145,10 @@ object CompanyNoCRNReasonControllerSpec extends CompanyNoCRNReasonControllerSpec
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
   val viewModel: ReasonViewModel = ReasonViewModel(
-    postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, None),
+    postCall = controllers.register.trustees.company.routes.CompanyNoCRNReasonController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
     title = Message("messages__whyNoCRN", Message("messages__theCompany").resolve),
     heading = Message("messages__whyNoCRN", "test company name"),
-    srn = None
+    srn = EmptyOptionalSchemeReferenceNumber
   )
 
 }

@@ -18,6 +18,8 @@ package controllers
 
 import connectors.PensionAdministratorConnector
 import controllers.actions._
+import models.EmptyOptionalSchemeReferenceNumber
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,7 +38,7 @@ class BeforeYouStartController @Inject()(override val messagesApi: MessagesApi,
                                         )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(None)).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber)).async {
     implicit request =>
       pensionAdministratorConnector.getPSAName.flatMap { psaName =>
         Future.successful(Ok(view(psaName)))

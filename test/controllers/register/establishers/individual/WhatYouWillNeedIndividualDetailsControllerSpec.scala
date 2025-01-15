@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.individual.EstablisherNameId
 import models.person.PersonName
-import models.{Index, Mode, NormalMode, UpdateMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, UpdateMode}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
@@ -51,15 +51,15 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
     )
 
   def viewAsString(mode: Mode): String = {
-    val href = EstablisherDOBController.onPageLoad(mode, 0, None)
-    view(None, href, None, establisherName)(fakeRequest, messages).toString
+    val href = EstablisherDOBController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)
+    view(None, href, EmptyOptionalSchemeReferenceNumber, establisherName)(fakeRequest, messages).toString
   }
 
   "WhatYouWillNeedIndividualDetailsControllerSpec" when {
 
     "in Subscription journey" must {
       "on a GET it must return OK and the correct view" in {
-        val result = controller().onPageLoad(NormalMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(NormalMode)
@@ -68,7 +68,7 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
 
     "in Variations journey" must {
       "on a GET it must return OK and the correct view" in {
-        val result = controller().onPageLoad(UpdateMode, Index(0), None)(fakeRequest)
+        val result = controller().onPageLoad(UpdateMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(UpdateMode)

@@ -24,7 +24,7 @@ import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.TolerantAddress
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -48,7 +48,7 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0), None)
+  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)
 
 
   private val view = injector.instanceOf[postcodeLookup]
@@ -87,14 +87,14 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
           val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
 
           lazy val viewModel = PostcodeLookupViewModel(
-            postCall = controller.postCall(NormalMode, firstIndex, None),
-            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, None),
+            postCall = controller.postCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
+            manualInputCall = controller.manualAddressCall(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),
             title = Message(controller.title),
             heading = Message(controller.heading, company.companyName),
             subHeading = Some(company.companyName)
           )
 
-          val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, None))
+          val request = addCSRFToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -136,7 +136,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
               .withHeaders("Csrf-Token" -> "nocheck"))
 
             val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
-            val result = controller.onSubmit(NormalMode, firstIndex, None)(fakeRequest)
+            val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardRoute.url

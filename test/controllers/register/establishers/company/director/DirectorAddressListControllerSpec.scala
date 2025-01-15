@@ -22,7 +22,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorNameId}
 import models.address.TolerantAddress
 import models.person.PersonName
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
@@ -65,7 +65,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
-  private val onwardRoute = routes.DirectorAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0), None)
+  private val onwardRoute = routes.DirectorAddressYearsController.onPageLoad( NormalMode,  Index(0), Index(0), EmptyOptionalSchemeReferenceNumber)
 
   "Director Address List Controller" must {
 
@@ -74,7 +74,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val view = app.injector.instanceOf[addressList]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe OK
 
@@ -90,10 +90,10 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
       running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber).url)
       }
     }
 
@@ -101,7 +101,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
       running(_.overrides(modules(dontGetAnyData): _*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
-        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -115,7 +115,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe onwardRoute.url
@@ -130,7 +130,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -145,18 +145,18 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
         ): _*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
-        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, None)(postRequest)
+        val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, None).url)
+        redirectLocation(result) mustBe Some(routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber).url)
       }
     }
   }
 
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
-      routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0), None),
-      routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0), None),
+      routes.DirectorAddressListController.onSubmit( NormalMode,  Index(0), Index(0), EmptyOptionalSchemeReferenceNumber),
+      routes.DirectorAddressController.onPageLoad( NormalMode,  Index(0), Index(0), EmptyOptionalSchemeReferenceNumber),
       addresses,
       title = Message("messages__dynamic_whatIsAddress", Message("messages__theDirector")),
       heading = Message("messages__dynamic_whatIsAddress", directorDetails.fullName),

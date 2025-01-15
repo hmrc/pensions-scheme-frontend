@@ -24,7 +24,7 @@ import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
 import models.person.PersonName
 import models.register.PartnerEntity
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -69,7 +69,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
       view
     )
 
-  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, None)
+  private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)
 
   private def viewAsString(form: Form[_] = form, completePartners: Seq[PartnerEntity] = Nil, incompletePartners: Seq[PartnerEntity] = Nil) =
     view(
@@ -80,7 +80,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
       None,
       false,
       NormalMode,
-      None
+      EmptyOptionalSchemeReferenceNumber
     )(fakeRequest, messages).toString
 
   private val partnershipName = "MyCo Ltd"
@@ -108,7 +108,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -119,7 +119,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
         .set(AddPartnersId(firstIndex))(true)
         .map { userAnswers =>
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
-          val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
+          val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
             incompletePartners = Seq(PartnerEntity(PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
@@ -128,7 +128,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
     "redirect to the next page when no partners exist and the user submits" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -137,7 +137,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
     "redirect to the next page when less than maximum partners exist and valid data is submitted" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -147,7 +147,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "meh"))
       val boundForm = form.bind(Map("value" -> "meh"))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
@@ -157,7 +157,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
     "redirect to the next page when maximum partners exist and the user submits" in {
       val partners = Seq.fill(maxPartners)(johnDoe)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -171,14 +171,14 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
         PartnerEntity(
           PartnerNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, None)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(form, incompletePartners = partnersViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
@@ -186,7 +186,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, None)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)

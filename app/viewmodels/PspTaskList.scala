@@ -15,9 +15,10 @@
  */
 
 package viewmodels
+import models.SchemeReferenceNumber
 
 case class PspTaskList(h1: String,
-                       srn: String,
+                       srn: SchemeReferenceNumber,
                        beforeYouStart: SchemeDetailsTaskListEntitySection,
                        about: SchemeDetailsTaskListEntitySection,
                        establishers: Seq[String],

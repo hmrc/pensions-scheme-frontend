@@ -19,7 +19,7 @@ package controllers.register.trustees
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import models.register.trustees.TrusteeKind
-import models.{Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import viewmodels.{AlreadyDeletedViewModel, Message}
@@ -27,7 +27,7 @@ import views.html.alreadyDeleted
 
 class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, None)
+  def onwardRoute: Call = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val trusteeIndex = Index(0)
 
@@ -58,28 +58,28 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
   "AlreadyDeleted Trustee Controller" must {
 
     "return OK and the correct view for a GET for an individual trustee" in {
-      val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, None)(fakeRequest)
+      val result = controller(getMandatoryTrustee).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("Test Name")
     }
 
     "return OK and the correct view for a GET for a company trustee" in {
-      val result = controller(getMandatoryTrusteeCompany).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Company, None)(fakeRequest)
+      val result = controller(getMandatoryTrusteeCompany).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Company, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test company name")
     }
 
     "return OK and the correct view for a GET for a partnership trustee" in {
-      val result = controller(getMandatoryTrusteePartnership).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Partnership, None)(fakeRequest)
+      val result = controller(getMandatoryTrusteePartnership).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Partnership, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString("test partnership name")
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, None)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, trusteeIndex, TrusteeKind.Individual, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad.url)
