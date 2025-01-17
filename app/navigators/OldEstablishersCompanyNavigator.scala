@@ -261,7 +261,7 @@ class OldEstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnsw
             mode match {
               case NormalMode | CheckMode =>
                 controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
-                  .onPageLoad(mode, srn, index)
+                  .onPageLoad(index)
               case _ => controllers.register.establishers.company.director.routes.DirectorNameController
                 .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
             }

@@ -101,8 +101,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER

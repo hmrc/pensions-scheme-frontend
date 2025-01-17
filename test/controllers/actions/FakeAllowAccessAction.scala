@@ -18,15 +18,15 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.OptionalDataRequest
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}

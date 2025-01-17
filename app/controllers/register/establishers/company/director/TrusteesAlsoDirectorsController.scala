@@ -90,20 +90,19 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
-            val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-            if (seqTrustee.isEmpty) {
-              Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, EmptyOptionalSchemeReferenceNumber)))
-            } else {
-              renderView(Ok,
-                seqTrustee,
-                getFormAsEither(seqTrustee, establisherIndex),
-                establisherIndex,
-                companyName,
-                schemeName
-              )
-            }
-          }.flatten
+          val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+          if (seqTrustee.isEmpty) {
+            Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
+              .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, EmptyOptionalSchemeReferenceNumber)))
+          } else {
+            renderView(Ok,
+              seqTrustee,
+              getFormAsEither(seqTrustee, establisherIndex),
+              establisherIndex,
+              companyName,
+              schemeName
+            )
+          }
         }
     }
 

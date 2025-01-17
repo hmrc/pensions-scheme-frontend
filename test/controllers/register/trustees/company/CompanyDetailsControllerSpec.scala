@@ -21,10 +21,7 @@ import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.FeatureToggleName.SchemeRegistration
 import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form

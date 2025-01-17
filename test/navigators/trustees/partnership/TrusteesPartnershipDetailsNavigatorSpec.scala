@@ -45,8 +45,7 @@ class TrusteesPartnershipDetailsNavigatorSpec extends SpecBase with Matchers wit
       def navigationForTrusteePartnership: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(PartnershipDetailsId(index))(partnershipDetails, addTrusteesPage(NormalMode, None)),
-          row(PartnershipDetailsId(index))(partnershipDetails, TrusteesTaskListPage(index), Some(uaFeatureToggleOn)),
+          row(PartnershipDetailsId(index))(partnershipDetails, TrusteesTaskListPage(index), None),
           row(PartnershipHasUTRId(index))(true, PartnershipEnterUTRController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
           row(PartnershipHasUTRId(index))(false, PartnershipNoUTRReasonController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
           row(PartnershipNoUTRReasonId(index))(someStringValue, hasVatPage(NormalMode, index, None)),

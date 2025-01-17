@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,7 +45,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(
             existingSchemeName,
             srn,
-            TrusteesAlsoDirectorsController.onPageLoad(mode, srn, establisherIndex)
+            TrusteesAlsoDirectorsController.onPageLoad(establisherIndex)
           )))
     }
 }

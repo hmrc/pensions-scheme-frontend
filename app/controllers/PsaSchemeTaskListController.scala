@@ -72,9 +72,9 @@ class PsaSchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
       lastUpdatedDate.flatMap { date =>
         val schemeNameOpt: Option[String] = request.userAnswers.flatMap(_.get(SchemeNameId))
         (srn, request.userAnswers, schemeNameOpt) match {
-          case (None, Some(userAnswers), Some(schemeName)) =>
-            Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName))
-          case (Some(_), Some(userAnswers), Some(schemeName)) =>
+          case (OptionalSchemeReferenceNumber(None), Some(userAnswers), Some(schemeName)) =>
+            Future.successful(Ok(viewRegistration(hsTaskListHelperRegistration.taskList(userAnswers, None, srn, date), schemeName)))
+          case (OptionalSchemeReferenceNumber(Some(_)), Some(userAnswers), Some(schemeName)) =>
             Future.successful(Ok(oldView(hsTaskListHelperVariations.taskList(userAnswers, Some(request.viewOnly), srn), schemeName)))
           case (OptionalSchemeReferenceNumber(Some(_)), answers, sn) =>
             logger.warn(s"Loading PSA task list page: srn $srn found but user answers empty " +

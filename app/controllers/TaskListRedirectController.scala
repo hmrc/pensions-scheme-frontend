@@ -22,7 +22,7 @@ import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.AuthenticatedRequest
-import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier

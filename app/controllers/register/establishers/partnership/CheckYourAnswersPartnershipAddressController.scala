@@ -22,13 +22,10 @@ import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
-
-import javax.inject.Inject
 import models.Mode.checkMode
-import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -36,6 +33,7 @@ import utils.{AllowChangeHelper, CountryOptions, Enumerable}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: FrontendAppConfig,
@@ -47,13 +45,12 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
                                                              implicit val countryOptions: CountryOptions,
                                                              allowChangeHelper: AllowChangeHelper,
                                                              val controllerComponents: MessagesControllerComponents,
-                                                             val view: checkYourAnswers,
-                                                             featureToggleService: FeatureToggleService
+                                                             val view: checkYourAnswers
                                                             )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  def onPageLoad(mode: Mode, index: Index, srn: Option[String]): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         val answerSections = Seq(AnswerSection(
@@ -73,14 +70,12 @@ class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: Frontend
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__addressFor", Message("messages__thePartnership"))
 
-        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-          (isEnabled, mode) match {
-            case (true, NormalMode) =>
-              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
-            case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
-          }
-        }
+        val saveURL = Future.successful(mode match {
+          case NormalMode =>
+            controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+          case _ =>
+            controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+        })
         saveURL.flatMap { url =>
           val vm = CYAViewModel(
             answerSections = answerSections,

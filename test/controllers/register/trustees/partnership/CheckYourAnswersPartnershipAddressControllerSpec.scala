@@ -90,7 +90,6 @@ object CheckYourAnswersPartnershipAddressControllerSpec extends ControllerSpecBa
   private val previousAddress        = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
 
   private val emptyAnswers = UserAnswers()
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   private def partnershipAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =
     routes.PartnershipAddressController.onPageLoad(mode, Index(index), OptionalSchemeReferenceNumber(srn)).url
   private def partnershipAddressYearsRoute(mode: Mode, srn: OptionalSchemeReferenceNumber) =

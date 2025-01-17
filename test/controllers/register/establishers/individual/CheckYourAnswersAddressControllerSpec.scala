@@ -146,7 +146,6 @@ object CheckYourAnswersAddressControllerSpec extends ControllerSpecBase with Enu
     else Seq(addressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)), previousAddressAnswerRow(mode, OptionalSchemeReferenceNumber(srn)))))
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(CYAViewModel(

@@ -23,7 +23,6 @@ import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual._
 import models._
-import navigators.trustees.individuals.TrusteesIndividualDetailsNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
@@ -41,8 +40,7 @@ class TrusteesIndividualDetailsNavigatorSpec extends SpecBase with Matchers with
     val navigationForNewTrusteeIndividual: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)),
-        row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index),Some(uaFeatureToggleOn)),
+        row(TrusteeNameId(index))(somePersonNameValue, controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index),None),
         row(TrusteeDOBId(index))(someDate, TrusteeHasNINOController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
         row(TrusteeHasNINOId(index))(true, TrusteeEnterNINOController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),
         row(TrusteeHasNINOId(index))(false, TrusteeNoNINOReasonController.onPageLoad(NormalMode, index, EmptyOptionalSchemeReferenceNumber)),

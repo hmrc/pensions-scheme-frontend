@@ -98,8 +98,7 @@ class DirectorsAlsoTrusteesController @Inject()(override val messagesApi: Messag
                 index
               )
             }
-          }.flatten
-        }
+          }
     }
 
   private def appendSelectedDirectors(selectedDirectors: List[Int],
