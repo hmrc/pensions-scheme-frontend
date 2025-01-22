@@ -42,7 +42,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       view
     )
 
-  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(0)
+  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, 0)
 
   private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
 

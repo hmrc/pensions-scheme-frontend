@@ -103,7 +103,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -121,7 +121,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
