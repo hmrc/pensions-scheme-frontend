@@ -86,14 +86,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       Right(formRadio(establisherIndex))
     }
 
-  def onPageLoad(establisherIndex: Index): Action[AnyContent] =
-    (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber,establisherIndex: Index): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
           val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
           if (seqTrustee.isEmpty) {
             Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
-              .onPageLoad(NormalMode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, EmptyOptionalSchemeReferenceNumber)))
+              .onPageLoad(mode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
           } else {
             renderView(Ok,
               seqTrustee,

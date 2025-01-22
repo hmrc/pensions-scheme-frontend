@@ -45,7 +45,7 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(view(
             existingSchemeName,
             srn,
-            TrusteesAlsoDirectorsController.onPageLoad(establisherIndex)
+            TrusteesAlsoDirectorsController.onPageLoad(mode, srn, establisherIndex)
           )))
     }
 }
