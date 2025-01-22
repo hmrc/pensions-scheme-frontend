@@ -22,19 +22,13 @@ import controllers.register.establishers.routes._
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
-import models.FeatureToggleName.SchemeRegistration
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.prop._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import services.FeatureToggleService
 import utils.UserAnswers
-
-import scala.concurrent.Future
 
 class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
 
@@ -42,14 +36,6 @@ class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with Navigator
 
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector.instanceOf[Navigator]
-
-  private val mockFeatureToggleService = mock[FeatureToggleService]
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "EstablishersPartnershipDetailsNavigator" when {
     "in NormalMode" must {

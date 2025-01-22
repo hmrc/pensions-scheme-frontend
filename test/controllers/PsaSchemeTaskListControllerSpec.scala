@@ -20,14 +20,12 @@ import base.JsonFileReader
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import identifiers.SchemeNameId
-import models.FeatureToggleName.SchemeRegistration
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.UserAnswers
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
 import viewmodels._
@@ -44,23 +42,10 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
     reset(mockUserAnswersCacheConnector)
     when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
       .thenReturn(Future.successful(PSAMinimalFlags(false, false, false)))
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
     when(mockUserAnswersCacheConnector.lastUpdated(any())(any(), any())).thenReturn(Future.successful(None))
   }
 
   "SchemeTaskList Controller when toggle is off" when {
-
-    "srn is None and there is user answers with toggle off" must {
-      "return OK and the old view" in {
-        when(fakeHsTaskListHelperRegistration.taskListToggleOff(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
-        val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
-          .onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe oldView(schemeDetailsTL, schemeName)(fakeRequest, messages).toString()
-      }
-    }
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
@@ -105,8 +90,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is None and there is user answers" must {
       "return OK and the correct view" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         when(fakeHsTaskListHelperRegistration.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL)
         val result = controller(UserAnswers().set(SchemeNameId)("test scheme").asOpt.value.dataRetrievalAction)
           .onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -118,8 +101,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn as None and no user answers" must {
       "return REDIRECT to manage" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         val result = controller(new FakeDataRetrievalAction(None)).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
@@ -129,8 +110,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is some value and there is user answers" must {
       "return OK and the correct view" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
@@ -146,8 +125,6 @@ class PsaSchemeTaskListControllerSpec extends ControllerSpecBase with BeforeAndA
 
     "srn is some value and there is no user answers" must {
       "return REDIRECT to session expired page" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         when(fakeHsTaskListHelperVariation.taskList(any(), any(), any(), any())).thenReturn(schemeDetailsTL.copy(declaration =
           Some(SchemeDetailsTaskListEntitySection(None, Nil, Some("messages__schemeTaskList__sectionDeclaration_header"),
             "messages__schemeTaskList__sectionDeclaration_incomplete_v1", "messages__schemeTaskList__sectionDeclaration_incomplete_v2"))))
@@ -167,7 +144,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
   private val fakeHsTaskListHelperVariation = mock[HsTaskListHelperVariations]
   private val mockMinimalPsaConnector: MinimalPsaConnector = mock[MinimalPsaConnector]
   private val psaTaskListRegistrationView = injector.instanceOf[psaTaskListRegistration]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   private val mockUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   private val srnValue = "S1000000456"
@@ -182,7 +158,6 @@ object PsaSchemeTaskListControllerSpec extends ControllerSpecBase with MockitoSu
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       controllerComponents,
-      mockFeatureToggleService,
       oldView,
       psaTaskListRegistrationView,
       fakeHsTaskListHelperRegistration,

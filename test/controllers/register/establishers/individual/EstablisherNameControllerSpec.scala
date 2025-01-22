@@ -20,9 +20,8 @@ import controllers.ControllerSpecBase
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.EstablisherNameId
-import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
-import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -33,7 +32,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import utils.FakeNavigator
 import utils.annotations.EstablishersIndividualDetails
 import viewmodels.{CommonFormWithHintViewModel, Message}
@@ -59,12 +58,6 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
   )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "Test"), ("lastName", "Name"))
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggle)
-    when(mockFeatureToggle.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "EstablisherNameController" must {
     "return OK and the correct view for a GET" in {
@@ -108,7 +101,6 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
       val app = applicationBuilder(getEmptyData)
         .overrides(
-          bind[FeatureToggleService].toInstance(mockFeatureToggle),
           bind[UserAnswersService].toInstance(mockUserAnswersService),
           bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersIndividualDetails]).toInstance(new FakeNavigator(onwardRoute))
         ).build()
@@ -155,7 +147,6 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__establisher")
-  private val mockFeatureToggle = mock[FeatureToggleService]
   private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 

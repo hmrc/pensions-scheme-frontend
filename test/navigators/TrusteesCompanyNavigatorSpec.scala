@@ -23,7 +23,6 @@ import controllers.register.trustees.routes._
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.company._
 import identifiers.{Identifier, TypedIdentifier}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import org.scalatest.matchers.must.Matchers
@@ -45,8 +44,6 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with Matchers with Navigator
       def navigation: TableFor3[Identifier, UserAnswers, Call] =
         Table(
           ("Id", "UserAnswers", "Next Page"),
-          row(CompanyDetailsId(0))(CompanyDetails(someStringValue), addTrusteePage(NormalMode)),
-          row(CompanyDetailsId(0))(CompanyDetails(someStringValue), trusteeTaskListPage(0), Some(uaWithToggleOn)),
           row(HasCompanyCRNId(0))(true, companyNoPage(NormalMode)),
           row(HasCompanyCRNId(0))(false, noCompanyNoPage(NormalMode)),
           row(CompanyNoCRNReasonId(0))(someStringValue, hasCompanyUtrPage(NormalMode)),
@@ -196,13 +193,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
   }
 
   private val newTrustee = UserAnswers().set(IsTrusteeNewId(0))(true).asOpt.value
-
-  private val uaWithToggleOn = {
-    val uaToggle = Json.obj(
-      SchemeRegistration.asString -> true
-    )
-    UserAnswers(uaToggle)
-  }
 
   private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 

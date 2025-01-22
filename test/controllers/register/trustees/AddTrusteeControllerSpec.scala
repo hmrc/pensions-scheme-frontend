@@ -23,25 +23,19 @@ import helpers.DataCompletionHelper
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
-import models.FeatureToggleName.SchemeRegistration
 import models._
 import models.person.PersonName
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.trustees.TrusteeKind
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
-import play.api.test.Helpers.{contentAsString, _}
-import services.FeatureToggleService
+import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.{addTrustee, addTrusteeOld}
-
-import scala.concurrent.Future
 
 class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach with MockitoSugar {
   appRunning()
@@ -57,13 +51,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
   private val formProvider = new AddTrusteeFormProvider()
   private val form = formProvider()
   private val testAnswer = "true"
-  private val mockFeatureToggleService = mock[FeatureToggleService]
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id, EmptyOptionalSchemeReferenceNumber).url
@@ -84,7 +71,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       formProvider,
-      mockFeatureToggleService,
       controllerComponents,
       view,
       oldView

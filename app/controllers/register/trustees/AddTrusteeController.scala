@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
-import models.{FeatureToggleName, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.register.Trustee
 import models.requests.DataRequest
 import navigators.Navigator
@@ -30,7 +30,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{NoSuspendedCheck, Trustees}
 import views.html.register.trustees._
@@ -47,7 +46,6 @@ class AddTrusteeController @Inject()(
                                       @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider,
-                                      featureToggleService: FeatureToggleService,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: addTrustee,
                                       val addTrusteeOldView: addTrusteeOld
@@ -64,15 +62,15 @@ class AddTrusteeController @Inject()(
                           srn: OptionalSchemeReferenceNumber,
                           form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
-    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-      (isEnabled, mode) match {
-        case (true, NormalMode) =>
+
+      mode match {
+        case NormalMode =>
           val completeTrustees = trustees.filter(_.isCompleted)
           val incompleteTrustees = trustees.filterNot(_.isCompleted)
-          status(view(form, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn))
-        case _ => status(addTrusteeOldView(form, mode, trustees, existingSchemeName, srn))
+          Future.successful(status(view(form, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn)))
+        case _ => Future.successful(status(addTrusteeOldView(form, mode, trustees, existingSchemeName, srn)))
       }
-    }
+
   }
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =

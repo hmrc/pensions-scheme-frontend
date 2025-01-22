@@ -20,15 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.director.routes._
-import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggleName, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.establishers.company.director.whatYouWillNeed
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -37,26 +36,16 @@ class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
                                                   allowAccess: AllowAccessActionProvider,
                                                   requireData: DataRequiredAction,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  val view: whatYouWillNeed,
-                                                  featureToggleService: FeatureToggleService
+                                                  val view: whatYouWillNeed
                                                  )(implicit val executionContext: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val directorIndex = request.userAnswers.allDirectors(establisherIndex).size
-        val futureURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map {
-          case true => TrusteesAlsoDirectorsController.onPageLoad(establisherIndex)
-          case _ => DirectorNameController.onPageLoad(mode, establisherIndex, directorIndex, srn)
-        }
-
-        futureURL.map { nextUrl =>
-          Ok(view(
+        Future.successful(Ok(view(
             existingSchemeName,
             srn,
-            nextUrl
-          ))
-        }
-
+            TrusteesAlsoDirectorsController.onPageLoad(mode, srn, establisherIndex)
+          )))
     }
 }

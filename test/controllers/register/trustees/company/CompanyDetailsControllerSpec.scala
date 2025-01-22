@@ -21,31 +21,20 @@ import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.FeatureToggleName.SchemeRegistration
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.trustees.company.companyDetails
-
-import scala.concurrent.Future
 
 class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
   appRunning()
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
@@ -54,8 +43,6 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   private val firstIndex = Index(0)
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
-  private val mockFeatureToggleService = mock[FeatureToggleService]
-
 
   private val view = injector.instanceOf[companyDetails]
 
@@ -63,8 +50,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)

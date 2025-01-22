@@ -22,24 +22,18 @@ import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
-import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.PartnerEntity
-import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode, PartnershipDetails}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
-
-import scala.concurrent.Future
 
 class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar{
 
@@ -57,7 +51,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
   private val establisherIndex = 0
 
   private val view = injector.instanceOf[addPartners]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def controller(
                           dataRetrievalAction: DataRetrievalAction,
@@ -73,8 +66,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
       new DataRequiredActionImpl,
       formProvider,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)
@@ -111,11 +103,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
     )
   }
 
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "AddPartners Controller" must {
 

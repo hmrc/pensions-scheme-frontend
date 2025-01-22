@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.MoneyPurchaseBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId}
 import models.MoneyPurchaseBenefits._
-import models.{EmptyOptionalSchemeReferenceNumber, Mode, MoneyPurchaseBenefits, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

@@ -22,31 +22,19 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes._
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.trustees.company.CompanyConfirmPreviousAddressId
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
 import models.address.Address
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-import scala.concurrent.Future
-
 class CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
 
   import CheckYourAnswersCompanyAddressControllerSpec._
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggle)
-    when(mockFeatureToggle.get(any())(any(),any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "Check Your Answers Company Address Controller " when {
     "on Page load in Normal Mode" must {
@@ -111,7 +99,6 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
   private val emptyAnswers = UserAnswers()
-  private val mockFeatureToggle = mock[FeatureToggleService]
 
   private def companyAddressRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): String = routes.CompanyAddressController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn)).url
 
@@ -191,7 +178,7 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
     new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      fakeCountryOptions, allowChangeHelper, controllerComponents, view, mockFeatureToggle)
+      fakeCountryOptions, allowChangeHelper, controllerComponents, view)
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(

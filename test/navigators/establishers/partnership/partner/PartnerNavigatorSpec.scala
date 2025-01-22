@@ -46,7 +46,6 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
     val normalModeRoutes: TableFor3[Identifier, UserAnswers, Call] =
       Table(
         ("Id", "UserAnswers", "Next Page"),
-        row(AddPartnersId(index))(false, taskListPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),
         row(AddPartnersId(index))(true, otherPartnersPage(NormalMode, EmptyOptionalSchemeReferenceNumber), Some(addPartnersMoreThan10)),
         row(AddPartnersId(index))(true, partnerNamePage(NormalMode, EmptyOptionalSchemeReferenceNumber, partnerIndex = 1), Some(lessThan10Partners)),
         row(PartnerNameId(Index(0), index))(somePersonNameValue, dobPage(NormalMode, EmptyOptionalSchemeReferenceNumber)),

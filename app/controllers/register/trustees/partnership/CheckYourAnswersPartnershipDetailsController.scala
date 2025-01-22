@@ -25,11 +25,11 @@ import identifiers.register.trustees.partnership._
 
 import javax.inject.Inject
 import models.Mode.checkMode
-import models.{FeatureToggleName, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -51,8 +51,7 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
                                                               userAnswersService: UserAnswersService,
                                                               allowChangeHelper: AllowChangeHelper,
                                                               val controllerComponents: MessagesControllerComponents,
-                                                              val view: checkYourAnswers,
-                                                              featureToggleService: FeatureToggleService
+                                                              val view: checkYourAnswers
                                                             )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
   with Retrievals with I18nSupport with Enumerable.Implicits {
@@ -84,14 +83,12 @@ class CheckYourAnswersPartnershipDetailsController @Inject()(
         val title = if (isNew) Message("checkYourAnswers.hs.title") else Message("messages__detailsFor", Message
         ("messages__thePartnership"))
 
-        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-          (isEnabled, mode) match {
-            case (true, NormalMode) =>
-              controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
+        val saveURL = mode match {
+            case NormalMode =>
+              Future.successful(controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index))
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+              Future.successful(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
           }
-        }
 
         saveURL.flatMap { url =>
           val vm = CYAViewModel(

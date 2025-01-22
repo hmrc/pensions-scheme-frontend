@@ -23,10 +23,10 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
-import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggleName, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -48,8 +48,7 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 allowChangeHelper: AllowChangeHelper,
                                                                 userAnswersService: UserAnswersService,
                                                                 val controllerComponents: MessagesControllerComponents,
-                                                                val view: checkYourAnswers,
-                                                                featureToggleService: FeatureToggleService
+                                                                val view: checkYourAnswers
                                                                )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
 
@@ -69,14 +68,13 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
         val title = if (isNew) Message("checkYourAnswers.hs.title") else
           Message("messages__contactDetailsFor", Message("messages__theCompany"))
 
-        val saveURL = featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-          (isEnabled, mode) match {
-            case (true, NormalMode) =>
-              controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
+        val saveURL = mode match {
+            case NormalMode =>
+              Future.successful(controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index))
             case _ =>
-              controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn)
+              Future.successful(controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, srn))
           }
-        }
+
         saveURL.flatMap { url =>
           val vm = CYAViewModel(
             answerSections = Seq(contactDetails),

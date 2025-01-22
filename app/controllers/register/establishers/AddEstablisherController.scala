@@ -16,19 +16,17 @@
 
 package controllers.register.establishers
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
 import models.register.Establisher
 import models.requests.DataRequest
-import models.{FeatureToggleName, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.FeatureToggleService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
@@ -36,15 +34,13 @@ import views.html.register.establishers.{addEstablisher, addEstablisherOld}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
+class AddEstablisherController @Inject()(override val messagesApi: MessagesApi,
                                          @Establishers navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider,
-                                         featureToggleService: FeatureToggleService,
                                          val controllerComponents: MessagesControllerComponents,
                                          val view: addEstablisher,
                                          val addEstablisherOldview: addEstablisherOld
@@ -57,14 +53,12 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                           srn: OptionalSchemeReferenceNumber,
                           form: Form[Option[Boolean]], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
-    featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-      (isEnabled, mode) match {
-        case (true, NormalMode) =>
+      mode match {
+        case NormalMode =>
           val completeEstablishers = establishers.filter(_.isCompleted)
           val incompleteEstablishers = establishers.filterNot(_.isCompleted)
-          status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn))
-        case _ => status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn))
-      }
+          Future.successful(status(view(form, mode, completeEstablishers, incompleteEstablishers, existingSchemeName, srn)))
+        case _ => Future.successful(status(addEstablisherOldview(form, mode, establishers, existingSchemeName, srn)))
     }
   }
 

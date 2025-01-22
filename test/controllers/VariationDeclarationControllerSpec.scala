@@ -19,15 +19,14 @@ package controllers
 import audit.{AuditService, TcmpAuditEvent}
 import connectors._
 import controllers.actions._
-import controllers.register.establishers.company.CompanyEnterCRNControllerSpec.srn
 import identifiers.{PstrId, SchemeNameId, TcmpChangedId}
 import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
-import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures.whenReady
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.Call

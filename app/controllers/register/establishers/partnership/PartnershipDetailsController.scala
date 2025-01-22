@@ -21,12 +21,12 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{FeatureToggleName, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FeatureToggleService, UserAnswersService}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{EstablishersPartnership, OldEstablishersPartnership}
 import utils.{Enumerable, UserAnswers}
@@ -47,8 +47,7 @@ class PartnershipDetailsController @Inject()(
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              val view: partnershipDetails,
-                                              featureToggleService: FeatureToggleService
+                                              val view: partnershipDetails
                                             )(implicit val executionContext: ExecutionContext) extends
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
@@ -76,11 +75,9 @@ class PartnershipDetailsController @Inject()(
           userAnswersService.save(mode, srn, PartnershipDetailsId(index), value
           ).flatMap {
             json =>
-              featureToggleService.get(FeatureToggleName.SchemeRegistration).map(_.isEnabled).map { isEnabled =>
-                (isEnabled, mode) match {
-                  case (true, NormalMode) => Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
-                  case _ => Redirect(oldNavigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn))
-                }
+              mode match {
+                case NormalMode => Future.successful(Redirect(navigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn)))
+                case _ => Future.successful(Redirect(oldNavigator.nextPage(PartnershipDetailsId(index), mode, UserAnswers(json), srn)))
               }
           }
       )

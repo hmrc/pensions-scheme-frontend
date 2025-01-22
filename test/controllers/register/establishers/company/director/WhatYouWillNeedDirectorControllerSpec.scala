@@ -19,24 +19,17 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.director.routes.{DirectorNameController, TrusteesAlsoDirectorsController}
-import models.FeatureToggleName.SchemeRegistration
-import models.{EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import views.html.register.establishers.company.director.whatYouWillNeed
-
-import scala.concurrent.Future
 
 class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   private val view = injector.instanceOf[whatYouWillNeed]
 
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
     new WhatYouWillNeedDirectorController(frontendAppConfig,
@@ -46,11 +39,10 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
-  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(0)
+  private def href: Call = TrusteesAlsoDirectorsController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, 0)
 
   private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
 
@@ -58,8 +50,6 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
     "on a GET" must {
       "return OK and the correct view" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
         val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
 
         status(result) mustBe OK
@@ -68,41 +58,3 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
     }
   }
 }
-
-class WhatYouWillNeedDirectorControllerToggleOffSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-
-  private val view = injector.instanceOf[whatYouWillNeed]
-
-  private val mockFeatureToggleService = mock[FeatureToggleService]
-
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
-    new WhatYouWillNeedDirectorController(frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      FakeAllowAccessProvider(),
-      new DataRequiredActionImpl,
-      controllerComponents,
-      view,
-      mockFeatureToggleService
-    )
-
-  private def href: Call = DirectorNameController.onPageLoad(NormalMode, 0, 0, EmptyOptionalSchemeReferenceNumber)
-
-  private def viewAsString(): String = view(None, EmptyOptionalSchemeReferenceNumber, href)(fakeRequest, messages).toString
-
-  "WhatYouWillNeedCompanyDetailsControllerSpec" when {
-
-    "on a GET" must {
-      "return OK and the correct view" in {
-        when(mockFeatureToggleService.get(any())(any(), any()))
-          .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-        val result = controller().onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, Index(0))(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString()
-      }
-    }
-  }
-}
-

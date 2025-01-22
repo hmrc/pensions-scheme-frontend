@@ -21,9 +21,8 @@ import controllers.actions._
 import forms.dataPrefill.DataPrefillRadioFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.FeatureToggleName.SchemeRegistration
 import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, FeatureToggle, NormalMode}
+import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -36,7 +35,7 @@ import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{DataPrefillService, FeatureToggleService, UserAnswersService}
+import services.{DataPrefillService, UserAnswersService}
 import utils.UserAnswers
 import views.html.dataPrefillRadio
 
@@ -61,7 +60,6 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val mockDataPrefillService = mock[DataPrefillService]
   private val mockNavigator = mock[EstablishersCompanyNavigator]
   private val mockUserAnswersService = mock[UserAnswersService]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
@@ -86,8 +84,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     bind[DataPrefillService].toInstance(mockDataPrefillService),
     bind[Navigator].toInstance(mockNavigator),
     bind[EstablishersCompanyNavigator].toInstance(mockNavigator),
-    bind[UserAnswersService].toInstance(mockUserAnswersService),
-    bind[FeatureToggleService].toInstance(mockFeatureToggleService)
+    bind[UserAnswersService].toInstance(mockUserAnswersService)
   )
 
   override def beforeEach(): Unit = {
@@ -95,11 +92,10 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
     reset(mockUserAnswersService)
     reset(mockNavigator)
     when(mockNavigator.nextPage(any(), any(), any(), any())(any(), any(), any())).thenReturn(onwardRoute)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "onPageLoad when only one trustee" must {
+    val srn = Some("S2400000041")
     "return Ok and the correct view on a GET request" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqOneTrustee)
@@ -107,7 +103,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val view = app.injector.instanceOf[dataPrefillRadio]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
 
         status(result) mustBe OK
         val form = new DataPrefillRadioFormProvider().apply(
@@ -119,29 +115,13 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       }
     }
 
-    "return Ok and the correct redirect to director name page when toggle is off" in {
-      when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
-        .thenReturn(seqOneTrustee)
-      when(mockFeatureToggleService.get(any())(any(), any()))
-        .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-      val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
-        val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(NormalMode, establisherIndex, 0, EmptyOptionalSchemeReferenceNumber).url)
-      }
-    }
-
     "redirect to director name page when there are no trustees to copy" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(Nil)
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules: _*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(establisherIndex = 0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController

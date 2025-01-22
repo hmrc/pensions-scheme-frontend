@@ -21,34 +21,22 @@ import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
 import models._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
 import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-import scala.concurrent.Future
-
 class CheckYourAnswersPartnershipContactDetailsControllerSpec extends ControllerSpecBase with MockitoSugar
   with BeforeAndAfterEach with ControllerAllowChangeBehaviour {
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   private val index = Index(0)
   private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
@@ -57,8 +45,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val fullAnswers = UserAnswers().trusteePartnershipDetails(Index(0), partnershipDetails).
     trusteePartnershipEmail(Index(0), email = "test@test.com").trusteePartnershipPhone(Index(0), phone = "1234")
-
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def submitUrl(index: Int): Call =
     PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
@@ -106,7 +92,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
-            Seq[GuiceableModule](bind[FeatureToggleService].toInstance(mockFeatureToggleService)): _*)) {
+            Seq[GuiceableModule](): _*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -120,7 +106,6 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
         "Update Mode" in {
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))

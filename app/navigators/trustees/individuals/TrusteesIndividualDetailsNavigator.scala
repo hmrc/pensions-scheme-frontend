@@ -23,7 +23,6 @@ import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
 import identifiers.register.trustees.individual.{TrusteeDOBId, _}
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import navigators.AbstractNavigator
@@ -45,12 +44,7 @@ class TrusteesIndividualDetailsNavigator @Inject()(val dataCacheConnector: UserA
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
                                        ua: UserAnswers,
                                        srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
-    case TrusteeNameId(index) =>
-      // TODO: Remove Json code below when SchemeRegistration toggle is removed
-      (ua.json \ SchemeRegistration.asString).asOpt[Boolean] match {
-        case Some(true) => trusteeTaskList(index)
-        case _ => AddTrusteeController.onPageLoad(mode, srn)
-      }
+    case TrusteeNameId(index) => trusteeTaskList(index)
     case TrusteeDOBId(index) if mode == NormalMode =>
       hasNinoPage(mode, index, srn)
     case TrusteeDOBId(index) =>

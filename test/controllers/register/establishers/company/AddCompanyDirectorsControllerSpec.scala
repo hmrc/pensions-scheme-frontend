@@ -22,13 +22,10 @@ import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
-import models.FeatureToggleName.SchemeRegistration
 import models.person.PersonName
 import models.register.DirectorEntity
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, FeatureToggle, Index, NormalMode}
+import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
@@ -36,9 +33,6 @@ import play.api.libs.json._
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
-import services.FeatureToggleService
-
-import scala.concurrent.Future
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
@@ -47,7 +41,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form = formProvider()
   private val postCall = routes.AddCompanyDirectorsController.onSubmit _
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   private def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
@@ -68,8 +61,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       new DataRequiredActionImpl,
       formProvider,
       view,
-      controllerComponents,
-      mockFeatureToggleService
+      controllerComponents
     )
 
   private def viewAsString(form: Form[_] = form,
@@ -107,12 +99,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
         )
       )
     )
-  }
-
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
   }
 
   "AddCompanyDirectors Controller" must {

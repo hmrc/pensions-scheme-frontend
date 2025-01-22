@@ -20,33 +20,23 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.individual._
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode._
 import models._
 import models.person.PersonName
-import org.mockito.ArgumentMatchers.any
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils._
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach with MockitoSugar {
 
   import CheckYourAnswersDetailsControllerSpec._
-
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
 
   "Check Your Answers Individual Details Controller " when {
     "when in registration journey" must {
@@ -266,7 +256,6 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
     )
 
   private val view = injector.instanceOf[checkYourAnswers]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersDetailsController =
     new CheckYourAnswersDetailsController(
@@ -281,8 +270,7 @@ object CheckYourAnswersDetailsControllerSpec extends ControllerSpecBase with Enu
       new DataRequiredActionImpl,
       new FakeCountryOptions,
       controllerComponents,
-      view,
-      mockFeatureToggleService
+      view
     )
 
   def viewAsString(answerSections: Seq[AnswerSection],

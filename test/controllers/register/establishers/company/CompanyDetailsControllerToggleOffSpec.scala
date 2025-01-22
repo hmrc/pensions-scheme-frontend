@@ -21,21 +21,16 @@ import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.FeatureToggleName.SchemeRegistration
 import models._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.{FakeUserAnswersService, FeatureToggleService}
+import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.establishers.company.companyDetails
-
-import scala.concurrent.Future
 
 class CompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
 
@@ -49,11 +44,10 @@ class CompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with Befo
   private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
 
   private val view = injector.instanceOf[companyDetails]
-  private val mockFeatureToggleService = mock[FeatureToggleService]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, navigator,
-      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view, mockFeatureToggleService)
+      FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
   def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, EmptyOptionalSchemeReferenceNumber, 0), EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
@@ -66,12 +60,6 @@ class CompanyDetailsControllerToggleOffSpec extends ControllerSpecBase with Befo
       )
     )
   )
-
-  override protected def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, false)))
-  }
 
   "CompanyDetails Controller" must {
 

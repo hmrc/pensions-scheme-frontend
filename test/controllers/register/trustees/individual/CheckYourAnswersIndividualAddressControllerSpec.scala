@@ -20,43 +20,31 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
-import models.FeatureToggleName.SchemeRegistration
 import models.Mode.checkMode
-import org.mockito.Mockito._
 import models._
 import models.address.Address
 import models.person.PersonName
 import navigators.Navigator
-import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import services.FeatureToggleService
 import utils._
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
-import scala.concurrent.Future
 
 class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach{
 
   import CheckYourAnswersIndividualAddressControllerSpec._
 
-  override def beforeEach(): Unit = {
-    reset(mockFeatureToggleService)
-    when(mockFeatureToggleService.get(any())(any(), any()))
-      .thenReturn(Future.successful(FeatureToggle(SchemeRegistration, true)))
-  }
-
   "Check Your Answers Individual Address Controller " when {
     "on Page load" must {
       "return OK and the correct view with full answers" when {
         "Normal MOde" in {
-          val app = applicationBuilder(fullAnswers.dataRetrievalAction).overrides(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService)).build()
+          val app = applicationBuilder(fullAnswers.dataRetrievalAction).build()
 
           val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]
           val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -71,7 +59,6 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
         "Update Mode" in {
 
           val ftBinding: Seq[GuiceableModule] = Seq(
-            bind[FeatureToggleService].toInstance(mockFeatureToggleService),
             bind[Navigator].toInstance(FakeNavigator),
             bind[AuthAction].toInstance(FakeAuthAction),
             bind[AllowAccessActionProvider].toInstance(FakeAllowAccessProvider()),
@@ -108,7 +95,6 @@ object CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBas
   val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   val trusteeName = "First Last"
 
-  private val mockFeatureToggleService = mock[FeatureToggleService]
   private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
   private val addressYearsUnderAYear = AddressYears.UnderAYear
   private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")

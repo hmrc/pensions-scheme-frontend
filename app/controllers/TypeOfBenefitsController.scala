@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.TypeOfBenefitsFormProvider
 import identifiers.{MoneyPurchaseBenefitsId, SchemeNameId, TcmpChangedId, TypeOfBenefitsId}
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TypeOfBenefits}
+import models.{Mode, OptionalSchemeReferenceNumber, TypeOfBenefits}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
