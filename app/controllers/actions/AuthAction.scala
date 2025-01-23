@@ -88,7 +88,7 @@ class AuthImpl(override val authConnector: AuthConnector,
                                            psaId:Option[PsaId], pspId: Option[PspId],
                      block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    sessionDataCacheConnector.fetch(id).flatMap { optionJsValue =>
+    sessionDataCacheConnector.fetch.flatMap { optionJsValue =>
       optionJsValue.map(UserAnswers).flatMap(_.get(AdministratorOrPractitionerId)) match {
         case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))
         case Some(aop) =>

@@ -35,7 +35,7 @@ class LogoutController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate().async { implicit request =>
-    sessionDataCacheConnector.removeAll(request.externalId).map { _ =>
+    sessionDataCacheConnector.removeAll.map { _ =>
       Redirect(appConfig.serviceSignOut).withNewSession
     }
   }
