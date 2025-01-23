@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataCacheConnector @Inject()(config: FrontendAppConfig, httpClientV2: HttpClientV2) {
 
-  private def url(cacheId: String) = url"${config.pensionsAdministratorUrl}/pension-administrator/journey-cache/session-data/$cacheId"
+  private def url = url"${config.pensionsAdministratorUrl}/pension-administrator/journey-cache/session-data-self"
 
-  def fetch(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
-    httpClientV2.get(url(id))
+  def fetch(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2.get(url)
       .setHeader(headers(hc): _*)
       .execute[HttpResponse]
       .flatMap { response =>
@@ -45,8 +45,8 @@ class SessionDataCacheConnector @Inject()(config: FrontendAppConfig, httpClientV
         }
       }
 
-  def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
-    httpClientV2.delete(url(id))
+  def removeAll(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+    httpClientV2.delete(url)
       .setHeader(headers(hc): _*)
       .execute[HttpResponse]
       .map(_ => Ok)
