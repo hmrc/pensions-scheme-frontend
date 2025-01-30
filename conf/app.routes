@@ -17,8 +17,6 @@ GET         /scheme-details/:srn                                     controllers
 
 GET         /what-you-will-need-before-start                         controllers.BeforeYouStartController.onPageLoad()
 
-GET         /index                                                   controllers.IndexController.onPageLoad
-
 GET         /assets/*file                                            controllers.Assets.versioned(path="/public", file: Asset)
 
 GET         /language/:lang                                          controllers.LanguageSwitchController.switchToLanguage(lang: String)
@@ -47,9 +45,6 @@ GET         /sharing-scheme-details                                  controllers
 POST        /sharing-scheme-details                                  controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode = NormalMode)
 GET         /:mode/sharing-scheme-details                            controllers.MembershipPensionRegulatorController.onPageLoad(mode: Mode)
 POST        /:mode/sharing-scheme-details                            controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode)
-
-GET         /what-you-will-need-bank-details                         controllers.WhatYouWillNeedBankDetailsController.onPageLoad
-POST        /what-you-will-need-bank-details                         controllers.WhatYouWillNeedBankDetailsController.onSubmit
 
 GET         /having-pensions-working-knowledge                       controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = NormalMode)
 POST        /having-pensions-working-knowledge                       controllers.WorkingKnowledgeController.onSubmit(mode: Mode = NormalMode)
@@ -93,16 +88,6 @@ GET         /change/insurance-policy-number                          controllers
 POST        /change/insurance-policy-number                          controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = CheckMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
 GET         /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber)
 POST        /:mode/insurance-policy-number/:srn                      controllers.InsurancePolicyNumberController.onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber)
-
-GET         /uk-bank-account                                         controllers.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
-POST        /uk-bank-account                                         controllers.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
-GET         /:mode/uk-bank-account                                   controllers.UKBankAccountController.onPageLoad(mode: Mode)
-POST        /:mode/uk-bank-account                                   controllers.UKBankAccountController.onSubmit(mode: Mode)
-
-GET         /bank-account-details                                    controllers.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /bank-account-details                                    controllers.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /:mode/bank-account-details                              controllers.BankAccountDetailsController.onPageLoad(mode: Mode)
-POST        /:mode/bank-account-details                              controllers.BankAccountDetailsController.onSubmit(mode: Mode)
 
 GET         /current-scheme-members                                  controllers.CurrentMembersController.onPageLoad(mode: Mode = NormalMode)
 POST        /current-scheme-members                                  controllers.CurrentMembersController.onSubmit(mode: Mode = NormalMode)
@@ -174,8 +159,6 @@ GET         /check-your-answers-before-start/:srn                    controllers
 GET         /check-your-answers-members                              controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
 GET         /:mode/check-your-answers-members/:srn                   controllers.CheckYourAnswersMembersController.onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber)
 GET         /check-your-answers-members/:srn                         controllers.CheckYourAnswersMembersController.pspOnPageLoad(srn: SchemeReferenceNumber)
-
-GET         /check-your-answers-bank-details                         controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 
 GET         /check-your-answers-benefits-insurance                   controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
 GET         /:mode/check-your-answers-benefits-insurance/:srn        controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber)
