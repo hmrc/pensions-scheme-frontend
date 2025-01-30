@@ -240,9 +240,9 @@ messages__scheme_name__heading = What is the name of the scheme?
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
 messages__error__scheme_name_invalid = The scheme name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
-messages__error__scheme_type_invalid = You must select a valid scheme type
+messages__error__scheme_type_invalid = The scheme type must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^).
 messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
-messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
+messages__error__scheme_type_other_invalid = The scheme type must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^).
 messages__error__scheme_name_psa_name_match = The name of the scheme must be different from {0}
 
 messages__investment_regulated__title = Is the scheme investment regulated?
@@ -258,11 +258,11 @@ messages__benefits_insurance__title = Benefits secured by a contract of insuranc
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
-messages__error__company_name_invalid = The name contains invalid characters
+messages__error__company_name_invalid = The name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^).
 
 messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 160 characters
-messages__error__company_name_invalid = The company name contains invalid characters
+messages__error__company_name_invalid = The name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^).
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 55 characters
 messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
