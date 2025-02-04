@@ -79,7 +79,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
     }
 
     "POST Request with errors" must {
-      "render the same page with invalid error message when invalid characters are entered" ignore {
+      "render the same page with invalid error message when invalid characters are entered" in {
         running(_.overrides(
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].toInstance(getMandatoryTrusteeCompany),
