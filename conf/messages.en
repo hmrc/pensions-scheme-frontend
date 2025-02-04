@@ -35,7 +35,7 @@ messages__common__email = Email address
 messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
-messages__common__address_postcode = Postal code
+messages__common__address_postcode = Postcode
 messages__common__manual__address__title = Address
 messages__common__manual__address__heading = Address
 messages__common__address_lede = This is usually the registered business address but you can enter any address you have for this company.
@@ -449,7 +449,7 @@ messages__benefits_insurance_addr__cya_label = Insurance company address
 messages__common__company_address_hint = This is usually the registered business address but you can enter any address you have for this company.
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
-messages__common__address_postcode = Postal code
+messages__common__address_postcode = Postcode
 
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
