@@ -118,7 +118,7 @@ class DataRetrievalImpl(
                                      hc: HeaderCarrier): Future[Option[JsValue]] =
     if (refresh) {
       schemeDetailsConnector
-        .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
+        .getSchemeDetails(psaId, schemeIdType = "srn", srn, srn, Some(true))
         .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, psaId, viewConnector.upsert(request.externalId, _)))
         .map(Some(_))
     } else {
@@ -281,7 +281,7 @@ class RacdacDataRetrievalImpl(
                                   hc: HeaderCarrier): String => Future[Option[JsValue]] = {
 
     def refreshSchemeDetails: Future[Some[JsValue]] = schemeDetailsConnector
-      .getSchemeDetails(psaId, schemeIdType = "srn", srn, Some(true))
+      .getSchemeDetails(psaId, schemeIdType = "srn", srn, srn, Some(true))
       .flatMap(ua => addMinimalFlagsAndUpdateRepository(srn, ua.json, viewConnector.upsert(request.externalId, _)).map(Some(_)))
 
     id =>

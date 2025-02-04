@@ -34,6 +34,7 @@ trait SchemeDetailsConnector {
   def getSchemeDetails(psaId: String,
                        schemeIdType: String,
                        idNumber: String,
+                       srn: String,
                        refreshData: Option[Boolean] = None
                       )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers]
 
@@ -52,10 +53,11 @@ class SchemeDetailsConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: F
   override def getSchemeDetails(psaId: String,
                                 schemeIdType: String,
                                 idNumber: String,
+                                srn: String,
                                 refreshData: Option[Boolean]
                                )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
-    val url = url"${config.schemeDetailsUrl}"
+    val url = url"${config.schemeDetailsUrl.format(srn)}"
     val schemeHc = hc.withExtraHeaders(
       "schemeIdType" -> schemeIdType,
       "idNumber" -> idNumber,
@@ -79,7 +81,7 @@ class SchemeDetailsConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: F
                                    refreshData: Option[Boolean]
                                   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UserAnswers] = {
 
-    val url = url"${config.pspSchemeDetailsUrl}"
+    val url = url"${config.pspSchemeDetailsUrl.format(srn.id)}"
     val schemeHc = hc.withExtraHeaders(
       "srn" -> srn.id,
     "pspId" -> pspId,
