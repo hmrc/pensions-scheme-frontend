@@ -1286,20 +1286,20 @@ messages__schemeTaskList__sectionEstablishers_view_link = View establishers
 messages__schemeTaskList__sectionEstablishers_no_establishers = No establishers
 
 messages__schemeTaskList__add_details_wk = Add a person or company that has working knowledge
-messages__schemeTaskList__add_details = Add details for {0}
+messages__schemeTaskList__add_details = Add working knowledge details for {0}
 messages__schemeTaskList__add_address = Add address for {0}
 messages__schemeTaskList__add_contact = Add contact details for {0}
 messages__schemeTaskList__continue_contact = Continue adding contact details for {0}
 
 messages__schemeTaskList__change_details = Change working knowledge details for {0}
-messages__schemeTaskList__view_details = View details for {0}
+messages__schemeTaskList__view_details = View working knowledge details for {0}
 messages__schemeTaskList__change_address = Change address for {0}
 messages__schemeTaskList__continue_address = Continue adding address for {0}
 messages__schemeTaskList__view_address = View address for {0}
 messages__schemeTaskList__change_contact = Change contact details for {0}
 messages__schemeTaskList__view_contact = View contact details for {0}
 
-messages__schemeTaskList__continue_details = Continue adding details for {0}
+messages__schemeTaskList__continue_details = Continue adding working knowledge details for {0}
 messages__schemeTaskList__continue_address = Continue adding address for {0}
 messages__schemeTaskList__continue_contact = Continue adding contact details for {0}
 
