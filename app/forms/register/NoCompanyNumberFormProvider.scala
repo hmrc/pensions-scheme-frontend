@@ -29,6 +29,6 @@ class NoCompanyNumberFormProvider @Inject() extends Mappings with Transforms {
     "reason" -> text(Messages("messages__error__no_company_number", name)).
       verifying(firstError(
         maxLength(maxLength, "messages__error__no_company_number_maxlength"),
-        safeText("messages__error__no_company_number_invalid")))
+        tightText("messages__error__no_company_number_invalid")))
   )
 }

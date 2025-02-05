@@ -68,14 +68,13 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     }
 
     "render the same page with invalid error message when invalid characters are entered" in {
-      val controller = app.injector.instanceOf[DirectorNoUTRReasonController]
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";]["))
 
-      val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
 
-      contentAsString(result) must include(messages("messages__reason__error_invalid"))
+      contentAsString(result) must include("The reason must only include letters, spaces, ampersands (&amp;), grave accents (à), apostrophes, hyphens, full stops and carets (^)")
     }
 
     "render the same page with maxlength error message when invalid characters are entered" ignore {

@@ -27,6 +27,6 @@ class SchemeNameFormProvider @Inject() extends Mappings with Constraints {
     "schemeName" -> text("messages__error__scheme_name").
       verifying(firstError(
         maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
-        safeText("messages__error__scheme_name_invalid")))
+        tightTextWithNumber("messages__error__scheme_name_invalid")))
   )
 }
