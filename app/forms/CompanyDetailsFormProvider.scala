@@ -35,7 +35,7 @@ class CompanyDetailsFormProvider @Inject() extends Mappings with Transforms {
               companyNameLength,
               "messages__error__company_name_length"
             ),
-            safeText("messages__error__company_name_invalid")
+            tightTextWithNumber("messages__error__company_name_invalid")
           )
         )
     )(CompanyDetails.applyDelete)(CompanyDetails.unapplyDelete)

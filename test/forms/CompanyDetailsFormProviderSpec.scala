@@ -39,7 +39,7 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexSafeText)
+      RegexpGen.from(regexTightTextWithNumber)
     )
 
     behave like fieldWithMaxLength(
@@ -59,7 +59,7 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
       form,
       fieldName,
       "{invalid}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+      error = FormError(fieldName, invalidKey, Seq(regexTightTextWithNumber))
     )
   }
 }

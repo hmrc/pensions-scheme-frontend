@@ -90,7 +90,7 @@ trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generato
       "not bind a Map with type other and invalid schemeTypeDetails" in {
         val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> "{invalid}"))
         result.errors must contain(FormError(otherDetailsFieldName, invalidOtherKey,
-          Seq(regexSafeText)))
+          Seq(regexTightText)))
       }
 
       forAll(schemeTypeTable) { (schemeType, schemeValue) =>
