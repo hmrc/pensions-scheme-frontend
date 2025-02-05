@@ -17,6 +17,7 @@
 package forms.mappings
 
 import models.register.SchemeType
+
 import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
@@ -43,6 +44,8 @@ trait Constraints {
   val regexVat = """^\d{9}$"""
   val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val regexSafeText = """^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,160}$"""
+  val regexTightText = """^[a-zA-ZàÀ-ÿ '&.^-]{1,160}$"""
+  val regexTightTextWithNumber = """^[a-zA-Z0-9àÀ-ÿ '&.^-]{1,160}$"""
   val regexAddressLine = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
   val adviserNameRegex = """^[a-zA-Z0-9À-ÿ !#$%&'‘’\"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,107}$"""
   val regexPolicyNumber = """^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,55}$"""
@@ -213,6 +216,10 @@ trait Constraints {
 
   protected def safeText(errorKey: String): Constraint[String] = regexp(regexSafeText, errorKey)
 
+  protected def tightText(errorKey: String): Constraint[String] = regexp(regexTightText, errorKey)
+
+  protected def tightTextWithNumber(errorKey: String): Constraint[String] = regexp(regexTightTextWithNumber, errorKey)
+
   protected def personOrOrganisationName(errorKey:String): Constraint[String] = regexp(regexPersonOrOrganisationName, errorKey)
 
   protected def name(errorKey: String): Constraint[String] = regexp(regexName, errorKey)
@@ -224,4 +231,5 @@ trait Constraints {
   protected def policyNumber(errorKey: String): Constraint[String] = regexp(regexPolicyNumber, errorKey)
 
   protected def contractOrPolicyNumber(errorKey: String): Constraint[String] = regexp(regexContractOrPolicyNumber, errorKey)
+
 }
