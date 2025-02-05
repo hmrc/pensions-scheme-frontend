@@ -258,7 +258,7 @@ messages__benefits_insurance__title = Benefits secured by a contract of insuranc
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
-messages__error__company_name_invalid = The name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
+messages__error__company_name_invalid = The name must only include letters, numbers, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 160 characters
