@@ -64,7 +64,7 @@ class TaskListRedirectController @Inject()(appConfig: FrontendAppConfig,
 
           (mode, toSrn(srn), request.psaId) match {
             case (UpdateMode, Some(srnNo), Some(psaId)) =>
-              schemeDetailsConnector.getSchemeDetails(psaId.id, schemeIdType = "srn", srnNo).map { ua =>
+              schemeDetailsConnector.getSchemeDetails(psaId.id, schemeIdType = "srn", srnNo, srnNo.id).map { ua =>
                 ua.get(IsRacDacId) match {
                   case Some(true) =>
                     Redirect(controllers.racdac.routes.CheckYourAnswersController.onPageLoad(mode, srn))
