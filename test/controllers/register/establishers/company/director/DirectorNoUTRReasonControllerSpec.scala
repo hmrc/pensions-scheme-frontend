@@ -46,7 +46,7 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       val dataRetrievalAction = new FakeDataRetrievalAction(Some(validData))
       val result = controller(dataRetrievalAction = dataRetrievalAction).onPageLoad(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form = form("test director name").fill("new reason"))
+      contentAsString(result) mustBe viewAsString(form = form.fill("new reason"))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -68,11 +68,13 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
     }
 
     "render the same page with invalid error message when invalid characters are entered" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "<>?:-{}<>,/.,/;#\";]["))
+      val controller = app.injector.instanceOf[DirectorNoUTRReasonController]
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))
 
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
+      val result = controller.onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
+
       contentAsString(result) must include(messages("messages__reason__error_invalid"))
     }
 
@@ -103,9 +105,9 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
+  private val name = "test director name"
   private val formProvider = new ReasonFormProvider()
-  private def form(name: String = "test director name"): Form[String] =
-    formProvider("messages__reason__error_utrRequired", name)
+  private val form = formProvider("messages__reason__error_utrRequired", name)
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
   private val srn = None
@@ -133,7 +135,6 @@ object DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = formProvider("messages__reason__error_utrRequired", "test director name")) =
-    view(form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 }
 
