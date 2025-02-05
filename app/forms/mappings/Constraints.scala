@@ -48,7 +48,7 @@ trait Constraints {
   val regexTightTextWithNumber = """^[a-zA-Z0-9àÀ-ÿ '&.^-]{1,160}$"""
   val regexAddressLine = """^[A-Za-z0-9 &!'‘’(),./—–‐-]{1,35}$"""
   val adviserNameRegex = """^[a-zA-Z0-9À-ÿ !#$%&'‘’\"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,107}$"""
-  val regexPolicyNumber = """^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\—–‐_^`-]{1,55}$"""
+  val regexPolicyNumber = """^[a-zA-Z0-9 ]{1,55}$"""
   val regexContractOrPolicyNumber = """^[a-zA-Z0-9À-ÿ!#$%&''‘’"“”«»()*+,./:;=?@\[\]|~£€¥\\—–‐_^`-]{1,50}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =

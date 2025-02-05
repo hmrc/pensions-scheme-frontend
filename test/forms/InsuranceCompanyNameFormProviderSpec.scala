@@ -36,7 +36,7 @@ class InsuranceCompanyNameFormProviderSpec extends StringFieldBehaviours with Co
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexSafeText)
+      RegexpGen.from(regexTightTextWithNumber)
     )
 
     behave like fieldWithMaxLength(
@@ -56,7 +56,7 @@ class InsuranceCompanyNameFormProviderSpec extends StringFieldBehaviours with Co
       form,
       fieldName,
       "{name}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+      error = FormError(fieldName, invalidKey, Seq(regexTightTextWithNumber))
     )
   }
 }

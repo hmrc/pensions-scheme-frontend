@@ -307,13 +307,13 @@ class ConstraintsSpec extends PlaySpec with Constraints with RegexBehaviourSpec 
 
     val validText = Table(
       "text",
-      "some valid text À ÿ",
-      "!$%&*()[]@@'~#;:,./?^",
-      "s\\as"
+      "some valid text A y",
+      "523b2b9",
+      "s12as"
     )
 
     val invalidText = Table(
-      "text",
+      "!$%&*()[]@@'~#;:,./?^",
       "{invalid text}",
       "<invalid>"
     )
