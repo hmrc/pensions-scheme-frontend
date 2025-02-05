@@ -87,17 +87,17 @@ messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
 messages__error__no_sautr_length = The reason cannot be more than 160 characters
-messages__error__no_sautr_invalid = The reason cannot contain invalid characters
+messages__error__no_sautr_invalid = The reason must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 messages__error__address_line_1_required = Enter the first line of address
 messages__error__address_line_2_required = Enter the second line of address
 messages__error__address_line_1_length = The first line of address cannot be more than 35 characters
 messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
 messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
 messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
-messages__error__address_line_1_invalid = The first line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
-messages__error__address_line_2_invalid = The second line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
-messages__error__address_line_3_invalid = The third line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
-messages__error__address_line_4_invalid = The fourth line of the address must only include letters, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_1_invalid = The first line of the address must only include letters, numbers, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_2_invalid = The second line of the address must only include letters, numbers, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_3_invalid = The third line of the address must only include letters, numbers, spaces, ampersands (&), apostrophes, hyphens and full stops
+messages__error__address_line_4_invalid = The fourth line of the address must only include letters, numbers, spaces, ampersands (&), apostrophes, hyphens and full stops
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 messages__hasUtr__error__required = Select yes if {0} has a Unique Taxpayer Reference (UTR)
@@ -239,7 +239,7 @@ messages__scheme_name__heading = What is the name of the scheme?
 
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
-messages__error__scheme_name_invalid = The scheme name must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
+messages__error__scheme_name_invalid = The scheme name must only include letters, numbers, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
 messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
@@ -341,7 +341,7 @@ messages__error__nino = Enter the National Insurance number
 messages__error__no_nino_establisher = You need to tell us why the establisher does not have a National Insurance number
 messages__error__nino_invalid = Enter a valid National Insurance number
 messages__error__no_nino_length = The reason cannot be more than 160 characters
-messages__error__no_nino_invalid = The reason cannot contain invalid characters
+messages__error__no_nino_invalid = The reason must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 messages__establishers__add__opt__company=Company
 messages__establishers__add__opt__individual=Individual
@@ -439,7 +439,7 @@ messages__error__no_crn_company = You need to tell us why the company does not h
 messages__error__crn_invalid = Enter a company number in the correct format
 messages__error__crn_invalid_with_company_name = Enter {0}’s company number in the correct format
 messages__error__no_crn_length = The reason cannot be more than 160 characters
-messages__error__no_crn_invalid = The reason cannot contain invalid characters
+messages__error__no_crn_invalid = The reason must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 messages__error__crn = Enter the Company Registration number
 
 messages__error__company_number = Enter a company number
@@ -609,7 +609,7 @@ messages__whyNoCRN = Why does {0} not have a company number?
 
 messages__error__no_company_number = Enter a reason why {0} does not have a company number
 messages__error__no_company_number_maxlength = Reason must be 160 characters or less
-messages__error__no_company_number_invalid = Reason must only include letters, numbers and punctuation marks
+messages__error__no_company_number_invalid = The reason must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 
 messages__checkYourAnswers__section__contact_details = Contact details
@@ -1730,7 +1730,7 @@ messages__utr__checkyouranswerslabel = Unique Taxpayer Reference (UTR)
 messages__reason__error_utrRequired = Enter a reason why {0} does not have a Unique Taxpayer Reference (UTR)
 messages__reason__error_ninoRequired = Enter a reason why {0} does not have a NINO
 messages__reason__error_maxLength = Reason must be 160 characters or less
-messages__reason__error_invalid = Reason must only include letters, numbers and punctuation marks
+messages__reason__error_invalid = The reason must only include letters, spaces, ampersands (&), grave accents (à), apostrophes, hyphens, full stops and carets (^)
 
 messages__whyPersonNoUTR = Why does the person not have a Unique Taxpayer Reference (UTR)?
 messages__whyNoNINO = Why does {0} not have a National Insurance number?
