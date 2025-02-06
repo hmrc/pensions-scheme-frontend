@@ -103,7 +103,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       .thenReturn(Future.successful(JsNull))
     when(viewCacheConnector.upsert(any(), any())(any(), any()))
       .thenReturn(Future.successful(JsNull))
-    when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
+    when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(answersFromDES))
   }
 
@@ -286,7 +286,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       whenReady(futureResult) { result =>
         result.userAnswers mustBe Some(uaInsertedIntoViewCache)
-        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any(), any())(any(), any())
         verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
         jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.json.as[JsObject])
       }
@@ -314,7 +314,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       whenReady(futureResult) { result =>
         result.userAnswers mustBe Some(uaInsertedIntoViewCache)
-        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any(), any())(any(), any())
         verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
         verify(lockRepoConnector, times(1)).releaseLock(any(), any())(any(), any())
         jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.json.as[JsObject])
@@ -349,7 +349,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       whenReady(futureResult) { result =>
         result.userAnswers mustBe Some(uaInsertedIntoViewCache)
         result.viewOnly mustBe false
-        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any(), any())(any(), any())
         verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
         jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.json.as[JsObject])
       }
@@ -378,7 +378,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       whenReady(futureResult) { result =>
         result.userAnswers mustBe Some(uaInsertedIntoViewCache)
         result.viewOnly mustBe true
-        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any(), any())(any(), any())
         verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
         jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.json.as[JsObject])
       }
@@ -397,7 +397,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
       when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
-      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any())(any(), any()))
+      when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(answersFromDES))
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -414,7 +414,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       whenReady(futureResult) { result =>
         result.userAnswers mustBe None
         result.viewOnly mustBe true
-        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any())(any(), any())
+        verify(schemeDetailsConnector, times(1)).getSchemeDetails(any(), any(), any(), any(), any())(any(), any())
         verify(viewCacheConnector, times(1)).upsert(any(), jsonCaptor.capture())(any(), any())
         jsonCaptor.getValue must containJson(answersFromDESWithSuspensionFlag.set(SchemeSrnId)(srn).asOpt.value.json.as[JsObject])
       }

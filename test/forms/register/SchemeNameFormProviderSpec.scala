@@ -36,7 +36,7 @@ class SchemeNameFormProviderSpec extends StringFieldBehaviours with Constraints 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexSafeText)
+      RegexpGen.from(regexTightTextWithNumber)
     )
 
     behave like fieldWithMaxLength(
@@ -56,7 +56,7 @@ class SchemeNameFormProviderSpec extends StringFieldBehaviours with Constraints 
       form,
       fieldName,
       "{name}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+      error = FormError(fieldName, invalidKey, Seq(regexTightTextWithNumber))
     )
   }
 }

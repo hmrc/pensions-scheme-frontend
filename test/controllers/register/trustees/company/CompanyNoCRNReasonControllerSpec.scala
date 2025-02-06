@@ -92,7 +92,7 @@ class CompanyNoCRNReasonControllerSpec extends ControllerSpecBase with Matchers 
           val result = controller.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(request)
 
           status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
+          contentAsString(result) must include("The reason must only include letters, spaces, ampersands (&amp;), grave accents (à), apostrophes, hyphens, full stops and carets (^)")
         }
       }
 

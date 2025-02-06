@@ -49,7 +49,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
-    connector.getSchemeDetails(psaId, schemeIdType, idNumber).map(schemeDetails =>
+    connector.getSchemeDetails(psaId, schemeIdType, idNumber, srn).map(schemeDetails =>
       schemeDetails shouldBe psaSchemeDetailsVariationsResponse
     )
   }
@@ -70,7 +70,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
     val connector = injector.instanceOf[SchemeDetailsConnector]
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber, srn)
     }
   }
 
@@ -90,7 +90,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber, srn)
     }
 
   }
@@ -107,7 +107,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber, srn)
     }
 
   }
@@ -125,7 +125,7 @@ class SchemeDetailsConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
     val connector = injector.instanceOf[SchemeDetailsConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.getSchemeDetails(psaId, schemeIdType, idNumber)
+      connector.getSchemeDetails(psaId, schemeIdType, idNumber, srn)
     }
 
   }
@@ -233,8 +233,10 @@ object SchemeDetailsConnectorSpec {
   private val pspId = "0000"
   private val schemeIdType = "pstr"
   private val idNumber = SchemeReferenceNumber("00000000AA")
-  private val schemeDetailsUrl = s"/pensions-scheme/scheme"
-  private val pspSchemeDetailsUrl = s"/pensions-scheme/psp-scheme"
+  private val srn      = "00000000AA"
+  private val schemeDetailsUrl = s"/pensions-scheme/scheme/$srn"
+  private val pspSchemeDetailsUrl = s"/pensions-scheme/psp-scheme/$srn"
+
   val mockSchemeDetails: SchemeDetails = SchemeDetails(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("S9000000000"))), Some("00000000AA"), "Open", "Benefits Scheme",
     isMasterTrust = true, typeOfScheme = None, otherTypeOfScheme = None, hasMoreThanTenTrustees = false,
     members = SchemeMemberNumbers("0", "0"), isInvestmentRegulated = false, isOccupational = false, benefits = "AD",

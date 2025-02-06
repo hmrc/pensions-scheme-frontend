@@ -73,7 +73,8 @@ class DirectorNoUTRReasonControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include(messages("messages__error__no_company_number_invalid"))
+
+      contentAsString(result) must include("The reason must only include letters, spaces, ampersands (&amp;), grave accents (à), apostrophes, hyphens, full stops and carets (^)")
     }
 
     "render the same page with maxlength error message when invalid characters are entered" ignore {

@@ -45,7 +45,7 @@ class NoCompanyNumberFormProviderSpec @Inject() extends StringFieldBehaviours wi
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexSafeText)
+      RegexpGen.from(regexTightText)
     )
 
     behave like fieldWithMaxLength(
@@ -65,7 +65,7 @@ class NoCompanyNumberFormProviderSpec @Inject() extends StringFieldBehaviours wi
       form,
       fieldName,
       "{name}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+      error = FormError(fieldName, invalidKey, Seq(regexTightText))
     )
   }
 }
