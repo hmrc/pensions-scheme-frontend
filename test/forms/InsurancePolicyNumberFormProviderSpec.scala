@@ -39,9 +39,9 @@ class InsurancePolicyNumberFormProviderSpec extends StringFieldBehaviours with C
     )
 
     "remove spaces and convert to upper case for valid value" in {
-      val result = form.bind(Map(fieldName -> "  a b c ÿ d e f   "))
+      val result = form.bind(Map(fieldName -> "  a b c 5 d e f   "))
       result.errors mustBe empty
-      result.value mustBe Some("ABCÿDEF")
+      result.value mustBe Some("ABC5DEF")
     }
 
     behave like mandatoryField(

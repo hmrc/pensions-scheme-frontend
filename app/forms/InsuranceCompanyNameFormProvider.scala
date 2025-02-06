@@ -27,6 +27,6 @@ class InsuranceCompanyNameFormProvider @Inject() extends Mappings with Constrain
     "companyName" -> text("messages__error__insurance_company_name").
       verifying(firstError(
         maxLength(maxLength, "messages__error__insurance_company_name_length"),
-        safeText("messages__error__insurance_company_name_invalid")))
+        tightTextWithNumber("messages__error__insurance_company_name_invalid")))
   )
 }
