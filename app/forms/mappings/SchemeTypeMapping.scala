@@ -62,7 +62,7 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
         verifying(firstError(
           maxLength(schemeTypeDetailsMaxLength, lengthOtherKey),
-          safeText(invalidOtherKey))))
+          tightText(invalidOtherKey))))
     ).transform(toSchemeType, fromSchemeType)
   }
 }
