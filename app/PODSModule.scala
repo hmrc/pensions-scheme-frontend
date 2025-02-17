@@ -34,7 +34,6 @@ class PODSModule extends AbstractModule {
   override def configure(): Unit = {
 
     val navigators = Multibinder.newSetBinder(binder(), classOf[Navigator])
-    navigators.addBinding().to(classOf[AboutBankDetailsNavigator])
     navigators.addBinding().to(classOf[AboutBenefitsAndInsuranceNavigator])
     navigators.addBinding().to(classOf[AboutMembersNavigator])
     navigators.addBinding().to(classOf[BeforeYouStartNavigator])
@@ -95,10 +94,6 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[AboutBenefitsAndInsurance])
       .to(classOf[AboutBenefitsAndInsuranceNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[AboutBankDetails])
-      .to(classOf[AboutBankDetailsNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Register])
