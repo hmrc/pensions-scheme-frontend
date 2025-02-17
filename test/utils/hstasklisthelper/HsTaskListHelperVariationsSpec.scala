@@ -262,20 +262,14 @@ object HsTaskListHelperVariationsSpec extends SpecBase with Matchers with Option
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,
-                                     isCompleteAboutBank: Boolean = true,
                                      isCompleteAboutBenefits: Boolean = true,
-                                     isCompleteWk: Boolean = true,
-                                     isCompleteEstablishers: Boolean = true,
-                                     isCompleteTrustees: Boolean = true,
-                                     isChangedInsuranceDetails: Boolean = true,
-                                     isChangedEstablishersTrustees: Boolean = true
+                                     isCompleteWk: Boolean = true
                                     ): UserAnswers = {
     setCompleteBeforeYouStart(isCompleteBeforeStart,
       setCompleteMembers(isCompleteAboutMembers,
-        setCompleteBank(isCompleteAboutBank,
           setCompleteBenefits(isCompleteAboutBenefits,
             setCompleteEstIndividual(0,
               setCompleteTrusteeIndividual(0,
-                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName)))))))
+                setCompleteWorkingKnowledge(isCompleteWk, userAnswersWithSchemeName))))))
   }
 }

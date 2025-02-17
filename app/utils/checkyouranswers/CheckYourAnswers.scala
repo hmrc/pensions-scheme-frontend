@@ -288,32 +288,6 @@ object CheckYourAnswers {
 
 }
 
-case class BankDetailsCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[Message] = None,
-                                                                    hiddenLabel: Option[Message] = None) {
-
-  def apply()(implicit rds: Reads[BankAccountDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          bankDetails =>
-            Seq(AnswerRow(
-              label.fold(Message(s"${id.toString}.checkYourAnswersLabel"))(customLabel => customLabel),
-              Seq(
-                s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
-                bankDetails.accountNumber),
-              answerIsMessageKey = false,
-              Some(Link("site.change", changeUrl,
-                Some(hiddenLabel.fold(Message(s"messages__visuallyhidden__${id.toString}"))(customHiddenLabel =>
-                  customHiddenLabel))))
-            ))
-        }.getOrElse(Seq.empty[AnswerRow])
-
-      override def updateRow(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        row(id)(changeUrl, userAnswers)
-    }
-  }
-}
-
 case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: Message =
                                                                Message("messages__establisher_address_years__title"),
                                                                changeAddressYears: Message =

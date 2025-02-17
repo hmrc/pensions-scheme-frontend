@@ -76,8 +76,6 @@ trait DataCompletion {
     isAnswerComplete(CurrentMembersId),
     isAnswerComplete(FutureMembersId)))
 
-  def isBankDetailsCompleted: Option[Boolean] = isAnswerComplete(UKBankAccountId, BankAccountDetailsId, None)
-
   def isAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
                           yesValueId: TypedIdentifier[A],
                           noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =

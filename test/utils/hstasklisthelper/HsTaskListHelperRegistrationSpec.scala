@@ -461,38 +461,38 @@ class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with Mo
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 2
     }
 
-    "return 7 when all complete and working knowledge answered as no and trustees as yes" in {
+    "return 6 when all complete and working knowledge answered as no and trustees as yes" in {
       val userAnswers = answersDataAllComplete()
         .setOrException(DeclarationDutiesId)(false)
         .setOrException(HaveAnyTrusteesId)(true)
-      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 7
-    }
-
-    "return 6 when all complete and working knowledge answered as no and trustees as no" in {
-      val userAnswers = answersDataAllComplete()
-        .setOrException(DeclarationDutiesId)(false)
-        .setOrException(HaveAnyTrusteesId)(false)
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 6
     }
 
-    "return 5 when all complete and working knowledge answered as yes and trustees as no" in {
+    "return 5 when all complete and working knowledge answered as no and trustees as no" in {
       val userAnswers = answersDataAllComplete()
-        .setOrException(DeclarationDutiesId)(true)
+        .setOrException(DeclarationDutiesId)(false)
         .setOrException(HaveAnyTrusteesId)(false)
       HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
 
-    "return 7 when all complete and working knowledge answered as no and trustees question not answered and scheme type single trust" in {
+    "return 4 when all complete and working knowledge answered as yes and trustees as no" in {
       val userAnswers = answersDataAllComplete()
-        .setOrException(DeclarationDutiesId)(false)
-      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 7
+        .setOrException(DeclarationDutiesId)(true)
+        .setOrException(HaveAnyTrusteesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 4
     }
 
-    "return 6 when all complete and working knowledge answered as no and trustees question not answered and scheme type is body corp " in {
+    "return 6 when all complete and working knowledge answered as no and trustees question not answered and scheme type single trust" in {
+      val userAnswers = answersDataAllComplete()
+        .setOrException(DeclarationDutiesId)(false)
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 6
+    }
+
+    "return 5 when all complete and working knowledge answered as no and trustees question not answered and scheme type is body corp " in {
       val userAnswers = answersDataAllComplete()
         .setOrException(DeclarationDutiesId)(false)
         .setOrException(SchemeTypeId)(SchemeType.BodyCorporate)
-      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 6
+      HsTaskListHelperRegistration.completedSectionCount(userAnswers) mustBe 5
     }
 
   }
@@ -531,41 +531,31 @@ object HsTaskListHelperRegistrationSpec extends DataCompletionHelper with Enumer
 
   private def answersDataAllComplete(isCompleteBeforeStart: Boolean = true,
                                      isCompleteAboutMembers: Boolean = true,
-                                     isCompleteAboutBank: Boolean = true,
                                      isCompleteAboutBenefits: Boolean = true,
                                      isCompleteWk: Boolean = true,
                                      isCompleteEstablishers: Boolean = true,
-                                     isCompleteTrustees: Boolean = true,
-                                     isChangedInsuranceDetails: Boolean = true,
-                                     isChangedEstablishersTrustees: Boolean = true
+                                     isCompleteTrustees: Boolean = true
                                     ): UserAnswers = {
     val ua = setCompleteWorkingKnowledge(isCompleteWk,
       setCompleteBeforeYouStart(isCompleteBeforeStart,
         setCompleteMembers(isCompleteAboutMembers,
-          setCompleteBank(isCompleteAboutBank,
-            setCompleteBenefits(isCompleteAboutBenefits, userAnswersWithSchemeName)))))
+            setCompleteBenefits(isCompleteAboutBenefits, userAnswersWithSchemeName))))
     val uaAfterTrusteesUpdate = if (isCompleteTrustees) setCompleteTrusteeIndividual(0, ua) else ua
     if (isCompleteEstablishers) setCompleteEstIndividual(0, uaAfterTrusteesUpdate) else uaAfterTrusteesUpdate
   }
 
   private def answersData(isCompleteBeforeStart: Boolean,
                           isCompleteAboutMembers: Boolean = false,
-                          isCompleteAboutBank: Boolean = false,
                           isCompleteAboutBenefits: Boolean = false,
                           isCompleteWk: Boolean = false,
                           isCompleteEstablishers: Boolean = false,
-                          isCompleteTrustees: Boolean = false,
-                          isChangedInsuranceDetails: Boolean = false,
-                          isChangedEstablishersTrustees: Boolean = false
+                          isCompleteTrustees: Boolean = false
                          ): UserAnswers =
     answersDataAllComplete(isCompleteBeforeStart,
       isCompleteAboutMembers,
-      isCompleteAboutBank,
       isCompleteAboutBenefits,
       isCompleteWk,
       isCompleteEstablishers,
-      isCompleteTrustees,
-      isChangedInsuranceDetails,
-      isChangedEstablishersTrustees
+      isCompleteTrustees
     )
 }

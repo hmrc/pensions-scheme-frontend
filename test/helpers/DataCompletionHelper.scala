@@ -121,10 +121,6 @@ trait DataCompletionHelper extends OptionValues {
     if (isComplete) ua.currentMembers(Members.One).futureMembers(Members.One) else ua.currentMembers(Members.One)
   }
 
-  protected def setCompleteBank(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
-    if (isComplete) ua.ukBankAccount(ukBankAccount = false) else ua.ukBankAccount(ukBankAccount = true)
-  }
-
   protected def setCompleteBenefits(isComplete: Boolean, ua: UserAnswers): UserAnswers = {
     if (isComplete) {
       ua.occupationalPensionScheme(isOccupational = true).
