@@ -38,7 +38,7 @@
 
 @layout(pageTitle = titleWithErrors(form, messages(viewModel.title))) {
 
-    @formHelper(action = viewModel.postCall, Symbol("autoComplete") -> "off") {
+    @formHelper(action = viewModel.postCall, Symbol("autoComplete") -> "on") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
