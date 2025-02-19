@@ -259,14 +259,11 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       isComplete = true,
       setCompleteMembers(
         isComplete = true,
-        setCompleteBank(
-          isComplete = true,
           setCompleteBenefits(
             isComplete = true,
             setCompleteEstIndividual(0, UserAnswers())
           )
         )
-      )
     )
       .set(HaveAnyTrusteesId)(false).asOpt.value
 

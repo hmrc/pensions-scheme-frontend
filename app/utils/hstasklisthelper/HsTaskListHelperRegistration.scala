@@ -295,7 +295,6 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
     val workingKnowledgeCount = toInt(userAnswers.get(DeclarationDutiesId).contains(false), userAnswers.isWorkingKnowledgeCompleted.contains(true))
     val beforeYouStartCount = toInt(userAnswers.isBeforeYouStartCompleted(NormalMode))
     val membersCount = toInt(userAnswers.isMembersCompleted.contains(true))
-    val bankCount = toInt(userAnswers.isBankDetailsCompleted.contains(true))
     val benefitsCount = toInt(userAnswers.isBenefitsAndInsuranceCompleted.contains(true))
     val estCount = toInt(isAllEstablishersCompleted(userAnswers, NormalMode))
 
@@ -303,7 +302,6 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
       workingKnowledgeCount +
       beforeYouStartCount +
       membersCount +
-      bankCount +
       benefitsCount +
       estCount
     totalCount

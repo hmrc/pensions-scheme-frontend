@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.routes.VariationDeclarationController
 import identifiers._
 import models.OptionalSchemeReferenceNumber.toSrn
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, TypeOfBenefits, UpdateMode}
+import models.{OptionalSchemeReferenceNumber, TypeOfBenefits, UpdateMode}
 import models.requests.DataRequest
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import connectors._
 import identifiers.PsaMinimalFlagsId._
-import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId, UKBankAccountId}
+import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
 import matchers.JsonMatchers
 import models.OptionalSchemeReferenceNumber.toSrn
 import models._
@@ -269,7 +269,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is no data in the read-only cache in UpdateMode and " +
       s"lock is not held by psa then build new user answers with data retrieved from scheme details" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn)))).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn))))
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future(None)
       when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
@@ -295,7 +295,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is no data in the update cache in UpdateMode and " +
       s"variance lock is held by psa then release the lock and get data in readonly cache" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn)))).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn))))
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(Some(VarianceLock)))
       when(lockRepoConnector.releaseLock(any(), any())(any(), any())).thenReturn(Future((): Unit))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future(None)
@@ -328,7 +328,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "overwrite data with new user answers with data retrieved from scheme details and add it to the request" +
       "and set view only to false" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn)))).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusOpen, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn))))
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusOpen).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
@@ -357,7 +357,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     "when refreshData is true and there is data in the read-only cache in UpdateMode and lock is not held by anyone " +
       "status is not open, then build new user answers with data retrieved from scheme details and set view only to true" in {
-      val uaInsertedIntoViewCache = userAnswersDummy(status = statusPending, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn)))).set(UKBankAccountId)(true).asOpt.value
+      val uaInsertedIntoViewCache = userAnswersDummy(status = statusPending, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn))))
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
@@ -390,13 +390,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
       val answersFromDES = userAnswersDummy(statusOpen, srn = OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(differentSrn))))
       val answersFromDESWithSuspensionFlag = answersFromDES
         .set(PsaMinimalFlagsId)(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)).asOpt.value
-      val uaInsertedIntoViewCache = answersFromDESWithSuspensionFlag.set(UKBankAccountId)(true).asOpt.value
       val answersAlreadyInViewCache = UserAnswers().set(SchemeStatusId)(statusPending).flatMap(_.set(SchemeSrnId)(srn)).asOpt.value.json
 
 
       when(lockRepoConnector.isLockByPsaIdOrSchemeId(any(), any())(any(), any())).thenReturn(Future(None))
       when(viewCacheConnector.fetch(any())(any(), any())) thenReturn Future.successful(Some(answersAlreadyInViewCache))
-      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(uaInsertedIntoViewCache.json))
+      when(viewCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(answersFromDESWithSuspensionFlag.json))
       when(schemeDetailsConnector.getSchemeDetails(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(answersFromDES))
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])

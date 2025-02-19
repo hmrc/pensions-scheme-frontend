@@ -70,14 +70,6 @@ package object utils {
       answers.set(EstablishedCountryId)(country).asOpt.value
     }
 
-    def schemeUkBankAccount(haveUkBankAccount: Boolean): UserAnswers = {
-      answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
-    }
-
-    def bankAccountDetails(bankAccountDetails: BankAccountDetails): UserAnswers = {
-      answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
-    }
-
     def currentMembers(currentMembers: Members): UserAnswers = {
       answers.set(CurrentMembersId)(currentMembers).asOpt.value
     }
@@ -100,10 +92,6 @@ package object utils {
 
     def insurerSelectAddress(address: TolerantAddress): UserAnswers = {
       answers.set(identifiers.InsurerSelectAddressId)(address).asOpt.value
-    }
-
-    def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
-      answers.set(identifiers.UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
     def declarationDuties(haveWorkingKnowledge: Boolean): UserAnswers = {

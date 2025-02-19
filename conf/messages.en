@@ -291,32 +291,10 @@ messages__complete__pension_regulator = {0} for this scheme to be authorised. HM
 
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
-messages__uk_bank_account_details__title = Bank account details
-messages__uk_bank_account_details__sort_code = Sort code
-messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
-messages__uk_bank_account_details__account_number = Account number
-messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
-
-messages__error__account_number = Enter the account number
-messages__error__sort_code = Enter the sort code
-
-messages__error__sort_code__blank = Enter a bank sort code
-messages__error__sort_code__length = Sort code must be 6 numbers
-messages__error__sort_code__invalid = Enter a bank sort code using only numbers
-
-messages__error__bank_accno__blank = Enter a bank account number
-messages__error__bank_accno__invalid = Account number must be 8 digits long
-
-messages__error__sort_code_length = Enter the sort code using 6 numbers
-messages__error__sort_code_invalid = Enter the sort code using 6 numbers
-messages__error__account_number_length = The account number cannot be more than 8 numbers
-messages__error__account_number_invalid = The account number can only contain numbers
 messages__scheme_country__title = Where was the scheme established?
 messages__error__scheme_country = Enter a recognised country
 messages__scheme_country__hint = Enter the country where the scheme was established
 messages__common__pick_country = Select a country
-
-messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
 messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
@@ -657,9 +635,6 @@ messages__scheme_benefits_section=Scheme benefits
 membership.checkYourAnswersLabel = Current membership
 membershipFuture.checkYourAnswersLabel = Membership within 12 months
 schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme established?
-
-uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
-bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened
 
 messages__trusteeKind__title = What kind of trustee are you adding?
 messages__trusteeKind__heading = What kind of trustee are you adding?
@@ -1101,13 +1076,6 @@ messages__visuallyhidden__benefits_insurance__name = Change the name of the insu
 messages__visuallyhidden__benefits_insurance__policy = Change the policy number
 messages__visuallyhidden__insurer_address = Change the address of the insurance company
 
-messages__visuallyhidden__uKBankAccount = Change whether the scheme has a UK bank account
-messages__visuallyhidden__uKBankAccount__bank_name = Change the bank name
-messages__visuallyhidden__uKBankAccount__account_name = Change the account name
-messages__visuallyhidden__uKBankAccount__sort_code = Change the sort code
-messages__visuallyhidden__uKBankAccount__account_number = Change the account number
-messages__visuallyhidden__uKBankAccount__date_bank_account = Change approximate date the account was opened
-
 messages__visuallyhidden__establisher__nino_yes_no = Change whether the establisher has a National Insurance number
 messages__visuallyhidden__establisher__vat_yes_no = Change whether the establisher has a VAT registration number
 messages__visuallyhidden__establisher__paye_yes_no = Change whether the establisher has a PAYE employer reference number
@@ -1415,9 +1383,6 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
-messages__scheme_uk_bank_account__title = Does the scheme have a UK bank account?
-messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
-
 messages__members__opt1 = None
 messages__members__opt2 = 1
 messages__members__opt3 = 2 to 11
@@ -1452,13 +1417,6 @@ messages__membership_pension_regulator__title = The scheme details will be share
 messages__membership_pension_regulator__h1 = The scheme details will be shared with The Pensions Regulator
 messages__membership_pension_regulator__p1 = HMRC will share the scheme and your contact details with The Pensions Regulator.
 messages__membership_pension_regulator__p2 = The Pensions Regulator will contact you to register the scheme with them.
-
-messages__what_you_will_need_bank_details__title = Bank details
-messages__what_you_will_need_bank_details__h1 = Bank details
-messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
-messages__what_you_will_need_bank_details__p2 = If the scheme does have a bank account, you will also need to tell us the:
-messages__what_you_will_need_bank_details__item_1 = sort code
-messages__what_you_will_need_bank_details__item_2 = account number
 
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is {0} investment regulated?
@@ -1522,22 +1480,6 @@ haveAnyTrustees.checkYourAnswersLabel = Does {0} have any trustees?
 messages__visuallyhidden__haveAnyTrustees = if {0} has any trustees
 schemeEstablishedCountry.checkYourAnswersLabel = Which country was {0} established in?
 messages__visuallyhidden__schemeEstablishedCountry = the country {0} was established in
-
-
-messages__bank_account_details__title = What are the scheme’s bank account details?
-messages__bank_account_details__h1 = What are {0}’s bank account details?
-messages__bank_account_details__bank_name = Bank name
-messages__bank_account_details__account_name = Account name
-messages__bank_account_details__sort_code = Sort code
-messages__bank_account_details__sort_code_hint = For example, 08 32 10
-messages__bank_account_details__account_number_hint = Must be 8 digits long
-messages__bank_account_details__account_number = Account number
-messages__bank_account_details__date_bank_account = Approximate date the account was opened
-
-uKBankAccount.checkYourAnswersLabel = Does {0} have a UK bank account?
-messages__visuallyhidden__uKBankAccount = whether {0} has a UK bank account
-uKBankDetails.checkYourAnswersLabel = What are the bank account details for {0}?
-messages__visuallyhidden__uKBankDetails = the bank account details for {0}
 
 messages__whatYouWillNeedEstablisherCompany__title = Company details
 messages__detailsFor = {0}’s details
@@ -1653,9 +1595,6 @@ messages__schemeTaskList__about_benefits_and_insurance_link_text = Change {0}’
 messages__schemeTaskList__about_benefits_and_insurance_link_text_view = View benefits and insurance for {0}
 messages__schemeTaskList__about_benefits_and_insurance_link_text_add = Add {0}’s benefits and insurance
 messages__schemeTaskList__about_benefits_and_insurance_link_text_continue = Continue adding {0}’s benefits and insurance
-messages__schemeTaskList__about_bank_details_link_text = Change {0}’s bank details
-messages__schemeTaskList__about_bank_details_link_text_add = Add {0}’s bank details
-messages__schemeTaskList__about_bank_details_link_text_continue = Continue adding {0}’s bank details
 messages__schemeTaskList__before_you_start_header = Before you start
 messages__schemeTaskList__about_scheme_header = About {0}
 messages__schemeTaskList__working_knowledge_header = Working knowledge of pensions and pensions tax legislation
@@ -1822,7 +1761,6 @@ messages__theAdviser = the adviser
 messages__benefits_secured_by_insurance__error_required = Select yes if any of {0}’s benefits are secured by a contract of insurance or annuity
 messages__investment_regulated_scheme__error_required = Select yes if {0} is investment regulated
 messages__occupational_pension_scheme__error_required = Select yes if {0} is an occupational pension scheme
-messages__scheme_uk_bank_account__error_required = Select yes if {0} has a UK bank account
 messages__confirmDelete__error_required = Select yes if you want to delete {0}
 messages__moreThanTenTrustees__error_required = Select yes if you need to tell us about other trustees
 messages__current_members__error_required = Select how many members {0} currently has

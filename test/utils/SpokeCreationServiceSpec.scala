@@ -108,8 +108,7 @@ class SpokeCreationServiceSpec
       }
 
       "display all the spokes with link to first page, incomplete status if the spoke is in progress" in {
-        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true).
-          ukBankAccount(ukBankAccount = true)
+        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true)
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_continue", schemeName),
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
@@ -123,9 +122,8 @@ class SpokeCreationServiceSpec
 
       "display all the spokes with link to cya page, complete status if the spoke is completed" in {
         val userAnswers = setCompleteMembers(isComplete = true,
-          setCompleteBank(isComplete = true,
             setCompleteBenefits(isComplete = true,
-              userAnswersWithSchemeName)))
+              userAnswersWithSchemeName))
 
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text", schemeName),
@@ -154,8 +152,7 @@ class SpokeCreationServiceSpec
       }
 
       "display members and benefits and insurance spokes with link to first page, in progress status if the spoke is in progress" in {
-        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true).
-          ukBankAccount(ukBankAccount = true)
+        val userAnswers = userAnswersWithSchemeName.currentMembers(Members.One).occupationalPensionScheme(isOccupational = true)
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),
             controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), Some(false)),
@@ -169,9 +166,8 @@ class SpokeCreationServiceSpec
 
       "display members and benefits and insurance spokes with link to cya page, blank status if the spoke is completed" in {
         val userAnswers = setCompleteMembers(isComplete = true,
-          setCompleteBank(isComplete = true,
             setCompleteBenefits(isComplete = true,
-              userAnswersWithSchemeName)))
+              userAnswersWithSchemeName))
 
         val expectedSpoke = Seq(
           EntitySpoke(TaskListLink(Message("messages__schemeTaskList__about_members_link_text_view", schemeName),

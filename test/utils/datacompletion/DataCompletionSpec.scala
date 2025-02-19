@@ -425,28 +425,6 @@ class DataCompletionSpec extends AnyWordSpec with Matchers with OptionValues wit
     }
   }
 
-  "isBankDetailsCompleted" must {
-    "return true when all the answers are completed with no uk bank account" in {
-      val answers = UserAnswers().ukBankAccount(false)
-      answers.isBankDetailsCompleted.value mustBe true
-    }
-
-    "return true when all the answers are completed with uk bank account" in {
-      val answers = UserAnswers().ukBankAccount(true).
-        bankAccountDetails(BankAccountDetails(SortCode("12", "34", "56"), "no"))
-      answers.isBankDetailsCompleted.value mustBe true
-    }
-
-    "return false when bank details are not provided" in {
-      val answers = UserAnswers().ukBankAccount(true)
-      answers.isBankDetailsCompleted.value mustBe false
-    }
-
-    "return None when there is no data" in {
-      UserAnswers().isBankDetailsCompleted mustBe None
-    }
-  }
-
   "isBenefitsAndInsuranceCompleted" must {
     "return true when all the answers are completed with benefits secured by insurance" in {
       val answers = UserAnswers().investmentRegulated(true).occupationalPensionScheme(true).

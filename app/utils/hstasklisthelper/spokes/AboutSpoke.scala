@@ -78,28 +78,3 @@ case object AboutBenefitsAndInsuranceSpoke extends Spoke {
   override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
     answers.isBenefitsAndInsuranceCompleted
 }
-
-case object AboutBankDetailsSpoke extends Spoke {
-  override def addLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
-    TaskListLink(
-      Message("messages__schemeTaskList__about_bank_details_link_text_add", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
-    )
-
-  override def changeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
-    TaskListLink(
-      Message("messages__schemeTaskList__about_bank_details_link_text", name),
-      controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad().url
-    )
-
-  override def incompleteChangeLink(name: String)(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Option[Index]): TaskListLink =
-    TaskListLink(
-      Message("messages__schemeTaskList__about_bank_details_link_text_continue", name),
-      controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url
-    )
-
-  override def completeFlag(answers: UserAnswers, index: Option[Index], mode: Mode): Option[Boolean] =
-    answers.isBankDetailsCompleted
-}
-
-
