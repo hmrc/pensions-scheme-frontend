@@ -42,7 +42,8 @@
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = HtmlContent(s"""<h1 class="govuk-heading-l govuk-!-margin-top-0">${viewModel.heading.resolve}</h1>"""),
+                    content = HtmlContent(viewModel.heading.resolve),
+                    classes = "govuk-fieldset__legend--l govuk-!-margin-bottom-4",
                     isPageHeading = true
                 ))
             )),
