@@ -30,6 +30,14 @@
 
 @(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
+@labelClass = @{
+    if(viewmodel.labelHidden == true) {
+        Some("govuk-visually-hidden")
+    } else {
+        None
+    }
+}
+
 @layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 
     @formHelper(action = viewmodel.postCall, Symbol("autoComplete") -> "off") {
@@ -38,14 +46,17 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(messages(viewmodel.heading))
+        @if(viewmodel.headingIsLegend == false) {
+            @components.heading(messages(viewmodel.heading))
 
-        @components.paragraph_text(viewmodel.entityName.map(p => messages("messages__enterPAYE__p1", p)).getOrElse(""))
+            @components.paragraph_text(viewmodel.entityName.map(p => messages("messages__enterPAYE__p1", p)).getOrElse(""))
+        }
 
         @input_text(
             field = form("paye"),
             label = messages(viewmodel.heading),
-            labelClass = Some("govuk-visually-hidden"),
+            labelClass = labelClass,
+            headingIsLegend = viewmodel.headingIsLegend,
             hint = viewmodel.hint.map(hint => messages(hint))
         )
 

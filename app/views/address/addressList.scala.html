@@ -39,23 +39,19 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @components.heading(messages(viewModel.heading))
-
-        <p class="govuk-body">
-            @viewModel.selectAddress.resolve
-            <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
-                @viewModel.selectAddressLink.resolve
-            </a>
-        </p>
-
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(viewModel.heading),
-                    classes = "govuk-visually-hidden",
-                    isPageHeading = false,
+                    content = HtmlContent(s"""<h1 class="govuk-heading-l govuk-!-margin-top-0">${viewModel.heading.resolve}</h1>"""),
+                    isPageHeading = true
                 ))
             )),
+            hint = Some(Hint(content = HtmlContent(s"""<p class="govuk-body">
+                ${viewModel.selectAddress.resolve}
+                <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
+                    ${viewModel.selectAddressLink.resolve}
+                </a>
+            </p>"""))),
             items = for((address, i) <-  viewModel.addresses.zipWithIndex)
                 yield {
                     RadioItem(

@@ -19,7 +19,8 @@ package viewmodels.address
 import models.address.TolerantAddress
 import play.api.mvc.Call
 import viewmodels.Message
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 
 case class AddressListViewModel(
                                  postCall: Call,
@@ -30,5 +31,6 @@ case class AddressListViewModel(
                                  selectAddress: Message = Message("messages__common__select_address"),
                                  selectAddressLink: Message = Message("messages__common__select_address_link"),
                                  srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber,
-                                 entityName: String
+                                 entityName: String,
+                                 hint: Option[Hint] = None
                                )

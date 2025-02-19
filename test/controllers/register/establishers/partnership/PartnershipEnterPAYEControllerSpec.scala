@@ -78,7 +78,9 @@ object PartnershipEnterPAYEControllerSpec extends PartnershipEnterPAYEController
     heading = Message("messages__enterPAYE", partnershipName),
     hint = Some(Message("messages__enterPAYE__hint")),
     srn = OptionalSchemeReferenceNumber(srn),
-    entityName = Some(partnershipName)
+    entityName = Some(partnershipName),
+    labelHidden = false,
+    headingIsLegend = true
   )
 
   private val view = injector.instanceOf[paye]
