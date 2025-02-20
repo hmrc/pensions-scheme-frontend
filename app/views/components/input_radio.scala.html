@@ -20,7 +20,7 @@
 
 @this(
     govukRadios : GovukRadios,
-    govukInput: GovukInput
+    govukTextarea: GovukTextarea
 )
 
 @(
@@ -36,24 +36,27 @@
     chtml_name: Option[String] = None
 )(implicit messages: Messages)
 
+@getCorrectId(id: String) = @{
+    id.split("_").mkString(".")
+}
+
 @conditionalHtml(chtml_name: Option[String], inputValue: String) = @{
-    if(chtml_name.nonEmpty &&  (inputValue  == chtml_name.get)){
-    chtml_field match {
-        case Some(html_field) => {
+    if(chtml_name.nonEmpty && (inputValue == chtml_name.get)) {
+        chtml_field match {
+            case Some(html_field) => {
                 Some(
-                govukInput(Input(
-                    id = html_field.id,
-                    name = html_field.name,
-                    label = Label(
-                        content = Text(chtml_label.getOrElse("")),
-                    ),
-                    classes = "govuk-!-width-one-half"
-                ).withFormField(html_field))
+                    govukTextarea(Textarea(
+                        id = getCorrectId(html_field.id),
+                        name = html_field.name,
+                        label = Label(
+                            content = Text(chtml_label.getOrElse(""))
+                        )
+                    ).withFormField(html_field))
                 )
             }
          case _ => None
         }
-    } else{
+    } else {
         None
     }
 }
