@@ -78,7 +78,7 @@
                 @for((entity, j) <- taskSections.establisher.entities.zipWithIndex){
                     <li class="app-task-list__item">
                         <span class="app-task-list__task-name">
-                            <a id="section-establishers-link-@j" href="@{entity.link.target}" @if(taskSections.establisher.isCompleted.nonEmpty){aria-describedby="section-about-status"}>@messages(entity.link.text)</a>
+                            <a id="section-establishers-link-@j" class="govuk-link" href="@{entity.link.target}" @if(taskSections.establisher.isCompleted.nonEmpty){aria-describedby="section-about-status"}>@messages(entity.link.text)</a>
                         </span>
                         @entity.isCompleted.map{ isCompleted =>
                             <strong class="app-task-list__tag @statusClass(isCompleted)" id="section-establishers-status-@j"><span class="govuk-visually-hidden">@messages("messages__schemeTaskList__status_visuallyHidden") </span>@messages(status(isCompleted))</strong>
