@@ -34,7 +34,6 @@ import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class PartnershipPreviousAddressListController @Inject()(val appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,

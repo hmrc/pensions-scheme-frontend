@@ -69,7 +69,9 @@ class PartnershipEnterPAYEController @Inject()(
       heading = Message("messages__enterPAYE", partnershipName),
       hint = Some(Message("messages__enterPAYE__hint")),
       srn = srn,
-      entityName = Some(partnershipName)
+      entityName = Some(partnershipName),
+      labelHidden = false,
+      headingIsLegend = true
     )
 
   def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData

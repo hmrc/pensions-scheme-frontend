@@ -25,5 +25,7 @@ case class PayeViewModel(
                           heading: Message,
                           hint: Option[Message] = None,
                           srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber,
-                          entityName: Option[String] = None
+                          entityName: Option[String] = None,
+                          labelHidden: Boolean = true,
+                          headingIsLegend: Boolean = false
                         )
