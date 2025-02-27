@@ -37,8 +37,8 @@ class CannotMakeChangesControllerSpec extends ControllerSpecBase {
   lazy val view: cannotMakeChanges = injector.instanceOf[cannotMakeChanges]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): CannotMakeChangesController =
-    new CannotMakeChangesController(frontendAppConfig, messagesApi,
-      FakeAuthAction, dataRetrievalAction,new DataRequiredActionImpl, controllerComponents, view, FakeAllowAccessProvider())
+    new CannotMakeChangesController(messagesApi,
+      FakeAuthAction, dataRetrievalAction, controllerComponents, view, FakeAllowAccessProvider())
 
   def viewAsString(): String = view(OptionalSchemeReferenceNumber(srn), Some(schemeName))(fakeRequest, messages).toString
 

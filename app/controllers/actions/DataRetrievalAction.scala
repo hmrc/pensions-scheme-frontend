@@ -130,7 +130,7 @@ class DataRetrievalImpl(
                                                     psaId: String,
                                                     upsertUserAnswers: JsValue => Future[JsValue])
                                                    (implicit hc: HeaderCarrier): Future[JsValue] = {
-    minimalPsaConnector.getMinimalFlags.flatMap { minimalFlags =>
+    minimalPsaConnector.getMinimalFlags().flatMap { minimalFlags =>
       val ua = UserAnswers(jsValue)
         .set(PsaMinimalFlagsId)(minimalFlags)
         .flatMap(

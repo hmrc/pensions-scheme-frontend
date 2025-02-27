@@ -17,8 +17,9 @@
 package forms
 
 import forms.mappings.{Constraints, Mappings, Transforms}
-import javax.inject.Inject
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class InsurancePolicyNumberFormProvider @Inject() extends Mappings with Constraints with Transforms {
   val maxLength = 55

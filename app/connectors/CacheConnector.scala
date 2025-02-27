@@ -23,12 +23,12 @@ import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.UserAnswers
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import java.net.URL
 
+import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
 trait CacheConnector extends UserAnswersCacheConnector {

@@ -22,9 +22,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.establishers.individual.routes.EstablisherPhoneController
 import forms.PhoneFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherPhoneId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class EstablisherPhoneController @Inject()(val appConfig: FrontendAppConfig,

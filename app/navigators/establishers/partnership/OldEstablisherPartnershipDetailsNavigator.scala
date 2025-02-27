@@ -18,7 +18,7 @@ package navigators.establishers.partnership
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.establishers.partnership.routes.{CheckYourAnswersPartnershipDetailsController, PartnershipEnterPAYEController, PartnershipEnterUTRController, PartnershipEnterVATController, PartnershipHasPAYEController, PartnershipHasVATController, PartnershipNoUTRReasonController}
+import controllers.register.establishers.partnership.routes._
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._

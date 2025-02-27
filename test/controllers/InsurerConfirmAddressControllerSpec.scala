@@ -22,8 +22,8 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.address.AddressFormProvider
 import identifiers._
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}

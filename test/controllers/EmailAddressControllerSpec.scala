@@ -24,8 +24,8 @@ import identifiers.TypedIdentifier
 import models.CheckUpdateMode
 import models.requests.DataRequest
 import navigators.Navigator
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{OptionValues}
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi

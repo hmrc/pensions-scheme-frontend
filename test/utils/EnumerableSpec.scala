@@ -17,8 +17,8 @@
 package utils
 
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{EitherValues, OptionValues}
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json._
 
 object EnumerableSpec {

@@ -17,7 +17,7 @@
 package controllers.register
 
 import audit.{AuditService, TcmpAuditEvent}
-import connectors.{FakeUserAnswersCacheConnector, _}
+import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
@@ -26,12 +26,12 @@ import identifiers._
 import identifiers.register.{DeclarationDormantId, DeclarationId}
 import models._
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
@@ -44,6 +44,7 @@ import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationControllerSpec
@@ -365,12 +366,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
+    @nowarn
     override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
-
+    @nowarn
     override def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
-
+    @nowarn
     override def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
       Future.successful(Some("psa name"))
   }

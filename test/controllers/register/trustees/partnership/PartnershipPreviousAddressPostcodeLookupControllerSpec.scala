@@ -24,7 +24,9 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
+import org.mockito.Mockito._
 import org.mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -35,8 +37,6 @@ import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
 

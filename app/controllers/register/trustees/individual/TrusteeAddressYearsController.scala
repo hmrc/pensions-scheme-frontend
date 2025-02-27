@@ -24,7 +24,7 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.individual.{TrusteeAddressYearsId, TrusteeNameId}
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -21,7 +21,7 @@ import controllers.actions.FakeDataRetrievalAction
 import forms.ReasonFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyNoUTRReasonId}
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind

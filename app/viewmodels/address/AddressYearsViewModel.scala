@@ -16,7 +16,7 @@
 
 package viewmodels.address
 
-import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message

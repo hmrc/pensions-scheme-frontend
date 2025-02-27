@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDOBId, DirectorNameId}
 import models.person.PersonName
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

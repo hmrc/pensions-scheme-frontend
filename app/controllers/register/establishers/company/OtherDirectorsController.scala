@@ -21,9 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,6 +32,7 @@ import utils.UserAnswers
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.otherDirectors
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OtherDirectorsController @Inject()(

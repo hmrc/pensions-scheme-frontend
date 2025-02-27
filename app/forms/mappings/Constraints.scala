@@ -17,12 +17,11 @@
 package forms.mappings
 
 import models.register.SchemeType
-
-import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
 import utils.{CountryOptions, NameMatching}
 
+import java.time.LocalDate
 import scala.language.implicitConversions
 
 trait Constraints {

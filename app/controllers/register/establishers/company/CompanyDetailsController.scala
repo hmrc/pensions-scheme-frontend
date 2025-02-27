@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

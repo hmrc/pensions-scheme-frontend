@@ -29,8 +29,8 @@ import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, UpdateMode}
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {

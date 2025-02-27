@@ -19,7 +19,7 @@ package controllers.register.trustees.partnership
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.PayeFormProvider
-import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind

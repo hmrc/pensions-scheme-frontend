@@ -16,8 +16,8 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class IndexSpec extends AnyWordSpecLike with Matchers with OptionValues {

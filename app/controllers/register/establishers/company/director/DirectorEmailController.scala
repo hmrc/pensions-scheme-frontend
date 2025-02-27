@@ -21,9 +21,7 @@ import controllers.EmailAddressController
 import controllers.actions._
 import forms.EmailFormProvider
 import identifiers.register.establishers.company.director.{DirectorEmailId, DirectorNameId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class DirectorEmailController @Inject()(val appConfig: FrontendAppConfig,

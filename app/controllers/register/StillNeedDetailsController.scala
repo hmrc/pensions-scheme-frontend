@@ -18,7 +18,7 @@ package controllers.register
 
 import controllers.Retrievals
 import controllers.actions._
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models.{OptionalSchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

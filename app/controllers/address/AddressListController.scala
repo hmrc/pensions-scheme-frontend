@@ -21,9 +21,9 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue

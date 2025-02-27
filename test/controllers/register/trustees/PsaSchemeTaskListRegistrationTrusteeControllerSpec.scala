@@ -19,11 +19,11 @@ package controllers.register.trustees
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction, FakeDataRetrievalAction}
 import identifiers.SchemeNameId
-import models.{EmptyOptionalSchemeReferenceNumber, EntitySpoke, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers
 import utils.hstasklisthelper.HsTaskListHelperRegistration
@@ -91,7 +91,6 @@ class PsaSchemeTaskListRegistrationTrusteeControllerSpec extends ControllerSpecB
 }
 
 object PsaSchemeTaskListRegistrationTrusteeControllerSpec extends PsaSchemeTaskListRegistrationTrusteeControllerSpec with MockitoSugar {
-  private val srn = None
   private val h1 = "h1"
   private val schemeName = "scheme"
   private val userAnswersWithSchemeName: UserAnswers = UserAnswers().set(SchemeNameId)(schemeName).asOpt.value

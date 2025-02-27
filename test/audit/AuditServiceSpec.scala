@@ -17,9 +17,9 @@
 package audit
 
 import org.apache.pekko.stream.Materializer
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.Inside
 import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{ApplicationLifecycle, bind}
 import play.api.mvc.AnyContentAsEmpty

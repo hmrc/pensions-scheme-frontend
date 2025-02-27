@@ -17,9 +17,9 @@
 package utils.hstasklisthelper
 
 
-import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.trustees.IsTrusteeNewId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import models.Index.indexToInt
 import models._
 import models.register.Entity

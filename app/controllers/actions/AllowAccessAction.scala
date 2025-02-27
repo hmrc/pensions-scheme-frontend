@@ -17,21 +17,21 @@
 package controllers.actions
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
 import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.PsaMinimalFlagsId
-import PsaMinimalFlagsId._
-import config.FrontendAppConfig
+import identifiers.PsaMinimalFlagsId._
 import models.OptionalSchemeReferenceNumber.toSrn
-import models.{OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import models.requests.OptionalDataRequest
+import models.{OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import play.api.Logging
 import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 

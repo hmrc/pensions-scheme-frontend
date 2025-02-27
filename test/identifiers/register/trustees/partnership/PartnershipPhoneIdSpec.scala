@@ -18,7 +18,7 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -30,7 +30,6 @@ class PartnershipPhoneIdSpec extends SpecBase {
 
   "cya" when {
     implicit val countryOptions: CountryOptions = new CountryOptions(Seq.empty[InputOption])
-    val index = 0
     val phone = "0111"
     val onwardUrl = "onwardUrl"
     val partnershipDetails = PartnershipDetails("test partnership")

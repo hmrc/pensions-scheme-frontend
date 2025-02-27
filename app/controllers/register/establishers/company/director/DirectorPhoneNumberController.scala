@@ -21,9 +21,7 @@ import controllers.PhoneNumberController
 import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.register.establishers.company.director.{DirectorNameId, DirectorPhoneNumberId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class DirectorPhoneNumberController @Inject()(

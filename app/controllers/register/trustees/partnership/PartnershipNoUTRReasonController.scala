@@ -21,10 +21,8 @@ import controllers.actions._
 import controllers.{ReasonController, Retrievals}
 import forms.ReasonFormProvider
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipNoUTRReasonId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,6 +32,7 @@ import utils.Enumerable
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PartnershipNoUTRReasonController @Inject()(

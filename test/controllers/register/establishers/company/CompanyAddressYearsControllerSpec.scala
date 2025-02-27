@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
-import models.{AddressYears, CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
+import models._
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

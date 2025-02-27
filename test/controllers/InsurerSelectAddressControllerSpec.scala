@@ -20,8 +20,8 @@ import audit.testdoubles.StubSuccessfulAuditService
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerEnterPostCodeId, InsurerSelectAddressId}
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.TolerantAddress
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._

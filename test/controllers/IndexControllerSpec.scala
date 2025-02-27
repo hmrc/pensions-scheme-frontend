@@ -17,7 +17,6 @@
 package controllers
 
 import play.api.test.Helpers._
-
 import views.html.index
 
 class IndexControllerSpec extends ControllerSpecBase {

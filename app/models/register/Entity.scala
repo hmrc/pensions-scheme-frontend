@@ -16,6 +16,8 @@
 
 package models.register
 
+import controllers.register.establishers.routes._
+import controllers.register.trustees.routes._
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorNameId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
@@ -29,8 +31,6 @@ import identifiers.register.trustees.partnership.{PartnershipDetailsId => Truste
 import models._
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
-import controllers.register.establishers.routes._
-import controllers.register.trustees.routes._
 
 sealed trait Entity[ID] {
   def id: ID

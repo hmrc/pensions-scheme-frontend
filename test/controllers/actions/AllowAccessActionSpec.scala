@@ -22,12 +22,12 @@ import connectors.PensionsSchemeConnector
 import identifiers.PsaMinimalFlagsId
 import models.PSAMinimalFlags._
 import models.requests.OptionalDataRequest
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
+import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result}

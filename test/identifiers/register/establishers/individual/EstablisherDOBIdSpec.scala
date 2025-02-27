@@ -16,8 +16,6 @@
 
 package identifiers.register.establishers.individual
 
-import java.time.LocalDate
-
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models._
@@ -29,6 +27,8 @@ import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 class EstablisherDOBIdSpec extends SpecBase {
 

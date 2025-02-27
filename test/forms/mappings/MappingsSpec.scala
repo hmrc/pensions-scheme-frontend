@@ -18,8 +18,8 @@ package forms.mappings
 
 import generators.Generators
 import org.scalacheck.Gen
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.data.Forms._

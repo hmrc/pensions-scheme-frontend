@@ -22,7 +22,6 @@ import identifiers.Identifier
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
 import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, UpdateMode}
-import org.apache.pekko.http.scaladsl.model.Uri.Empty
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3

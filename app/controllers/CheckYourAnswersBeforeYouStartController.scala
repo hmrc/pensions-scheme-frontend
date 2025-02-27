@@ -17,10 +17,8 @@
 package controllers
 
 import controllers.actions._
-import identifiers.{DeclarationDutiesId, _}
+import identifiers._
 import models.AdministratorOrPractitioner.Practitioner
-
-import javax.inject.Inject
 import models.AuthEntity.PSP
 import models.OptionalSchemeReferenceNumber.toSrn
 import models._
@@ -34,6 +32,7 @@ import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesApi: MessagesApi,

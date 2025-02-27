@@ -17,12 +17,13 @@
 package forms
 
 import forms.mappings.VatMapping
-import javax.inject.Inject
 import models.ReferenceValue
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import viewmodels.Message
+
+import javax.inject.Inject
 
 class EnterVATFormProvider @Inject() extends VatMapping {
 

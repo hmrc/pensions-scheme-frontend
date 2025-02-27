@@ -22,12 +22,10 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-
-import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +33,7 @@ import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AlreadyDeletedController @Inject()(

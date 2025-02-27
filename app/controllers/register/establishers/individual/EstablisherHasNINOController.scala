@@ -21,10 +21,8 @@ import controllers.HasReferenceNumberController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.HasUTRFormProvider
 import identifiers.register.establishers.individual.{EstablisherHasNINOId, EstablisherNameId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,6 +30,7 @@ import services.UserAnswersService
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class EstablisherHasNINOController @Inject()(override val appConfig: FrontendAppConfig,

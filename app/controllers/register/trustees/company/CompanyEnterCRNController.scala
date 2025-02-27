@@ -22,7 +22,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.CompanyRegistrationNumberBaseController
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterCRNId}
-import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}

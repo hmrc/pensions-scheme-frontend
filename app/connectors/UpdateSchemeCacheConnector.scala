@@ -19,9 +19,9 @@ package connectors
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Singleton
-import uk.gov.hmrc.http.client.HttpClientV2
 
 @Singleton
 class UpdateSchemeCacheConnector @Inject()(

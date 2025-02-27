@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails, ReferenceValue}
+import models._
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.libs.json.Json

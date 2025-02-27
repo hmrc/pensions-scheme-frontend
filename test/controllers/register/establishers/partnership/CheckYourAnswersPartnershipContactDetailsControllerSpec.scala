@@ -22,8 +22,8 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
 import models.Mode.checkMode
 import models._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call

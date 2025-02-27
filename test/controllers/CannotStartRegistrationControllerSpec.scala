@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import play.api.test.Helpers._
-
 import views.html.cannotStartRegistration
 
 class CannotStartRegistrationControllerSpec extends ControllerSpecBase {

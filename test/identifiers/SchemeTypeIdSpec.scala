@@ -18,8 +18,8 @@ package identifiers
 
 import models.register.SchemeType
 import org.scalatest.OptionValues
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 

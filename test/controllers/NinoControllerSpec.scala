@@ -20,8 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions.DataRetrievalAction
 import forms.NINOFormProvider
 import identifiers.TypedIdentifier
-
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, ReferenceValue}
 import navigators.Navigator
@@ -36,6 +34,7 @@ import utils.{FakeNavigator, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 

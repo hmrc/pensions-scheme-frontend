@@ -28,9 +28,9 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousA
 import models.address.Address
 import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind

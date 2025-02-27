@@ -19,6 +19,7 @@ package controllers.register.trustees
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.trustees.routes.AddTrusteeController
 import identifiers.SchemeNameId
 import models.AuthEntity.PSA
 import models.OptionalSchemeReferenceNumber.toSrn
@@ -32,7 +33,6 @@ import utils.annotations.TaskList
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import viewmodels.SchemeDetailsTaskListTrustees
 import views.html.register.trustees.psaTaskListRegistrationTrustees
-import controllers.register.trustees.routes.AddTrusteeController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

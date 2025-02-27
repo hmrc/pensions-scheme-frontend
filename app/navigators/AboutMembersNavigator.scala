@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
-import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Members, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import utils.{Enumerable, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

@@ -24,7 +24,6 @@ import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 import views.html.workingKnowledge
 

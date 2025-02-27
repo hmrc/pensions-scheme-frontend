@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models._
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.AnyContentAsFormUrlEncoded

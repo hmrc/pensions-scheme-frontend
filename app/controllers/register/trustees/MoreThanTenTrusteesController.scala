@@ -21,9 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.trustees.MoreThanTenTrusteesId
-
-import javax.inject.Inject
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,6 +32,7 @@ import utils.UserAnswers
 import utils.annotations.Trustees
 import views.html.register.trustees.moreThanTenTrustees
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class MoreThanTenTrusteesController @Inject()(

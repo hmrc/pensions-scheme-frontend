@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import controllers.actions._
 import forms.AnyMoreChangesFormProvider
 import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
@@ -25,6 +23,9 @@ import play.api.data.Form
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.anyMoreChanges
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class AnyMoreChangesControllerSpec extends ControllerSpecBase {

@@ -17,14 +17,13 @@
 package handlers
 
 import config.FrontendAppConfig
-
-import javax.inject.{Inject, Singleton}
 import models.Link
 import play.api.i18n.{I18nSupport, Lang, MessagesApi}
 import play.api.mvc.{Request, RequestHeader}
 import play.twirl.api.Html
 import views.html.{error_template, error_template_page_not_found}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

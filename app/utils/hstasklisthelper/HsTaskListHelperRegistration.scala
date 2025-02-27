@@ -28,7 +28,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompany
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models.register.establishers.EstablisherKind
-import models.{EmptyOptionalSchemeReferenceNumber, LastUpdated, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import utils.{Enumerable, UserAnswers}
 import viewmodels._
 

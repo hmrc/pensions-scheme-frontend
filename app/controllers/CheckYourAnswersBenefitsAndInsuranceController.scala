@@ -23,7 +23,7 @@ import models.AuthEntity.PSP
 import models.Mode._
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.DataRequest
-import models.{CheckUpdateMode, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

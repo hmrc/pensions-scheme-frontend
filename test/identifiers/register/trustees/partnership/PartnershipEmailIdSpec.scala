@@ -18,7 +18,7 @@ package identifiers.register.trustees.partnership
 
 import base.SpecBase
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -33,7 +33,6 @@ class PartnershipEmailIdSpec extends SpecBase {
     val email = "test@test.com"
     val onwardUrl = "onwardUrl"
     val partnershipDetails = PartnershipDetails("test partnership")
-    val index = 0
     val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id",
       UserAnswers().trusteePartnershipEmail(Index(0), email).trusteePartnershipDetails(Index(0), partnershipDetails), Some(PsaId("A0000000")))
 

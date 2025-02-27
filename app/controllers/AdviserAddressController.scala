@@ -23,7 +23,6 @@ import controllers.address.ManualAddressController
 import controllers.routes._
 import forms.address.AddressFormProvider
 import identifiers.{AdviserAddressId, AdviserAddressListId, AdviserAddressPostCodeLookupId, AdviserNameId}
-import javax.inject.Inject
 import models.Mode
 import models.address.Address
 import navigators.Navigator
@@ -37,6 +36,7 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AdviserAddressController @Inject()(

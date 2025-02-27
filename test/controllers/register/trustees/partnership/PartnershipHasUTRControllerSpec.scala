@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId, PartnershipNoUTRReasonId}
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}

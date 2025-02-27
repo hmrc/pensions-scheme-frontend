@@ -18,7 +18,7 @@ package navigators
 
 import identifiers.Identifier
 import models.requests.{AuthenticatedRequest, IdentifiedRequest}
-import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
@@ -27,9 +27,9 @@ import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
-import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.jdk.CollectionConverters._
 
 class CompoundNavigatorSpec extends AnyFreeSpec with Matchers {
 

@@ -16,9 +16,9 @@
 
 package forms.mappings
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.wordspec.AnyWordSpec
 
 class TransformsSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks with Transforms {
 

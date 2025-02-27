@@ -19,10 +19,10 @@ package utils.hstasklisthelper
 import base.{JsonFileReader, SpecBase}
 import helpers.DataCompletionHelper
 import models._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import utils.UserAnswers
 import viewmodels.{Message, PspTaskList, SchemeDetailsTaskListEntitySection}
 

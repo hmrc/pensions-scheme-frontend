@@ -21,8 +21,8 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAll
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.individual._
 import models.Mode.checkMode
-import models.person.PersonName
 import models._
+import models.person.PersonName
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._

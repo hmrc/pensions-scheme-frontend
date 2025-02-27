@@ -23,7 +23,7 @@ import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{AddressYears, Link, NormalMode, UpdateMode}
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

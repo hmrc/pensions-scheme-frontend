@@ -22,8 +22,8 @@ import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company._
 import models.Mode.checkMode
-import models.register.DeclarationDormant
 import models._
+import models.register.DeclarationDormant
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
 import play.api.test.Helpers._

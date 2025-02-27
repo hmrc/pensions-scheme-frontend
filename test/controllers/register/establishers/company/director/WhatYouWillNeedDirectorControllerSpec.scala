@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.company.director.routes.{DirectorNameController, TrusteesAlsoDirectorsController}
+import controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar

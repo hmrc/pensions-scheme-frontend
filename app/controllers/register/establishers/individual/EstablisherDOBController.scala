@@ -16,15 +16,12 @@
 
 package controllers.register.establishers.individual
 
-import java.time.LocalDate
 import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.dateOfBirth.DateOfBirthController
 import forms.DOBFormProvider
 import identifiers.register.establishers.individual.{EstablisherDOBId, EstablisherNameId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -34,6 +31,8 @@ import viewmodels.Message
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class EstablisherDOBController @Inject()(val appConfig: FrontendAppConfig,

@@ -31,9 +31,9 @@ import models.person.PersonName
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.register.{DeclarationDormant, SchemeType}
-import models.{EntitySpoke, Mode, NormalMode, _}
-import org.scalatest.matchers.must.Matchers
+import models._
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.hstasklisthelper.SpokeCreationService
 import viewmodels.Message

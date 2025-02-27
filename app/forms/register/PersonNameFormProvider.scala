@@ -17,11 +17,12 @@
 package forms.register
 
 import forms.mappings.{Mappings, Transforms}
-import javax.inject.Inject
 import models.person.PersonName
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
+
+import javax.inject.Inject
 
 class PersonNameFormProvider @Inject() extends Mappings with Transforms {
 

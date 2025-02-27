@@ -20,15 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.company.CompanyDetailsId
-
-import javax.inject.Inject
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppConfig,

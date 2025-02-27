@@ -19,7 +19,7 @@ package identifiers.register.trustees.partnership
 import base.SpecBase
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -91,7 +91,6 @@ class PartnershipHasBeenTradingIdSpec extends SpecBase {
 }
 
 object PartnershipHasBeenTradingIdSpec extends SpecBase {
-  private val index = 0
   private val partnershipDetails = PartnershipDetails("test partnership name")
 
   private def ua(v: Boolean): UserAnswers = UserAnswers(Json.obj())

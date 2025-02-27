@@ -22,7 +22,7 @@ import forms.HasBeenTradingFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
 import models.address.{Address, TolerantAddress}
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

@@ -21,9 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -34,6 +32,7 @@ import utils.UserAnswers
 import utils.annotations.EstablishersCompanyDirector
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeleteDirectorController @Inject()(

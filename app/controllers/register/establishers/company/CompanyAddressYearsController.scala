@@ -22,10 +22,8 @@ import controllers.actions._
 import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,6 +33,7 @@ import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CompanyAddressYearsController @Inject()(

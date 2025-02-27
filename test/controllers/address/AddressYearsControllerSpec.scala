@@ -16,7 +16,6 @@
 
 package controllers.address
 
-import org.apache.pekko.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
@@ -25,12 +24,13 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
+import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc._

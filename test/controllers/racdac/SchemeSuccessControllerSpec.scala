@@ -21,8 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.{ContractOrPolicyNumberId, DeclarationId, RACDACNameId}
-import org.mockito.ArgumentMatchers._
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application

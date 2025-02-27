@@ -20,7 +20,6 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.partnership.CheckYourAnswersPartnershipDetailsControllerSpec.index
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerNameId}
@@ -28,9 +27,9 @@ import models.address.Address
 import models.person.PersonName
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule

@@ -22,9 +22,7 @@ import controllers.actions._
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId, TrusteePreviousAddressId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,6 +32,7 @@ import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class IndividualConfirmPreviousAddressController @Inject()(val appConfig: FrontendAppConfig,

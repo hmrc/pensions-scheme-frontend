@@ -22,7 +22,6 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
-import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
@@ -34,6 +33,7 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AdviserPostCodeLookupController @Inject()(

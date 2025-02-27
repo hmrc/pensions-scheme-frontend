@@ -22,7 +22,6 @@ import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
 import controllers.register.establishers.company.routes._
 import identifiers.register.establishers.company.director._
-import javax.inject.Inject
 import models.Mode.checkMode
 import models._
 import models.requests.DataRequest
@@ -36,8 +35,8 @@ import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,

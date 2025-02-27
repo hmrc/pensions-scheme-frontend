@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
 import identifiers.DeclarationDutiesId
-import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
 import navigators.Navigator
@@ -33,6 +32,7 @@ import utils._
 import utils.annotations.BeforeYouStart
 import views.html.workingKnowledge
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WorkingKnowledgeController @Inject()(

@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
-import models.{AddressYears, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
+import models._
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._

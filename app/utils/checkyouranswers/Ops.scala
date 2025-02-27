@@ -17,8 +17,8 @@
 package utils.checkyouranswers
 
 import identifiers.TypedIdentifier
-import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import models.requests.DataRequest
+import models.{CheckUpdateMode, Mode, NormalMode, UpdateMode}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import viewmodels.AnswerRow

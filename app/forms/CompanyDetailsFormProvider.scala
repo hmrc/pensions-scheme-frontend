@@ -17,10 +17,11 @@
 package forms
 
 import forms.mappings._
-import javax.inject.Inject
 import models.CompanyDetails
 import play.api.data.Form
 import play.api.data.Forms._
+
+import javax.inject.Inject
 
 class CompanyDetailsFormProvider @Inject() extends Mappings with Transforms {
 

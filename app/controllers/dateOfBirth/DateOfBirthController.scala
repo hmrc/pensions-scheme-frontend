@@ -16,8 +16,6 @@
 
 package controllers.dateOfBirth
 
-import java.time.LocalDate
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
@@ -34,6 +32,7 @@ import utils.UserAnswers
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DateOfBirthController extends FrontendBaseController with Retrievals with I18nSupport {

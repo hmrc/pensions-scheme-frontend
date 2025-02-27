@@ -17,8 +17,9 @@
 package forms.address
 
 import forms.mappings.AddressMapping
-import javax.inject.Inject
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class PostCodeLookupFormProvider @Inject() extends AddressMapping {
 

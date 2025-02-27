@@ -16,8 +16,8 @@
 
 package utils
 
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class NameMatchingSpec extends AnyWordSpecLike with Matchers with OptionValues {

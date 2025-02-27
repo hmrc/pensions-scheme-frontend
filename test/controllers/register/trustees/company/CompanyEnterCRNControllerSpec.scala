@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
-import models.{CheckUpdateMode, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind

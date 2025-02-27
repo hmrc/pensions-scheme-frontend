@@ -24,7 +24,6 @@ import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipEmailId, PartnershipPhoneNumberId}
 import models._
-import navigators.establishers.partnership.EstablisherPartnershipAddressNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._

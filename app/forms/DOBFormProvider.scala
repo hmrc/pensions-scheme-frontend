@@ -16,11 +16,11 @@
 
 package forms
 
-import java.time.LocalDate
-
 import forms.mappings.{Mappings, Transforms}
-import javax.inject.Inject
 import play.api.data.Form
+
+import java.time.LocalDate
+import javax.inject.Inject
 
 class DOBFormProvider @Inject() extends Mappings with Transforms {
 

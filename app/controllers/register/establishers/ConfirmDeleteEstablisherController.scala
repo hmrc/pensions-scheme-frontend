@@ -24,7 +24,6 @@ import identifiers.register.establishers.ConfirmDeleteEstablisherId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import javax.inject.Inject
 import models._
 import models.person.PersonName
 import models.register.establishers.EstablisherKind
@@ -40,8 +39,8 @@ import utils.UserAnswers
 import utils.annotations.Establishers
 import views.html.register.establishers.confirmDeleteEstablisher
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,

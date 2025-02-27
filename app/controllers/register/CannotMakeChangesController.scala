@@ -16,26 +16,22 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-
-import javax.inject.Inject
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models.{OptionalSchemeReferenceNumber, UpdateMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.TaskList
 import views.html.register.cannotMakeChanges
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CannotMakeChangesController @Inject()(
-                                             appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: cannotMakeChanges,
                                              @TaskList allowAccessAction: AllowAccessActionProvider

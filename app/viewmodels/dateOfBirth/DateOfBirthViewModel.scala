@@ -16,8 +16,8 @@
 
 package viewmodels.dateOfBirth
 
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
 import play.api.mvc.Call
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class DateOfBirthViewModel(
                                  postCall: Call,

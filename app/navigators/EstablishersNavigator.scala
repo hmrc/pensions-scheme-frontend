@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import models.register.establishers.EstablisherKind
-import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models._
 import utils.{Enumerable, UserAnswers}
 
 class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

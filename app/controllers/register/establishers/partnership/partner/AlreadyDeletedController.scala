@@ -20,9 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.partnership.partner.PartnerNameId
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,6 +28,7 @@ import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
 import views.html.alreadyDeleted
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AlreadyDeletedController @Inject()(

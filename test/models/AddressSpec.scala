@@ -17,8 +17,8 @@
 package models
 
 import models.address.Address
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class AddressSpec extends AnyWordSpec with Matchers {
 

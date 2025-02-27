@@ -35,7 +35,6 @@ import views.html.register.establishers.psaTaskListRegistrationEstablishers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class PsaSchemeTaskListRegistrationEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                                                    override val messagesApi: MessagesApi,

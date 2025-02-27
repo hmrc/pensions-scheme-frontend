@@ -25,8 +25,8 @@ import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import navigators.Navigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -147,7 +147,6 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 object EstablisherNameControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val formProvider: PersonNameFormProvider = new PersonNameFormProvider()
   private val form: Form[PersonName] = formProvider("messages__error__establisher")
-  private val index: Index = Index(0)
   private val mockUserAnswersService: UserAnswersService = mock[UserAnswersService]
 
   private def onwardRoute: Call = Call("GET", "/index")

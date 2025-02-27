@@ -26,7 +26,6 @@ import identifiers.register.establishers.partnership.partner._
 import models.Mode.journeyMode
 import models._
 import models.person.PersonName
-import navigators.establishers.partnership.OldEstablisherPartnershipDetailsNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._

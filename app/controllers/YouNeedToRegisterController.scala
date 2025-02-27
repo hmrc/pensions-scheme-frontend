@@ -18,12 +18,12 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.youNeedToRegister
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class YouNeedToRegisterController @Inject()(appConfig: FrontendAppConfig,

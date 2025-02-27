@@ -21,9 +21,9 @@ import controllers.actions._
 import forms.PhoneFormProvider
 import identifiers.register.establishers.company.director.DirectorNameId
 import models.person.PersonName
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
-import org.scalatestplus.mockito.MockitoSugar
+import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._

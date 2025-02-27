@@ -22,7 +22,6 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.establishers.partnership._
-import javax.inject.Inject
 import models._
 import models.requests.DataRequest
 import navigators.Navigator
@@ -33,6 +32,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipPreviousAddressListController @Inject()(val appConfig: FrontendAppConfig,

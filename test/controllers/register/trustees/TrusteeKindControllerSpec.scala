@@ -23,7 +23,7 @@ import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.register.trustees.TrusteeKind
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService

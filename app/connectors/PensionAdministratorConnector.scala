@@ -18,14 +18,13 @@ package connectors
 
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
-
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 

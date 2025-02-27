@@ -17,8 +17,8 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.details._
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status

@@ -28,7 +28,6 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-
 import utils.{FakeNavigator, UserAnswers}
 import views.html.investmentRegulatedScheme
 

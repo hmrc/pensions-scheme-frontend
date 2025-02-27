@@ -23,7 +23,7 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyPAYEId}
 import models.requests.DataRequest
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

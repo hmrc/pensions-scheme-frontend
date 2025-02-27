@@ -17,8 +17,9 @@
 package forms.register.establishers
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import play.api.data.{Form, Forms}
+
+import javax.inject.Inject
 
 class AddEstablisherFormProvider @Inject() extends Mappings {
 

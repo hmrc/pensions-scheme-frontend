@@ -18,6 +18,7 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
+import models.SchemeReferenceNumber
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -27,7 +28,6 @@ import utils.{HttpResponseHelper, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
-import models.SchemeReferenceNumber
 
 @ImplementedBy(classOf[SchemeDetailsConnectorImpl])
 trait SchemeDetailsConnector {

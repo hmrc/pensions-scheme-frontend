@@ -16,7 +16,7 @@
 
 package identifiers
 
-import play.api.libs.json.{JsPath, _}
+import play.api.libs.json._
 import utils.UserAnswers
 
 import scala.language.implicitConversions

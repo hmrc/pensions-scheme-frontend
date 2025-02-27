@@ -21,10 +21,8 @@ import controllers.HasReferenceNumberController
 import controllers.actions._
 import forms.HasCRNFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, HasCompanyCRNId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,6 +31,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class HasCompanyCRNController @Inject()(override val appConfig: FrontendAppConfig,

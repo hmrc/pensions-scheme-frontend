@@ -22,8 +22,6 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressListController => GenericAddressListController}
 import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherNameId, PostCodeLookupId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
@@ -34,6 +32,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressListController @Inject()(val appConfig: FrontendAppConfig,

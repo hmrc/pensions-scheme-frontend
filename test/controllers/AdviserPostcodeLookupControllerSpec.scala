@@ -17,24 +17,24 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, AddressLookupConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.NormalMode
 import models.address.TolerantAddress
 import navigators.Navigator
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.ArgumentMatchers
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{running, redirectLocation, OK, status, contentAsString, route, SEE_OTHER, _}
+import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator

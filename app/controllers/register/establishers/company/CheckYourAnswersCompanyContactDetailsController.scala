@@ -23,7 +23,7 @@ import controllers.helpers.CheckYourAnswersControllerHelper._
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService

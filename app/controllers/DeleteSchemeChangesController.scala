@@ -20,18 +20,17 @@ import config.FrontendAppConfig
 import connectors.{MinimalPsaConnector, PensionSchemeVarianceLockConnector, UpdateSchemeCacheConnector}
 import controllers.actions._
 import forms.DeleteSchemeChangesFormProvider
-
-import javax.inject.Inject
+import models.SchemeReferenceNumber
 import play.api.data.Form
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.deleteSchemeChanges
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class DeleteSchemeChangesController @Inject()(
                                                appConfig: FrontendAppConfig,

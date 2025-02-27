@@ -28,7 +28,6 @@ import views.html.register.whatYouWillNeedContactDetails
 class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSpecBase {
 
   private val trusteeName = person.PersonName("Test", "Name")
-  private val index = 0
   private val srn = Some(SchemeReferenceNumber("srn"))
 
   private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = TrusteeEmailController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))

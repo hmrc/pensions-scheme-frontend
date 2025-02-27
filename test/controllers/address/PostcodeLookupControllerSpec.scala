@@ -16,23 +16,23 @@
 
 package controllers.address
 
-import org.apache.pekko.stream.Materializer
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
+import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.{eq => eqTo, _}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._

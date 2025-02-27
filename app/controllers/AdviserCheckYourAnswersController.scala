@@ -20,8 +20,6 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import identifiers._
-
-import javax.inject.Inject
 import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,

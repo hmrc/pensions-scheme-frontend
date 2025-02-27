@@ -21,9 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Enumerable
 import views.html.register.trustees.company.companyDetails
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyDetailsController @Inject()(

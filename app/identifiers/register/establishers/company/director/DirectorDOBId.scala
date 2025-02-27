@@ -16,8 +16,6 @@
 
 package identifiers.register.establishers.company.director
 
-import java.time.LocalDate
-
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Link
@@ -25,6 +23,8 @@ import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersDirectors}
 import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 case class DirectorDOBId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDOBId.toString

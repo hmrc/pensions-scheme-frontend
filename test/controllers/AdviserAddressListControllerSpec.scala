@@ -23,11 +23,11 @@ import identifiers.{AdviserAddressPostCodeLookupId, AdviserNameId}
 import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import navigators.Navigator
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call

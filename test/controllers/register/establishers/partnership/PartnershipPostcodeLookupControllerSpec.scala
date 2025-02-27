@@ -27,8 +27,8 @@ import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, Partnershi
 import navigators.Navigator
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json

@@ -16,10 +16,10 @@
 
 package viewmodels.address
 
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
 import play.api.mvc.Call
 import utils.InputOption
 import viewmodels.Message
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class ManualAddressViewModel(
                                    postCall: Call,

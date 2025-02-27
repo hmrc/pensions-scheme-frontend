@@ -15,7 +15,7 @@
  */
 
 package viewmodels
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.OptionalSchemeReferenceNumber
 
 case class SchemeDetailsTaskList(
                                   h1: String,

@@ -18,8 +18,6 @@ package controllers.racdac
 
 import connectors.PensionAdministratorConnector
 import controllers.actions._
-
-import javax.inject.Inject
 import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import views.html.racdac.whatIsRACDAC
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsRACDACController @Inject()(override val messagesApi: MessagesApi,

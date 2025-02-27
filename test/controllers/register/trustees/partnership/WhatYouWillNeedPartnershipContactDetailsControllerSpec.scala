@@ -27,7 +27,6 @@ import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
 class WhatYouWillNeedPartnershipContactDetailsControllerSpec extends ControllerSpecBase {
-  private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
 
   def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyEmailController.onPageLoad( NormalMode,  Index(0), EmptyOptionalSchemeReferenceNumber)

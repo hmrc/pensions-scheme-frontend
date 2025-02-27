@@ -24,9 +24,9 @@ import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
 import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
