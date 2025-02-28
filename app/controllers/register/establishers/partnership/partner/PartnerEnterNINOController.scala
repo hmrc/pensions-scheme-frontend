@@ -21,10 +21,8 @@ import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
 import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerNameId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,6 +30,7 @@ import services.UserAnswersService
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PartnerEnterNINOController @Inject()(

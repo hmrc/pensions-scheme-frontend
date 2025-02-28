@@ -16,8 +16,6 @@
 
 package identifiers.register.trustees.individual
 
-import java.time.LocalDate
-
 import identifiers._
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteesId}
 import models.Link
@@ -25,6 +23,8 @@ import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersTrusteeIndividual}
 import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 case class TrusteeDOBId(index: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDOBId.toString

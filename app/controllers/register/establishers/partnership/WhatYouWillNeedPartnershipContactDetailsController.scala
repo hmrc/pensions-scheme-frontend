@@ -20,15 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, PartnershipDetails, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, PartnershipDetails}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouWillNeedPartnershipContactDetailsController @Inject()(val appConfig: FrontendAppConfig,

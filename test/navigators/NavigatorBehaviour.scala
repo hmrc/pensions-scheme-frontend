@@ -23,11 +23,11 @@ import models.Mode.checkMode
 import models.address.{Address, TolerantAddress}
 import models.person.PersonName
 import models.requests.IdentifiedRequest
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
+import models._
+import org.scalatest.OptionValues
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.{TableFor3, TableFor6}
-import org.scalatest.OptionValues
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Writes

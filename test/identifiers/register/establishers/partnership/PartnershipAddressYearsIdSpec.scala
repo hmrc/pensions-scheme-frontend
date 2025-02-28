@@ -22,7 +22,7 @@ import models.AddressYears.UnderAYear
 import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import org.scalatest.{ OptionValues}
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

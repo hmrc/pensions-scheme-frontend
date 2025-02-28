@@ -20,7 +20,7 @@ import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
 import models.address.Address
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

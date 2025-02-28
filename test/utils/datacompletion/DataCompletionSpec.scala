@@ -25,9 +25,9 @@ import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeHasN
 import identifiers.register.trustees.{company => tc}
 import models._
 import models.address.Address
-import models.register.{SchemeType, SortCode}
-import org.scalatest.matchers.must.Matchers
+import models.register.SchemeType
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.JsValue
 import utils.{Enumerable, UserAnswers}

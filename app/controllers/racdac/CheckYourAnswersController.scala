@@ -23,7 +23,7 @@ import identifiers.racdac.{ContractOrPolicyNumberId, RACDACNameId}
 import models.AuthEntity.PSP
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.DataRequest
-import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals

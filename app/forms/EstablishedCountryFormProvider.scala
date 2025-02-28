@@ -17,9 +17,10 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import play.api.data.Form
 import utils.CountryOptions
+
+import javax.inject.Inject
 
 class EstablishedCountryFormProvider @Inject()(countries: CountryOptions) extends Mappings {
 

@@ -20,9 +20,9 @@ import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport

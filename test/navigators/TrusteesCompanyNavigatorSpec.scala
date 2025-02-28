@@ -196,8 +196,6 @@ object TrusteesCompanyNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def addTrusteePage(mode: Mode): Call = AddTrusteeController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber)
 
-  private def trusteeTaskListPage(index: Int): Call =  PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(index)
-
   private def companyNoPage(mode: Mode): Call = CompanyEnterCRNController.onPageLoad(mode, EmptyOptionalSchemeReferenceNumber, 0)
 
   private def noCompanyNoPage(mode: Mode): Call = CompanyNoCRNReasonController.onPageLoad(mode, 0, EmptyOptionalSchemeReferenceNumber)

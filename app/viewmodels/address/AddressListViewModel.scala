@@ -17,10 +17,10 @@
 package viewmodels.address
 
 import models.address.TolerantAddress
-import play.api.mvc.Call
-import viewmodels.Message
 import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
+import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+import viewmodels.Message
 
 case class AddressListViewModel(
                                  postCall: Call,

@@ -17,12 +17,13 @@
 package forms
 
 import forms.mappings.PayeMapping
-import javax.inject.Inject
 import models.ReferenceValue
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import viewmodels.Message
+
+import javax.inject.Inject
 
 class PayeFormProvider @Inject() extends PayeMapping {
 

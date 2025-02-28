@@ -17,8 +17,9 @@
 package forms.racdac
 
 import forms.mappings.{Constraints, Mappings}
-import javax.inject.Inject
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class RACDACNameFormProvider @Inject() extends Mappings with Constraints {
   private val maxLength = 160

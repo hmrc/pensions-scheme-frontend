@@ -28,7 +28,6 @@ import utils.UserAnswers
 import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
-  private val index = 0
   private val trusteePartnership = PartnershipDetails("partnership Name")
   private val view = injector.instanceOf[whatYouWillNeedPartnershipDetails]
 

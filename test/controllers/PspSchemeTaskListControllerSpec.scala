@@ -22,8 +22,8 @@ import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.BeforeAndAfterEach
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers

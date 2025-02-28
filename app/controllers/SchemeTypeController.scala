@@ -20,7 +20,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
 import identifiers.{SchemeNameId, SchemeTypeId}
-import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
@@ -31,6 +30,7 @@ import utils.UserAnswers
 import utils.annotations.BeforeYouStart
 import views.html.schemeType
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,

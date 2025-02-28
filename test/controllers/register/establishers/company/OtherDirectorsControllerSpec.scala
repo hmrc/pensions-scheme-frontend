@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call

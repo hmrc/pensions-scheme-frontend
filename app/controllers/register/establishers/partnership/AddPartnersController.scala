@@ -21,8 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.AddPartnersId
-import models.requests.DataRequest
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

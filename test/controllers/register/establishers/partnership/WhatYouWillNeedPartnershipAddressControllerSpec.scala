@@ -28,7 +28,6 @@ import views.html.register.whatYouWillNeedAddress
 
 class WhatYouWillNeedPartnershipAddressControllerSpec extends ControllerSpecBase {
 
-  private val index  = 0
   private val establisherPartnership = PartnershipDetails("partnership Name")
 
   private def href: Call = controllers.register.establishers.partnership.routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, index = 0, EmptyOptionalSchemeReferenceNumber)

@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.adviser.AdviserPhoneFormProvider
 import identifiers.{AdviserNameId, AdviserPhoneId, SchemeNameId}
-import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
@@ -32,6 +31,7 @@ import utils.UserAnswers
 import utils.annotations.WorkingKnowledge
 import views.html.adviserPhone
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserPhoneController @Inject()(

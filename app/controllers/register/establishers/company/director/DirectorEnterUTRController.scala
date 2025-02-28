@@ -21,9 +21,7 @@ import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
 import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,6 +31,7 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{Message, UTRViewModel}
 import views.html.utr
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class DirectorEnterUTRController @Inject()(

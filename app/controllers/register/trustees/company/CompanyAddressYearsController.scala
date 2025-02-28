@@ -20,10 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{AddressYears, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{AddressYears, Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,6 +31,7 @@ import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CompanyAddressYearsController @Inject()(

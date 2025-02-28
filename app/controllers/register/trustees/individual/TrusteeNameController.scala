@@ -22,11 +22,9 @@ import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredA
 import controllers.register.trustees.individual.routes._
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
-
-import javax.inject.Inject
 import models.person.PersonName
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,6 +35,7 @@ import utils.Enumerable
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,

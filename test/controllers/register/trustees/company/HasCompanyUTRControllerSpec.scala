@@ -22,7 +22,7 @@ import forms.HasUTRFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual.TrusteeNoUTRReasonId
-import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._

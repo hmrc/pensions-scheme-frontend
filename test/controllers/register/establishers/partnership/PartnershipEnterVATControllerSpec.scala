@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import forms.EnterVATFormProvider
-import models.{CheckUpdateMode, EmptyOptionalSchemeReferenceNumber, Index, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models._
 import navigators.Navigator
 import org.scalatest.matchers.must.Matchers
 import play.api.inject.bind

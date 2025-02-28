@@ -22,7 +22,7 @@ import controllers.register.trustees.individual.routes._
 import controllers.register.trustees.routes._
 import identifiers.Identifier
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.individual.{TrusteeDOBId, _}
+import identifiers.register.trustees.individual._
 import models.Mode._
 import models._
 import navigators.AbstractNavigator

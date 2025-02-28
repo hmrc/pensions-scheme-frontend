@@ -22,9 +22,9 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.establishers.company.IsCompanyDormantId
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
+import models.{Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

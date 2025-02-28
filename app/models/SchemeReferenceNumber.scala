@@ -16,7 +16,6 @@
 
 package models
 
-import models.details.SchemeDetails
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{JavascriptLiteral, PathBindable, QueryStringBindable}
 

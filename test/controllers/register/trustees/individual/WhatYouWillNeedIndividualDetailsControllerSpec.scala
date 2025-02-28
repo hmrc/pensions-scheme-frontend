@@ -20,9 +20,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, UpdateMode}
-import org.scalatestplus.mockito.MockitoSugar
+import models._
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import utils.UserAnswers
 import views.html.register.whatYouWillNeedIndividualDetails

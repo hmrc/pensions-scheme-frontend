@@ -25,8 +25,8 @@ import identifiers.register.establishers.partnership.{PartnershipDetailsId, Part
 import models.address.TolerantAddress
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
 import org.mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call

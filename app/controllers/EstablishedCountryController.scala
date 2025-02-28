@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.EstablishedCountryFormProvider
 import identifiers.{EstablishedCountryId, SchemeNameId}
-import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.data.Form
@@ -32,6 +31,7 @@ import utils.annotations.BeforeYouStart
 import utils.{CountryOptions, UserAnswers}
 import views.html.establishedCountry
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EstablishedCountryController @Inject()(appConfig: FrontendAppConfig,

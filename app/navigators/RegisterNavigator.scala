@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import identifiers.VariationDeclarationId
 import identifiers.register._
 import models.OptionalSchemeReferenceNumber.toSrn
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber}
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity

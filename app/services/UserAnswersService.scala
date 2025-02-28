@@ -32,7 +32,7 @@ import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => T
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.address.Address
 import models.requests.DataRequest
-import models.{Mode, _}
+import models._
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier

@@ -18,7 +18,7 @@ package identifiers.register.establishers.partnership
 
 import base.SpecBase
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId

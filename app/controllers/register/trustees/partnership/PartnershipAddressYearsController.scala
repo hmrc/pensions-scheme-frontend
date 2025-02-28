@@ -24,7 +24,7 @@ import controllers.address.AddressYearsController
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models.requests.DataRequest
-import models.{AddressYears, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{AddressYears, Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.MessagesApi

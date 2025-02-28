@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import identifiers.MembershipPensionRegulatorId
-import javax.inject.Inject
 import models.Mode
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.AboutMembers
 import views.html.membershipPensionRegulator
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfig,

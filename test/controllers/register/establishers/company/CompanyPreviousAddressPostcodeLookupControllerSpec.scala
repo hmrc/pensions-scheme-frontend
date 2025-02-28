@@ -24,8 +24,8 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.{CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
-import org.mockito._
 import org.mockito.Mockito._
+import org.mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._

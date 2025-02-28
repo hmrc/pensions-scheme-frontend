@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.FutureMembersFormProvider
 import identifiers.{FutureMembersId, SchemeNameId}
-import javax.inject.Inject
 import models.{Members, Mode}
 import navigators.Navigator
 import play.api.data.Form
@@ -32,6 +31,7 @@ import utils.annotations.AboutMembers
 import utils.{Enumerable, UserAnswers}
 import views.html.futureMembers
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FutureMembersController @Inject()(appConfig: FrontendAppConfig,

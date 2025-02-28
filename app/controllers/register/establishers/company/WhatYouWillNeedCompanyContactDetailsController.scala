@@ -21,15 +21,14 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.routes.CompanyEmailController
 import identifiers.register.establishers.company.CompanyDetailsId
-
-import javax.inject.Inject
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,

@@ -17,8 +17,9 @@
 package forms.register
 
 import forms.mappings.{Constraints, Mappings}
-import javax.inject.Inject
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class SchemeNameFormProvider @Inject() extends Mappings with Constraints {
   val schemeNameMaxLength = 160

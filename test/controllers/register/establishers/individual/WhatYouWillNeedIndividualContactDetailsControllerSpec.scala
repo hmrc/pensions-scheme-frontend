@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import controllers.ControllerSpecBase
 import controllers.register.establishers.individual.routes.EstablisherEmailController
 import models.person.PersonName
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, UpdateMode}
+import models._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.UserAnswers
@@ -29,7 +29,6 @@ import views.html.register.whatYouWillNeedContactDetails
 class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSpecBase {
 
   private val establisherName = PersonName("Test", "Name")
-  private val index = 0
   private val srn = Some(SchemeReferenceNumber("srn"))
 
   private def onwardRoute(mode: Mode, srn: OptionalSchemeReferenceNumber): Call = EstablisherEmailController.onPageLoad(mode, Index(0), OptionalSchemeReferenceNumber(srn))

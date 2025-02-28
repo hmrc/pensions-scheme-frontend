@@ -89,7 +89,6 @@ class CompanyHasBeenTradingIdSpec extends SpecBase {
 }
 
 object CompanyHasBeenTradingIdSpec extends SpecBase {
-  private val index = 0
   private val companyDetails = CompanyDetails("test company name")
 
   private def ua(v: Boolean): UserAnswers = UserAnswers(Json.obj())

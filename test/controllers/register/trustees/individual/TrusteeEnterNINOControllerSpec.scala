@@ -97,7 +97,6 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
   val formProvider       = new NINOFormProvider()
   private val srn        = Some(SchemeReferenceNumber("srn"))
   val form: Form[ReferenceValue] = formProvider("First Name Last Name")
-  private val index      = Index(0)
   private val ninoData   = "CS700100A"
   val trusteeFullName    = "Test Name"
   private val schemeName = "pension scheme details"

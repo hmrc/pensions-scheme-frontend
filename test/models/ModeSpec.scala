@@ -16,8 +16,8 @@
 
 package models
 
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class ModeSpec extends AnyWordSpecLike with Matchers with OptionValues {

@@ -17,9 +17,9 @@
 package utils
 
 import connectors.PensionAdministratorConnector
-import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(pensionAdministratorConnector: PensionAdministratorConnector) {

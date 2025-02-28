@@ -19,9 +19,9 @@ package services
 import config.FrontendAppConfig
 import connectors._
 import identifiers.TypedIdentifier
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.address.Address
 import models.requests.DataRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json._

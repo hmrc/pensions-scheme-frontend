@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
-import models.{AddressYears, CompanyDetails, EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
+import models._
 import play.api.data.Form
 import play.api.libs.json.{JsResult, Json}
 import play.api.mvc.Call

@@ -21,10 +21,8 @@ import controllers.ReasonController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.ReasonFormProvider
 import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherNoNINOReasonId}
-
-import javax.inject.Inject
 import models.requests.DataRequest
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +31,7 @@ import services.UserAnswersService
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class EstablisherNoNINOReasonController @Inject()(override val appConfig: FrontendAppConfig,

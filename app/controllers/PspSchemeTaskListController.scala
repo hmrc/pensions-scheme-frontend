@@ -20,6 +20,7 @@ import controllers.actions._
 import identifiers.SchemeNameId
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSP
+import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -29,7 +30,6 @@ import views.html.pspTaskList
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import models.{OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 class PspSchemeTaskListController @Inject()(
                                              override val messagesApi: MessagesApi,

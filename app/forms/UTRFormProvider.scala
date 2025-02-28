@@ -17,10 +17,11 @@
 package forms
 
 import forms.mappings.UtrMapping
-import javax.inject.Inject
 import models.ReferenceValue
 import play.api.data.Form
 import play.api.data.Forms._
+
+import javax.inject.Inject
 
 class UTRFormProvider @Inject() extends UtrMapping {
 

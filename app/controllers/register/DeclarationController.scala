@@ -30,14 +30,15 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, PSAMinimalFlags, SchemeReferenceNumber, TypeOfBenefits}
+import models._
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.HttpErrorFunctions._
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
@@ -45,12 +46,10 @@ import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HttpErrorFunctions._
-
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,

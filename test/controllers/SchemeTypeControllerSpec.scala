@@ -25,7 +25,6 @@ import models.register.SchemeType
 import play.api.data.Form
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory, UserAnswers}
 import views.html.schemeType
 

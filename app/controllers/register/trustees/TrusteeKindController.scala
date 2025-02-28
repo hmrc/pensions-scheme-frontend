@@ -21,9 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
-
-import javax.inject.Inject
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,6 +32,7 @@ import utils.annotations.Trustees
 import utils.{Enumerable, UserAnswers}
 import views.html.register.trustees.trusteeKind
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeKindController @Inject()(

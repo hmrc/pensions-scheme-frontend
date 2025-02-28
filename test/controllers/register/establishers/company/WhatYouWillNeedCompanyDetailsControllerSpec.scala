@@ -19,8 +19,8 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 

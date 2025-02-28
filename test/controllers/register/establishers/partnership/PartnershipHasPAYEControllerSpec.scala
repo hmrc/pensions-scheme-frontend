@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.HasPAYEFormProvider
 import identifiers.register.establishers.partnership.PartnershipHasPAYEId
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, PartnershipDetails}
+import models._
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind

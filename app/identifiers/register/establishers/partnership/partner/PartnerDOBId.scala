@@ -16,8 +16,6 @@
 
 package identifiers.register.establishers.partnership.partner
 
-import java.time.LocalDate
-
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Link
@@ -25,6 +23,8 @@ import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersPartners}
 import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 case class PartnerDOBId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath =

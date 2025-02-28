@@ -17,9 +17,9 @@
 package viewmodels.address
 
 import models.address.Address
+import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber}
 import play.api.mvc.Call
 import viewmodels.Message
-import models.{EmptyOptionalSchemeReferenceNumber, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 
 case class ConfirmAddressViewModel(
                                     postCall: Call,

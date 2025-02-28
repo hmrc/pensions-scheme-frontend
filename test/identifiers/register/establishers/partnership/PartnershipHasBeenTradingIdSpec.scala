@@ -19,7 +19,7 @@ package identifiers.register.establishers.partnership
 import base.SpecBase
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models.{Index, Link, NormalMode, PartnershipDetails, UpdateMode}
+import models._
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

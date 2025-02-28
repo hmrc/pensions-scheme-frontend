@@ -21,8 +21,8 @@ import identifiers.register.establishers.{company => _, partnership => _}
 import identifiers.register.trustees.{company => _}
 import models._
 import models.requests.DataRequest
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent

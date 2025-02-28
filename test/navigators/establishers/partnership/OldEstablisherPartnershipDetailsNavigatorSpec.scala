@@ -24,8 +24,6 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.prop._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar

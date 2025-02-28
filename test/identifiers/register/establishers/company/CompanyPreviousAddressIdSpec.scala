@@ -20,7 +20,7 @@ import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
 import models.address.Address
 import models.requests.DataRequest
-import models.{CompanyDetails, Index, Link, NormalMode, UpdateMode}
+import models._
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

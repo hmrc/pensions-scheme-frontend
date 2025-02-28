@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers._
 import models.register.SchemeType
-import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber}
 import utils.UserAnswers
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,

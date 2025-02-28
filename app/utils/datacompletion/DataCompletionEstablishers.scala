@@ -16,11 +16,11 @@
 
 package utils.datacompletion
 
+import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
+import identifiers.register.establishers.individual._
 import identifiers.register.establishers.partnership._
 import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.company._
-import identifiers.register.establishers.individual._
 import models.{Mode, NormalMode}
 import utils.UserAnswers
 

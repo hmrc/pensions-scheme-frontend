@@ -16,15 +16,13 @@
 
 package controllers.behaviours
 
-import java.time.LocalDate
-
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import forms.DOBFormProvider
 import models.Mode
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.JsObject
@@ -35,6 +33,7 @@ import services.UserAnswersService
 import viewmodels.dateOfBirth.DateOfBirthViewModel
 import views.html.register.DOB
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait DateOfBirthControllerBehaviours extends ControllerSpecBase

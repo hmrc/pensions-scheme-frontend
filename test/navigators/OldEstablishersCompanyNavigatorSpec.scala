@@ -19,17 +19,17 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
-import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
+import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
 import models.Mode.checkMode
 import models._
 import models.person.PersonName
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}

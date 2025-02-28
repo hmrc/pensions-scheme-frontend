@@ -95,7 +95,6 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   }
 
   "onPageLoad when only one trustee" must {
-    val srn = Some("S2400000041")
     "return Ok and the correct view on a GET request" in {
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqOneTrustee)

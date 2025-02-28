@@ -17,11 +17,12 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.TypeOfBenefits
 import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
+
+import javax.inject.Inject
 
 class TypeOfBenefitsFormProvider @Inject() extends Mappings {
 

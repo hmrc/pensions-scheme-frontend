@@ -16,7 +16,7 @@
 
 package utils.hstasklisthelper.spokes
 
-import models.{Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber, TaskListLink}
+import models.{Index, Mode, OptionalSchemeReferenceNumber, TaskListLink}
 import utils.UserAnswers
 import viewmodels.Message
 

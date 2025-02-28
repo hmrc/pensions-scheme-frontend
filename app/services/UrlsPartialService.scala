@@ -23,7 +23,7 @@ import identifiers.SchemeNameId
 import identifiers.racdac.RACDACNameId
 import identifiers.register.SubmissionReferenceNumberId
 import models.requests.OptionalDataRequest
-import models.{LastUpdated, PSAMinimalFlags}
+import models.{LastUpdated, PSAMinimalFlags, SchemeReferenceNumber}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, JsValue}
@@ -37,7 +37,6 @@ import viewmodels.Message
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
-import models.SchemeReferenceNumber
 
 class UrlsPartialService @Inject()(
                                     override val messagesApi: MessagesApi,

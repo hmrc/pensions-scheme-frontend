@@ -18,14 +18,14 @@ package navigators
 
 import com.google.inject.Inject
 import identifiers.Identifier
-import models.{Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.requests.IdentifiedRequest
+import models.{Mode, OptionalSchemeReferenceNumber}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
-import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContext
+import scala.jdk.CollectionConverters._
 
 class CompoundNavigator @Inject()(navigators: java.util.Set[Navigator]) extends Navigator {
 

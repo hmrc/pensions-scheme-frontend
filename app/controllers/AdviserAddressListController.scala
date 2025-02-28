@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers._
-import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigators.Navigator
@@ -33,6 +32,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserAddressListController @Inject()(override val appConfig: FrontendAppConfig,

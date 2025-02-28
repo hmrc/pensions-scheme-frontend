@@ -21,9 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.AddTrusteeId
-import models.{Mode, NormalMode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
 import models.register.Trustee
 import models.requests.DataRequest
+import models.{Mode, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.Logger
 import play.api.data.Form

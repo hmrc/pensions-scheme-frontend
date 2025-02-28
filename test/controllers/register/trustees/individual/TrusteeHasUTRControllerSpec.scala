@@ -22,7 +22,7 @@ import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
 import models.person.PersonName
-import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, OptionalSchemeReferenceNumber, person}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call

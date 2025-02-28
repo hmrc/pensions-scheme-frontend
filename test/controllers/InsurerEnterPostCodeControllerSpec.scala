@@ -20,8 +20,8 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurerConfirmAddressId, InsurerSelectAddressId, SchemeNameId}
-import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import models.address.{Address, TolerantAddress}
+import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.Navigator
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures

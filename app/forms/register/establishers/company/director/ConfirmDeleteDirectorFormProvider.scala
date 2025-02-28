@@ -17,10 +17,11 @@
 package forms.register.establishers.company.director
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.Messages
 import viewmodels.Message
+
+import javax.inject.Inject
 
 class ConfirmDeleteDirectorFormProvider @Inject() extends Mappings {
 

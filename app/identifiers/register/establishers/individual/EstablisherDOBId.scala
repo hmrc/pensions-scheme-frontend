@@ -16,8 +16,6 @@
 
 package identifiers.register.establishers.individual
 
-import java.time.LocalDate
-
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.Link
@@ -25,6 +23,8 @@ import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual}
 import utils.{DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 case class EstablisherDOBId(index: Int) extends TypedIdentifier[LocalDate] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherDOBId.toString

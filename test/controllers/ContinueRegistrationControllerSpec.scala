@@ -19,7 +19,6 @@ package controllers
 import controllers.actions.{DataRetrievalAction, FakeAuthAction}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-
 import utils.FakeNavigator
 
 class ContinueRegistrationControllerSpec extends ControllerSpecBase {

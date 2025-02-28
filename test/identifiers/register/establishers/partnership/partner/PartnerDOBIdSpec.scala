@@ -16,8 +16,6 @@
 
 package identifiers.register.establishers.partnership.partner
 
-import java.time.LocalDate
-
 import base.SpecBase
 import models.person.PersonName
 import models.requests.DataRequest
@@ -28,6 +26,8 @@ import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, DateHelper, UserAnswers}
 import viewmodels.{AnswerRow, Message}
+
+import java.time.LocalDate
 
 class PartnerDOBIdSpec extends SpecBase {
 

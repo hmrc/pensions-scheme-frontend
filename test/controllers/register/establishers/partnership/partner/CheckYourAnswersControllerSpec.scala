@@ -24,7 +24,7 @@ import identifiers.register.establishers.partnership.partner._
 import models.Mode.checkMode
 import models.address.Address
 import models.person.PersonName
-import models.{Index, _}
+import models._
 import play.api.test.Helpers.{contentAsString, status, _}
 import services.FakeUserAnswersService
 import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}

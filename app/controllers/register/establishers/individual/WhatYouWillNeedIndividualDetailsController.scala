@@ -21,14 +21,13 @@ import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.establishers.individual.routes._
 import identifiers.register.establishers.individual.EstablisherNameId
-
-import javax.inject.Inject
-import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber, SchemeReferenceNumber}
+import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.register.whatYouWillNeedIndividualDetails
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,

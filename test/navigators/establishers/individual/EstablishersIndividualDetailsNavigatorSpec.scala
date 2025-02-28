@@ -25,7 +25,6 @@ import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
-import navigators.establishers.individual.EstablishersIndividualContactDetailsNavigatorSpec.srn
 import navigators.{Navigator, NavigatorBehaviour}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._

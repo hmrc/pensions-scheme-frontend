@@ -18,11 +18,11 @@ package utils
 
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import identifiers.{LastPageId, TypedIdentifier}
-import models.requests.IdentifiedRequest
 import models._
+import models.requests.IdentifiedRequest
 import navigators.AbstractNavigator
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 

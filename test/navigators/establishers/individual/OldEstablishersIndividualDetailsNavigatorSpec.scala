@@ -21,17 +21,18 @@ import controllers.register.establishers.individual.routes._
 import controllers.register.establishers.routes._
 import generators.Generators
 import identifiers.Identifier
+import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.individual._
 import models.Mode._
 import models._
 import navigators.{Navigator, NavigatorBehaviour}
-import identifiers.register.establishers.IsEstablisherNewId
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import utils.UserAnswers
+
 import java.time.LocalDate
 
 class OldEstablishersIndividualDetailsNavigatorSpec extends SpecBase

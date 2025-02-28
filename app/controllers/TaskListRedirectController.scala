@@ -21,8 +21,8 @@ import controllers.actions._
 import identifiers.racdac.IsRacDacId
 import models.AuthEntity.PSA
 import models.OptionalSchemeReferenceNumber.toSrn
-import models.requests.AuthenticatedRequest
 import models._
+import models.requests.AuthenticatedRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier

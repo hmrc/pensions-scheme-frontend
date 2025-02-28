@@ -20,8 +20,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.partnership.partner.routes.PartnerNameController
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import views.html.register.establishers.partnership.partner.whatYouWillNeed
