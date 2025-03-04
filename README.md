@@ -8,7 +8,7 @@
 - [Identity Verification Testing](#identity-verification-testing)
 - [Navigation](#navigation)
 - [Dependencies](#dependencies)
-- [Service Documentation](#service-documentation)
+- [Terminology](#note-on-terminology)
 - [License](#license)
 
 ## Overview
