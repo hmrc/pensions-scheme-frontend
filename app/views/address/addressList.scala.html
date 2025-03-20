@@ -49,7 +49,7 @@
             )),
             hint = Some(Hint(content = HtmlContent(s"""<p class="govuk-body">
                 ${viewModel.selectAddress.resolve}
-                <a id="manual-address-link" href="@viewModel.manualInputCall"  class="govuk-link">
+                <a id="manual-address-link" href="${viewModel.manualInputCall}"  class="govuk-link">
                     ${viewModel.selectAddressLink.resolve}
                 </a>
             </p>"""))),
