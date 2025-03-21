@@ -89,8 +89,15 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber,establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
+
+        val logger = play.api.Logger(this.getClass)
+        logger.debug(s"onPageLoad started for PSAID=${request.psaId}, establisherIndex=$establisherIndex, session=${request.session}")
+
         (CompanyDetailsId(establisherIndex) and SchemeNameId).retrieve.map { case companyName ~ schemeName =>
           val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+
+          logger.debug(s"Retrieved seqTrustee=$seqTrustee for PSAID=${request.psaId}")
+
           if (seqTrustee.isEmpty) {
             Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
               .onPageLoad(mode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
@@ -103,6 +110,13 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
               schemeName
             )
           }
+        }.recover {
+          case e: NoSuchElementException =>
+            logger.warn(s"Data retrieval failed for PSAID=${request.psaId}, establisherIndex=$establisherIndex, likely missing CompanyDetails or SchemeName", e)
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+          case e: Exception =>
+            logger.error(s"Unexpected failure in onPageLoad for PSAID=${request.psaId}, establisherIndex=$establisherIndex", e)
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad)
         }
     }
 

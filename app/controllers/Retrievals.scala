@@ -24,6 +24,7 @@ import identifiers.{SchemeNameId, TypedIdentifier}
 import models.person.PersonName
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
+import play.api.Logger
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result, WrappedRequest}
@@ -52,7 +53,12 @@ trait Retrievals {
   private[controllers] def retrieve[A](id: TypedIdentifier[A])
                                       (f: A => Future[Result])
                                       (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
+
+    val logger = Logger(this.getClass)
+    logger.debug(s"Starting retrieve for $id, PSAID=${request.psaId}, session=${request.session}")
+
     request.userAnswers.get(id).map(f).getOrElse {
+      logger.warn(s"Data missing for $id, redirecting to session expired for PSAID=${request.psaId}")
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
     }
 
@@ -108,9 +114,17 @@ trait Retrievals {
   implicit def fromId[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Retrieval[A] =
     Retrieval {
       implicit request =>
+
+        val logger = Logger(this.getClass)
+        logger.debug(s"Starting fromId retrieval for $id, PSAID=${request.psaId}, session=${request.session}")
+
         request.userAnswers.get(id) match {
-          case Some(value) => Right(value)
-          case None => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
+          case Some(value) =>
+            logger.debug(s"Retrieval successful for $id with value=$value for PSAID=${request.psaId}")
+            Right(value)
+          case None =>
+            logger.warn(s"Retrieval failed: $id not found in UserAnswers for PSAID=${request.psaId}")
+            Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad)))
         }
     }
 

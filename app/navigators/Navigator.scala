@@ -18,7 +18,7 @@ package navigators
 
 import connectors.UserAnswersCacheConnector
 import controllers.routes.AnyMoreChangesController
-import identifiers.{Identifier, LastPageId, TypedIdentifier}
+import identifiers.{Identifier, LastPageId, PstrId, TypedIdentifier}
 import models._
 import models.requests.IdentifiedRequest
 import play.api.Logger
@@ -67,7 +67,7 @@ trait Navigator {
 abstract class AbstractNavigator
   extends Navigator {
 
-  private val logger  = Logger(classOf[AbstractNavigator])
+  private val logger = Logger(classOf[AbstractNavigator])
 
   override final def nextPageOptional(id: Identifier,
                                       mode: Mode,
@@ -98,11 +98,15 @@ abstract class AbstractNavigator
   }
 
   protected def navigateOrSessionExpired[A](answers: UserAnswers, id: => TypedIdentifier[A], destination: A => Call)
-                                           (implicit reads: Reads[A]): Option[NavigateTo] =
+                                           (implicit reads: Reads[A]): Option[NavigateTo] = {
     NavigateTo
       .dontSave(
-        answers.get(id).fold(controllers.routes.SessionExpiredController.onPageLoad)(destination(_))
+        answers.get(id).fold {
+          val pstr = answers.get(PstrId)
+          logger.warn(s"id not found, looking for id: ${id}, ${pstr.getOrElse("No Pstr")}")
+          controllers.routes.SessionExpiredController.onPageLoad}(destination(_))
       )
+  }
 
   protected def dataCacheConnector: UserAnswersCacheConnector
 
