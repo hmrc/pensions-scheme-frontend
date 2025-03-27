@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
+  def registerScheme(answers: UserAnswers, schemeJourneyType: SchemeJourneyType.Name
                     )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+  def updateSchemeDetails(pstr: String, answers: UserAnswers, srn: SchemeReferenceNumber
                          )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit]
 
   def checkForAssociation(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean = true)
@@ -52,15 +52,13 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
 
   private val logger  = Logger(classOf[PensionsSchemeConnectorImpl])
 
-  def registerScheme(answers: UserAnswers, psaId: String, schemeJourneyType: SchemeJourneyType.Name
-                    )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, schemeJourneyType: SchemeJourneyType.Name)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
 
     val url = url"${config.registerSchemeUrl(schemeJourneyType)}"
-    val headers = Seq("psaId" -> psaId)
 
     httpClientV2.post(url)
       .withBody(answers.json)
-      .setHeader(headers*)
       .execute[HttpResponse].map { response =>
         response.status match {
           case OK =>
@@ -76,11 +74,11 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
       }
   }
 
-  def updateSchemeDetails(psaId: String, pstr: String, answers: UserAnswers
+  def updateSchemeDetails(pstr: String, answers: UserAnswers, srn: SchemeReferenceNumber
                          )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    val url = url"${config.updateSchemeDetailsUrl}"
-    val headers = Seq("psaId" -> psaId, "pstr" -> pstr)
+    val url = url"${config.updateSchemeDetailsUrl}/${srn.id}"
+    val headers = Seq("pstr" -> pstr)
 
     httpClientV2.post(url)
       .withBody(answers.json)

@@ -161,7 +161,7 @@ class DeclarationController @Inject()(
 
       (for {
         cacheMap <- dataCacheConnector.upsert(request.externalId, updatedUA.json)
-        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), psaId.id, SchemeJourneyType.NON_RAC_DAC_SCHEME)
+        submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), SchemeJourneyType.NON_RAC_DAC_SCHEME)
         _ <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
         _ <- sendEmail(SchemeReferenceNumber(submissionResponse.schemeReferenceNumber), psaId)
         _ <- auditTcmp(psaId.id, request.userAnswers)

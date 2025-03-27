@@ -122,7 +122,7 @@ class DeclarationControllerSpec
     }
 
     "redirect to the next page on clicking agree and continue and ensure racdac declaration ID removed and register declaration ID present" in {
-      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -134,7 +134,7 @@ class DeclarationControllerSpec
 
     "redirect to your action was not processed page when backend returns 5XX" in {
       reset(mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
@@ -145,7 +145,7 @@ class DeclarationControllerSpec
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
       reset(mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
       val result = controller(nonDormantCompany).onClickAgree()(fakeRequest)
@@ -157,7 +157,7 @@ class DeclarationControllerSpec
     "redirect to the next page on clicking agree and continue and audit TCMP" in {
       reset(mockAuditService)
       reset(mockPensionSchemeConnector)
-      when(mockPensionSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
+      when(mockPensionSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.successful(validSchemeSubmissionResponse))
       val result = controller(tcmpAuditDataUa(TypeOfBenefits.MoneyPurchase).dataRetrievalAction).onClickAgree()(fakeRequest)
 
       val argCaptor = ArgumentCaptor.forClass(classOf[TcmpAuditEvent])
@@ -240,7 +240,7 @@ class DeclarationControllerSpec
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
-  
+
   private val href = controllers.register.routes.DeclarationController.onClickAgree
   val psaId: PsaId = PsaId("A0000000")
 
@@ -361,7 +361,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
-   
+
     override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
 

@@ -121,7 +121,7 @@ class DeclarationController @Inject()(
       .remove(identifiers.register.DeclarationId).asOpt.getOrElse(request.userAnswers)
       .setOrException(DeclarationId)(true)
     for {
-      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, psaId.id, SchemeJourneyType.RAC_DAC_SCHEME)
+      submissionResponse <- pensionsSchemeConnector.registerScheme(ua, SchemeJourneyType.RAC_DAC_SCHEME)
       _ <- sendEmail(psaId, schemeName)
       _ <- dataCacheConnector.upsert(request.externalId, ua.setOrException(SubmissionReferenceNumberId)(submissionResponse).json)
     } yield {
