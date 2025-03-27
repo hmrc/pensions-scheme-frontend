@@ -86,7 +86,7 @@ class DeclarationControllerSpec
   "onClickAgree" must {
     "redirect to the next page on clicking agree and continue" in {
       val uaCaptorForRegisterScheme = ArgumentCaptor.forClass(classOf[UserAnswers])
-      when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any(), any())(any(), any()))
+      when(mockPensionsSchemeConnector.registerScheme(uaCaptorForRegisterScheme.capture(), any())(any(), any()))
         .thenReturn(Future.successful(schemeSubmissionResponse))
       when(mockEmailConnector.sendEmail(any(), any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
@@ -97,7 +97,7 @@ class DeclarationControllerSpec
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-      verify(mockPensionsSchemeConnector, times(1)).registerScheme(any(), any(), any())(any(), any())
+      verify(mockPensionsSchemeConnector, times(1)).registerScheme(any(), any())(any(), any())
       uaCaptorForRegisterScheme.getValue.get(DeclarationId) mustBe Some(true)
       FakeUserAnswersCacheConnector.verifyUpsert(DeclarationId, true)
       FakeUserAnswersCacheConnector.verifyUpsert(SubmissionReferenceNumberId, schemeSubmissionResponse)
@@ -111,7 +111,7 @@ class DeclarationControllerSpec
 
     "redirect to your action was not processed page when backend returns 5XX" in {
       reset(mockPensionsSchemeConnector)
-      when(mockPensionsSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionsSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.INTERNAL_SERVER_ERROR, "response.body"), Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)))
 
@@ -123,7 +123,7 @@ class DeclarationControllerSpec
 
     "redirect to session timeout page when backend returns any other error than 5XX" in {
       reset(mockPensionsSchemeConnector)
-      when(mockPensionsSchemeConnector.registerScheme(any(), any(), any())(any(), any())).thenReturn(Future.failed(
+      when(mockPensionsSchemeConnector.registerScheme(any(), any())(any(), any())).thenReturn(Future.failed(
         UpstreamErrorResponse(upstreamResponseMessage("POST", "url",
           Status.BAD_REQUEST, "response.body"), Status.BAD_REQUEST, Status.BAD_REQUEST)))
       val result = controller(dataRetrievalAction).onClickAgree()(fakeRequest)

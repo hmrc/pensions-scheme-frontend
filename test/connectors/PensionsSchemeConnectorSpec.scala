@@ -54,7 +54,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME).map(response =>
+    connector.registerScheme(userAnswers, SchemeJourneyType.NON_RAC_DAC_SCHEME).map(response =>
       response shouldBe schemeSubmissionResponse
     )
 
@@ -75,7 +75,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
+      connector.registerScheme(userAnswers, SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -95,7 +95,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[UpstreamErrorResponse] {
-      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
+      connector.registerScheme(userAnswers, SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -115,7 +115,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsonParseException] {
-      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
+      connector.registerScheme(userAnswers, SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -135,7 +135,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsResultException] {
-      connector.registerScheme(userAnswers, "test-psa-id", SchemeJourneyType.NON_RAC_DAC_SCHEME)
+      connector.registerScheme(userAnswers, SchemeJourneyType.NON_RAC_DAC_SCHEME)
     }
 
   }
@@ -144,7 +144,6 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     server.stubFor(
       post(urlEqualTo(updateSchemeUrl))
         .withHeader("Content-Type", equalTo("application/json"))
-        .withHeader("psaId", equalTo(psaId))
         .withHeader("pstr", equalTo(pstr))
         .withRequestBody(equalToJson(Json.stringify(userAnswers.json)))
         .willReturn(
@@ -156,7 +155,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     noException shouldBe thrownBy {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+      connector.updateSchemeDetails(pstr, userAnswers, srn)
     }
   }
 
@@ -175,7 +174,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[BadRequestException] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+      connector.updateSchemeDetails(pstr, userAnswers, srn)
     }
 
   }
@@ -195,7 +194,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[UpstreamErrorResponse] {
-      connector.updateSchemeDetails(psaId, pstr, userAnswers)
+      connector.updateSchemeDetails(pstr, userAnswers, srn)
     }
 
   }
@@ -222,7 +221,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     noException shouldBe thrownBy {
-      connector.checkForAssociation(psaId, pstr)
+      connector.checkForAssociation(psaId, srn)
     }
   }
 
@@ -238,7 +237,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.checkForAssociation(psaId, pstr).map(response =>
+    connector.checkForAssociation(psaId, srn).map(response =>
       response.swap.map(_.status) shouldBe Right(INTERNAL_SERVER_ERROR)
     )
   }
@@ -254,7 +253,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.checkForAssociation(psaId, pstr).map(response =>
+    connector.checkForAssociation(psaId, srn).map(response =>
       response.swap.map(_.status) shouldBe Right(BAD_REQUEST)
     )
   }
@@ -270,7 +269,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.checkForAssociation(psaId, pstr).map(response =>
+    connector.checkForAssociation(psaId, srn).map(response =>
       response.swap.map(_.status) shouldBe Right(NOT_FOUND)
     )
   }
@@ -334,9 +333,10 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
 object PensionsSchemeConnectorSpec extends OptionValues {
 
-  private val registerSchemeUrl = "/pensions-scheme/register-scheme/non-rac-dac"
+  private val registerSchemeUrl = "/pensions-scheme/register-scheme-self/non-rac-dac"
 
-  private val updateSchemeUrl = "/pensions-scheme/update-scheme"
+  private val srn = SchemeReferenceNumber("test-srn")
+  private val updateSchemeUrl = s"/pensions-scheme/update-scheme/${srn.id}"
   private val checkAssociationUrl = "/pensions-scheme/is-psa-associated"
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
@@ -345,7 +345,7 @@ object PensionsSchemeConnectorSpec extends OptionValues {
   private val schemeId = SchemeReferenceNumber("test-scheme-id")
   private val psaId = "test-psa-id"
   private val pspId = "test-psp-id"
-  private val pstr = SchemeReferenceNumber("test-pstr")
+  private val pstr = "test-pstr"
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeId)
 
   private val validResponse =
