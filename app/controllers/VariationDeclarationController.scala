@@ -90,7 +90,7 @@ class VariationDeclarationController @Inject()(
                 .asOpt
                 .getOrElse(request.userAnswers)
 
-            pensionsSchemeConnector.updateSchemeDetails(psaId.id, pstr, ua) flatMap { _ =>
+            pensionsSchemeConnector.updateSchemeDetails(pstr, ua, srnId) flatMap { _ =>
               for {
                 schemeDetails <- schemeDetailsConnector.getSchemeDetails(psaId.id, "pstr", pstr, srnId)
                 _ <- auditTcmp(psaId.id, schemeDetails.get(TypeOfBenefitsId), ua)
