@@ -22,11 +22,7 @@ lazy val root = (project in file("."))
   .settings(
     scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
     scalacOptions += "-Wconf:src=routes/.*:s",
-    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s",
-      scalacOptions ++= Seq(
-      "-rewrite",
-      "-source:3.6-migration"
-    )
+    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
   )
 
   .settings(
