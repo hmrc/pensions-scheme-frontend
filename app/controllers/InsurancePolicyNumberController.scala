@@ -69,7 +69,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           val companyName = request.userAnswers.get(InsuranceCompanyNameId)
           Future.successful(BadRequest(view(formWithErrors,
             mode, companyName, existingSchemeName, postCall(mode, srn), srn)))

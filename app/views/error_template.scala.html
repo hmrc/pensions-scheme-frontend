@@ -21,7 +21,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(pageTitle: String, heading: String, message: String, appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String, appConfig: FrontendAppConfig)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages(pageTitle)) {
 

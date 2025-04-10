@@ -47,7 +47,7 @@ trait NinoController extends FrontendBaseController with Retrievals with I18nSup
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, form: Form[ReferenceValue], viewmodel: NinoViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewmodel.srn, id, value.copy(isEditable = true)).map { cacheMap =>

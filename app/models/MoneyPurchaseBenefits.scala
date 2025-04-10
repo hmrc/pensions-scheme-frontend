@@ -47,5 +47,5 @@ object MoneyPurchaseBenefits extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[MoneyPurchaseBenefits] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

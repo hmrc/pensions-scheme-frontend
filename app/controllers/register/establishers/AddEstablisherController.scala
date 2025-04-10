@@ -48,7 +48,7 @@ class AddEstablisherController @Inject()(override val messagesApi: MessagesApi,
   extends FrontendBaseController with Retrievals with I18nSupport {
 
   private def renderPage(
-                          establishers: Seq[Establisher[_]],
+                          establishers: Seq[Establisher[?]],
                           mode: Mode,
                           srn: OptionalSchemeReferenceNumber,
                           form: Form[Option[Boolean]], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {

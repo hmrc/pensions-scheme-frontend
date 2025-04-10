@@ -64,7 +64,7 @@ class CompanyDetailsController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn,
             index), srn))),
         value =>
@@ -78,6 +78,6 @@ class CompanyDetailsController @Inject()(
       )
   }
 
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit
 
 }

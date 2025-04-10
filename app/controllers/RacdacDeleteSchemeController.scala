@@ -60,7 +60,7 @@ class RacdacDeleteSchemeController @Inject()(
     implicit request =>
       getSchemeInfo { (schemeName, psaName, hintTextMessageKey) =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, schemeName, psaName, hintTextMessageKey))),
           {
             case true => dataCacheConnector.removeAll(request.externalId).map {

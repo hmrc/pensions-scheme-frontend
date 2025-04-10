@@ -1,12 +1,12 @@
-import com.typesafe.sbt.digest.Import._
-import com.typesafe.sbt.web.Import._
-import net.ground5hark.sbt.concat.Import._
+import com.typesafe.sbt.digest.Import.*
+import com.typesafe.sbt.web.Import.*
+import net.ground5hark.sbt.concat.Import.*
 import play.sbt.PlayImport.PlayKeys
 import play.sbt.routes.RoutesKeys
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "pensions-scheme-frontend"
@@ -14,15 +14,21 @@ lazy val appName: String = "pensions-scheme-frontend"
 lazy val root = (project in file("."))
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
-  .settings(scalaSettings: _*)
-  .settings(defaultSettings(): _*)
-  .settings(inConfig(Test)(testSettings): _*)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
+  .settings(inConfig(Test)(testSettings) *)
   .settings(majorVersion := 0)
-  .settings(scalaVersion := "2.13.16")
+  .settings(scalaVersion := "3.6.4")
   .settings(
-    scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s",
-    scalacOptions += "-Wconf:src=routes/.*:s"
+    scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
+    scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s",
+      scalacOptions ++= Seq(
+      "-rewrite",
+      "-source:3.6-migration"
+    )
   )
+
   .settings(
     name := appName,
     RoutesKeys.routesImport ++= Seq(
@@ -84,7 +90,7 @@ lazy val root = (project in file("."))
     )
   )
 
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork        := true,
   javaOptions ++= Seq(
     "-Dconfig.resource=test.application.conf"

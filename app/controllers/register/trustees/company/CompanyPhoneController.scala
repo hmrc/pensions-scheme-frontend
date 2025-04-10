@@ -45,8 +45,7 @@ class CompanyPhoneController @Inject()(val appConfig: FrontendAppConfig,
                                        formProvider: PhoneFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: phoneNumber
-                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with
-  I18nSupport {
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
   protected val form: Form[String] = formProvider()
 

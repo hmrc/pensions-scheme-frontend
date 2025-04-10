@@ -77,7 +77,7 @@ class PartnerNameController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn),
               existingSchemeName)))
           ,

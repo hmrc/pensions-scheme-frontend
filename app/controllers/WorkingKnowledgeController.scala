@@ -66,7 +66,7 @@ class WorkingKnowledgeController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
 

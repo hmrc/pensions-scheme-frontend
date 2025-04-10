@@ -49,7 +49,7 @@ trait ReasonController extends FrontendBaseController with Retrievals with I18nS
   def post(id: TypedIdentifier[String], mode: Mode, viewmodel: ReasonViewModel, form: Form[String])
           (implicit request: DataRequest[AnyContent]): Future[Result] =
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       reason =>
         userAnswersService.save(mode, viewmodel.srn, id, reason).map(cacheMap =>

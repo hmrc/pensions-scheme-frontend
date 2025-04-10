@@ -28,7 +28,7 @@
         submit_button: components.submit_button
 )
 
-@(form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @openLink = {
     <a id="manual-address-link" class="govuk-link" href="@viewmodel.manualInputCall">

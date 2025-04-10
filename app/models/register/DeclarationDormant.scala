@@ -35,6 +35,6 @@ object DeclarationDormant extends Enumerable.Implicits {
   case object Yes extends WithName("yes") with DeclarationDormant
 
   implicit val enumerable: Enumerable[DeclarationDormant] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 
 }

@@ -52,11 +52,10 @@ class AdviserAddressController @Inject()(
                                           val auditService: AuditService,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: manualAddress
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with
-  I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = AdviserAddressController.onSubmit _
+  private[controllers] val postCall = AdviserAddressController.onSubmit
   private[controllers] val title: Message = "messages__confirmAdviserAddress__title"
   private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
   private[controllers] val hint = None

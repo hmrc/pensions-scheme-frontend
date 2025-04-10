@@ -32,7 +32,7 @@
     submit_button: components.submit_button
 )
 
-@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[_], messages: Messages)
+@(currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean, email: String)(implicit request: Request[?], messages: Messages)
 
 @yourSchemesLink = {
     <a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete__copy_2_link")</a>

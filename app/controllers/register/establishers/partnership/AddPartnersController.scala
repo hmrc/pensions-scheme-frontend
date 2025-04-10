@@ -72,7 +72,7 @@ class AddPartnersController @Inject()(
       else {
 
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             retrievePartnershipName(index) {
               _ =>
                 Future.successful(

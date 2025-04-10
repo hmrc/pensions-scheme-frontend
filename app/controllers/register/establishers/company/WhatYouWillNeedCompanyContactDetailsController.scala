@@ -39,8 +39,7 @@ class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: Fronte
                                                                requireData: DataRequiredAction,
                                                                val view: whatYouWillNeedContactDetails,
                                                                val controllerComponents: MessagesControllerComponents
-                                                              ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                              ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

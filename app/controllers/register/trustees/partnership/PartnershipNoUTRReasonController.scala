@@ -47,9 +47,7 @@ class PartnershipNoUTRReasonController @Inject()(
                                                   formProvider: ReasonFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: reason
-                                                )(implicit val ec: ExecutionContext) extends ReasonController with
-  Retrievals
-  with I18nSupport with Enumerable.Implicits {
+                                                )(implicit val ec: ExecutionContext) extends ReasonController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

@@ -62,7 +62,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName,
             controllers.routes.InsuranceCompanyNameController.onSubmit(mode, srn), srn))),
         value =>

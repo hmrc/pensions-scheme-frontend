@@ -27,10 +27,10 @@
 @this(
     govukTable : GovukTable
 )
-@(entities: Seq[Entity[_]], mode: Mode, srn: OptionalSchemeReferenceNumber, entityNameHeader: String)(implicit messages: Messages)
+@(entities: Seq[Entity[?]], mode: Mode, srn: OptionalSchemeReferenceNumber, entityNameHeader: String)(implicit messages: Messages)
 
 
-@getKind(entity: Entity[_]) = @{
+@getKind(entity: Entity[?]) = @{
     entity.id match {
         case CompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__common__entityKind_company")
         case EstablisherNameId(_) | TrusteeNameId(_) => messages("messages__common__entityKind_individual")
@@ -45,7 +45,7 @@
     }
 }
 
-@removeLink(deleteLink: Option[String], entity: Entity[_]) = {
+@removeLink(deleteLink: Option[String], entity: Entity[?]) = {
 
     @if(entities.exists(_.deleteLink(mode, srn).isDefined)){
         <a id="person-@{entity.index}-delete" class="govuk-link" href=@deleteLink

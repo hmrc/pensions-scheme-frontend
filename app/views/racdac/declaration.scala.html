@@ -22,7 +22,7 @@
     button_link: components.button_link
 )
 
-@(psaName: String, href: Call)(implicit request: Request[_], messages: Messages)
+@(psaName: String, href: Call)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration_racdac__title")) {
 

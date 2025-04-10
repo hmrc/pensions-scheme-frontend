@@ -29,7 +29,7 @@
     hasWorkingKnowledge: Boolean,
     schemeName: Option[String],
     href: Call
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration__title")) {
 

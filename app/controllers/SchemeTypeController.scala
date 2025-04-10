@@ -61,7 +61,7 @@ class SchemeTypeController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           SchemeNameId.retrieve.map { schemeName =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },

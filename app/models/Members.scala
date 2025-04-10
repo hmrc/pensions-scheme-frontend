@@ -42,5 +42,5 @@ object Members {
   case object MoreThanTenThousand extends WithName("opt6") with Members
 
   implicit val enumerable: Enumerable[Members] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

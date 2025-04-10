@@ -73,7 +73,7 @@ class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
         value =>
           userAnswersService.save(mode, srn, TrusteeNameId(index), value).flatMap { _ =>

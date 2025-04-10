@@ -46,8 +46,7 @@ class PartnershipEnterPAYEController @Inject()(
                                                 formProvider: PayeFormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 val view: paye
-                                              )(implicit val ec: ExecutionContext) extends PayeController with
-  I18nSupport {
+                                              )(implicit val ec: ExecutionContext) extends PayeController with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

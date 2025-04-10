@@ -25,6 +25,6 @@ case class CompanyPreviousAddressListId(index: Int) extends TypedIdentifier[Tole
   override def path: JsPath = TrusteesId(index).path \ CompanyPreviousAddressListId.toString
 }
 
-object CompanyPreviousAddressListId extends {
+object CompanyPreviousAddressListId {
   override def toString: String = "companyPreviousAddressList"
 }

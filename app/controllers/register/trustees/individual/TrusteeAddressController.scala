@@ -52,15 +52,14 @@ class TrusteeAddressController @Inject()(
                                           val auditService: AuditService,
                                           val controllerComponents: MessagesControllerComponents,
                                           val view: manualAddress
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with
-  I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>
       TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = TrusteeAddressController.onSubmit _
+  private[controllers] val postCall = TrusteeAddressController.onSubmit
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

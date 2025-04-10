@@ -21,6 +21,7 @@ import identifiers.TypedIdentifier
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
+import play.api.libs.ws.writeableOf_JsValue
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -57,7 +58,7 @@ trait CacheConnector extends UserAnswersCacheConnector {
           case JsSuccess(UserAnswers(updatedJson), _) =>
             httpClientV2.post(url(cacheId))
               .withBody(updatedJson)
-              .setHeader(headers(hc): _*)
+              .setHeader(headers(hc)*)
               .execute[HttpResponse].flatMap { response =>
                 response.status match {
                   case OK =>
@@ -73,7 +74,7 @@ trait CacheConnector extends UserAnswersCacheConnector {
 
   override def fetch(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     httpClientV2.get(url(id))
-      .setHeader(headers(hc): _*)
+      .setHeader(headers(hc)*)
       .execute[HttpResponse].flatMap { response =>
         response.status match {
           case NOT_FOUND =>
@@ -85,19 +86,19 @@ trait CacheConnector extends UserAnswersCacheConnector {
         }
       }
 
-  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I
+  override def remove[I <: TypedIdentifier[?]](cacheId: String, id: I
                                               )(implicit ec: ExecutionContext, hc: HeaderCarrier
                                               ): Future[JsValue] = modify(cacheId, _.remove(id))
 
   override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
     httpClientV2.delete(url(id))
-      .setHeader(headers(hc): _*)
+      .setHeader(headers(hc)*)
       .execute[HttpResponse]
       .map(_ => Ok)
 
   override def lastUpdated(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     httpClientV2.get(lastUpdatedUrl(id))
-      .setHeader(headers(hc): _*)
+      .setHeader(headers(hc)*)
       .execute[HttpResponse].flatMap { response =>
         response.status match {
           case NOT_FOUND =>

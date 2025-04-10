@@ -50,7 +50,7 @@ trait UTRController extends FrontendBaseController with Retrievals with I18nSupp
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       utr => {
         userAnswersService.save(mode, viewmodel.srn, id, utr.copy(isEditable = true)).map(cacheMap =>

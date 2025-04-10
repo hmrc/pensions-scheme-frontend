@@ -65,7 +65,7 @@ class RACDACNameController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen allowAccess(EmptyOptionalSchemeReferenceNumber)).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           pensionAdministratorConnector.getPSAName.map { psaName =>
             BadRequest(view(formWithErrors, mode, psaName))
           }

@@ -48,7 +48,7 @@ class TrusteeEnterNINOController @Inject()(
                                           )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController
-    .onSubmit _
+    .onSubmit
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

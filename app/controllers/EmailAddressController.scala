@@ -47,7 +47,7 @@ trait EmailAddressController extends FrontendBaseController with Retrievals with
            completeId: Option[TypedIdentifier[Boolean]])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       value => {
         val answers = request.userAnswers

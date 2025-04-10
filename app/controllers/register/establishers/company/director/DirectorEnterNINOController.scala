@@ -46,11 +46,10 @@ class DirectorEnterNINOController @Inject()(
                                              val formProvider: NINOFormProvider,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: nino
-                                           )(implicit val ec: ExecutionContext) extends NinoController with
-  I18nSupport {
+                                           )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.company.director.routes
-    .DirectorEnterNINOController.onSubmit _
+    .DirectorEnterNINOController.onSubmit
   private[controllers] val hint: String = "messages__common__nino_hint"
   private val directorName: (Index, Index) => Retrieval[String] = (establisherIndex, directorIndex) => Retrieval {
     implicit request =>

@@ -25,7 +25,7 @@
     button_link: components.button_link
 )
 
-@(vm:CYAViewModel)(implicit request: Request[_], messages: Messages)
+@(vm:CYAViewModel)(implicit request: Request[?], messages: Messages)
 
 @layout( pageTitle = vm.title.resolve.capitalize ) {
 

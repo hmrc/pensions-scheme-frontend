@@ -45,8 +45,7 @@ class EstablisherNoNINOReasonController @Inject()(override val appConfig: Fronte
                                                   formProvider: ReasonFormProvider,
                                                   val view: reason,
                                                   val controllerComponents: MessagesControllerComponents)
-                                                 (implicit val ec: ExecutionContext) extends ReasonController with
-  I18nSupport {
+                                                 (implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

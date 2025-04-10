@@ -73,8 +73,8 @@ class PartnershipPreviousAddressListController @Inject()(val appConfig: Frontend
 
   private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-
-    (PartnershipDetailsId(index) and PartnershipPreviousAddressPostcodeLookupId(index)).retrieve.map {
+    
+    PartnershipDetailsId(index).and(PartnershipPreviousAddressPostcodeLookupId(index)).retrieve.map {
       case partnershipDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.PartnershipPreviousAddressListController.onSubmit(mode, index, srn),

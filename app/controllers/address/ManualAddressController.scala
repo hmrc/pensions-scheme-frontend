@@ -76,7 +76,7 @@ trait ManualAddressController extends FrontendBaseController with Retrievals wit
                       postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithError: Form[_]) => Future.successful(BadRequest(view(formWithError, viewModel, existingSchemeName))),
+      (formWithError: Form[?]) => Future.successful(BadRequest(view(formWithError, viewModel, existingSchemeName))),
       address => {
         val existingAddress = request.userAnswers.get(id)
         val selectedAddress = request.userAnswers.get(selectedId)

@@ -62,7 +62,7 @@ trait CompanyRegistrationNumberBaseController extends FrontendBaseController wit
            companyName: String)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form(companyName).bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
 
         Future.successful(BadRequest(
           view(viewModel, formWithErrors, existingSchemeName, postCall(mode, srn, index), srn))),

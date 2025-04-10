@@ -21,7 +21,7 @@
     button_link: components.button_link
 )
 
-@(viewModel: AlreadyDeletedViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: AlreadyDeletedViewModel)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = viewModel.title) {
 

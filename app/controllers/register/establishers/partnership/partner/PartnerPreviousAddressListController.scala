@@ -76,7 +76,7 @@ class PartnerPreviousAddressListController @Inject()(
   private def viewModel(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
-    (PartnerNameId(establisherIndex, partnerIndex) and PartnerPreviousAddressPostcodeLookupId(establisherIndex,
+    PartnerNameId(establisherIndex, partnerIndex).and(PartnerPreviousAddressPostcodeLookupId(establisherIndex,
       partnerIndex)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(

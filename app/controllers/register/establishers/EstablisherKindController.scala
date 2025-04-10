@@ -51,7 +51,7 @@ class EstablisherKindController @Inject()(
   FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
-  private val postCall = routes.EstablisherKindController.onSubmit _
+  private val postCall = routes.EstablisherKindController.onSubmit
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -64,7 +64,7 @@ class EstablisherKindController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, srn, index, existingSchemeName, postCall(mode, index,
             srn)))),
         value =>

@@ -37,8 +37,7 @@ class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendA
                                                             requireData: DataRequiredAction,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             val view: whatYouWillNeedPartnershipDetails
-                                                           ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                           ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

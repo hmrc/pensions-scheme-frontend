@@ -64,7 +64,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
           value =>
             dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>

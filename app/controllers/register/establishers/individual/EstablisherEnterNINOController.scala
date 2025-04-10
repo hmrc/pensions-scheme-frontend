@@ -46,11 +46,10 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
                                                val view: nino,
                                                val controllerComponents: MessagesControllerComponents
                                               )
-                                              (implicit val ec: ExecutionContext) extends NinoController with
-  I18nSupport {
+                                              (implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.individual.routes
-    .EstablisherEnterNINOController.onSubmit _
+    .EstablisherEnterNINOController.onSubmit
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

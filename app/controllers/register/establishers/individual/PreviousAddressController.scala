@@ -51,11 +51,10 @@ class PreviousAddressController @Inject()(
                                            val auditService: AuditService,
                                            val view: manualAddress,
                                            val controllerComponents: MessagesControllerComponents
-                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with
-  I18nSupport {
+                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = routes.PreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.PreviousAddressController.onSubmit
   private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =

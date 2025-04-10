@@ -53,7 +53,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     implicit request =>
       TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
-  private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.IndividualConfirmPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 

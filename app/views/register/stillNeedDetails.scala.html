@@ -16,7 +16,7 @@
 
 @this(layout: templates.Layout)
 
-@(srn: OptionalSchemeReferenceNumber, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(srn: OptionalSchemeReferenceNumber, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__stillNeedDetails__title")) {
 

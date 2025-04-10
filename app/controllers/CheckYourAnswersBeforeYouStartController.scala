@@ -16,19 +16,19 @@
 
 package controllers
 
-import controllers.actions._
-import identifiers._
+import controllers.actions.*
+import identifiers.*
 import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.OptionalSchemeReferenceNumber.toSrn
-import models._
-import models.requests.DataRequest
+import models.*
+import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils._
+import utils.*
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 

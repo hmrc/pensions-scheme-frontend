@@ -74,7 +74,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
   def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber)
                (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
 
-    (TrusteeNameId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.map {
+    TrusteeNameId(index).and(IndividualPreviousAddressPostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.TrusteePreviousAddressListController.onSubmit(mode, index, srn),

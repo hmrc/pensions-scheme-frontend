@@ -58,7 +58,7 @@ class CompanyPreviousAddressController @Inject()(
   with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
+  private[controllers] val postCall = CompanyPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"

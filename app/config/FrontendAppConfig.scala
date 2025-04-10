@@ -87,7 +87,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
       .underlying.getString("urls.updateSchemeDetails")
   }"
 
-  def schemeDashboardUrl(request: DataRequest[_]): String = schemeDashboardUrl(request.psaId, request.pspId)
+  def schemeDashboardUrl(request: DataRequest[?]): String = schemeDashboardUrl(request.psaId, request.pspId)
 
   def schemeDashboardUrl(psaId: Option[PsaId], pspId: Option[PspId]): String =
     (psaId, pspId) match {

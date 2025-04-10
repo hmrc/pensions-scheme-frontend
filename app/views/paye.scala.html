@@ -28,7 +28,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], viewmodel: PayeViewModel, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @labelClass = @{
     if(viewmodel.labelHidden == true) {

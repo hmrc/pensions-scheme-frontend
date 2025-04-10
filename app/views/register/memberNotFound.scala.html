@@ -21,7 +21,7 @@
     appConfig: FrontendAppConfig
 )
 
-@(label: String)(implicit request: Request[_], messages: Messages)
+@(label: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__pageNotFound404__title")) {
 

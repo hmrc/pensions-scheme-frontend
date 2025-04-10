@@ -29,7 +29,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn: OptionalSchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, index: Index, schemeName: Option[String], postCall: Call, srn: OptionalSchemeReferenceNumber)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__companyName__title"))) {
 

@@ -67,7 +67,7 @@ class TrusteeKindController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
         },

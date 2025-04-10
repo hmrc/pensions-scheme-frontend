@@ -24,6 +24,7 @@ import models.register.SchemeSubmissionResponse
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
+import play.api.libs.ws.writeableOf_JsValue
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -59,7 +60,7 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
 
     httpClientV2.post(url)
       .withBody(answers.json)
-      .setHeader(headers:_ *)
+      .setHeader(headers*)
       .execute[HttpResponse].map { response =>
         response.status match {
           case OK =>
@@ -83,7 +84,7 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
 
     httpClientV2.post(url)
       .withBody(answers.json)
-      .setHeader(headers:_ *)
+      .setHeader(headers*)
       .execute[HttpResponse].map { response =>
         response.status match {
           case OK => Right(())
@@ -99,7 +100,7 @@ class PensionsSchemeConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: 
     val headers: Seq[(String, String)] =
       Seq((if(isPsa) "psaId" else "pspId", userId), ("schemeReferenceNumber", srn.id), ("Content-Type", "application/json"))
     val url = url"${config.checkAssociationUrl}"
-    implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers: _*)
+    implicit val hc: HeaderCarrier = headerCarrier.withExtraHeaders(headers*)
 
     httpClientV2.get(url)(hc)
       .execute[HttpResponse]

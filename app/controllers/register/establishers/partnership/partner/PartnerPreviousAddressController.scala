@@ -57,7 +57,7 @@ class PartnerPreviousAddressController @Inject()(
   with I18nSupport with Retrievals {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.PartnerPreviousAddressController.onSubmit
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =

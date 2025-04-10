@@ -49,8 +49,7 @@ class CompanyAddressListController @Inject()(
                                               val auditService: AuditService,
                                               val view: addressList,
                                               val controllerComponents: MessagesControllerComponents
-                                            )(implicit val ec: ExecutionContext) extends AddressListController with
-  Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -76,7 +75,7 @@ class CompanyAddressListController @Inject()(
 
   private def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.map {
+    CompanyDetailsId(index).and(CompanyPostCodeLookupId(index)).retrieve.map {
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyAddressListController.onSubmit(mode, srn, index),

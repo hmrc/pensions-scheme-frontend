@@ -27,7 +27,7 @@
     bodyClasses: Option[String] = None,
     mainClass: Option[String] = None,
     scriptElem: Option[Html] = None
-)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+)(mainContent: Html)(implicit request : Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__pension_scheme_registration__title")) {
     @mainContent

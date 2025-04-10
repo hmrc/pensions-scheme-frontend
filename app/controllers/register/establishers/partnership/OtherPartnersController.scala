@@ -68,7 +68,7 @@ class OtherPartnersController @Inject()(
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) => {
+            (formWithErrors: Form[?]) => {
               val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController
                 .onSubmit(mode, establisherIndex, srn)
               Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName,

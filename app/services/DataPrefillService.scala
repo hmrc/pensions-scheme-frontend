@@ -26,7 +26,7 @@ import models.prefill.IndividualDetails
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
+import play.api.libs.json.Reads.JsObjectReducer
 import play.api.libs.json._
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UserAnswers}

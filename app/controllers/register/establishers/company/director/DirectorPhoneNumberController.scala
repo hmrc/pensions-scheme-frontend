@@ -46,8 +46,7 @@ class DirectorPhoneNumberController @Inject()(
                                                formProvider: PhoneFormProvider,
                                                val view: phoneNumber,
                                                val controllerComponents: MessagesControllerComponents
-                                             )(implicit val ec: ExecutionContext) extends PhoneNumberController with
-  I18nSupport {
+                                             )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
 
 
   protected val form: Form[String] = formProvider()

@@ -31,7 +31,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], viewmodel: ManualAddressViewModel, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages(viewmodel.title))) {
 

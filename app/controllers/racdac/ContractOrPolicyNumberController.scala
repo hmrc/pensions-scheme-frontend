@@ -70,7 +70,7 @@ class ContractOrPolicyNumberController @Inject()(
       withRACDACName { racdacName =>
         val form = formProvider(racdacName)
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) => {
+          (formWithErrors: Form[?]) => {
             pensionAdministratorConnector.getPSAName.map { psaName =>
               BadRequest(view(formWithErrors, mode, psaName, racdacName))
             }

@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
-@import controllers.routes._
+@import controllers.routes.CurrentMembersController
 @import models.{Mode}
 @import models.Members
 @import utils.ViewHelper.titleWithErrors
@@ -30,7 +30,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, schemeName: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__current_members__title"))) {
 

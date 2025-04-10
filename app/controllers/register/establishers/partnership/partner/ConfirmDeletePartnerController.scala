@@ -80,7 +80,7 @@ class ConfirmDeletePartnerController @Inject()(
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map {
           partnerDetails =>
             form(partnerDetails.fullName).bindFromRequest().fold(
-              (formWithErrors: Form[_]) =>
+              (formWithErrors: Form[?]) =>
                 Future.successful(BadRequest(view(
                   formWithErrors,
                   partnerDetails.fullName,

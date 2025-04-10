@@ -21,16 +21,16 @@
     govukTable : GovukTable
 )
 
-@(entities: Seq[Entity[_]], viewOnly:Boolean = false, mode: Mode, srn: OptionalSchemeReferenceNumber, tableCaption: String)(implicit messages: Messages)
+@(entities: Seq[Entity[?]], viewOnly:Boolean = false, mode: Mode, srn: OptionalSchemeReferenceNumber, tableCaption: String)(implicit messages: Messages)
 
-@edit(entity: Entity[_], editLink: String) = {
+@edit(entity: Entity[?], editLink: String) = {
     <a id="person-@{entity.index}-edit" class="govuk-link" href="@editLink">
         <span>@messages("site.change")</span>
         <span class="govuk-visually-hidden">@entity.name</span>
     </a>
 }
 
-@delete(entity: Entity[_], deleteLink: String) = {
+@delete(entity: Entity[?], deleteLink: String) = {
     <a id="person-@{entity.index}-delete" class="govuk-link" href="@deleteLink">
         <span>@messages("site.remove")</span>
         <span class="govuk-visually-hidden">@{entity.name}</span>

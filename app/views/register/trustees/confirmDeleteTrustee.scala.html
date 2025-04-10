@@ -28,7 +28,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], trusteeName: String, postCall: Call, schemeName: Option[String], mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], trusteeName: String, postCall: Call, schemeName: Option[String], mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__confirmDeleteTrustee__title"))) {
 

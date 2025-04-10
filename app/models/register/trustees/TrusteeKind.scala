@@ -37,7 +37,7 @@ object TrusteeKind {
   case object Partnership extends WithName("partnership") with TrusteeKind
 
   implicit val enumerable: Enumerable[TrusteeKind] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 
   //noinspection ConvertExpressionToSAM
   implicit val jsLiteral: JavascriptLiteral[TrusteeKind] = new JavascriptLiteral[TrusteeKind] {

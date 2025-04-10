@@ -46,7 +46,7 @@ trait PhoneNumberController extends FrontendBaseController with Retrievals with 
   def post(id: TypedIdentifier[String], mode: Mode, form: Form[String], viewModel: CommonFormWithHintViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, existingSchemeName))),
       value =>
         userAnswersService.save(mode, viewModel.srn, id, value).map { cacheMap =>

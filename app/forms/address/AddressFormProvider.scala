@@ -43,6 +43,6 @@ class AddressFormProvider @Inject()(countryOptions: CountryOptions) extends Addr
           "messages__error__postcode_nonUK_length"),
       "country" ->
         countryMapping(countryOptions, "messages__error_country_required", "messages__error_country_invalid")
-    )(Address.apply)(Address.unapply)
+    )(Address.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }

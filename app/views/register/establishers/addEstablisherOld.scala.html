@@ -30,12 +30,12 @@
     submit_button: components.submit_button
 )
 @(
-    form: Form[_],
+    form: Form[?],
     mode: Mode,
-    establishers: Seq[Establisher[_]],
+    establishers: Seq[Establisher[?]],
     schemeName: Option[String],
     srn: OptionalSchemeReferenceNumber
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__establishers__add__title"))) {
 

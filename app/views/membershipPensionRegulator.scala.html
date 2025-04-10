@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
+@import controllers.routes.MembershipPensionRegulatorController
 @import models.Mode
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
@@ -26,7 +26,7 @@
     submit_button: components.submit_button
 )
 
-@(mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(mode: Mode, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(
     pageTitle = messages("messages__membership_pension_regulator__title")) {

@@ -52,8 +52,8 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
   PostcodeLookupController with I18nSupport {
 
   override protected val form: Form[String] = formProvider()
-  private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
-  private[controllers] val postCall = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit _
+  private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad
+  private[controllers] val postCall = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit
   private[controllers] val title: Message = "messages__companyPreviousAddressPostcodeLookup__title"
   private[controllers] val heading: Message = "messages__companyPreviousAddressPostcodeLookup__heading"
 

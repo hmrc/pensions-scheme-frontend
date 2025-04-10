@@ -67,7 +67,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, companyName, postCall(mode, srn, index),
               existingSchemeName))),
           {

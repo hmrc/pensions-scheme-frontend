@@ -53,7 +53,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
     implicit request =>
       DirectorNameId(establisherIndex, directorIndex).retrieve.map(_.fullName)
   }
-  private[controllers] val postCall = routes.DirectorConfirmPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.DirectorConfirmPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
@@ -77,7 +77,7 @@ class DirectorConfirmPreviousAddressController @Inject()(val appConfig: Frontend
   private def viewmodel(mode: Mode, establisherIndex: Int, directorIndex: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
-        (directorName(establisherIndex, directorIndex) and ExistingCurrentAddressId(establisherIndex, directorIndex))
+        directorName(establisherIndex, directorIndex).and(ExistingCurrentAddressId(establisherIndex, directorIndex))
           .retrieve.map {
           case name ~ address =>
             ConfirmAddressViewModel(

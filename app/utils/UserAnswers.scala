@@ -55,7 +55,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   def prettyPrint: String = Json.prettyPrint(json)
 
   def getAll[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
-    (JsLens.fromPath(path) andThen JsLens.atAllIndices)
+    JsLens.fromPath(path).andThen(JsLens.atAllIndices)
       .getAll(json)
       .flatMap(a => traverse(a.map(s => Json.fromJson[A](s))))
       .asOpt
@@ -86,7 +86,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
 
   def set(path: JsPath)(jsValue: JsValue): JsResult[UserAnswers] = {
     JsLens.fromPath(path)
-      .set(jsValue, json).map(UserAnswers)
+      .set(jsValue, json).map(UserAnswers.apply)
   }
 
   def removeAllOf[I <: TypedIdentifier.PathDependent](ids: List[I]): JsResult[UserAnswers] = {
@@ -120,7 +120,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       result match {
         case JsSuccess(results, _) =>
           entities match {
-            case Seq(h, t@_*) => reads(h._2).reads(h._1) match {
+            case Seq(h, t*) => reads(h._2).reads(h._1) match {
               case JsSuccess(item, _) => recur(JsSuccess(results :+ item), t)
               case error@JsError(_) => error
             }
@@ -154,7 +154,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
-  def allPartners(establisherIndex: Int): Seq[Partner[_]] =
+  def allPartners(establisherIndex: Int): Seq[Partner[?]] =
     getAllRecursive[PersonName](PartnerNameId.collectionPath(establisherIndex)).map {
       details =>
         for ((partner, partnerIndex) <- details.zipWithIndex) yield {
@@ -171,12 +171,12 @@ final case class UserAnswers(json: JsValue = Json.obj())
         }
     }.getOrElse(Seq.empty)
 
-  def allPartnersAfterDelete(establisherIndex: Int): Seq[Partner[_]] = {
+  def allPartnersAfterDelete(establisherIndex: Int): Seq[Partner[?]] = {
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
   //scalastyle:off method.length
-  def readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
+  def readTrustees: Reads[Seq[Trustee[?]]] = new Reads[Seq[Trustee[?]]] {
 
     private def noOfRecords: Int = json.validate((__ \ Symbol("trustees")).readNullable(__.read(
       Reads.seq((__ \ Symbol("trusteeKind")).read[String].flatMap {
@@ -188,7 +188,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       case _ => 0
     }
 
-    private def readsIndividual(index: Int): Reads[Trustee[_]] =
+    private def readsIndividual(index: Int): Reads[Trustee[?]] =
       (
         (JsPath \ TrusteeNameId.toString).read[PersonName] and
           (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
@@ -198,7 +198,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
           isTrusteeIndividualComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
       )
 
-    private def readsCompany(index: Int): Reads[Trustee[_]] = (
+    private def readsCompany(index: Int): Reads[Trustee[?]] = (
       (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
       ) ((details, isNew) => {
@@ -207,7 +207,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }
     )
 
-    private def readsPartnership(index: Int): Reads[Trustee[_]] = (
+    private def readsPartnership(index: Int): Reads[Trustee[?]] = (
       (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
       ) ((details, isNew) => TrusteePartnershipEntity(
@@ -215,15 +215,15 @@ final case class UserAnswers(json: JsValue = Json.obj())
       isTrusteePartnershipComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
     )
 
-    private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
-      override def reads(json: JsValue): JsResult[Trustee[_]] = {
+    private def readsSkeleton(index: Int): Reads[Trustee[?]] = new Reads[Trustee[?]] {
+      override def reads(json: JsValue): JsResult[Trustee[?]] = {
         (json \ TrusteeKindId.toString)
           .toOption.map(_ => JsSuccess(TrusteeSkeletonEntity(TrusteeKindId(index))))
           .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
       }
     }
 
-    override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
+    override def reads(json: JsValue): JsResult[Seq[Trustee[?]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
           val jsResults = trustees.zipWithIndex.map { case (jsValue, index) =>
@@ -243,9 +243,9 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }
   }
 
-  def allTrustees: Seq[Trustee[_]] = {
+  def allTrustees: Seq[Trustee[?]] = {
 
-    json.validate[Seq[Trustee[_]]](readTrustees) match {
+    json.validate[Seq[Trustee[?]]](readTrustees) match {
       case JsSuccess(trustees, _) =>
         trustees
       case JsError(errors) =>
@@ -254,7 +254,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }
   }
 
-  def allTrusteesAfterDelete: Seq[Trustee[_]] = {
+  def allTrusteesAfterDelete: Seq[Trustee[?]] = {
     allTrustees.filterNot(_.isDeleted)
   }
 
@@ -281,11 +281,11 @@ final case class UserAnswers(json: JsValue = Json.obj())
     }
   }
 
-  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[_]] =
+  def allEstablishersAfterDelete(mode: Mode): Seq[Establisher[?]] =
     allEstablishers(mode).filterNot(_.isDeleted)
 
-  def allEstablishers(mode: Mode): Seq[Establisher[_]] = {
-    json.validate[Seq[Establisher[_]]](readEstablishers(mode)) match {
+  def allEstablishers(mode: Mode): Seq[Establisher[?]] = {
+    json.validate[Seq[Establisher[?]]](readEstablishers(mode)) match {
       case JsSuccess(establishers, _) =>
         establishers
       case JsError(errors) =>
@@ -295,7 +295,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   }
 
   //scalastyle:off method.length
-  def readEstablishers(mode: Mode): Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+  def readEstablishers(mode: Mode): Reads[Seq[Establisher[?]]] = new Reads[Seq[Establisher[?]]] {
 
     private def noOfRecords: Int = json.validate((__ \ Symbol("establishers")).readNullable(__.read(
       Reads.seq((__ \ Symbol("establisherKind")).read[String].flatMap {
@@ -307,7 +307,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
       case _ => 0
     }
 
-    private def readsIndividual(index: Int): Reads[Establisher[_]] = (
+    private def readsIndividual(index: Int): Reads[Establisher[?]] = (
       (JsPath \ EstablisherNameId.toString).read[PersonName] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
@@ -316,7 +316,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
         isEstablisherIndividualComplete(index), isNew.fold(false)(identity), noOfRecords)
     )
 
-    private def readsCompany(index: Int): Reads[Establisher[_]] = (
+    private def readsCompany(index: Int): Reads[Establisher[?]] = (
       (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
@@ -325,7 +325,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
         (false)(identity), noOfRecords)
     )
 
-    private def readsPartnership(index: Int): Reads[Establisher[_]] = (
+    private def readsPartnership(index: Int): Reads[Establisher[?]] = (
       (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsEstablisherNewId.toString).readNullable[Boolean]
       ) ((details, isNew) =>
@@ -334,15 +334,15 @@ final case class UserAnswers(json: JsValue = Json.obj())
         (identity), noOfRecords)
     )
 
-    private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
-      override def reads(json: JsValue): JsResult[Establisher[_]] = {
+    private def readsSkeleton(index: Int): Reads[Establisher[?]] = new Reads[Establisher[?]] {
+      override def reads(json: JsValue): JsResult[Establisher[?]] = {
         (json \ EstablisherKindId.toString)
           .toOption.map(_ => JsSuccess(EstablisherSkeletonEntity(EstablisherKindId(index))))
           .getOrElse(JsError(s"Establisher does not have element establisherKind: index=$index"))
       }
     }
 
-    override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
+    override def reads(json: JsValue): JsResult[Seq[Establisher[?]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
           val jsResults = establishers.zipWithIndex.map { case (jsValue, index) =>

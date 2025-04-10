@@ -29,7 +29,7 @@
     incompleteAlert: components.incomplete_alert
 )
 
-@(taskSections: SchemeDetailsTaskListTrustees, schemeName: String, returnUrl: String)(implicit request: Request[_], messages: Messages)
+@(taskSections: SchemeDetailsTaskListTrustees, schemeName: String, returnUrl: String)(implicit request: Request[?], messages: Messages)
 
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {

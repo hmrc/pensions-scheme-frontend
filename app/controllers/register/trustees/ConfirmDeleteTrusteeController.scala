@@ -122,7 +122,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 srn: OptionalSchemeReferenceNumber,
                                 mode: Mode)(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form(name).bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(
           formWithErrors,
           name,

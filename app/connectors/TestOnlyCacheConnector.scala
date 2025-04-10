@@ -31,7 +31,7 @@ class TestOnlyCacheConnector @Inject()(config: FrontendAppConfig, httpClientV2: 
 
   def dropCollection(collectionName: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
     httpClientV2.delete(url(collectionName))
-      .setHeader(headers(hc): _*)
+      .setHeader(headers(hc)*)
       .execute[HttpResponse]
       .map(_ => Ok)
 

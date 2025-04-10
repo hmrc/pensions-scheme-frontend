@@ -64,7 +64,7 @@ class MoreThanTenTrusteesController @Inject()(
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           val submitUrl = controllers.register.trustees.routes.MoreThanTenTrusteesController.onSubmit(mode, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, submitUrl, srn)))
         },

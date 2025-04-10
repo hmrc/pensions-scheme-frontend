@@ -49,7 +49,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
                                                            )(implicit val ec: ExecutionContext) extends
   ConfirmPreviousAddressController with I18nSupport with Retrievals {
 
-  private[controllers] val postCall = routes.PartnershipConfirmPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.PartnershipConfirmPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
@@ -72,7 +72,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
   private def viewmodel(srn: OptionalSchemeReferenceNumber, index: Int) =
     Retrieval(
       implicit request =>
-        (PartnershipDetailsId(index) and ExistingCurrentAddressId(index)).retrieve.map {
+        PartnershipDetailsId(index).and(ExistingCurrentAddressId(index)).retrieve.map {
           case details ~ address =>
             ConfirmAddressViewModel(
               postCall(index, srn),

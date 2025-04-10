@@ -36,7 +36,7 @@ class ErrorHandlerWithReturnLinkToManage @Inject()(
   errorTemplateView) with I18nSupport {
 
   override def notFoundTemplate(implicit request: RequestHeader): Future[Html] = {
-    implicit def requestImplicit: Request[_] = Request(request, "")
+    implicit def requestImplicit: Request[?] = Request(request, "")
     val linkContent = messagesApi.apply("messages__complete__returnToManagePensionSchemes")(Lang.defaultLang)
     Future.successful(notFoundTemplateView(Link(linkContent, appConfig.managePensionsSchemeOverviewUrl.url, Some(linkContent)))
     )

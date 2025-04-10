@@ -172,7 +172,7 @@ object TolerantAddress {
       (JsPath \ "addressLine4").formatNullable[String] and
       (JsPath \ "postalCode").formatNullable[String] and
       (JsPath \ "countryCode").formatNullable[String]
-    ) (TolerantAddress.apply, unlift(TolerantAddress.unapply))
+    ) (TolerantAddress.apply, o => Tuple.fromProductTyped(o))
 
   implicit def convert(tolerant: TolerantAddress): Option[Address] =
     for {

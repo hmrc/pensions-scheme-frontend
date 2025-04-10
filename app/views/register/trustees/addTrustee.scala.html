@@ -34,13 +34,13 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     mode: Mode,
-    completeTrustees: Seq[Trustee[_]],
-    incompleteTrustees: Seq[Trustee[_]],
+    completeTrustees: Seq[Trustee[?]],
+    incompleteTrustees: Seq[Trustee[?]],
     schemeName: Option[String],
     srn: OptionalSchemeReferenceNumber
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @allTrustees = @{ completeTrustees ++ incompleteTrustees }
 

@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._
 @import views.html._
-@import controllers.routes._
+@import controllers.routes.RacdacDeleteSchemeController
 @import utils.ViewHelper.titleWithErrors
 @import config.FrontendAppConfig
 
@@ -31,7 +31,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], schemeName: String, psaName : String, hintTextMessageKey: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__deleteScheme__title"))) {
 

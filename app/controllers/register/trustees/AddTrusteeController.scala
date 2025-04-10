@@ -57,7 +57,7 @@ class AddTrusteeController @Inject()(
   private val form = formProvider()
 
   private def renderPage(
-                          trustees: Seq[Trustee[_]],
+                          trustees: Seq[Trustee[?]],
                           mode: Mode,
                           srn: OptionalSchemeReferenceNumber,
                           form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {

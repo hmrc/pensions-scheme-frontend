@@ -45,7 +45,7 @@ trait EnterVATController extends FrontendBaseController with Retrievals with I18
   def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: EnterVATViewModel, form: Form[ReferenceValue])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       vat => {
         userAnswersService.save(mode, viewmodel.srn, id, vat.copy(isEditable = true)).map(cacheMap =>

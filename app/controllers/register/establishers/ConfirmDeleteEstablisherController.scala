@@ -127,7 +127,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     srn: OptionalSchemeReferenceNumber)(implicit dataRequest: DataRequest[AnyContent])
   : Future[Result] = {
     form(name).bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(
           formWithErrors,
           name,

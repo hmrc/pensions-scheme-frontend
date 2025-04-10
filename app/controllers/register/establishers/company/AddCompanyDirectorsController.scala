@@ -69,7 +69,7 @@ class AddCompanyDirectorsController @Inject()(
       }
       else {
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(
               BadRequest(
                 view(
@@ -93,6 +93,6 @@ class AddCompanyDirectorsController @Inject()(
       }
   }
 
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit
 
 }

@@ -65,7 +65,7 @@ class SpokeCreationService extends Enumerable.Implicits {
   }
 
   //scalastyle:off cyclomatic.complexity
-  def createDirectorPartnerSpoke(entityList: Seq[Entity[_]], spoke: Spoke, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String, index: Option[Index]): EntitySpoke = {
+  def createDirectorPartnerSpoke(entityList: Seq[Entity[?]], spoke: Spoke, mode: Mode, srn: OptionalSchemeReferenceNumber, name: String, index: Option[Index]): EntitySpoke = {
     val isComplete: Option[Boolean] = {
       (mode, entityList.isEmpty) match {
         case (NormalMode | UpdateMode, true) => Some(false)

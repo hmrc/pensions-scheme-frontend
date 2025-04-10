@@ -63,7 +63,7 @@ class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
           value =>
             dataCacheConnector.save(request.externalId, CurrentMembersId, value).map { cacheMap =>

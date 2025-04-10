@@ -57,7 +57,7 @@ class PreviousAddressListController @Inject()(override val appConfig: FrontendAp
 
   private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (EstablisherNameId(index) and PreviousPostCodeLookupId(index)).retrieve.map {
+    EstablisherNameId(index).and(PreviousPostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.PreviousAddressListController.onSubmit(mode, index, srn),

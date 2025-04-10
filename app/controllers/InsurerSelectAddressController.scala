@@ -46,8 +46,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
                                                val auditService: AuditService,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressList
-                                              )(implicit val ec: ExecutionContext) extends AddressListController with
-  Retrievals {
+                                              )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(mode, srn)
@@ -75,7 +74,7 @@ class InsurerSelectAddressController @Inject()(override val appConfig: FrontendA
   private def viewModel(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent])
   : Either[Future[Result],
     AddressListViewModel] = {
-    (InsurerEnterPostCodeId and InsuranceCompanyNameId).retrieve.map {
+    InsurerEnterPostCodeId.and(InsuranceCompanyNameId).retrieve.map {
       case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.InsurerSelectAddressController.onSubmit(mode, srn),

@@ -69,7 +69,7 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName, postCall(mode, srn), srn))),
           value =>
             userAnswersService.save(mode, srn, BenefitsSecuredByInsuranceId, value).map { userAnswers =>

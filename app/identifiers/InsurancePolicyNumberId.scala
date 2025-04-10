@@ -39,7 +39,7 @@ case object InsurancePolicyNumberId extends TypedIdentifier[String] {
         Some(Message("messages__visuallyhidden__insurance_policy_number_add"))
       }
 
-    new CheckYourAnswers[self.type] {
+      new CheckYourAnswers[self.type] {
 
       override def row(id: self.type)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
         StringCYA[self.type](label, hiddenLabel)().row(id)(changeUrl, userAnswers)

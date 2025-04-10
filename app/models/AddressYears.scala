@@ -35,5 +35,5 @@ object AddressYears extends Enumerable.Implicits {
   case object OverAYear extends WithName("over_a_year") with AddressYears
 
   implicit val enumerable: Enumerable[AddressYears] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

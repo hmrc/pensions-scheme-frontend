@@ -69,7 +69,7 @@ class OtherDirectorsController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(
               view(formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex),
                 srn))),
@@ -79,5 +79,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit
 }

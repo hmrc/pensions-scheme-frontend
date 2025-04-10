@@ -56,7 +56,7 @@ class PartnershipPreviousAddressController @Inject()(
   ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__common__confirmPreviousAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmPreviousAddress__h1"
 

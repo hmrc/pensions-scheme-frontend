@@ -46,7 +46,7 @@ class DeleteSchemeChangesController @Inject()(
                                              )(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Retrievals {
 
   private lazy val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
-  private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit _
+  private lazy val postCall = routes.DeleteSchemeChangesController.onSubmit
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData()).async {
@@ -84,7 +84,7 @@ class DeleteSchemeChangesController @Inject()(
           request.psaId.map { psaId =>
             getSchemeName(srn) { (psaName, schemeName) =>
               form.bindFromRequest().fold(
-                (formWithErrors: Form[_]) =>
+                (formWithErrors: Form[?]) =>
                   Future.successful(BadRequest(view(formWithErrors, schemeName, postCall(srn), psaName))),
                 {
                   case true =>
