@@ -56,7 +56,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
   "CompanyNoUTRReasonController" when {
     "on a GET" must {
       "render the view correctly when there is no existing answer" in {
-        running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
+        running(_.overrides(modules(getMandatoryEstablisherCompany)*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
@@ -68,7 +68,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
       "render the view correctly when there is a existing answer" in {
         val data = new FakeDataRetrievalAction(Some(UserAnswers().set(CompanyDetailsId(0))(CompanyDetails("test company name")).flatMap(
           _.set(CompanyNoUTRReasonId(0))("no reason")).asOpt.getOrElse(UserAnswers()).json))
-        running(_.overrides(modules(data):_*)) {
+        running(_.overrides(modules(data)*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val result = controller.onPageLoad(NormalMode, OptionalSchemeReferenceNumber(srn), index = 0)(fakeRequest)
@@ -83,7 +83,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(getMandatoryEstablisherCompany)++
           Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ):_*)) {
+          )*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "123456789"))
@@ -97,7 +97,7 @@ class CompanyNoUTRReasonControllerSpec extends ControllerSpecBase {
         running(_.overrides(modules(getMandatoryEstablisherCompany)++
           Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ):_*)) {
+          )*)) {
           app =>
             val controller = app.injector.instanceOf[CompanyNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "1234567{0}"))

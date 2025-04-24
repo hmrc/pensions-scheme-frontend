@@ -31,7 +31,7 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
   private val view = injector.instanceOf[whatYouWillNeedWorkingKnowledge]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedWorkingKnowledgeController =
-    new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,
+    new WhatYouWillNeedWorkingKnowledgeController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

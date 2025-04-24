@@ -17,14 +17,14 @@
 package controllers
 
 import connectors.FakeUserAnswersCacheConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.register.AdviserNameFormProvider
 import identifiers.AdviserNameId
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.FakeNavigator
 import views.html.adviserName
 
@@ -38,13 +38,13 @@ class AdviserNameControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[adviserName]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AdviserNameController =
-    new AdviserNameController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AdviserNameController(messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider,
       controllerComponents,
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, NormalMode, None)(fakeRequest, messages).toString
 
   "AdviserName Controller" must {
 

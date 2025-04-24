@@ -151,7 +151,7 @@ class AddressYearsControllerSpec extends SpecBase with Matchers with OptionValue
           when(userAnswersService.save[AddressYears, FakeIdentifier.type](
             eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber),
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
-          ) thenReturn Future.successful(UserAnswers().json)
+          ).thenReturn(Future.successful(UserAnswers().json))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> AddressYears.OverAYear.toString

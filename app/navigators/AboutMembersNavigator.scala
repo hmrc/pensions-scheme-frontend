@@ -17,15 +17,13 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
-import models._
+import models.*
 import utils.{Enumerable, UserAnswers}
 
-class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                      appConfig: FrontendAppConfig
-                                     ) extends AbstractNavigator with Enumerable.Implicits {
+class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

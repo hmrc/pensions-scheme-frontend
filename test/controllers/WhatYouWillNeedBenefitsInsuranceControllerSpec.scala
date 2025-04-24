@@ -31,7 +31,7 @@ class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase 
   private val view = injector.instanceOf[whatYouWillNeedBenefitsInsurance]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
-    new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
+    new WhatYouWillNeedBenefitsInsuranceController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

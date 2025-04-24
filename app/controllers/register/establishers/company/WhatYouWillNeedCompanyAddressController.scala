@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -29,8 +28,7 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyAddress
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                        override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyAddressController @Inject()(override val messagesApi: MessagesApi,
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,

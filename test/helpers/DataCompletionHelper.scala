@@ -16,8 +16,8 @@
 
 package helpers
 
-import identifiers.register.trustees.individual._
-import models._
+import identifiers.register.trustees.individual.*
+import models.*
 import models.address.Address
 import models.person.PersonName
 import models.register.SchemeType
@@ -25,7 +25,7 @@ import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import org.scalatest.OptionValues
 import play.api.libs.json.JsResult
-import utils.UserAnswers
+import utils.{UserAnswerOps, UserAnswers}
 
 import java.time.LocalDate
 

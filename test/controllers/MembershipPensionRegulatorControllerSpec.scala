@@ -16,7 +16,6 @@
 
 package controllers
 
-import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
@@ -33,10 +32,9 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
   private val view = injector.instanceOf[membershipPensionRegulator]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MembershipPensionRegulatorController =
-    new MembershipPensionRegulatorController(frontendAppConfig,
+    new MembershipPensionRegulatorController(
       messagesApi,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl(),

@@ -39,6 +39,6 @@ class TypeOfBenefitsFormProviderSpec extends FormBehaviours with SpecBase {
         "value",
         Required -> Message("messages__type_of_benefits__error_required", schemeName),
         Invalid -> "error.invalid"),
-      TypeOfBenefits.options.map(_.value): _*)
+      TypeOfBenefits.options.map(_.value)*)
   }
 }

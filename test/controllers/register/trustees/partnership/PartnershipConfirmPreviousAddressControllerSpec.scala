@@ -73,7 +73,6 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       countryOptions,
@@ -81,7 +80,7 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       viewmodel,

@@ -69,7 +69,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       controllerComponents = controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       PostcodeLookupViewModel(

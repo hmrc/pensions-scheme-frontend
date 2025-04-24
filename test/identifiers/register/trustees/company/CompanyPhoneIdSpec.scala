@@ -22,8 +22,8 @@ import models.{CompanyDetails, Link, NormalMode, UpdateMode}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.checkyouranswers.Ops.*
+import utils.{CountryOptions, InputOption, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class CompanyPhoneIdSpec extends SpecBase {

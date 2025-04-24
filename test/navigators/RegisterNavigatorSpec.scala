@@ -18,21 +18,21 @@ package navigators
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import identifiers.register._
+import identifiers.register.*
 import identifiers.{Identifier, VariationDeclarationId}
-import models._
+import models.*
 import models.register.SchemeType
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{UserAnswerOps, UserAnswers}
 
 //scalastyle:off line.size.limit
 class RegisterNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour {
 
-  import RegisterNavigatorSpec._
+  import RegisterNavigatorSpec.*
 
   val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 

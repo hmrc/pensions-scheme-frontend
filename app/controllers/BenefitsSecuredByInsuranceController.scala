@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.BenefitsSecuredByInsuranceFormProvider
 import identifiers.{BenefitsSecuredByInsuranceId, SchemeNameId}
@@ -34,8 +33,7 @@ import views.html.benefitsSecuredByInsurance
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
+class BenefitsSecuredByInsuranceController @Inject()(override val messagesApi: MessagesApi,
                                                      @InsuranceService userAnswersService: UserAnswersService,
                                                      @AboutBenefitsAndInsurance navigator: Navigator,
                                                      authenticate: AuthAction,

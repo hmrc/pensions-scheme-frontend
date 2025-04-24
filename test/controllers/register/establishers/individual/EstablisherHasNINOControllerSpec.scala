@@ -62,7 +62,7 @@ class EstablisherHasNINOControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form): String = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "EstablisherHasNINOController" must {
 

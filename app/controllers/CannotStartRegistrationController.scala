@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,8 +25,7 @@ import views.html.cannotStartRegistration
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CannotStartRegistrationController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
+class CannotStartRegistrationController @Inject()(override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: cannotStartRegistration)(implicit val ec: ExecutionContext) extends FrontendBaseController with I18nSupport {

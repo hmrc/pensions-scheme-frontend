@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import utils.UserAnswerOps
 import models._
 import models.register.SchemeType
 import play.api.mvc.Call

@@ -16,8 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import identifiers.MembershipPensionRegulatorId
 import models.Mode
@@ -31,10 +29,8 @@ import views.html.membershipPensionRegulator
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
+class MembershipPensionRegulatorController @Inject()(override val messagesApi: MessagesApi,
                                                      @AboutMembers navigator: Navigator,
-                                                     userAnswersCacheConnector: UserAnswersCacheConnector,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,

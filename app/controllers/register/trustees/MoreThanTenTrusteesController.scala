@@ -16,9 +16,8 @@
 
 package controllers.register.trustees
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.{Mode, OptionalSchemeReferenceNumber}
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class MoreThanTenTrusteesController @Inject()(
-                                               appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                userAnswersService: UserAnswersService,
                                                @Trustees navigator: Navigator,

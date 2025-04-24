@@ -19,7 +19,7 @@ package controllers
 
 import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.OccupationalPensionSchemeFormProvider
 import identifiers.{OccupationalPensionSchemeId, SchemeNameId}
@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import views.html.occupationalPensionScheme
 
 class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWithQuestionPageBehaviours {
@@ -41,7 +41,7 @@ class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWi
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
   private val view = injector.instanceOf[occupationalPensionScheme]
-  private def viewAsStringview(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, NormalMode, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(
@@ -51,7 +51,6 @@ class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWi
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): OccupationalPensionSchemeController =
     new OccupationalPensionSchemeController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,
@@ -81,14 +80,14 @@ class OccupationalPensionSchemeControllerSpec extends SpecBase with ControllerWi
       validData.dataRetrievalAction,
       form,
       form.fill(true),
-      viewAsStringview(form)
+      viewAsString(form)
     )
 
     behave like controllerWithOnSubmitMethod(
       onSubmitAction(navigator),
       validData.dataRetrievalAction,
       form.bind(Map.empty[String, String]),
-      viewAsStringview(form),
+      viewAsString(form),
       postRequest
     )
 

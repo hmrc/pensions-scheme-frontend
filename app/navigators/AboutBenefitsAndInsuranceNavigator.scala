@@ -17,17 +17,15 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import controllers.routes._
-import identifiers._
+import controllers.routes.*
+import identifiers.*
+import models.*
 import models.TypeOfBenefits.Defined
-import models._
 import utils.{Enumerable, UserAnswers}
 
-class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                                   appConfig: FrontendAppConfig
-                                                  ) extends AbstractNavigator with Enumerable.Implicits {
+class AboutBenefitsAndInsuranceNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator with Enumerable.Implicits {
 
 
   //scalastyle:off cyclomatic.complexity

@@ -19,16 +19,16 @@ package controllers.racdac
 import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.racdac.RACDACNameFormProvider
 import identifiers.racdac.RACDACNameId
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.FakeNavigator
 import views.html.racdac.racDACName
 
@@ -61,7 +61,7 @@ class RACDACNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, psaName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, NormalMode, psaName)(fakeRequest, messages).toString
 
   "RACDACName Controller" must {
 

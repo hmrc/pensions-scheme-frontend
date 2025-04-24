@@ -89,7 +89,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
     "render manualAddress from GET request" in {
       val postCall = routes.DirectorAddressController.onSubmit( NormalMode, Index(establisherIndex), Index(directorIndex), EmptyOptionalSchemeReferenceNumber)
       running(_.overrides(modules(retrieval) ++
-        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions))*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorAddressController]
 
@@ -113,7 +113,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ): _*)) { app =>
+          )*)) { app =>
 
           val postRequest = fakeRequest.withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),
@@ -139,7 +139,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
 
         val postRequest = fakeRequest.withFormUrlEncodedBody(
           ("addressLine1", address.addressLine1),

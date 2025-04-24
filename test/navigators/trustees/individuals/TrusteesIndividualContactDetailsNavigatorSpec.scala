@@ -91,6 +91,6 @@ object TrusteesIndividualContactDetailsNavigatorSpec extends SpecBase with Match
   private val srn                   = Some(SchemeReferenceNumber("srn"))
 
   private def cyaContactDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersIndividualContactDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), srn)
+    CheckYourAnswersIndividualContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, srn)
 
 }

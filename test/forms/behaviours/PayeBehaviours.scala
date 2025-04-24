@@ -31,7 +31,7 @@ class PayeBehaviours extends FormSpec with PayeMapping with RegexBehaviourSpec {
   ): Unit = {
 
     "fail to bind when paye exceeds max length of 16" in {
-      val testString = RandomStringUtils.randomAlphabetic(PayeMapping.maxPayeLength + 1)
+      val testString = RandomStringUtils.secure.nextAlphanumeric(PayeMapping.maxPayeLength + 1)
       val result     = testForm.bind(Map("paye" -> testString))
       result.errors mustBe Seq(FormError("paye", keyPayeLength, Seq(PayeMapping.maxPayeLength)))
     }

@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
@@ -27,7 +26,6 @@ import models._
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils._
 import utils.annotations.NoSuspendedCheck
@@ -38,13 +36,11 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
+class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
-                                           userAnswersService: UserAnswersService,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
                                            val controllerComponents: MessagesControllerComponents,

@@ -125,7 +125,7 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
     case CompanyAddressId(index) if isNewTrustee(ua, index) => cyaAddressPage(mode, index, srn)
     case CompanyAddressId(index) => isThisPreviousAddressPage(index, srn)
     case id@CompanyConfirmPreviousAddressId(index) =>
-      booleanNav(id, ua, moreChanges(mode, index, srn), previousAddressLookupPage(mode, index, srn))
+      booleanNav(id, ua, moreChanges(srn), previousAddressLookupPage(mode, index, srn))
     case CompanyAddressYearsId(index) if overAYear(ua, index) => cyaAddressPage(mode, index, srn)
     case CompanyAddressYearsId(index) if underAYear(ua, index) => hasBeenTradingPage(mode, index, srn)
     case CompanyPreviousAddressPostcodeLookupId(index) => selectPreviousAddressPage(mode, index, srn)
@@ -217,7 +217,7 @@ object TrusteesCompanyNavigator {
   private def isThisPreviousAddressPage(index: Int, srn: OptionalSchemeReferenceNumber): Call =
     CompanyConfirmPreviousAddressController.onPageLoad(index, srn)
 
-  private def moreChanges(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber): Call =
+  private def moreChanges(srn: OptionalSchemeReferenceNumber): Call =
     AnyMoreChangesController.onPageLoad(srn)
 
 }

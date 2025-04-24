@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId}
@@ -29,9 +29,9 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -80,7 +80,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       ManualAddressViewModel(

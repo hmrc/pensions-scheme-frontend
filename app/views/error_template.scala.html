@@ -17,8 +17,7 @@
 @import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout
 )
 
 @(pageTitle: String, heading: String, message: String, appConfig: FrontendAppConfig)(implicit request: Request[?], messages: Messages)

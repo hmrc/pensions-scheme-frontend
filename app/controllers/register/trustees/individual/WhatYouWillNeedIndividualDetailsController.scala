@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -29,8 +28,7 @@ import views.html.register.whatYouWillNeedIndividualDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                           override val messagesApi: MessagesApi,
+class WhatYouWillNeedIndividualDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,

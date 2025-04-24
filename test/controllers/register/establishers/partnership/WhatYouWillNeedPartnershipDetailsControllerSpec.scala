@@ -17,14 +17,14 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import views.html.register.whatYouWillNeedPartnershipDetails
 
 class WhatYouWillNeedPartnershipDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {

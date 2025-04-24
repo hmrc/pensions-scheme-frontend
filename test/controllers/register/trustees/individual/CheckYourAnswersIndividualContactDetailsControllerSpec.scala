@@ -17,21 +17,21 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.individual.{TrusteeEmailId, TrusteeNameId, TrusteePhoneId}
+import models.*
 import models.Mode.checkMode
-import models._
 import models.person.PersonName
 import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -105,7 +105,7 @@ class CheckYourAnswersIndividualContactDetailsControllerSpec extends ControllerS
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
           )
-          running(_.overrides(ftBinding: _*)) {
+          running(_.overrides(ftBinding*)) {
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualContactDetailsController]

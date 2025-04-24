@@ -17,12 +17,12 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, PartnershipDetails}
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import views.html.register.whatYouWillNeedAddress
 

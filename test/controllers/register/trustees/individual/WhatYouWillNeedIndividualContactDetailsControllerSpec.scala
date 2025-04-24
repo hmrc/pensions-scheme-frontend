@@ -18,10 +18,10 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.register.trustees.individual.routes.TrusteeEmailController
-import models._
+import models.*
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
@@ -39,7 +39,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction)*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
           val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -53,7 +53,7 @@ class WhatYouWillNeedIndividualContactDetailsControllerSpec extends ControllerSp
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteeName(Index(0), trusteeName).dataRetrievalAction)*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedIndividualContactDetailsController]
           val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)

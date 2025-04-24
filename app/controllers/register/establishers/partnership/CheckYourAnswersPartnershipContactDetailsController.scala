@@ -16,10 +16,9 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
-import controllers.helpers.CheckYourAnswersControllerHelper._
+import controllers.actions.*
+import controllers.helpers.CheckYourAnswersControllerHelper.*
 import identifiers.register.establishers.IsEstablisherNewId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEmailId, PartnershipPhoneNumberId}
 import models.Mode.checkMode
@@ -28,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
 import utils.{AllowChangeHelper, CountryOptions}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -36,8 +35,7 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersPartnershipContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                                    override val messagesApi: MessagesApi,
+class CheckYourAnswersPartnershipContactDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                                     authenticate: AuthAction,
                                                                     getData: DataRetrievalAction,
                                                                     @NoSuspendedCheck

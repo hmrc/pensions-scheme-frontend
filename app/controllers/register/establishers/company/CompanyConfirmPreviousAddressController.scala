@@ -57,12 +57,12 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).retrieve.map { vm =>
+        viewmodel(index, srn).retrieve.map { vm =>
           get(CompanyConfirmPreviousAddressId(index), vm)
         }
     }
 
-  private def viewmodel(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber) =
+  private def viewmodel(index: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         CompanyDetailsId(index).and(ExistingCurrentAddressId(index)).retrieve.map {
@@ -82,7 +82,7 @@ class CompanyConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).retrieve.map { vm =>
+        viewmodel(index, srn).retrieve.map { vm =>
           post(CompanyConfirmPreviousAddressId(index), CompanyPreviousAddressId(index), vm, mode)
         }
     }

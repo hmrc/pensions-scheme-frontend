@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import models.person.PersonName
@@ -38,7 +37,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnerNameController @Inject()(
-                                       appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        userAnswersService: UserAnswersService,
                                        navigator: Navigator,

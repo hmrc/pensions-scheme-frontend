@@ -139,9 +139,9 @@ object EstablisherEnterNINOControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): String = {
+  private def viewAsString(form: Form[?], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): String = {
     val vm = NinoViewModel(
-      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
+      postCall = controllers.register.establishers.individual.routes.EstablisherEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
       title = messages("messages__enterNINO", messages("messages__theIndividual")),
       heading = messages("messages__enterNINO", establisherName),
       hint = messages("messages__common__nino_hint"),

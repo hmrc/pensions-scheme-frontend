@@ -88,7 +88,7 @@ trait Retrievals {
     def retrieve(implicit request: DataRequest[AnyContent]): Either[Future[Result], A]
 
     def and[B](query: Retrieval[B]): Retrieval[A ~ B] =
-      (request: DataRequest[AnyContent]) => {
+      implicit request => {
         for {
           a <- self.retrieve(request)
           b <- query.retrieve(request)
@@ -102,7 +102,7 @@ trait Retrievals {
   object Retrieval {
 
     def apply[A](f: DataRequest[AnyContent] => Either[Future[Result], A]): Retrieval[A] =
-      (request: DataRequest[AnyContent]) => f(request)
+      implicit request => f(request)
   }
 
   implicit def fromId[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Retrieval[A] =

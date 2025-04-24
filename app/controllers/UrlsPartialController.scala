@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,8 +26,7 @@ import views.html.urlsPartial
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class UrlsPartialController @Inject()(appConfig: FrontendAppConfig,
-                                     override val messagesApi: MessagesApi,
+class UrlsPartialController @Inject()(override val messagesApi: MessagesApi,
                                      authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       urlsPartialService: UrlsPartialService,

@@ -22,7 +22,7 @@ import models.AdministratorOrPractitioner.Practitioner
 import models.AuthEntity.PSP
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.*
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -55,11 +55,11 @@ class CheckYourAnswersBeforeYouStartController @Inject()(override val messagesAp
         Future.successful(Ok(view(vm(mode, srn))))
     }
 
-    def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
-      (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(OptionalSchemeReferenceNumber(Some(srn)), allowPsa = true, allowPsp = true) andThen requireData).async {
-        implicit request =>
-          Future.successful(Ok(view(vm(UpdateMode, OptionalSchemeReferenceNumber(Some(srn))))))
-      }
+  def pspOnPageLoad(srn: SchemeReferenceNumber): Action[AnyContent] =
+    (authenticate(Some(PSP)) andThen getPspData(srn) andThen allowAccess(OptionalSchemeReferenceNumber(Some(srn)), allowPsa = true, allowPsp = true) andThen requireData).async {
+      implicit request =>
+        Future.successful(Ok(view(vm(UpdateMode, OptionalSchemeReferenceNumber(Some(srn))))))
+    }
 
   private def vm(mode: Mode, srn: OptionalSchemeReferenceNumber)(implicit request: DataRequest[AnyContent]): CYAViewModel = {
     implicit val userAnswers: UserAnswers = request.userAnswers

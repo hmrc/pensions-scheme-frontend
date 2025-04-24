@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
@@ -37,7 +36,7 @@ import views.html.register.establishers.isDormant
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
+class IsCompanyDormantController @Inject()(
                                            override val messagesApi: MessagesApi,
                                            userAnswersService: UserAnswersService,
                                            @EstablishersCompany navigator: Navigator,

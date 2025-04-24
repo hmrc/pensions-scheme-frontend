@@ -85,7 +85,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
     "render manualAddress from GET request" in {
       running(_.overrides(modules(retrieval) ++
-        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions))*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorPreviousAddressController]
 
@@ -109,7 +109,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ): _*)) { app =>
+          )*)) { app =>
 
           val postRequest = fakeRequest.withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),
@@ -135,7 +135,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
 
         val postRequest = fakeRequest.withFormUrlEncodedBody(
           ("addressLine1", address.addressLine1),

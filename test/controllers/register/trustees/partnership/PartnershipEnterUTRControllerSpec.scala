@@ -90,7 +90,7 @@ object PartnershipEnterUTRControllerSpec extends PartnershipEnterUTRControllerSp
 
   private val view = injector.instanceOf[utr]
 
-  def viewAsString(form: Form[_] = form) =
+  def viewAsString(form: Form[?] = form) =
     view(form, viewModel, schemeName = None)(fakeRequest, messages).toString
 
   def getDataWithNoUtrReason: FakeDataRetrievalAction = new FakeDataRetrievalAction(

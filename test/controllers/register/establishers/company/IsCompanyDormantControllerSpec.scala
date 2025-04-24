@@ -41,7 +41,6 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): IsCompanyDormantController =
     new IsCompanyDormantController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -67,7 +66,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       )
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, companyName, postCall, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, companyName, postCall, None)(fakeRequest, messages).toString
 
   "IsCompanyDormant Controller" must {
 

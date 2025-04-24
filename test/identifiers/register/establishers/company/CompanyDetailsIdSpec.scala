@@ -18,13 +18,13 @@ package identifiers.register.establishers.company
 
 import base.SpecBase
 import identifiers.register.establishers.IsEstablisherNewId
-import models._
+import models.*
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
-import utils.checkyouranswers.Ops._
+import utils.{UserAnswerOps, UserAnswers}
+import utils.checkyouranswers.Ops.*
 import viewmodels.{AnswerRow, Message}
 
 class CompanyDetailsIdSpec extends SpecBase {

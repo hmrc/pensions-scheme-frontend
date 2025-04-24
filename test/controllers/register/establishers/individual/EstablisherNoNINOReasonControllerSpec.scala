@@ -57,7 +57,7 @@ class EstablisherNoNINOReasonControllerSpec extends ControllerSpecBase with Mock
 
   private val view = injector.instanceOf[reason]
 
-  private def viewAsString(form: Form[_] = form) = view(form, viewModel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "EstablisherNoNINOReasonController" must {
     "return OK and the correct view for a GET" in {

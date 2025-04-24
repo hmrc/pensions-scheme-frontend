@@ -17,18 +17,18 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.HasReferenceNumberFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeHasUTRId, TrusteeNameId, TrusteeNoUTRReasonId, TrusteeUTRId}
+import models.*
 import models.person.PersonName
-import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -83,7 +83,7 @@ class TrusteeHasUTRControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form): String = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "TrusteeHasUTRController" must {
 

@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.PhoneFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerNameId
 import models.person.PersonName
@@ -26,9 +26,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
@@ -58,7 +58,7 @@ class PartnerPhoneControllerSpec extends ControllerSpecBase with MockitoSugar wi
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       CommonFormWithHintViewModel(

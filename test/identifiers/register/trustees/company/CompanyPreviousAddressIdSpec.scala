@@ -18,20 +18,20 @@ package identifiers.register.trustees.company
 
 import base.SpecBase
 import identifiers.register.trustees.IsTrusteeNewId
+import models.*
 import models.address.Address
 import models.requests.DataRequest
-import models._
 import org.scalatest.OptionValues
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, InputOption, UserAnswers}
+import utils.checkyouranswers.Ops.*
+import utils.{CountryOptions, InputOption, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class CompanyPreviousAddressIdSpec extends SpecBase {
 
-  import CompanyPreviousAddressIdSpec._
+  import CompanyPreviousAddressIdSpec.*
 
   private val answerRowWithChangeLink = Seq(
     AnswerRow(

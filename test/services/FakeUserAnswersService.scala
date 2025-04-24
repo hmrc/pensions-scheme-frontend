@@ -78,7 +78,7 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     Future.successful(value)
   }
 
-  override def remove[I <: TypedIdentifier[_]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
+  override def remove[I <: TypedIdentifier[?]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier,
@@ -98,9 +98,9 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
     data should contain(id.toString -> Json.toJson(value))
   }
 
-  def verifyNot(id: TypedIdentifier[_]): Unit = data should not contain key(id.toString)
+  def verifyNot(id: TypedIdentifier[?]): Unit = data should not contain key(id.toString)
 
-  def verifyRemoved(id: TypedIdentifier[_]): Unit = removed should contain(id.toString)
+  def verifyRemoved(id: TypedIdentifier[?]): Unit = removed should contain(id.toString)
 
   def removeAll(cacheId: String): Future[Result] = Future.successful(Ok)
 

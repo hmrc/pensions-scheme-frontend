@@ -37,7 +37,7 @@ class EstablisherEnterUTRControllerSpec extends ControllerSpecBase with Matchers
   "EstablisherEnterUTRController" must {
 
     "render the view correctly on a GET request" in {
-      running(_.overrides(modules(getMandatoryEstablisherIndividual): _*)) {
+      running(_.overrides(modules(getMandatoryEstablisherIndividual)*)) {
         app =>
           val controller = app.injector.instanceOf[EstablisherEnterUTRController]
           val result = controller.onPageLoad(CheckUpdateMode, firstIndex, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -51,7 +51,7 @@ class EstablisherEnterUTRControllerSpec extends ControllerSpecBase with Matchers
         modules(getMandatoryEstablisherIndividual) ++
           Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ): _*)) {
+          )*)) {
         app =>
           val controller = app.injector.instanceOf[EstablisherEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))

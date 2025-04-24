@@ -16,12 +16,11 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.trustees.company.routes.HasCompanyCRNController
 import identifiers.register.trustees.company.CompanyDetailsId
-import models._
+import models.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,8 +29,7 @@ import views.html.register.trustees.company.whatYouWillNeedCompanyDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                        override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,

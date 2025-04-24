@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
@@ -58,7 +58,7 @@ class DirectorPhoneNumberControllerSpec extends ControllerSpecBase with MockitoS
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       CommonFormWithHintViewModel(

@@ -16,10 +16,9 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.register.trustees.individual.routes._
+import controllers.register.trustees.individual.routes.*
 import forms.register.PersonNameFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
@@ -38,8 +37,7 @@ import views.html.personName
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TrusteeNameController @Inject()(appConfig: FrontendAppConfig,
-                                      override val messagesApi: MessagesApi,
+class TrusteeNameController @Inject()(override val messagesApi: MessagesApi,
                                       userAnswersService: UserAnswersService,
                                       navigator: Navigator,
                                       authenticate: AuthAction,

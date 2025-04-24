@@ -45,7 +45,6 @@ class SchemeVariationsSuccessControllerSpec extends ControllerSpecBase with Mock
   private def controller(dataRetrievalAction: DataRetrievalAction =
                          new FakeDataRetrievalAction(Some(validData))): SchemeVariationsSuccessController =
     new SchemeVariationsSuccessController(
-      frontendAppConfig,
       messagesApi,
       fakeUserAnswersCacheConnector,
       FakeAuthAction,

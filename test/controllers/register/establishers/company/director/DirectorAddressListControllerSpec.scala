@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import services.{FakeUserAnswersService, UserAnswersService}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -71,7 +71,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
     "return Ok and the correct view on a GET request" in {
 
-      running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
+      running(_.overrides(modules(dataRetrievalAction)*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val view = app.injector.instanceOf[addressList]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -88,7 +88,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to Director Address Post Code Lookup if no address data on a GET request" in {
 
-      running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
+      running(_.overrides(modules(UserAnswers().dataRetrievalAction)*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
@@ -99,7 +99,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
 
-      running(_.overrides(modules(dontGetAnyData): _*)) { app =>
+      running(_.overrides(modules(dontGetAnyData)*)) { app =>
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
@@ -112,7 +112,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dataRetrievalAction) ++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
@@ -127,7 +127,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dontGetAnyData) ++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
@@ -142,7 +142,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(getEmptyData) ++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[DirectorAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)

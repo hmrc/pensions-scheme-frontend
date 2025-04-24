@@ -83,7 +83,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       viewmodel,

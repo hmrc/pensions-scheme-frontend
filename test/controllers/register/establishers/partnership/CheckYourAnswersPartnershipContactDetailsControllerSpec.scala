@@ -30,7 +30,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, UserAnswers, UserAnswerOps}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -46,7 +46,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
     set(PartnershipEmailId(index))("test@test.com").asOpt.value.
     set(PartnershipPhoneNumberId(index))("1234").asOpt.value
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl: Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
@@ -67,7 +67,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl, hideButton: Boolean = false,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(
@@ -92,7 +92,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
           val bindings = modules(fullAnswers.dataRetrievalAction)
           val ftBinding: Seq[GuiceableModule] = Seq()
 
-          running(_.overrides((bindings ++ ftBinding): _*)) {
+          running(_.overrides((bindings ++ ftBinding)*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -110,13 +110,13 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
-          running(_.overrides(ftBinding: _*)) {
+          running(_.overrides(ftBinding*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl, hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePartnership").resolve),
                 h1 = Message("messages__contactDetailsFor", partnershipDetails.name))
           }

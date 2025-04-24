@@ -16,11 +16,11 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import identifiers.SchemeNameId
 import models.{EmptyOptionalSchemeReferenceNumber, NormalMode}
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import views.html.yourActionWasNotProcessed
 
 class YourActionWasNotProcessedControllerSpec extends ControllerSpecBase {

@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.adviserEmailAddress
 
 class AdviserEmailAddressControllerSpec extends ControllerSpecBase with ControllerWithQuestionPageBehaviours {
@@ -44,7 +44,7 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("email", emailAddress))
 
   private val view = injector.instanceOf[adviserEmailAddress]
-  def viewAsString(form: Form[_]): Form[_] => String =
+  def viewAsString(form: Form[?]): Form[?] => String =
     form =>
       view(form,
         NormalMode,
@@ -59,7 +59,6 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): AdviserEmailAddressController =
     new AdviserEmailAddressController(
-      frontendAppConfig,
       messagesApi,
       authAction,
       navigator,

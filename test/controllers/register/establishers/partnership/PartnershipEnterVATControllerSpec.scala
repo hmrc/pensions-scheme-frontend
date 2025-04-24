@@ -37,7 +37,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
   "PartnershipEnterVATController" must {
 
     "render the view correctly on a GET request" in {
-      running(_.overrides(modules(getMandatoryEstablisherPartnership):_*)) {
+      running(_.overrides(modules(getMandatoryEstablisherPartnership)*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
           val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -50,7 +50,7 @@ class PartnershipEnterVATControllerSpec extends ControllerSpecBase with Matchers
       running(_.overrides(modules(getMandatoryEstablisherPartnership)++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ):_*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterVATController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("vat", "123456789"))

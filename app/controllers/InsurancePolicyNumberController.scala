@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsurancePolicyNumberFormProvider
 import identifiers.{InsuranceCompanyNameId, InsurancePolicyNumberId}
@@ -34,8 +33,7 @@ import views.html.insurancePolicyNumber
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
-                                                override val messagesApi: MessagesApi,
+class InsurancePolicyNumberController @Inject()(override val messagesApi: MessagesApi,
                                                 @InsuranceService userAnswersService: UserAnswersService,
                                                 @AboutBenefitsAndInsurance navigator: Navigator,
                                                 authenticate: AuthAction,

@@ -18,10 +18,10 @@ package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import controllers.address.ConfirmPreviousAddressController
 import identifiers.register.trustees.ExistingCurrentAddressId
-import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.partnership.*
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -40,7 +40,6 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
                                                             val userAnswersService: UserAnswersService,
                                                             val navigator: Navigator,
                                                             authenticate: AuthAction,
-                                                            allowAccess: AllowAccessActionProvider,
                                                             getData: DataRetrievalAction,
                                                             requireData: DataRequiredAction,
                                                             val countryOptions: CountryOptions,

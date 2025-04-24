@@ -16,7 +16,6 @@
 
 package controllers.register.establishers
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EstablisherKindController @Inject()(
-                                           appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            val userAnswersService: UserAnswersService,
                                            @Establishers navigator: Navigator,

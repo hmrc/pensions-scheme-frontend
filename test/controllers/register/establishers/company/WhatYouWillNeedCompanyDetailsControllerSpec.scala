@@ -29,7 +29,7 @@ class WhatYouWillNeedCompanyDetailsControllerSpec extends ControllerSpecBase wit
   private val view = injector.instanceOf[whatYouWillNeedCompanyDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedCompanyDetailsController =
-    new WhatYouWillNeedCompanyDetailsController(frontendAppConfig,
+    new WhatYouWillNeedCompanyDetailsController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

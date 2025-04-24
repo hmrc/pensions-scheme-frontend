@@ -36,7 +36,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   "PartnerEnterUTRController" must {
     "render the view correctly on a GET request" in {
-      running(_.overrides(modules(getMandatoryPartner): _*)) {
+      running(_.overrides(modules(getMandatoryPartner)*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
           val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -49,7 +49,7 @@ class PartnerEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryPartner) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))

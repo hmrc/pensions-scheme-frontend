@@ -41,7 +41,7 @@ class EstablishersIndividualAddressNavigator @Inject()(val dataCacheConnector: U
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
     navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
+  def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case PostCodeLookupId(index) => AddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case AddressListId(index) if mode == NormalMode => AddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)

@@ -57,7 +57,6 @@ lazy val root = (project in file("."))
   .settings(
     libraryDependencies ++= AppDependencies(),
     scalacOptions ++= Seq("-feature"),
-    scalacOptions ++= Seq("-Xmaxerrs", "10000"),
     retrieveManaged := true
   )
   .settings(resolvers ++= Seq(

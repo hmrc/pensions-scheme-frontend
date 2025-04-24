@@ -274,7 +274,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach with MockitoSugar 
 
 object AuthActionSpec extends SpecBase with BeforeAndAfterEach with MockitoSugar {
 
-  private def fakeAuthConnector(stubbedRetrievalResult: Future[_]) = new AuthConnector {
+  private def fakeAuthConnector(stubbedRetrievalResult: Future[?]) = new AuthConnector {
 
     def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
       stubbedRetrievalResult.map(_.asInstanceOf[A])(ec)

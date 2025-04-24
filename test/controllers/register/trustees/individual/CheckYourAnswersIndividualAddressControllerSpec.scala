@@ -66,7 +66,7 @@ class CheckYourAnswersIndividualAddressControllerSpec extends ControllerSpecBase
             bind[AllowChangeHelper].toInstance(allowChangeHelper(saveAndContinueButton = true)),
             bind[AllowAccessActionProvider].qualifiedWith(classOf[NoSuspendedCheck]).to(FakeAllowAccessProvider())
           )
-          running(_.overrides(ftBinding: _*)) {
+          running(_.overrides(ftBinding*)) {
             app =>
 
               val controller = app.injector.instanceOf[CheckYourAnswersIndividualAddressController]

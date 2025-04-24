@@ -17,24 +17,24 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.NINOFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeNameId}
-import models._
+import models.*
 import models.person.PersonName
 import play.api.data.Form
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{Message, NinoViewModel}
 import views.html.nino
 
 class TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
 
-  import TrusteeEnterNINOControllerSpec._
+  import TrusteeEnterNINOControllerSpec.*
 
   "TrusteeNino Controller" must {
 
@@ -132,10 +132,10 @@ object TrusteeEnterNINOControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, trusteeName: String =trusteeFullName): String = {
+  private def viewAsString(form: Form[?], mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, trusteeName: String =trusteeFullName): String = {
 
     val vm = NinoViewModel(
-      postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, Index(0), OptionalSchemeReferenceNumber(srn)),
+      postCall = controllers.register.trustees.individual.routes.TrusteeEnterNINOController.onSubmit(mode, index, OptionalSchemeReferenceNumber(srn)),
       title = Message("messages__enterNINO", Message("messages__theIndividual").resolve),
       heading = Message("messages__enterNINO", trusteeName),
       hint = "messages__common__nino_hint",

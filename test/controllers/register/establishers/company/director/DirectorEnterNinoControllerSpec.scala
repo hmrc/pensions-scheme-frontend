@@ -82,7 +82,7 @@ class DirectorEnterNinoControllerSpec extends ControllerSpecBase {
     new DirectorEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = {
+  def viewAsString(form: Form[?] = form): String = {
     val viewmodel = NinoViewModel(
       postCall = controllers.register.establishers.company.director.routes.DirectorEnterNINOController.onSubmit(NormalMode, establisherIndex, directorIndex, EmptyOptionalSchemeReferenceNumber),
       title = Message("messages__enterNINO", Message("messages__theDirector")),

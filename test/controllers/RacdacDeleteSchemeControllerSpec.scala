@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-import utils.UserAnswers
+import utils.{UserAnswerOps, UserAnswers}
 import views.html.deleteSchemeRacdac
 
 import scala.concurrent.Future
@@ -49,7 +49,7 @@ class RacdacDeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSu
     new RacdacDeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
       dataRetrievalAction, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)

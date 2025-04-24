@@ -241,7 +241,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteEstablisherController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -256,7 +255,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(hintText:Option[String] = None,
                            estName:String = establisherName,
-                           postCall:Call, form: Form[_] = form) = view(
+                           postCall:Call, form: Form[?] = form) = view(
     form,
     estName,
     hintText,

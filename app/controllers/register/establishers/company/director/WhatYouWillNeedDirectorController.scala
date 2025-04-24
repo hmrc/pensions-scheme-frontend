@@ -16,10 +16,9 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
-import controllers.register.establishers.company.director.routes._
+import controllers.actions.*
+import controllers.register.establishers.company.director.routes.*
 import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,8 +28,7 @@ import views.html.register.establishers.company.director.whatYouWillNeed
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouWillNeedDirectorController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
+class WhatYouWillNeedDirectorController @Inject()(override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   allowAccess: AllowAccessActionProvider,

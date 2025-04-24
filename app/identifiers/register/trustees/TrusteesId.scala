@@ -26,7 +26,6 @@ case class TrusteesId(index: Int) extends TypedIdentifier[Nothing] {
   override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case None => userAnswers.remove(MoreThanTenTrusteesId)
-      case _ => super.cleanup(value, userAnswers)
     }
   }
 }

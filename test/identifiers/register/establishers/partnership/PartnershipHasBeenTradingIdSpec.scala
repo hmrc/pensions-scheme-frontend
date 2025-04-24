@@ -17,21 +17,21 @@
 package identifiers.register.establishers.partnership
 
 import base.SpecBase
+import models.*
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models._
 import org.scalatest.OptionValues
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnershipHasBeenTradingIdSpec extends SpecBase {
 
-  import PartnershipHasBeenTradingIdSpec._
+  import PartnershipHasBeenTradingIdSpec.*
 
   "cleanup" when {
     "`PartnershipHasBeenTrading` changed to false" must {

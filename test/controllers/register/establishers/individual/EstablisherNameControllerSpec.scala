@@ -51,7 +51,7 @@ class EstablisherNameControllerSpec extends ControllerSpecBase with BeforeAndAft
 
   private val view = injector.instanceOf[personName]
 
-  def viewAsString(form: Form[_] = form): String = view(
+  def viewAsString(form: Form[?] = form): String = view(
     form,
     viewmodel,
     None

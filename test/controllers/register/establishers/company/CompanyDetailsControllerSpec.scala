@@ -17,17 +17,17 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models._
+import models.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import views.html.register.establishers.company.companyDetails
@@ -40,17 +40,17 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   private val formProvider = new CompanyDetailsFormProvider()
   private val form = formProvider()
   private val firstIndex = Index(0)
-  private val postCall = routes.CompanyDetailsController.onSubmit _
+  private val postCall = routes.CompanyDetailsController.onSubmit
   private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
   private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[companyDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
-    new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,
+    new CompanyDetailsController(messagesApi, FakeUserAnswersService, navigator, oldNavigator,
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
+  def viewAsString(form: Form[?] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, EmptyOptionalSchemeReferenceNumber, 0), EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   private val validData = Json.obj(

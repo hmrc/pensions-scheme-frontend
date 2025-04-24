@@ -27,7 +27,7 @@ import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.hasReferenceNumber
 
@@ -53,13 +53,13 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[hasReferenceNumber]
 
-  private def viewAsString(form: Form[_] = form): String =
+  private def viewAsString(form: Form[?] = form): String =
     view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipHasUTRController" when {
     "on a GET" must {
       "return OK and the correct view" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction)*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -70,7 +70,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and the correct view where question already answered" in {
-        running(_.overrides(modules(fullAnswers.set(PartnershipHasUTRId(index))(value = false).asOpt.value.dataRetrievalAction): _*)) {
+        running(_.overrides(modules(fullAnswers.set(PartnershipHasUTRId(index))(value = false).asOpt.value.dataRetrievalAction)*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -87,7 +87,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
           modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
-            ): _*)) {
+            )*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
@@ -103,7 +103,7 @@ class PartnershipHasUTRControllerSpec extends ControllerSpecBase {
           modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
-            ): _*)) {
+            )*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipHasUTRController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))

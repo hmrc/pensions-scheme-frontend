@@ -16,15 +16,14 @@
 
 package controllers.register.trustees
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models._
+import models.*
 import models.person.PersonName
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
@@ -42,8 +41,7 @@ import views.html.register.trustees.confirmDeleteTrustee
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
+class ConfirmDeleteTrusteeController @Inject()(override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                allowAccess: AllowAccessActionProvider,

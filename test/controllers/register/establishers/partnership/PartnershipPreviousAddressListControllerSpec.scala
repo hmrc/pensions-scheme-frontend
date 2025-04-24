@@ -81,7 +81,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       AddressListViewModel(

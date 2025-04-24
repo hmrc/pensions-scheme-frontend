@@ -68,7 +68,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String = view(
+  def viewAsString(form: Form[?] = form): String = view(
     form,
     PostcodeLookupViewModel(
       routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber),

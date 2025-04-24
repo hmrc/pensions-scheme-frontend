@@ -17,15 +17,15 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
-import models._
+import models.*
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.Message
@@ -60,7 +60,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_] = form) =
+  private def viewAsString(form: Form[?] = form) =
     view(
       form,
       AddressYearsViewModel(

@@ -41,7 +41,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
   "CompanyEnterCRNControllerSpec" must {
 
     "render the view correctly on a GET request when there is no existing answer" in {
-      running(_.overrides(modules(getMandatoryEstablisherCompany):_*)) {
+      running(_.overrides(modules(getMandatoryEstablisherCompany)*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val result = controller.onPageLoad(CheckUpdateMode, 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -54,7 +54,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
     "render the view correctly on a GET request when there is an existing answer" in {
       val data = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test company name")).
         set(CompanyEnterCRNId(0))(value = ReferenceValue("1234567")).asOpt.getOrElse(UserAnswers()).dataRetrievalAction
-      running(_.overrides(modules(data):_*)) {
+      running(_.overrides(modules(data)*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val result = controller.onPageLoad(CheckUpdateMode, 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -68,7 +68,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompany)++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ):_*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber", "1234567"))
@@ -82,7 +82,7 @@ class CompanyEnterCRNControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompany)++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ):_*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[CompanyEnterCRNController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber", "123456{0"))
@@ -108,7 +108,7 @@ object CompanyEnterCRNControllerSpec extends CompanyEnterCRNControllerSpec {
     )
   }
 
-  private val postCall = routes.CompanyEnterCRNController.onSubmit _
+  private val postCall = routes.CompanyEnterCRNController.onSubmit
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 }

@@ -16,9 +16,8 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.CompanyDetailsFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
@@ -35,7 +34,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
                                           navigator: Navigator,

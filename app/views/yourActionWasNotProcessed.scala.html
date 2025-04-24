@@ -17,8 +17,7 @@
 @import config.FrontendAppConfig
 
 @this(
-    layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout
 )
 
 @(schemeName: Option[String], returnUrl: Call)(implicit request: Request[?], messages: Messages)

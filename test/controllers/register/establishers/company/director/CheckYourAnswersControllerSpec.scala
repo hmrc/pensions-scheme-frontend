@@ -18,19 +18,18 @@ package controllers.register.establishers.company.director
 
 import base.SpecBase
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
-import identifiers.register.establishers.company.director._
-import models._
+import identifiers.register.establishers.company.director.*
+import models.*
 import models.address.Address
 import models.person.PersonName
 import models.requests.DataRequest
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils._
-import utils.checkyouranswers.Ops._
+import play.api.test.Helpers.*
+import utils.*
+import utils.checkyouranswers.Ops.*
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -38,7 +37,7 @@ import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
-  import CheckYourAnswersControllerSpec._
+  import CheckYourAnswersControllerSpec.*
 
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
 
@@ -47,29 +46,25 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeUserAnswersService,
       countryOptions,
       allowChangeHelper,
       controllerComponents,
       view
     )
 
-  private def viewAsString(mode: Mode,
-                           answerSection: (Mode, OptionalSchemeReferenceNumber) => Seq[AnswerSection],
+  private def viewAsString(answerSection: (Mode, OptionalSchemeReferenceNumber) => Seq[AnswerSection],
                            href: Call,
                            srn: OptionalSchemeReferenceNumber,
                            title: Message,
                            h1: Message): String =
-    viewAsString(mode, answerSection(NormalMode, OptionalSchemeReferenceNumber(srn)), href, OptionalSchemeReferenceNumber(srn), title, h1)
+    viewAsString(answerSection(NormalMode, OptionalSchemeReferenceNumber(srn)), href, OptionalSchemeReferenceNumber(srn), title, h1)
 
-  private def viewAsString(mode: Mode,
-                           answerSection: Seq[AnswerSection],
+  private def viewAsString(answerSection: Seq[AnswerSection],
                            href: Call,
                            srn: OptionalSchemeReferenceNumber,
                            title: Message,
@@ -134,8 +129,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
         val result = controller(directorAnswers.dataRetrievalAction).onPageLoad(Index(0), Index(0), NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(NormalMode,
-                                                    answerSectionDirector _,
+        contentAsString(result) mustBe viewAsString(answerSectionDirector,
                                                     href(NormalMode, EmptyOptionalSchemeReferenceNumber, 0),
           EmptyOptionalSchemeReferenceNumber,
                                                     title = Message("checkYourAnswers.hs.heading"),
@@ -147,7 +141,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(
-          UpdateMode,
           answerSectionDirector(UpdateMode, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn")))),
           href(UpdateMode, OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))), 0),
           OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber("srn"))),

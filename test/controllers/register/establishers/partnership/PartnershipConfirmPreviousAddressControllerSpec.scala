@@ -17,16 +17,16 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.establishers.ExistingCurrentAddressId
 import identifiers.register.establishers.partnership.{PartnershipConfirmPreviousAddressId, PartnershipDetailsId}
-import models._
+import models.*
 import models.address.Address
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
 import utils.{CountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.Message
@@ -73,7 +73,6 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
-      FakeAllowAccessProvider(),
       dataRetrievalAction,
       new DataRequiredActionImpl,
       countryOptions,
@@ -81,7 +80,7 @@ class PartnershipConfirmPreviousAddressControllerSpec extends ControllerSpecBase
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       viewmodel,

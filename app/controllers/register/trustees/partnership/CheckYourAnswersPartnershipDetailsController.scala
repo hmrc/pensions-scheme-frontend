@@ -16,21 +16,18 @@
 
 package controllers.register.trustees.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
-import controllers.helpers.CheckYourAnswersControllerHelper._
+import controllers.actions.*
+import controllers.helpers.CheckYourAnswersControllerHelper.*
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.partnership.*
 import models.Mode.checkMode
 import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
 import utils.{AllowChangeHelper, CountryOptions, Enumerable, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -39,15 +36,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersPartnershipDetailsController @Inject()(
-                                                              appConfig: FrontendAppConfig,
                                                               override val messagesApi: MessagesApi,
                                                               authenticate: AuthAction,
                                                               getData: DataRetrievalAction,
                                                               @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                                               requireData: DataRequiredAction,
                                                               implicit val countryOptions: CountryOptions,
-                                                              navigator: Navigator,
-                                                              userAnswersService: UserAnswersService,
                                                               allowChangeHelper: AllowChangeHelper,
                                                               val controllerComponents: MessagesControllerComponents,
                                                               val view: checkYourAnswers

@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
@@ -39,7 +38,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorNameController @Inject()(
-                                        appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         userAnswersService: UserAnswersService,
                                         @EstablishersCompanyDirector navigator: Navigator,

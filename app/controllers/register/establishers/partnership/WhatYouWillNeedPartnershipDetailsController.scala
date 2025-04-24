@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,8 +28,7 @@ import views.html.register.whatYouWillNeedPartnershipDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                            override val messagesApi: MessagesApi,
+class WhatYouWillNeedPartnershipDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,

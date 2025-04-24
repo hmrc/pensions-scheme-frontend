@@ -99,7 +99,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(seqOneTrustee)
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val view = app.injector.instanceOf[dataPrefillRadio]
         val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
@@ -118,7 +118,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.getListOfTrusteesToBeCopied(any())(any()))
         .thenReturn(Nil)
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
 
@@ -139,7 +139,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1, 2)), any())).thenReturn(emptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "1",
@@ -161,7 +161,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), any(), any())).thenReturn(emptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
@@ -183,7 +183,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copyAllTrusteesToDirectors(any(), ArgumentMatchers.eq(Seq(1)), any())).thenReturn(emptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
         val result = controller.onSubmit(establisherIndex = 0)(fakeRequest)
         status(result) mustBe BAD_REQUEST

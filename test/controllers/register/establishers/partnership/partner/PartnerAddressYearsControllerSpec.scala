@@ -63,7 +63,7 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) =
+  private def viewAsString(form: Form[?] = form) =
     view(
       form,
       AddressYearsViewModel(

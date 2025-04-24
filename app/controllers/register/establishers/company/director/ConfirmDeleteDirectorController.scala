@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorNameId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeleteDirectorController @Inject()(
-                                                 appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  userAnswersService: UserAnswersService,
                                                  @EstablishersCompanyDirector navigator: Navigator,

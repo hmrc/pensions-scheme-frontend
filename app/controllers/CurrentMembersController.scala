@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.CurrentMembersFormProvider
@@ -34,8 +33,7 @@ import views.html.currentMembers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
+class CurrentMembersController @Inject()(override val messagesApi: MessagesApi,
                                          dataCacheConnector: UserAnswersCacheConnector,
                                          @AboutMembers navigator: Navigator,
                                          authenticate: AuthAction,

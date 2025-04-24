@@ -16,9 +16,8 @@
 
 package controllers.register.trustees
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeKindController @Inject()(
-                                       appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        userAnswersService: UserAnswersService,
                                        @Trustees navigator: Navigator,

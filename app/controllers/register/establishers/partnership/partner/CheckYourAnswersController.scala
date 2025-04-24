@@ -16,36 +16,30 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
-import controllers.helpers.CheckYourAnswersControllerHelper._
-import identifiers.register.establishers.partnership.partner._
+import controllers.helpers.CheckYourAnswersControllerHelper.*
+import identifiers.register.establishers.partnership.partner.*
+import models.*
 import models.Mode.checkMode
-import models._
 import models.requests.DataRequest
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils._
+import utils.*
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
+class CheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            @NoSuspendedCheck allowAccess: AllowAccessActionProvider,
                                            requiredData: DataRequiredAction,
-                                           userAnswersService: UserAnswersService,
-                                           navigator: Navigator,
                                            implicit val countryOptions: CountryOptions,
                                            allowChangeHelper: AllowChangeHelper,
                                            val controllerComponents: MessagesControllerComponents,

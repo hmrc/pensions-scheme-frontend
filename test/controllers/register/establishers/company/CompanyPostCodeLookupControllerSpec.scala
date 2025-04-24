@@ -68,7 +68,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   )
 
   "render the view correctly on a GET request" in {
-    running(_.overrides(modules(getMandatoryEstablisherCompany): _*)) {
+    running(_.overrides(modules(getMandatoryEstablisherCompany)*)) {
       app =>
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]
         val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, index = 0)(fakeRequest)
@@ -83,7 +83,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompany]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(addressLookupConnector)
-      ): _*)) {
+      )*)) {
       app =>
         when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[CompanyPostCodeLookupController]

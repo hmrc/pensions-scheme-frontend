@@ -18,17 +18,17 @@ package controllers
 
 import base.JsonFileReader
 import connectors.{MinimalPsaConnector, UserAnswersCacheConnector}
-import controllers.actions._
+import controllers.actions.*
 import identifiers.SchemeNameId
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import utils.hstasklisthelper.{HsTaskListHelperRegistration, HsTaskListHelperVariations}
-import viewmodels._
+import viewmodels.*
 import views.html.{oldPsaTaskList, psaTaskListRegistration}
 
 import scala.concurrent.Future

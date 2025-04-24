@@ -49,7 +49,7 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
     Future.successful(value)
   }
 
-  override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+  override def remove[I <: TypedIdentifier[?]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
@@ -84,11 +84,11 @@ trait FakeUserAnswersCacheConnector extends UserAnswersCacheConnector with Match
 
   def getUpsertedData:Option[JsValue] = upsertData.get("upserted")
 
-  def verifyNot(id: TypedIdentifier[_]): Unit = {
+  def verifyNot(id: TypedIdentifier[?]): Unit = {
     data should not contain key(id.toString)
   }
 
-  def verifyRemoved(id: TypedIdentifier[_]): Unit = {
+  def verifyRemoved(id: TypedIdentifier[?]): Unit = {
     removed should contain(id.toString)
   }
 

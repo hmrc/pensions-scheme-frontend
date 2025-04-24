@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.InvestmentRegulatedSchemeFormProvider
@@ -34,8 +33,7 @@ import views.html.investmentRegulatedScheme
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
+class InvestmentRegulatedSchemeController @Inject()(override val messagesApi: MessagesApi,
                                                     dataCacheConnector: UserAnswersCacheConnector,
                                                     @AboutBenefitsAndInsurance navigator: Navigator,
                                                     authenticate: AuthAction,

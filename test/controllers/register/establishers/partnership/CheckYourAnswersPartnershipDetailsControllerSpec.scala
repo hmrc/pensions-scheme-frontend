@@ -260,7 +260,6 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
                  allowChangeHelper: AllowChangeHelper = ach,
                  isToggleOn: Boolean = false): CheckYourAnswersPartnershipDetailsController =
     new CheckYourAnswersPartnershipDetailsController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

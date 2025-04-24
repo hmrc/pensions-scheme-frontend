@@ -32,7 +32,7 @@ class WhatYouWillNeedDirectorControllerSpec extends ControllerSpecBase with Mock
 
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): WhatYouWillNeedDirectorController =
-    new WhatYouWillNeedDirectorController(frontendAppConfig,
+    new WhatYouWillNeedDirectorController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

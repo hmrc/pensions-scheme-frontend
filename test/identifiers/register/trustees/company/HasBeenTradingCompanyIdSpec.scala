@@ -17,19 +17,19 @@
 package identifiers.register.trustees.company
 
 import base.SpecBase
+import models.*
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import models._
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class HasBeenTradingCompanyIdSpec extends SpecBase {
-  import HasBeenTradingCompanyIdSpec._
+  import HasBeenTradingCompanyIdSpec.*
 
   "cleanup" when {
     "`HasBeenTradingCompany` changed to false" must {

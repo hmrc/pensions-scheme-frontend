@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers, UserAnswerOps}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -72,7 +72,7 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       ManualAddressViewModel(

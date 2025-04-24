@@ -16,28 +16,26 @@
 
 package controllers.register.trustees.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
-import controllers.helpers.CheckYourAnswersControllerHelper._
+import controllers.actions.*
+import controllers.helpers.CheckYourAnswersControllerHelper.*
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.partnership.*
 import models.Mode.checkMode
 import models.{Index, Mode, NormalMode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils._
+import utils.*
 import utils.annotations.NoSuspendedCheck
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                             override val messagesApi: MessagesApi,
+class CheckYourAnswersPartnershipAddressController @Inject()(override val messagesApi: MessagesApi,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,

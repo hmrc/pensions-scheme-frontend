@@ -89,7 +89,7 @@ class PartnershipAddressYearsIdSpec extends SpecBase {
 
     val onwardUrl = "onwardUrl"
 
-    def answers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
+    def answers: UserAnswers = UserAnswers().set(PartnershipAddressYearsId(0))(UnderAYear).asOpt.get
 
     "in normal mode" must {
 

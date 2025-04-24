@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.currentMembers
 
 class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -41,7 +41,7 @@ class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours 
 
 
   private val view = injector.instanceOf[currentMembers]
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, NormalMode, schemeName)(fakeRequest, messages).toString()
 
   private def controller(
@@ -51,7 +51,6 @@ class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours 
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): CurrentMembersController =
     new CurrentMembersController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

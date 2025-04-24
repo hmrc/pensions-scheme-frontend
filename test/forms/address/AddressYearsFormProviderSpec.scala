@@ -27,7 +27,7 @@ class AddressYearsFormProviderSpec extends FormBehaviours with SpecBase{
     "value" -> AddressYears.options.head.value
   )
 
-  val form: Form[_] = new AddressYearsFormProvider().apply("messages__common_error__current_address_years")
+  val form: Form[?] = new AddressYearsFormProvider().apply("messages__common_error__current_address_years")
 
   "AddressYearsFormProviderSpec form" must {
 
@@ -38,6 +38,6 @@ class AddressYearsFormProviderSpec extends FormBehaviours with SpecBase{
         "value",
         Required -> "messages__common_error__current_address_years",
         Invalid -> "error.invalid"),
-      AddressYears.options.map(_.value): _*)
+      AddressYears.options.map(_.value)*)
   }
 }

@@ -50,7 +50,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
   val addressObject: JsObject = Json.obj(InsurerEnterPostCodeId.toString -> addresses,
     InsuranceCompanyNameId.toString -> insurerCompanyName)
 
-  val form: Form[_] = formProvider(Seq(0))
+  val form: Form[?] = formProvider(Seq(0))
 
   private val view = injector.instanceOf[addressList]
 
@@ -71,7 +71,7 @@ class InsurerSelectAddressControllerSpec extends ControllerSpecBase with Mockito
       view
     )
 
-  def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
+  def viewAsString(form: Form[?] = form, address: Seq[TolerantAddress] = addresses): String =
     view(
       form,
       AddressListViewModel(

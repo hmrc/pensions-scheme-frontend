@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.routes.CompanyEmailController
@@ -31,8 +30,7 @@ import views.html.register.whatYouWillNeedContactDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                               override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyContactDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,

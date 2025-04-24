@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
@@ -37,7 +36,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeletePartnerController @Inject()(
-                                                appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
                                                 userAnswersService: UserAnswersService,
                                                 navigator: Navigator,

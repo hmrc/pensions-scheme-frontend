@@ -56,7 +56,7 @@ class EstablisherNoUTRReasonControllerSpec extends ControllerSpecBase with Mocki
   )
   private val view = injector.instanceOf[reason]
 
-  private def viewAsString(form: Form[_] = form): String = view(form, viewModel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form): String = view(form, viewModel, None)(fakeRequest, messages).toString
 
   "EstablisherNoUTRReasonController" must {
 

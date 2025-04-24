@@ -17,17 +17,16 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.VariationDeclarationId
-import identifiers.register._
+import identifiers.register.*
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber}
 import utils.UserAnswers
 
 //scalastyle:off cyclomatic.complexity
-class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                  appConfig: FrontendAppConfig) extends AbstractNavigator {
+class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {

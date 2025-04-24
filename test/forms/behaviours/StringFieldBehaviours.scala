@@ -21,7 +21,7 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-  def fieldWithMaxLength(form: Form[_],
+  def fieldWithMaxLength(form: Form[?],
                          fieldName: String,
                          maxLength: Int,
                          lengthError: FormError): Unit = {
@@ -36,7 +36,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
-  def fieldWithRegex(form: Form[_],
+  def fieldWithRegex(form: Form[?],
                      fieldName: String,
                      invalidString: String,
                      error: FormError): Unit = {
@@ -69,7 +69,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
-  override def mandatoryField(form: Form[_],
+  override def mandatoryField(form: Form[?],
                               fieldName: String,
                               requiredError: FormError): Unit = {
 

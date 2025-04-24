@@ -25,7 +25,7 @@ import models.register.SchemeType
 import play.api.data.Form
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory, UserAnswers}
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory, UserAnswers, UserAnswerOps}
 import views.html.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,7 +63,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "SchemeType Controller" must {
 

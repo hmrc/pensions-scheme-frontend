@@ -79,7 +79,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase with MockitoSugar {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "SchemeName Controller" must {
 

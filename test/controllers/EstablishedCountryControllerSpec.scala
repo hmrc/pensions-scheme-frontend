@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{CountryOptions, FakeNavigator, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, UserAnswers, UserAnswerOps}
 import views.html.establishedCountry
 
 class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -48,7 +48,7 @@ class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehavio
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", testAnswer))
 
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
    view(form, NormalMode, options, schemeName)(fakeRequest, messages).toString()
 
   private def controller(
@@ -58,7 +58,6 @@ class EstablishedCountryControllerSpec extends ControllerWithQuestionPageBehavio
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): EstablishedCountryController =
     new EstablishedCountryController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

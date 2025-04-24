@@ -32,7 +32,7 @@ class WhatYouWillNeedPartnerControllerSpec extends ControllerSpecBase with Mocki
   private val view = injector.instanceOf[whatYouWillNeed]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): WhatYouWillNeedPartnerController =
-    new WhatYouWillNeedPartnerController(frontendAppConfig,
+    new WhatYouWillNeedPartnerController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
