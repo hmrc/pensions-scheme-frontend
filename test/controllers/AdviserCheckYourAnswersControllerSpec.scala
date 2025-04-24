@@ -16,8 +16,7 @@
 
 package controllers
 
-import connectors._
-import controllers.actions._
+import controllers.actions.*
 import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.address.Address
 import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, Link, NormalMode}
@@ -26,15 +25,15 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
+import utils.{FakeCountryOptions, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
-  import AdviserCheckYourAnswersControllerSpec._
+  import AdviserCheckYourAnswersControllerSpec.*
 
   "AdviserCheckYourAnswers Controller" must {
 
@@ -126,20 +125,15 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   private val view = injector.instanceOf[checkYourAnswers]
   val viewAsString: String = view(vm)(fakeRequest, messages).toString
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad
-
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  psaName: JsValue = psaName
                 ): AdviserCheckYourAnswersController =
 
     new AdviserCheckYourAnswersController(
-      frontendAppConfig,
       messagesApi,
-      FakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
       controllerComponents,
       view

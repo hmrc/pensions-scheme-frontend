@@ -164,7 +164,6 @@ object SchemeReferenceNumber {
       override def to(value: Some[SchemeReferenceNumber]): String = {
         value match {
           case Some(schemeRef) => s"${schemeRef.id}"
-          case _ => ""
         }
       }
     }

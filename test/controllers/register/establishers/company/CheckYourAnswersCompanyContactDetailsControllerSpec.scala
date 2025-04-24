@@ -17,20 +17,19 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.PsaSchemeTaskListController
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
+import models.*
 import models.Mode.checkMode
-import models._
 import models.requests.DataRequest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import play.api.test.Helpers.*
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers, UserAnswerOps}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -43,7 +42,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
   private val srn = Some(SchemeReferenceNumber(SchemeReferenceNumber("test-srn")))
   private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl: Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def submitUrlUpdateMode(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
@@ -68,7 +67,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
-    new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
+    new CheckYourAnswersCompanyContactDetailsController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -76,12 +75,11 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
-      FakeUserAnswersService,
       controllerComponents,
       view
     )
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(),
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl,
                    title: Message, h1: Message): String =
     view(
       CYAViewModel(

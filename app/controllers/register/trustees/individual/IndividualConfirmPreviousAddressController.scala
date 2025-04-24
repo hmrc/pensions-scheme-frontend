@@ -61,13 +61,13 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>
-          viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>
+          viewmodel(trusteeName, index, srn).retrieve.map { vm =>
             get(IndividualConfirmPreviousAddressId(index), vm)
           }
         }
     }
 
-  private def viewmodel(trusteeName: String, mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber) = {
+  private def viewmodel(trusteeName: String, index: Int, srn: OptionalSchemeReferenceNumber) = {
     Retrieval(
       implicit request =>
         ExistingCurrentAddressId(index).retrieve.map { address =>
@@ -88,7 +88,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         trusteeName(index).retrieve.flatMap { trusteeName =>
-          viewmodel(trusteeName, mode, index, srn).retrieve.map { vm =>
+          viewmodel(trusteeName, index, srn).retrieve.map { vm =>
             post(IndividualConfirmPreviousAddressId(index), TrusteePreviousAddressId(index), vm, mode)
           }
         }

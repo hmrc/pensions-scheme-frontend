@@ -170,7 +170,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
         existingDirCount, config.maxDirectors - existingDirCount)
     )
   }
-
-  private def formRadio(index: Index): Form[Int] =
+  
+  def formRadio(index: Index): Form[Int] =
     formProviderRadio("messages__directors__prefill__single__error__required")
 }

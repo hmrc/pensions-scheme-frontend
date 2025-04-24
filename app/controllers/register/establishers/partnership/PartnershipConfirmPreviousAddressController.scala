@@ -40,7 +40,6 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
                                                             val userAnswersService: UserAnswersService,
                                                             val navigator: Navigator,
                                                             authenticate: AuthAction,
-                                                            allowAccess: AllowAccessActionProvider,
                                                             getData: DataRetrievalAction,
                                                             requireData: DataRequiredAction,
                                                             val countryOptions: CountryOptions,
@@ -69,7 +68,7 @@ class PartnershipConfirmPreviousAddressController @Inject()(val appConfig: Front
       }
   }
 
-  private def viewmodel(srn: OptionalSchemeReferenceNumber, index: Int) =
+  def viewmodel(srn: OptionalSchemeReferenceNumber, index: Int): Retrieval[ConfirmAddressViewModel] =
     Retrieval(
       implicit request =>
         PartnershipDetailsId(index).and(ExistingCurrentAddressId(index)).retrieve.map {

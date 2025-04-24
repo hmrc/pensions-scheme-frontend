@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorNameId
@@ -29,8 +29,8 @@ import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json._
-import play.api.test.Helpers._
+import play.api.libs.json.*
+import play.api.test.Helpers.*
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -40,7 +40,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
 
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form = formProvider()
-  private val postCall = routes.AddCompanyDirectorsController.onSubmit _
+  private val postCall = routes.AddCompanyDirectorsController.onSubmit
 
   private def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
@@ -64,10 +64,9 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
       controllerComponents
     )
 
-  private def viewAsString(form: Form[_] = form,
+  private def viewAsString(form: Form[?] = form,
                            completeDirectors: Seq[DirectorEntity] = Nil,
-                           incompleteDirectors: Seq[DirectorEntity] = Nil,
-                           enableSubmission: Boolean = false) =
+                           incompleteDirectors: Seq[DirectorEntity] = Nil) =
     view(
       form,
       completeDirectors,
@@ -120,8 +119,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
 
           contentAsString(result) mustBe viewAsString(
             form,
-            incompleteDirectors = Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)),
-            enableSubmission = true)
+            incompleteDirectors = Seq(DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 1)))
         }
     }
 
@@ -131,11 +129,11 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
         DirectorEntity(DirectorNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
         DirectorEntity(DirectorNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 3)
       )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, establisherIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, incompleteDirectors = directorsViewModel, enableSubmission = true)
+      contentAsString(result) mustBe viewAsString(form, incompleteDirectors = directorsViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -176,7 +174,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase with BeforeAn
 
     "redirect to the next page when maximum directors exist and the user submits" in {
       val directors = Seq.fill(maxDirectors)(johnDoe)
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER

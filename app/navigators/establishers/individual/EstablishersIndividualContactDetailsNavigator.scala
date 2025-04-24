@@ -34,12 +34,12 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
   import EstablishersIndividualContactDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, EmptyOptionalSchemeReferenceNumber), from.id)
 
-  private def normalAndCheckModeRoutes(mode: SubscriptionMode, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
+  private def normalAndCheckModeRoutes(mode: SubscriptionMode, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) if mode == NormalMode => phonePage(mode, index, srn)
     case EstablisherEmailId(index) => cyaIndividualContactDetailsPage(mode, index, srn)
@@ -47,9 +47,9 @@ class EstablishersIndividualContactDetailsNavigator @Inject()(val dataCacheConne
   }
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
-    navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
+    navigateTo(updateModeRoutes(UpdateMode, srn), from.id)
 
-  private def updateModeRoutes(mode: UpdateMode.type, ua: UserAnswers, srn: OptionalSchemeReferenceNumber)
+  private def updateModeRoutes(mode: UpdateMode.type, srn: OptionalSchemeReferenceNumber)
   : PartialFunction[Identifier, Call] = {
     case EstablisherEmailId(index) => phonePage(mode, index, srn)
     case EstablisherPhoneId(index) => cyaIndividualContactDetailsPage(mode, index, srn)

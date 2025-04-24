@@ -55,11 +55,11 @@ class CompanyEnterCRNController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
-          get(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+          get(mode, srn, index, viewModel(companyName), companyName)
         }
     }
 
-  private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber, companyName: String)
+  private def viewModel(companyName: String)
   : CompanyRegistrationNumberViewModel = {
     CompanyRegistrationNumberViewModel(
       title = Message("messages__enterCRN", Message("messages__theCompany")),
@@ -73,7 +73,7 @@ class CompanyEnterCRNController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
-          post(mode, srn, index, viewModel(mode, index, srn, companyName), companyName)
+          post(mode, srn, index, viewModel(companyName), companyName)
         }
     }
 

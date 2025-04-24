@@ -195,8 +195,6 @@ trait Constraints {
   protected def nonEmptySeq(errorKey: String): Constraint[Seq[?]] = Constraint {
     case seq: Seq[_] =>
       if (seq.nonEmpty) Valid else Invalid(errorKey)
-    case _ =>
-      Invalid("error.invalid")
   }
 
   protected def emailAddressRestrictive(errorKey: String): Constraint[String] = regexp(regexEmailRestrictive, errorKey)

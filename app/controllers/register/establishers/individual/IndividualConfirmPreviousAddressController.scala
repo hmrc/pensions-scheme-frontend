@@ -55,7 +55,7 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).retrieve.map { vm =>
+        viewmodel(index, srn).retrieve.map { vm =>
           get(IndividualConfirmPreviousAddressId(index), vm)
         }
     }
@@ -63,12 +63,12 @@ class IndividualConfirmPreviousAddressController @Inject()(val appConfig: Fronte
   def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, index, srn).retrieve.map { vm =>
+        viewmodel(index, srn).retrieve.map { vm =>
           post(IndividualConfirmPreviousAddressId(index), PreviousAddressId(index), vm, mode)
         }
     }
 
-  private def viewmodel(mode: Mode, index: Int, srn: OptionalSchemeReferenceNumber) =
+  private def viewmodel(index: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
         EstablisherNameId(index).and(ExistingCurrentAddressId(index)).retrieve.map {
