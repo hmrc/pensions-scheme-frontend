@@ -48,7 +48,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
   FrontendBaseController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
-  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit _
+  private val postCall = controllers.routes.AnyMoreChangesController.onSubmit
 
   def onPageLoad(srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData(UpdateMode, srn) andThen
     allowAccess(srn) andThen requireData).async {
@@ -60,7 +60,7 @@ class AnyMoreChangesController @Inject()(appConfig: FrontendAppConfig,
     requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(
             BadRequest(view(formWithErrors, existingSchemeName, dateToCompleteDeclaration, postCall(srn), srn))
           ),

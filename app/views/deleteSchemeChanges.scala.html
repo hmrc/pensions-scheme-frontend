@@ -32,7 +32,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], schemeName: String, postCall: Call, psaName : String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], schemeName: String, postCall: Call, psaName : String)(implicit request: Request[?], messages: Messages)
 
 @layout( pageTitle = titleWithErrors(form, messages("messages__deleteSchemeChanges__title"))) {
 

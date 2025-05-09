@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 
 object ViewHelper {
 
-  def titleWithErrors(form: Form[_], title: String)(implicit messages: Messages): String =
+  def titleWithErrors(form: Form[?], title: String)(implicit messages: Messages): String =
     s"${if (form.hasErrors) messages("site.error") else ""} $title"
 
   val sanitiseOutput: String => String = (input: String) => Encode.forHtml(input)

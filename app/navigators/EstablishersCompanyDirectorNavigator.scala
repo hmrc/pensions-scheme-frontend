@@ -75,9 +75,9 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
       case DirectorAddressId(establisherIndex, directorIndex) =>
         NavigateTo.dontSave(routes.DirectorAddressYearsController.onPageLoad(mode, establisherIndex, directorIndex, srn))
       case DirectorPreviousAddressListId(establisherIndex, directorIndex) =>
-        previousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+        previousAddressRoutes(establisherIndex, directorIndex, mode, srn)
       case DirectorPreviousAddressId(establisherIndex, directorIndex) =>
-        previousAddressRoutes(establisherIndex, directorIndex, mode, srn)(from.userAnswers)
+        previousAddressRoutes(establisherIndex, directorIndex, mode, srn)
       case DirectorPhoneNumberId(establisherIndex, directorIndex) =>
         checkYourAnswers(establisherIndex, directorIndex, mode, srn)
       case DirectorAddressYearsId(establisherIndex, directorIndex) =>
@@ -236,7 +236,6 @@ class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: Use
         routes.DirectorNoUTRReasonController.onPageLoad(mode, establisherIndex, directorIndex, srn)
     )
 
-  private def previousAddressRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: OptionalSchemeReferenceNumber)(
-      answers: UserAnswers): Option[NavigateTo] =
+  private def previousAddressRoutes(establisherIndex: Int, directorIndex: Int, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     NavigateTo.dontSave(routes.DirectorEmailController.onPageLoad(mode, establisherIndex, directorIndex, srn))
 }

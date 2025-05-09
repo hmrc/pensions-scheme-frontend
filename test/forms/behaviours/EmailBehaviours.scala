@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError}
 trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailMapping with RegexBehaviourSpec{
 
   def formWithEmailField(
-                          form: Form[_],
+                          form: Form[?],
                           fieldName: String,
                           keyEmailRequired: String,
                           keyEmailLength: String,
@@ -62,7 +62,7 @@ trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailM
   }
 
   def formWithEmailFieldForAllErrors(
-                          form: Form[_],
+                          form: Form[?],
                           fieldName: String,
                           keyEmailRequired: String,
                           keyEmailLength: String,
@@ -103,7 +103,7 @@ trait EmailBehaviours extends StringFieldBehaviours with Constraints with EmailM
   }
 
   private def emailWithCorrectFormat(
-                                      form: Form[_],
+                                      form: Form[?],
                                       fieldName: String,
                                       keyEmailInvalid: String
                                     ): Unit = {

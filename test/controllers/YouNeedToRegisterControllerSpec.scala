@@ -24,11 +24,7 @@ class YouNeedToRegisterControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[youNeedToRegister]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): YouNeedToRegisterController =
-    new YouNeedToRegisterController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl,
-      controllerComponents,
-      view
-    )
+    new YouNeedToRegisterController(messagesApi, controllerComponents, view)
 
   private def viewAsString() = view()(fakeRequest, messages).toString
 

@@ -17,23 +17,22 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.partnership._
+import identifiers.register.trustees.partnership.*
+import models.*
 import models.Mode.checkMode
-import models._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils._
+import play.api.test.Helpers.*
+import utils.*
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
-  import CheckYourAnswersPartnershipDetailsControllerSpec._
+  import CheckYourAnswersPartnershipDetailsControllerSpec.*
 
   "Check Your Answers Partnership Details Controller " when {
     "when in registration journey" must {
@@ -258,15 +257,12 @@ object CheckYourAnswersPartnershipDetailsControllerSpec extends ControllerSpecBa
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersPartnershipDetailsController =
     new CheckYourAnswersPartnershipDetailsController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute(index)),
-      FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
       view

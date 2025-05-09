@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.establishers.partnership.OtherPartnersFormProvider
 import identifiers.register.establishers.partnership.OtherPartnersId
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
@@ -35,7 +34,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OtherPartnersController @Inject()(
-                                         appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          userAnswersService: UserAnswersService,
                                          navigator: Navigator,
@@ -68,7 +66,7 @@ class OtherPartnersController @Inject()(
       implicit request =>
         retrievePartnershipName(establisherIndex) { _ =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) => {
+            (formWithErrors: Form[?]) => {
               val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController
                 .onSubmit(mode, establisherIndex, srn)
               Future.successful(BadRequest(view(formWithErrors, mode, establisherIndex, existingSchemeName,

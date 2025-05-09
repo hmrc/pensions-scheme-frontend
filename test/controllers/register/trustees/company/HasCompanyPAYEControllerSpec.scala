@@ -65,7 +65,7 @@ class HasCompanyPAYEControllerSpec  extends ControllerSpecBase {
       global
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "HasCompanyPAYEController" must {
 

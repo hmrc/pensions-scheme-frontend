@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
@@ -35,7 +34,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HaveAnyTrusteesController @Inject()(
-                                           appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: UserAnswersCacheConnector,
                                            @BeforeYouStart navigator: Navigator,
@@ -64,7 +62,7 @@ class HaveAnyTrusteesController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           SchemeNameId.retrieve.map { schemeName =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName)))
           },

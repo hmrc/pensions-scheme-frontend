@@ -47,8 +47,7 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
                                               val auditService: AuditService,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: addressList
-                                             )(implicit val ec: ExecutionContext) extends AddressListController with
-  Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
@@ -58,7 +57,7 @@ class DirectorAddressListController @Inject()(override val appConfig: FrontendAp
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (DirectorNameId(establisherIndex, directorIndex) and DirectorAddressPostcodeLookupId(establisherIndex,
+    DirectorNameId(establisherIndex, directorIndex).and(DirectorAddressPostcodeLookupId(establisherIndex,
       directorIndex)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(

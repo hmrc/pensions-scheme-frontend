@@ -17,20 +17,19 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEmailId, CompanyPhoneId}
 import models.Mode.checkMode
-import models._
+import models.*
 import models.requests.DataRequest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
+import play.api.test.Helpers.*
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswers}
+import utils.{AllowChangeHelper, CountryOptions, FakeCountryOptions, FakeDataRequest, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -71,7 +70,7 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyContactDetailsController =
-    new CheckYourAnswersCompanyContactDetailsController(frontendAppConfig,
+    new CheckYourAnswersCompanyContactDetailsController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -79,7 +78,6 @@ class CheckYourAnswersCompanyContactDetailsControllerSpec extends ControllerSpec
       new DataRequiredActionImpl,
       fakeCountryOptions,
       allowChangeHelper,
-      FakeUserAnswersService,
       controllerComponents,
       view
     )

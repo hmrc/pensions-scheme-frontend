@@ -34,7 +34,7 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     completeDirectors: Seq[DirectorEntity],
     incompleteDirectors: Seq[DirectorEntity],
     schemeName: Option[String],
@@ -42,7 +42,7 @@
     viewOnly: Boolean,
     mode: Mode,
     srn: OptionalSchemeReferenceNumber
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @directors = @{ completeDirectors ++ incompleteDirectors }
 

@@ -35,10 +35,9 @@ class TrusteesPartnershipContactDetailsNavigator @Inject()(val dataCacheConnecto
   import TrusteesPartnershipContactDetailsNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, EmptyOptionalSchemeReferenceNumber), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
-                                       ua: UserAnswers,
                                        srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipEmailId(index) if mode == NormalMode => phonePage(mode, index, srn)
     case PartnershipEmailId(index) => cyaPage(mode, index, srn)
@@ -46,12 +45,12 @@ class TrusteesPartnershipContactDetailsNavigator @Inject()(val dataCacheConnecto
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, EmptyOptionalSchemeReferenceNumber), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)
 
-  private def updateModeRoutes(mode: UpdateMode.type,
+  def updateModeRoutes(mode: UpdateMode.type,
                                ua: UserAnswers,
                                srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
     case PartnershipEmailId(index) => phonePage(mode, index, srn)

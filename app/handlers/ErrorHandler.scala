@@ -41,12 +41,12 @@ class ErrorHandler @Inject()(
                                       heading: String,
                                       message: String
                                     )(implicit request: RequestHeader): Future[Html] = {
-    def requestImplicit: Request[_] = Request(request, "")
+    def requestImplicit: Request[?] = Request(request, "")
     def messages: Messages = messagesApi.preferred(request)
     Future.successful(errorTemplateView(pageTitle, heading, message, appConfig)(requestImplicit, messages))
   }
 
-  def notFoundTemplate(implicit request: Request[_]): Future[Html] = {
+  def notFoundTemplate(implicit request: Request[?]): Future[Html] = {
     val linkContent = messagesApi.apply("messages__schemesOverview__manage__link")(Lang.defaultLang)
     Future.successful(notFoundTemplateView(Link(linkContent, appConfig.managePensionsYourPensionSchemesUrl, Some(linkContent))))
   }

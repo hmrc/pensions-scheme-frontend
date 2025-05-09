@@ -24,8 +24,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.Ops.*
+import utils.{CountryOptions, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnerEnterUTRIdSpec extends SpecBase {

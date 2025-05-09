@@ -47,7 +47,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
   private val view = injector.instanceOf[companyDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDetailsController =
-    new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new CompanyDetailsController(messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
       view
@@ -55,7 +55,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase with BeforeAndAfte
 
   val submitUrl = controllers.register.trustees.company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(form, NormalMode, firstIndex, None, submitUrl, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

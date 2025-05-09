@@ -94,7 +94,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
         .thenReturn(seqOneEstablisherDirector)
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val view = app.injector.instanceOf[dataPrefillRadio]
         val result = controller.onPageLoad(index)(fakeRequest)
@@ -113,7 +113,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
         .thenReturn(Nil)
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val result = controller.onPageLoad(index)(fakeRequest)
 
@@ -136,7 +136,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "0",
@@ -165,7 +165,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
@@ -190,7 +190,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "0"
@@ -217,7 +217,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(nonEmptyUA)
 
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val request = fakeRequest.withFormUrlEncodedBody(
           "value" -> "-1"
@@ -234,7 +234,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
         .thenReturn(seqThreeEstablisherDirectors)
       val allModules = modules(dataRetrievalAction) ++ extraModules
-      running(_.overrides(allModules: _*)) { app =>
+      running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
         val result = controller.onSubmit(index)(fakeRequest)
         status(result) mustBe BAD_REQUEST

@@ -17,7 +17,6 @@
 package controllers
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.adviser.AdviserEmailFormProvider
@@ -35,7 +34,6 @@ import views.html.adviserEmailAddress
 import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserEmailAddressController @Inject()(
-                                               appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                @WorkingKnowledge navigator: Navigator,
@@ -69,7 +67,7 @@ class AdviserEmailAddressController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           for {
             schemeName <- SchemeNameId.retrieve
             adviserName <- AdviserNameId.retrieve

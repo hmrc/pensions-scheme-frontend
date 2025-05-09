@@ -27,7 +27,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.adviserPhone
 
 class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQuestionPageBehaviours {
@@ -44,7 +44,7 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
 
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("phone", phone))
 
-  def viewAsString(form: Form[_]): Form[_] => String =
+  def viewAsString(form: Form[?]): Form[?] => String =
     form =>
      view(
         form,
@@ -60,7 +60,6 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): AdviserPhoneController =
     new AdviserPhoneController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

@@ -16,9 +16,8 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.{CompanyDetails, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,16 +29,14 @@ import views.html.register.whatYouWillNeedContactDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                               override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyContactDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                                authenticate: AuthAction,
                                                                getData: DataRetrievalAction,
                                                                allowAccess: AllowAccessActionProvider,
                                                                requireData: DataRequiredAction,
                                                                val controllerComponents: MessagesControllerComponents,
                                                                val view: whatYouWillNeedContactDetails
-                                                              ) extends FrontendBaseController with Retrievals with
-  I18nSupport {
+                                                              ) extends FrontendBaseController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

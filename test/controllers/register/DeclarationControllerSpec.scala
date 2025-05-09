@@ -17,34 +17,31 @@
 package controllers.register
 
 import audit.{AuditService, TcmpAuditEvent}
-import connectors._
+import connectors.*
 import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.register.DeclarationFormProvider
+import controllers.actions.*
 import helpers.DataCompletionHelper
-import identifiers._
+import identifiers.*
 import identifiers.register.{DeclarationDormantId, DeclarationId}
-import models._
+import models.*
 import models.register.{DeclarationDormant, SchemeSubmissionResponse, SchemeType}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import views.html.register.declaration
 
-import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationControllerSpec
@@ -53,7 +50,7 @@ class DeclarationControllerSpec
     with ScalaFutures
     with BeforeAndAfterEach {
 
-  import DeclarationControllerSpec._
+  import DeclarationControllerSpec.*
 
   override protected def beforeEach(): Unit = {
     reset(mockHsTaskListHelperRegistration)
@@ -243,9 +240,7 @@ class DeclarationControllerSpec
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with DataCompletionHelper {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
-
-  private val formProvider = new DeclarationFormProvider()
-  private val form = formProvider()
+  
   private val href = controllers.register.routes.DeclarationController.onClickAgree
   val psaId: PsaId = PsaId("A0000000")
 
@@ -290,7 +285,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockAuditService
     )
 
-  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
+  private def viewAsString(isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     view(
       isCompany,
@@ -366,13 +361,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   }
 
   private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
-    @nowarn
+   
     override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
-    @nowarn
+
     override def getMinimalPsaDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MinimalPSA] =
       Future.successful(MinimalPSA("test@test.com", isPsaSuspended = isSuspended, Some("psa name"), None))
-    @nowarn
+
     override def getPsaNameFromPsaID()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
       Future.successful(Some("psa name"))
   }

@@ -16,16 +16,15 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 @import config.FrontendAppConfig
-@import controllers.routes._
+@import controllers.routes.SchemeNameController
 
 @this(
     layout: templates.Layout,
-    formHelper: PlayFrontendFormWithCSRF,
     appConfig: FrontendAppConfig,
     button_link: components.button_link
 )
 
-@(psaName: String)( implicit request: Request[_], messages: Messages)
+@(psaName: String)( implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__before_you_start__title")) {
 

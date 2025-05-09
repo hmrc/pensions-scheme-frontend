@@ -156,7 +156,6 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeletePartnerController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -169,7 +168,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(
+  private def viewAsString(form: Form[?] = form) = view(
     form,
     "John Doe",
     postCall,

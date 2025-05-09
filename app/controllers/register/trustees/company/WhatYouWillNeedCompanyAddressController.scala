@@ -16,11 +16,10 @@
 
 package controllers.register.trustees.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import identifiers.register.trustees.company.CompanyDetailsId
-import models._
+import models.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,16 +29,14 @@ import views.html.register.trustees.company.whatYouWillNeedCompanyAddress
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                        override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyAddressController @Inject()(override val messagesApi: MessagesApi,
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         requireData: DataRequiredAction,
                                                         val controllerComponents: MessagesControllerComponents,
                                                         val view: whatYouWillNeedCompanyAddress
-                                                       ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                       ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

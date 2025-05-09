@@ -42,8 +42,7 @@ class AuthImpl(override val authConnector: AuthConnector,
                          sessionDataCacheConnector: SessionDataCacheConnector,
                          val parser: BodyParsers.Default,
                         authEntity: Option[AuthEntity])
-                              (implicit val executionContext: ExecutionContext) extends Auth with
-  AuthorisedFunctions {
+                              (implicit val executionContext: ExecutionContext) extends Auth with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter
@@ -89,7 +88,7 @@ class AuthImpl(override val authConnector: AuthConnector,
                      block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionDataCacheConnector.fetch.flatMap { optionJsValue =>
-      optionJsValue.map(UserAnswers).flatMap(_.get(AdministratorOrPractitionerId)) match {
+      optionJsValue.map(UserAnswers.apply).flatMap(_.get(AdministratorOrPractitionerId)) match {
         case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))
         case Some(aop) =>
           (aop, authEntity) match {

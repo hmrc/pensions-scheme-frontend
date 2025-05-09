@@ -48,7 +48,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
     "return a sequence of establishers names, edit links and delete links" in {
       val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 
-      val allEstablisherEntities: Seq[Establisher[_]] = Seq(
+      val allEstablisherEntities: Seq[Establisher[?]] = Seq(
         establisherEntity("Test Company", 0, Company, isComplete = true),
         establisherEntity("Test Individual", 1, Indivdual, isComplete = true),
         establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
@@ -111,7 +111,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
       )
 
       val userAnswers = UserAnswers(json)
-      val allEstablisherEntities: Seq[Establisher[_]] =
+      val allEstablisherEntities: Seq[Establisher[?]] =
         Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 2),
           establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 2))
 
@@ -123,7 +123,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
     "return a map of trustee names, edit links, delete links and isComplete flag" in {
       val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
 
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(
+      val allTrusteesEntities: Seq[Trustee[?]] = Seq(
         trusteeEntity("test company", 0, TrusteeKind.Company, isComplete = true),
         trusteeEntity("firstName lastName", 1, TrusteeKind.Individual, isComplete = true),
         trusteeEntity("test partnership", 2, TrusteeKind.Partnership, isComplete = true)
@@ -186,7 +186,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
 
       val userAnswers = UserAnswers(json)
 
-      val allTrusteesEntities: Seq[Trustee[_]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
+      val allTrusteesEntities: Seq[Trustee[?]] = Seq(trusteeEntity("My Company", 1, TrusteeKind.Company, countAfterDeleted = 2))
 
       val result = userAnswers.allTrusteesAfterDelete
 
@@ -439,7 +439,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
 
 object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonFileReader {
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind,
-                                isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[_] = {
+                                isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[?] = {
     establisherKind match {
       case Indivdual =>
         EstablisherIndividualEntity(EstablisherNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
@@ -450,7 +450,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
     }
   }
 
-  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Trustee[_] = {
+  private def trusteeEntity(name: String, index: Int, trusteeKind: TrusteeKind, isComplete: Boolean = false, countAfterDeleted : Int = 3): Trustee[?] = {
     trusteeKind match {
       case TrusteeKind.Individual =>
         TrusteeIndividualEntity(TrusteeNameId(index), name, isDeleted = false, isCompleted = isComplete,

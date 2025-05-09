@@ -47,8 +47,7 @@ class TrusteeAddressYearsController @Inject()(
                                                requireData: DataRequiredAction,
                                                val controllerComponents: MessagesControllerComponents,
                                                val view: addressYears
-                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with
-  Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   val trusteeName: Index => Retrieval[String] = (trusteeIndex: Index) => Retrieval {
     implicit request =>

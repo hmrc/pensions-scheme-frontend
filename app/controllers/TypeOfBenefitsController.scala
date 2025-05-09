@@ -79,7 +79,7 @@ class TypeOfBenefitsController @Inject()(
         SchemeNameId.retrieve.map {
           schemeName =>
             form(schemeName).bindFromRequest().fold(
-              (formWithErrors: Form[_]) =>
+              (formWithErrors: Form[?]) =>
                 Future.successful(BadRequest(view(
                   form = formWithErrors,
                   postCall = routes.TypeOfBenefitsController.onSubmit(mode, srn),

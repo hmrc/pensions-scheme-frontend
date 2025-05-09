@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class AddressListFormProvider @Inject()() extends Mappings with Constraints {
 
-  def apply(addresses: Seq[_]): Form[Int] =
+  def apply(addresses: Seq[?]): Form[Int] =
     Form(
       "value" -> int("messages__error__select_address")
         .verifying(minimumValue(0, "error.invalid"))

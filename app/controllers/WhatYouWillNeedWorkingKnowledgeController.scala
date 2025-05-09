@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.AdviserNameController
 import models.NormalMode
@@ -28,8 +27,7 @@ import views.html.whatYouWillNeedWorkingKnowledge
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
-                                                          override val messagesApi: MessagesApi,
+class WhatYouWillNeedWorkingKnowledgeController @Inject()(override val messagesApi: MessagesApi,
                                                           authenticate: AuthAction,
                                                           getData: DataRetrievalAction,
                                                           val controllerComponents: MessagesControllerComponents,

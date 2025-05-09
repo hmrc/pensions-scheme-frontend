@@ -70,7 +70,7 @@ class UrlsPartialService @Inject()(
                         ):Future[Seq[OverviewLink]] = {
     racdacDataCacheConnector.fetch(request.externalId).flatMap {
       f =>
-        val racDACSchemeName = f.map(UserAnswers).flatMap(_.get(RACDACNameId))
+        val racDACSchemeName = f.map(UserAnswers.apply).flatMap(_.get(RACDACNameId))
         racDACSchemeName match {
           case Some(racDacName) =>
             lastUpdatedAndDeleteDate(request.externalId, racdacDataCacheConnector.lastUpdated) map { date =>
@@ -153,7 +153,7 @@ class UrlsPartialService @Inject()(
                               ):Future[Seq[OverviewLink]] = {
     racdacDataCacheConnector.fetch(request.externalId).map{
       f =>
-        val userAnswers = f.map(UserAnswers)
+        val userAnswers = f.map(UserAnswers.apply)
         val racDACSchemeName = userAnswers.flatMap(_.get(RACDACNameId))
           if (racDACSchemeName.isDefined) {
             Seq(OverviewLink(

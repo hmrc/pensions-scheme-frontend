@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
                                           @EstablishersCompany navigator: Navigator,
@@ -64,7 +62,7 @@ class CompanyDetailsController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, postCall(mode, srn,
             index), srn))),
         value =>
@@ -78,6 +76,6 @@ class CompanyDetailsController @Inject()(
       )
   }
 
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.CompanyDetailsController.onSubmit
 
 }

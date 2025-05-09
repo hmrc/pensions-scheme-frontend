@@ -46,7 +46,7 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
   val controller = new TestController(controllerComponents)
 
-  val success: String => Future[Result] = { _: String =>
+  val success: String => Future[Result] = { _ =>
     Future.successful(Ok("Success"))
   }
 
@@ -122,7 +122,7 @@ class RetrievalsSpec extends ControllerSpecBase with Retrievals with EitherValue
 
         implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
 
-        (testIdentifier and secondIdentifier).retrieve contains new ~("result", "answer")
+        testIdentifier.and(secondIdentifier).retrieve contains new ~("result", "answer")
       }
     }
 

@@ -31,7 +31,7 @@ object PersonName {
       (JsPath \ "firstName").read[String] and
         (JsPath \ "lastName").read[String] and
         ((JsPath \ "isDeleted").read[Boolean] orElse Reads.pure(false))
-      ) (PersonName.apply _)
+      ) (PersonName.apply)
 
   implicit val writes: Writes[PersonName] = Json.writes[PersonName]
 

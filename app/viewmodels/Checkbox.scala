@@ -23,6 +23,6 @@ object Checkbox {
     Checkbox(
       id = s"$keyPrefix$option",
       value = option,
-      message = Message(s"$keyPrefix$option", messageArgs: _*)
+      message = Message(s"$keyPrefix$option", messageArgs*)
     )
 }

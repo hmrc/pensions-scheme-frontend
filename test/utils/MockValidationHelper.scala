@@ -32,7 +32,7 @@ trait MockValidationHelper extends OptionValues {
       )
   }
 
-  def containJson(identifier: TypedIdentifier[_]): Matcher[JsValue] =
+  def containJson(identifier: TypedIdentifier[?]): Matcher[JsValue] =
     containJson(identifier.path)
 
   def containJson[A : Reads](path: JsPath, value: A): Matcher[JsValue] = new Matcher[JsValue] {

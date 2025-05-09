@@ -54,13 +54,13 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[haveAnyTrustees]
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): HaveAnyTrusteesController =
-    new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new HaveAnyTrusteesController(messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider,
       controllerComponents,
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, scheme)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 

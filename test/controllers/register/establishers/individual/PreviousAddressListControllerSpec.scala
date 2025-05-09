@@ -69,7 +69,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =
+  def viewAsString(form: Form[?] = form, address: Seq[TolerantAddress] = previousAddresses): String =
     view(
       form,
       AddressListViewModel(

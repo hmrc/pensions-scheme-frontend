@@ -18,11 +18,10 @@
 @import models.Link
 
 @this(
-    layout: templates.Layout,
-    appConfig: FrontendAppConfig
+    layout: templates.Layout
 )
 
-@(returnLink:Link)(implicit request: Request[_], messages: Messages)
+@(returnLink:Link)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__pageNotFound404__title")) {
 

@@ -228,7 +228,7 @@ object EstablishersCompanyDirectorNavigatorSpec extends SpecBase with OptionValu
 
   private def anyMoreChanges(srn: OptionalSchemeReferenceNumber) = controllers.routes.AnyMoreChangesController.onPageLoad(srn)
 
-  private def exitJourney(mode: Mode, answers: UserAnswers, index: Int = 0, srn: OptionalSchemeReferenceNumber) =
+  private def exitJourney(mode: Mode, answers: UserAnswers, srn: OptionalSchemeReferenceNumber) =
     if (mode == NormalMode) checkYourAnswers(mode, OptionalSchemeReferenceNumber(srn))
     else {
       if (answers.get(IsNewDirectorId(establisherIndex, directorIndex)).getOrElse(false)) checkYourAnswers(mode, OptionalSchemeReferenceNumber(srn))

@@ -87,8 +87,8 @@ abstract class AbstractNavigator
     navigateTo.map(to => saveAndContinue(to, ex.externalId))
   }
 
-  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)
-                                   (implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
+  private def saveAndContinue(navigation: NavigateTo, externalID: String)
+                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
     if (navigation.save) {
       dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
         case Failure(t: Throwable) => logger.warn("Error saving user's current page", t)

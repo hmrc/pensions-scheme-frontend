@@ -176,9 +176,17 @@ object CheckYourAnswersCompanyAddressControllerSpec extends ControllerSpecBase w
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyAddressController =
-    new CheckYourAnswersCompanyAddressController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl,
-      fakeCountryOptions, allowChangeHelper, controllerComponents, view)
+    new CheckYourAnswersCompanyAddressController(
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      FakeAllowAccessProvider(),
+      new DataRequiredActionImpl,
+      fakeCountryOptions,
+      allowChangeHelper,
+      controllerComponents,
+      view
+    )
 
   def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = postUrl, title:Message, h1:Message): String =
     view(CYAViewModel(

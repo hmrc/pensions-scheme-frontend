@@ -65,7 +65,7 @@ class SchemeNameController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName.getOrElse("")))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>

@@ -26,8 +26,8 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.UserAnswers
-import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.Ops.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class PartnerAddressYearsIdSpec extends SpecBase {

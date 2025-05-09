@@ -76,7 +76,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
+  def viewAsString(form: Form[?] = form, address: Seq[TolerantAddress] = addresses): String =
     view(
       form,
       AddressListViewModel(

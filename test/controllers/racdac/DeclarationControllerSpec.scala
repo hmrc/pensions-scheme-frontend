@@ -18,27 +18,27 @@ package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
 import config.FrontendAppConfig
-import connectors._
+import connectors.*
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import helpers.DataCompletionHelper
 import identifiers.racdac.{DeclarationId, RACDACNameId}
 import identifiers.register.SubmissionReferenceNumberId
 import models.register.SchemeSubmissionResponse
 import models.{MinimalPSA, PSAMinimalFlags, SchemeReferenceNumber}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.UpstreamErrorResponse
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import views.html.racdac.declaration
 
 import scala.concurrent.Future
@@ -49,7 +49,7 @@ class DeclarationControllerSpec
     with ScalaFutures
     with BeforeAndAfterEach {
 
-  import DeclarationControllerSpec._
+  import DeclarationControllerSpec.*
 
   override protected def beforeEach(): Unit = {
     when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))

@@ -48,22 +48,22 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
                                                        )(implicit val ec: ExecutionContext) extends
   ConfirmPreviousAddressController with Retrievals with I18nSupport {
 
-  private[controllers] val postCall = routes.PartnerConfirmPreviousAddressController.onSubmit _
+  private[controllers] val postCall = routes.PartnerConfirmPreviousAddressController.onSubmit
   private[controllers] val title: Message = "messages__confirmPreviousAddress__title"
   private[controllers] val heading: Message = "messages__confirmPreviousAddress__heading"
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map { vm =>
+        viewmodel(establisherIndex, partnerIndex, srn).retrieve.map { vm =>
           get(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), vm)
         }
     }
 
-  private def viewmodel(mode: Mode, establisherIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber) =
+  private def viewmodel(establisherIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber) =
     Retrieval(
       implicit request =>
-        (PartnerNameId(establisherIndex, partnerIndex) and ExistingCurrentAddressId(establisherIndex, partnerIndex))
+        PartnerNameId(establisherIndex, partnerIndex).and(ExistingCurrentAddressId(establisherIndex, partnerIndex))
           .retrieve.map {
           case details ~ address =>
             ConfirmAddressViewModel(
@@ -81,7 +81,7 @@ class PartnerConfirmPreviousAddressController @Inject()(val appConfig: FrontendA
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
-        viewmodel(mode, establisherIndex, partnerIndex, srn).retrieve.map { vm =>
+        viewmodel(establisherIndex, partnerIndex, srn).retrieve.map { vm =>
           post(PartnerConfirmPreviousAddressId(establisherIndex, partnerIndex), PartnerPreviousAddressId
           (establisherIndex, partnerIndex), vm, mode)
         }

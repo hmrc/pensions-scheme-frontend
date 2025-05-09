@@ -16,7 +16,6 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,7 +30,6 @@ class MemberNotFoundController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val controllerComponents: MessagesControllerComponents,
                                         authenticate: AuthAction,
-                                        appConfig: FrontendAppConfig,
                                         view: memberNotFound
                                       )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {

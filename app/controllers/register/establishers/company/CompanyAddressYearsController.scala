@@ -48,8 +48,7 @@ class CompanyAddressYearsController @Inject()(
                                                requireData: DataRequiredAction,
                                                val view: addressYears,
                                                val controllerComponents: MessagesControllerComponents
-                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with
-  Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends AddressYearsController with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

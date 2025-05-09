@@ -133,7 +133,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       actualUserAnswers.get(SchemeNameId).isDefined mustBe false
     }
 
-  "return OK and the correct view for a GET when RACDACNameId exists only" in {
+    "return OK and the correct view for a GET when RACDACNameId exists only" in {
       reset(mockUserAnswersCacheConnector)
       when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))
@@ -152,7 +152,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       actualUserAnswers.get(SchemeNameId).isDefined mustBe false
     }
 
-  "return OK and the correct view for a GET when both RAC/DAC answers exist" in {
+    "return OK and the correct view for a GET when both RAC/DAC answers exist" in {
     reset(mockUserAnswersCacheConnector)
       when(mockUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       when(mockUserAnswersCacheConnector.upsert(any(), any())(any(), any())).thenReturn(Future.successful(JsNull))

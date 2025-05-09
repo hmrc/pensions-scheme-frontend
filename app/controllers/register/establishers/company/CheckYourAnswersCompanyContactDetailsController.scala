@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
@@ -26,7 +25,6 @@ import models.Mode.checkMode
 import models._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.Ops._
@@ -37,8 +35,7 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                                override val messagesApi: MessagesApi,
+class CheckYourAnswersCompanyContactDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
                                                                 @NoSuspendedCheck
@@ -46,7 +43,6 @@ class CheckYourAnswersCompanyContactDetailsController @Inject()(appConfig: Front
                                                                 requireData: DataRequiredAction,
                                                                 implicit val countryOptions: CountryOptions,
                                                                 allowChangeHelper: AllowChangeHelper,
-                                                                userAnswersService: UserAnswersService,
                                                                 val controllerComponents: MessagesControllerComponents,
                                                                 val view: checkYourAnswers
                                                                )(implicit val executionContext: ExecutionContext)

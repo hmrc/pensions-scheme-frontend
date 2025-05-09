@@ -35,15 +35,15 @@
 )
 
 @(
-    form: Form[_],
-    completePartners: Seq[Partner[_]],
-    incompletePartners: Seq[Partner[_]],
+    form: Form[?],
+    completePartners: Seq[Partner[?]],
+    incompletePartners: Seq[Partner[?]],
     postUrl: Call,
     schemeName: Option[String],
     viewOnly: Boolean,
     mode: Mode,
     srn: OptionalSchemeReferenceNumber
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @partners = @{ completePartners ++ incompletePartners }
 

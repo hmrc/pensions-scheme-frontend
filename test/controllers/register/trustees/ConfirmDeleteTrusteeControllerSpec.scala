@@ -170,7 +170,6 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteTrusteeController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -183,7 +182,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind, form: Form[_] = form) =
+  private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind, form: Form[?] = form) =
     view(
       form,
       trusteeName,

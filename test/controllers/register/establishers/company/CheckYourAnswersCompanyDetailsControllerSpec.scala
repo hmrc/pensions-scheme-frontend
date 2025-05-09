@@ -17,24 +17,23 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.routes.PsaSchemeTaskListController
-import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.*
+import models.*
 import models.Mode.checkMode
-import models._
 import models.register.DeclarationDormant
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils._
+import play.api.test.Helpers.*
+import utils.*
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
-  import CheckYourAnswersCompanyDetailsControllerSpec._
+  import CheckYourAnswersCompanyDetailsControllerSpec.*
 
   "Check Your Answers Company Details Controller " when {
     "when in registration journey" must {
@@ -214,8 +213,7 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
     if(mode == NormalMode)
     Seq(stringChangeLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), utr,
       messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName))) else
-      Seq(stringLink(messages("messages__utr__checkyouranswerslabel"), companyUTRRoute(mode, OptionalSchemeReferenceNumber(srn)), utr,
-        messages("messages__visuallyhidden__dynamic_unique_taxpayer_reference", companyName)))
+      Seq(stringLink(messages("messages__utr__checkyouranswerslabel"), utr))
 
   private def vatRow(mode: Mode, srn: OptionalSchemeReferenceNumber): Seq[AnswerRow] =
     Seq(stringChangeLink(messages("messages__common__cya__vat"), companyEnterVATRoute(mode, OptionalSchemeReferenceNumber(srn)), vat,
@@ -279,12 +277,13 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
         Some(hiddenLabel)
     )))
 
-  private def stringLink(label: String, changeUrl: String, ansOrReason: String, hiddenLabel: String) =
+  private def stringLink(label: String, ansOrReason: String) =
     AnswerRow(
       label,
       Seq(ansOrReason),
       answerIsMessageKey = false,
-      None)
+      None
+    )
 
 
   private def addLink(label: String, changeUrl: String, hiddenLabel: String) =
@@ -294,15 +293,12 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyDetailsController =
     new CheckYourAnswersCompanyDetailsController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute),
-      FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
       view

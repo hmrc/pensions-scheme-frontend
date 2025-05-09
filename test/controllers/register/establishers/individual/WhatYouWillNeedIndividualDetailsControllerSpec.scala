@@ -18,14 +18,14 @@ package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
-import controllers.register.establishers.individual.routes._
+import controllers.register.establishers.individual.routes.*
 import identifiers.register.establishers.individual.EstablisherNameId
+import models.*
 import models.person.PersonName
-import models._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import views.html.register.whatYouWillNeedIndividualDetails
 
 class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -40,7 +40,6 @@ class WhatYouWillNeedIndividualDetailsControllerSpec extends ControllerSpecBase 
 
   def controller(dataRetrievalAction: DataRetrievalAction = mandatoryEstablisher): WhatYouWillNeedIndividualDetailsController =
     new WhatYouWillNeedIndividualDetailsController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

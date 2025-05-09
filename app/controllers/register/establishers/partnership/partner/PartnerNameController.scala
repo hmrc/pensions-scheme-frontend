@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.partnership.partner
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.PersonNameFormProvider
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import models.person.PersonName
@@ -38,7 +37,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnerNameController @Inject()(
-                                       appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        userAnswersService: UserAnswersService,
                                        navigator: Navigator,
@@ -77,7 +75,7 @@ class PartnerNameController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, partnerIndex, srn),
               existingSchemeName)))
           ,

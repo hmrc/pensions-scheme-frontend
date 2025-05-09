@@ -47,7 +47,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar wi
     new DeleteSchemeController(frontendAppConfig, messagesApi, fakeCacheConnector, minimalPsaConnector, FakeAuthAction,
       dataRetrievalAction, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, schemeName, psaName, hintTextMessageKey)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)

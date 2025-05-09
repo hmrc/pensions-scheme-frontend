@@ -22,12 +22,10 @@
 @this(
     layout: templates.Layout,
     appConfig: FrontendAppConfig,
-    formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
     incompleteAlert: components.incomplete_alert
 )
 
-@(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(taskSections: SchemeDetailsTaskList, schemeName: String)(implicit request: Request[?], messages: Messages)
 
 @status(isCompleted: Boolean) = @{
     if(isCompleted) {

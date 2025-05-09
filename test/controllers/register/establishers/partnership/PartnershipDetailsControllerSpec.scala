@@ -40,17 +40,17 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
   private val formProvider = new PartnershipDetailsFormProvider()
   private val form = formProvider()
   private val firstIndex = Index(0)
-  private val postCall = routes.PartnershipDetailsController.onSubmit _
+  private val postCall = routes.PartnershipDetailsController.onSubmit
   private def navigator = new FakeNavigator(desiredRoute = onwardRoute)
   private def oldNavigator = new FakeNavigator(desiredRoute = onwardRouteToggleOff)
 
   private val view = injector.instanceOf[partnershipDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
-    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, navigator, oldNavigator,
+    new PartnershipDetailsController(messagesApi, FakeUserAnswersService, navigator, oldNavigator,
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, firstIndex, None,
+  def viewAsString(form: Form[?] = form): String = view(form, NormalMode, firstIndex, None,
     postCall(NormalMode, 0, EmptyOptionalSchemeReferenceNumber), EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   private val validData = Json.obj(

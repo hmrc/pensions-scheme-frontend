@@ -46,7 +46,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
   private val view = injector.instanceOf[partnershipDetails]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): PartnershipDetailsController =
-    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new PartnershipDetailsController(messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider,
       controllerComponents,
       view
@@ -54,7 +54,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase with BeforeAnd
 
   val submitUrl: Call = controllers.register.trustees.partnership.routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)
 
-  def viewAsString(form: Form[_] = form): String = view(
+  def viewAsString(form: Form[?] = form): String = view(
     form,
     NormalMode,
     firstIndex,

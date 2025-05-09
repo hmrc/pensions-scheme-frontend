@@ -17,16 +17,16 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.PhoneFormProvider
 import identifiers.register.trustees.individual.TrusteeNameId
 import models.person.PersonName
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode}
 import play.api.data.Form
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.phoneNumber
 
@@ -56,7 +56,7 @@ class TrusteePhoneControllerSpec extends ControllerSpecBase {
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       CommonFormWithHintViewModel(

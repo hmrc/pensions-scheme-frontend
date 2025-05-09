@@ -68,7 +68,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   private val view = injector.instanceOf[postcodeLookup]
 
   "render the view correctly on a GET request" in {
-    running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
+    running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName)*)) {
       app =>
         val controller = app.injector.instanceOf[DirectorAddressPostcodeLookupController]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -83,7 +83,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
       Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[AddressLookupConnector].toInstance(addressLookupConnector)
-      ): _*)) {
+      )*)) {
       app =>
         when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
         val controller = app.injector.instanceOf[DirectorAddressPostcodeLookupController]

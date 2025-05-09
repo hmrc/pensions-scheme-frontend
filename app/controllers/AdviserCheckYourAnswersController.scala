@@ -16,16 +16,12 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import connectors._
 import controllers.actions._
 import identifiers._
 import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode}
-import navigators.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
@@ -34,13 +30,10 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: UserAnswersCacheConnector,
+class AdviserCheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  @WorkingKnowledge navigator: Navigator,
                                                   implicit val countryOptions: CountryOptions,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   val view: checkYourAnswers

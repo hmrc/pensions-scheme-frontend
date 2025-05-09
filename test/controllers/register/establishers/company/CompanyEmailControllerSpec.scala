@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.EmailFormProvider
 import identifiers.SchemeNameId
 import identifiers.register.establishers.EstablishersId
@@ -28,7 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
 import utils.FakeNavigator
 import viewmodels.{CommonFormWithHintViewModel, Message}
@@ -71,7 +71,7 @@ class CompanyEmailControllerSpec extends ControllerSpecBase with MockitoSugar wi
       controllerComponents
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       CommonFormWithHintViewModel(

@@ -125,9 +125,9 @@ class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSu
 
       val address = TolerantAddress(Some(""), Some(""), None, None, None, Some("GB"))
 
-      when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
+      when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())).thenReturn(Future.successful {
         Seq(address)
-      }
+      })
 
       when(userAnswersService.save(eqTo(NormalMode), eqTo(EmptyOptionalSchemeReferenceNumber),
                                    eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any(), any()))
@@ -155,8 +155,8 @@ class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSu
         val userAnswersService: UserAnswersService = mock[UserAnswersService]
         val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-        when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn
-          Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR))
+        when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any()))
+          .thenReturn(Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR)))
 
         running(_.overrides(
           bind[Navigator].toInstance(FakeNavigator),
@@ -218,9 +218,9 @@ class PostcodeLookupControllerSpec extends SpecBase with Matchers with MockitoSu
           val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
           val postCode = "ZZ1 1ZZ"
 
-          when(addressConnector.addressLookupByPostCode(eqTo(postCode))(any(), any())) thenReturn Future.successful {
+          when(addressConnector.addressLookupByPostCode(eqTo(postCode))(any(), any())).thenReturn(Future.successful {
             Seq.empty
-          }
+          })
 
           running(_.overrides(
             bind[Navigator].toInstance(FakeNavigator),

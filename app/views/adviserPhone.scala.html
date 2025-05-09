@@ -15,7 +15,7 @@
  *@
 
 @import models.Mode
-@import controllers.routes._
+@import controllers.routes.AdviserPhoneController
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
@@ -29,7 +29,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, adviserName: String, schemeName: String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__adviser__phone__title"))) {
 

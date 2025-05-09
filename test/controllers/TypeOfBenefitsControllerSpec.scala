@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.typeOfBenefits
 
 class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours with MockitoSugar {
@@ -43,7 +43,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
   private val postCall: Call = routes.TypeOfBenefitsController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
 
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, postCall, Some("Test Scheme Name"))(fakeRequest, messages).toString()
 
   private def controller(

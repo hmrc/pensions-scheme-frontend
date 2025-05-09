@@ -37,6 +37,6 @@ class EstablisherKindFormProviderSpec extends FormBehaviours {
         "value",
         Required -> "messages__establisher__type__error_required",
         Invalid -> "error.invalid"),
-      EstablisherKind.options.map(_.value): _*)
+      EstablisherKind.options.map(_.value)*)
   }
 }

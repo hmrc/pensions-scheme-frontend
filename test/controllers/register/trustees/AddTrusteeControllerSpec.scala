@@ -79,7 +79,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad
 
-  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String = {
+  def viewAsString(form: Form[?] = form, trustees: Seq[Trustee[?]] = Seq.empty): String = {
     val completeTrustees = trustees.filter(_.isCompleted)
     val inCompleteTrustees = trustees.filterNot(_.isCompleted)
     view(form, NormalMode, completeTrustees, inCompleteTrustees, None, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString

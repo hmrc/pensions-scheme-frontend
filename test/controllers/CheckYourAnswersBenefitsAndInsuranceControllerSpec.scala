@@ -23,7 +23,7 @@ import models.address.Address
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, UserAnswers}
+import utils.{FakeCountryOptions, UserAnswers, UserAnswerOps}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 

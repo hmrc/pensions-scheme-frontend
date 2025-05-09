@@ -37,7 +37,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
   "PartnershipEnterPAYEController" must {
 
     "render the view correctly on a GET request" in {
-      running(_.overrides(modules(getMandatoryEstablisherPartnership): _*)) {
+      running(_.overrides(modules(getMandatoryEstablisherPartnership)*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
           val result = controller.onPageLoad(CheckUpdateMode, index = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -50,7 +50,7 @@ class PartnershipEnterPAYEControllerSpec extends ControllerSpecBase with Matcher
       running(_.overrides(modules(getMandatoryEstablisherPartnership) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[PartnershipEnterPAYEController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("paye", "123456789"))

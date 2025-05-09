@@ -57,7 +57,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
 
   private def viewModel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (TrusteeNameId(index) and IndividualPostCodeLookupId(index)).retrieve.map {
+    TrusteeNameId(index).and(IndividualPostCodeLookupId(index)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(
           postCall = routes.IndividualAddressListController.onSubmit(mode, index, srn),

@@ -22,6 +22,7 @@ import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -81,7 +82,7 @@ class EmailConnectorImpl @Inject()(httpClientV2: HttpClientV2, config: FrontendA
             logger.warn(s"Email not sent. Failure with response status $status")
             EmailNotSent
         }
-      } recoverWith logExceptions
+      }.recoverWith(logExceptions)
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {

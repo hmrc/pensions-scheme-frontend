@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.individual
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.individual.TrusteeNameId
@@ -29,16 +28,14 @@ import views.html.register.whatYouWillNeedIndividualDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                           override val messagesApi: MessagesApi,
+class WhatYouWillNeedIndividualDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            requireData: DataRequiredAction,
                                                            val controllerComponents: MessagesControllerComponents,
                                                            val view: whatYouWillNeedIndividualDetails
-                                                          ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                          ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

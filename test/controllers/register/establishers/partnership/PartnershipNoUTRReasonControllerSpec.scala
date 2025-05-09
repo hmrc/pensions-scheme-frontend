@@ -19,15 +19,15 @@ package controllers.register.establishers.partnership
 import controllers.ControllerSpecBase
 import forms.ReasonFormProvider
 import identifiers.register.establishers.partnership.PartnershipNoUTRReasonId
-import models._
+import models.*
 import navigators.Navigator
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status, *}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
@@ -52,13 +52,13 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[reason]
 
-  private def viewAsString(form: Form[_] = form): String =
+  private def viewAsString(form: Form[?] = form): String =
     view(form, viewModel, schemeName)(fakeRequest, messages).toString
 
   "PartnershipNoUTRReasonController" when {
     "on a GET" must {
       "return OK and the correct view" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction)*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipNoUTRReasonController]
             val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -69,7 +69,7 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
       }
 
       "return OK and the correct view where question already answered" in {
-        running(_.overrides(modules(fullAnswers.set(PartnershipNoUTRReasonId(index))(dummyNoUtrReason).asOpt.value.dataRetrievalAction): _*)) {
+        running(_.overrides(modules(fullAnswers.set(PartnershipNoUTRReasonId(index))(dummyNoUtrReason).asOpt.value.dataRetrievalAction)*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipNoUTRReasonController]
             val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -86,7 +86,7 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
           modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
-            ): _*)) {
+            )*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", dummyNoUtrReason))
@@ -102,7 +102,7 @@ class PartnershipNoUTRReasonControllerSpec extends ControllerSpecBase {
           modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
-            ): _*)) {
+            )*)) {
           app =>
             val controller = app.injector.instanceOf[PartnershipNoUTRReasonController]
             val postRequest = fakeRequest.withFormUrlEncodedBody(("reason", "{invalid value}"))

@@ -115,11 +115,11 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with OptionValues wi
         app =>
           when(userAnswersService.upsert(
             any(), any(), any())(any(), any(), any())
-          ) thenReturn Future.successful(Json.obj())
+          ).thenReturn(Future.successful(Json.obj()))
 
           when(userAnswersService.save[Address, PreviousAddressId.type](
             any(), any(), eqTo(PreviousAddressId), any())(any(), any(), any(), any())
-          ) thenReturn Future.successful(Json.obj())
+          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> "true"
@@ -147,7 +147,7 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with OptionValues wi
 
           when(userAnswersService.upsert(
             any(), any(), any())(any(), any(), any())
-          ) thenReturn Future.successful(Json.obj())
+          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> "true"
@@ -176,7 +176,7 @@ class ConfirmPreviousAddressControllerSpec extends SpecBase with OptionValues wi
 
           when(userAnswersService.save(
             any(), any(), any(), any())(any(), any(), any(), any())
-          ) thenReturn Future.successful(Json.obj())
+          ).thenReturn(Future.successful(Json.obj()))
 
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> "false"

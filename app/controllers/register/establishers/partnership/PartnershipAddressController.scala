@@ -52,11 +52,10 @@ class PartnershipAddressController @Inject()(
                                               val auditService: AuditService,
                                               val controllerComponents: MessagesControllerComponents,
                                               val view: manualAddress
-                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with
-  I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
+  private[controllers] val postCall = routes.PartnershipAddressController.onSubmit
   private[controllers] val title: Message = "messages__partnershipAddress__title"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__partnershipAddress__lede"

@@ -16,7 +16,6 @@
 
 package controllers.register.trustees.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
@@ -35,7 +34,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipDetailsController @Inject()(
-                                              appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
                                               userAnswersService: UserAnswersService,
                                               navigator: Navigator,
@@ -63,7 +61,7 @@ class PartnershipDetailsController @Inject()(
   (mode, srn) andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
+        (formWithErrors: Form[?]) => {
           val submitUrl = controllers.register.trustees.partnership.routes.PartnershipDetailsController
             .onSubmit(mode, index, srn)
           Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))

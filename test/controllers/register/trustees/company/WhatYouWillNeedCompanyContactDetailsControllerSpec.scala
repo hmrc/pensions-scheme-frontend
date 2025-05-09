@@ -18,10 +18,10 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.register.trustees.company.routes.CompanyEmailController
-import models._
+import models.*
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import views.html.register.whatYouWillNeedContactDetails
 
@@ -39,7 +39,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Subscription" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteesCompanyDetails(Index(0), trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteesCompanyDetails(Index(0), trusteeName).dataRetrievalAction)*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
           val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -53,7 +53,7 @@ class WhatYouWillNeedCompanyContactDetailsControllerSpec extends ControllerSpecB
     "in Variation" must {
       "return the correct view on a GET" in {
         running(_.overrides(
-          modules(UserAnswers().trusteesCompanyDetails(Index(0), trusteeName).dataRetrievalAction): _*
+          modules(UserAnswers().trusteesCompanyDetails(Index(0), trusteeName).dataRetrievalAction)*
         )) { app =>
           val controller = app.injector.instanceOf[WhatYouWillNeedCompanyContactDetailsController]
           val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)

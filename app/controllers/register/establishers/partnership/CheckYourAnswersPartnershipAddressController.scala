@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.helpers.CheckYourAnswersControllerHelper._
@@ -36,8 +35,7 @@ import views.html.checkYourAnswers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersPartnershipAddressController @Inject()(appConfig: FrontendAppConfig,
-                                                             override val messagesApi: MessagesApi,
+class CheckYourAnswersPartnershipAddressController @Inject()(override val messagesApi: MessagesApi,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              @NoSuspendedCheck allowAccess: AllowAccessActionProvider,

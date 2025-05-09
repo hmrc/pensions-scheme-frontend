@@ -66,7 +66,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   "PartnerPreviousAddressPostcodeLookup Controller" must {
 
     "return OK and the correct view for a GET" in {
-      running(_.overrides(modules(getMandatoryPartner): _*)) {
+      running(_.overrides(modules(getMandatoryPartner)*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerPreviousAddressPostcodeLookupController]
           val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -81,7 +81,7 @@ class PartnerPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService),
           bind[AddressLookupConnector].toInstance(addressLookupConnector)
-        ): _*)) {
+        )*)) {
         app =>
           when(addressLookupConnector.addressLookupByPostCode(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(Seq(address)))
           val controller = app.injector.instanceOf[PartnerPreviousAddressPostcodeLookupController]

@@ -16,7 +16,6 @@
 
 package controllers.register.establishers
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
@@ -43,7 +42,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeleteEstablisherController @Inject()(
-                                                    appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     val userAnswersService: UserAnswersService,
                                                     @Establishers navigator: Navigator,
@@ -127,7 +125,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                     srn: OptionalSchemeReferenceNumber)(implicit dataRequest: DataRequest[AnyContent])
   : Future[Result] = {
     form(name).bindFromRequest().fold(
-      (formWithErrors: Form[_]) =>
+      (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(
           formWithErrors,
           name,

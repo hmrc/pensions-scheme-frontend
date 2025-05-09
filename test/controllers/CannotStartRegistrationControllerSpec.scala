@@ -24,7 +24,7 @@ class CannotStartRegistrationControllerSpec extends ControllerSpecBase {
   val view: cannotStartRegistration = app.injector.instanceOf[cannotStartRegistration]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CannotStartRegistrationController =
-    new CannotStartRegistrationController(frontendAppConfig, messagesApi, FakeAuthAction, controllerComponents, view)
+    new CannotStartRegistrationController(messagesApi, FakeAuthAction, controllerComponents, view)
 
   private def viewAsString() = view()(fakeRequest, messages).toString
 

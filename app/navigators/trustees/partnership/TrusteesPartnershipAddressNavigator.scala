@@ -36,11 +36,10 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   import TrusteesPartnershipAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
-                                       ua: UserAnswers,
-                                       srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
+                                       ua: UserAnswers): PartialFunction[Identifier, Call] = {
     case PartnershipPostcodeLookupId(index) => PartnershipAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case PartnershipAddressListId(index) if mode == NormalMode =>
       PartnershipAddressYearsController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
@@ -58,7 +57,7 @@ class TrusteesPartnershipAddressNavigator @Inject()(val dataCacheConnector: User
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers), from.id)
 
   override protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     navigateTo(updateModeRoutes(UpdateMode, from.userAnswers, srn), from.id)

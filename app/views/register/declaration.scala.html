@@ -18,7 +18,6 @@
 
 @this(
     layout: templates.Layout,
-    appConfig: FrontendAppConfig,
     button_link: components.button_link
 )
 
@@ -29,7 +28,7 @@
     hasWorkingKnowledge: Boolean,
     schemeName: Option[String],
     href: Call
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__declaration__title")) {
 

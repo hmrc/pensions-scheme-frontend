@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
@@ -36,7 +35,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OtherDirectorsController @Inject()(
-                                          appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           userAnswersService: UserAnswersService,
                                           @EstablishersCompany navigator: Navigator,
@@ -69,7 +67,7 @@ class OtherDirectorsController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(
               view(formWithErrors, mode, establisherIndex, existingSchemeName, postCall(mode, srn, establisherIndex),
                 srn))),
@@ -79,5 +77,5 @@ class OtherDirectorsController @Inject()(
         )
     }
 
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit
 }

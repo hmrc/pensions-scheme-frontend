@@ -41,7 +41,6 @@ class AlreadyDeletedControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction): AlreadyDeletedController =
     new AlreadyDeletedController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

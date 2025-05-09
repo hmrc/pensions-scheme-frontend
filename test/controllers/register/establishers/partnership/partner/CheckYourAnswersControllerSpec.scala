@@ -20,14 +20,13 @@ import base.SpecBase
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAllowAccessProvider, FakeAuthAction}
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.establishers.partnership.partner._
+import identifiers.register.establishers.partnership.partner.*
+import models.*
 import models.Mode.checkMode
 import models.address.Address
 import models.person.PersonName
-import models._
-import play.api.test.Helpers.{contentAsString, status, _}
-import services.FakeUserAnswersService
-import utils.{FakeCountryOptions, FakeDataRequest, FakeNavigator, UserAnswers, _}
+import play.api.test.Helpers.{contentAsString, status, *}
+import utils.{AllowChangeHelper, FakeCountryOptions, FakeDataRequest, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -35,7 +34,7 @@ import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour {
 
-  import CheckYourAnswersControllerSpec._
+  import CheckYourAnswersControllerSpec.*
 
   implicit val countryOptions: FakeCountryOptions = new FakeCountryOptions()
   implicit val request: FakeDataRequest = FakeDataRequest(partnerAnswers)
@@ -45,14 +44,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ControllerA
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersController =
     new CheckYourAnswersController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
-      FakeUserAnswersService,
-      new FakeNavigator(desiredRoute),
       countryOptions,
       allowChangeHelper,
       controllerComponents,
@@ -135,7 +131,6 @@ object CheckYourAnswersControllerSpec extends SpecBase {
   private val srn = Some(SchemeReferenceNumber("srn"))
   private val personName = PersonName("first name", "last name")
   private val address = Address("Address 1", "Address 2", None, None, None, "GB")
-  private val desiredRoute = controllers.routes.IndexController.onPageLoad
 
   private val partnerAnswers = UserAnswers()
     .set(PartnerNameId(firstIndex, firstIndex))(personName)

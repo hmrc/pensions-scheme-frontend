@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.InsuranceCompanyNameFormProvider
 import identifiers.InsuranceCompanyNameId
@@ -34,8 +33,7 @@ import views.html.insuranceCompanyName
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
+class InsuranceCompanyNameController @Inject()(override val messagesApi: MessagesApi,
                                                @InsuranceService userAnswersService: UserAnswersService,
                                                @AboutBenefitsAndInsurance navigator: Navigator,
                                                authenticate: AuthAction,
@@ -62,7 +60,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
     andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName,
             controllers.routes.InsuranceCompanyNameController.onSubmit(mode, srn), srn))),
         value =>

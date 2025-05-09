@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company.director
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonNameFormProvider
@@ -39,7 +38,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorNameController @Inject()(
-                                        appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         userAnswersService: UserAnswersService,
                                         @EstablishersCompanyDirector navigator: Navigator,
@@ -68,7 +66,7 @@ class DirectorNameController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, establisherIndex, directorIndex, srn),
               existingSchemeName)))
           ,

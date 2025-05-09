@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.trustees.individual._
+import identifiers.register.trustees.individual.*
 import models.address.TolerantAddress
 import models.person.PersonName
 import models.{EmptyOptionalSchemeReferenceNumber, Index, NormalMode, person}
@@ -29,9 +29,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, route, running, status, _}
+import play.api.test.Helpers.{contentAsString, route, running, status, *}
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList

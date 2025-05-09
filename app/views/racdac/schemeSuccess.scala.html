@@ -24,13 +24,12 @@
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
     appConfig: FrontendAppConfig,
     panel: components.panel,
     submit_button: components.submit_button
 )
 
-@(email:String, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(email:String, schemeName: String)(implicit request: Request[?], messages: Messages)
 
 @yourSchemesLink = {<a id="check-status-submission" class="govuk-link" href="@appConfig.managePensionsYourPensionSchemesUrl">@messages("messages__complete_racdac__copy_2_link")</a>}
 

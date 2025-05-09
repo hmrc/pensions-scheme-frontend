@@ -132,7 +132,7 @@ class PartnerNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
     case PartnerNoUTRReasonId(estIndex, partnerIndex) => cyaPage(mode, estIndex, partnerIndex, srn)
     case PartnerAddressId(estIndex, partnerIndex) if isNewPartner(estIndex, partnerIndex, ua) => cyaPage(mode,
       estIndex, partnerIndex, srn)
-    case PartnerAddressId(estIndex, partnerIndex) => isThisPaPage(mode, estIndex, partnerIndex, srn)
+    case PartnerAddressId(estIndex, partnerIndex) => isThisPaPage(estIndex, partnerIndex, srn)
     case id@PartnerConfirmPreviousAddressId(estIndex, partnerIndex) =>
       booleanNav(id, ua, anyMoreChangesPage(srn), paPostcodeLookupPage(mode, estIndex, partnerIndex, srn))
     case id@PartnerAddressYearsId(estIndex, partnerIndex) => partnerAddressYearsRoutes(mode, ua, estIndex,
@@ -161,7 +161,7 @@ object PartnerNavigator {
   private def isNewPartner(estIndex: Int, partnerIndex: Int, ua: UserAnswers): Boolean =
     ua.get(IsNewPartnerId(estIndex, partnerIndex)).getOrElse(false)
 
-  private def isThisPaPage(mode: Mode, estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
+  private def isThisPaPage(estIndex: Int, partnerIndex: Int, srn: OptionalSchemeReferenceNumber): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(estIndex, partnerIndex, srn)
 
   private def addPartnerPage(mode: Mode, estIndex: Int, srn: OptionalSchemeReferenceNumber): Call =

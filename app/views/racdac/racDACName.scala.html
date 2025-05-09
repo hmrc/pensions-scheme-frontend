@@ -31,7 +31,7 @@
         submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, psaName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, psaName: String)(implicit request: Request[?], messages: Messages)
 
 @layout(
     pageTitle = titleWithErrors(form, messages("messages__racdac_name__title"))) {

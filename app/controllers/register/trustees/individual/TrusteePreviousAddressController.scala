@@ -60,7 +60,7 @@ class TrusteePreviousAddressController @Inject()(
       TrusteeNameId(trusteeIndex).retrieve.map(_.fullName)
   }
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
+  private[controllers] val postCall = TrusteePreviousAddressController.onSubmit
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

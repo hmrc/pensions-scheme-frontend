@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.PartnerNameId
@@ -29,9 +29,9 @@ import navigators.Navigator
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.addPartners
 
@@ -71,7 +71,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)
 
-  private def viewAsString(form: Form[_] = form, completePartners: Seq[PartnerEntity] = Nil, incompletePartners: Seq[PartnerEntity] = Nil) =
+  private def viewAsString(form: Form[?] = form, completePartners: Seq[PartnerEntity] = Nil, incompletePartners: Seq[PartnerEntity] = Nil) =
     view(
       form,
       completePartners,
@@ -156,7 +156,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
 
     "redirect to the next page when maximum partners exist and the user submits" in {
       val partners = Seq.fill(maxPartners)(johnDoe)
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners*)))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -170,7 +170,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase with BeforeAndAfterEa
           PartnerNameId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2),
         PartnerEntity(
           PartnerNameId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false, isNewEntity = false, 2))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK

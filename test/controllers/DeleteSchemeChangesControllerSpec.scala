@@ -62,7 +62,7 @@ class DeleteSchemeChangesControllerSpec extends ControllerSpecBase with MockitoS
       view
     )
 
-  def viewAsString(form: Form[_] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, schemeName, postCall, psaName)(fakeRequest, messages).toString
 
   override def beforeEach(): Unit = {
     reset(fakeCacheConnector)

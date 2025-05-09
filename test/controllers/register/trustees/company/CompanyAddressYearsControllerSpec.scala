@@ -64,7 +64,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       controllerComponents,
       view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, viewmodel, None)(fakeRequest, messages).toString
+  def viewAsString(form: Form[?] = form): String = view(form, viewmodel, None)(fakeRequest, messages).toString
 
   val validData: JsResult[UserAnswers] = UserAnswers()
     .set(CompanyDetailsId(0))(companyDetails)

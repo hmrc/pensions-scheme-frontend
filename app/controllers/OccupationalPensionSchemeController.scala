@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.OccupationalPensionSchemeFormProvider
@@ -34,8 +33,7 @@ import views.html.occupationalPensionScheme
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
+class OccupationalPensionSchemeController @Inject()(override val messagesApi: MessagesApi,
                                                     dataCacheConnector: UserAnswersCacheConnector,
                                                     @AboutBenefitsAndInsurance navigator: Navigator,
                                                     authenticate: AuthAction,
@@ -64,7 +62,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeName))),
           value =>
             dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>

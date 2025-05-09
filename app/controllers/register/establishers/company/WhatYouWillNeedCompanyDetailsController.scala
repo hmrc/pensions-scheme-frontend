@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -29,16 +28,14 @@ import views.html.register.establishers.company.whatYouWillNeedCompanyDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedCompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                        override val messagesApi: MessagesApi,
+class WhatYouWillNeedCompanyDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                         authenticate: AuthAction,
                                                         getData: DataRetrievalAction,
                                                         allowAccess: AllowAccessActionProvider,
                                                         requireData: DataRequiredAction,
                                                         val view: whatYouWillNeedCompanyDetails,
                                                         val controllerComponents: MessagesControllerComponents
-                                                       ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                       ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

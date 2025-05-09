@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
+@import controllers.routes.HaveAnyTrusteesController
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -31,7 +31,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, schemeName:String)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__haveAnyTrustees__title"))){
 

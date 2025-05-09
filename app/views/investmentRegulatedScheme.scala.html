@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
+@import controllers.routes.InvestmentRegulatedSchemeController
 @import models.Mode
 @import utils.ViewHelper.titleWithErrors
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -29,7 +29,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], mode: Mode, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], mode: Mode, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__investment_regulated_scheme__title"))){
 

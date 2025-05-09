@@ -53,7 +53,6 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorNameController =
     new DirectorNameController(
-      frontendAppConfig,
       messagesApi,
       mockUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -67,7 +66,7 @@ class DirectorNameControllerSpec extends ControllerSpecBase {
     )
 
 
-  def viewAsString(form: Form[_] = form): String = view(
+  def viewAsString(form: Form[?] = form): String = view(
     form,
     viewmodel,
     None)(fakeRequest, messages).toString

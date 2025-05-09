@@ -75,7 +75,7 @@ trait UserAnswersService {
     }
   }
 
-  def remove[I <: TypedIdentifier[_]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
+  def remove[I <: TypedIdentifier[?]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I)
                                      (implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier,

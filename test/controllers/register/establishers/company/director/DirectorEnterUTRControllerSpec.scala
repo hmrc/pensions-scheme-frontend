@@ -37,7 +37,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
 
   "DirectorEnterUTRController" must {
     "render the view correctly on a GET request" in {
-      running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName): _*)) {
+      running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName)*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
           val result = controller.onPageLoad(NormalMode, establisherIndex = 0, directorIndex = 0, OptionalSchemeReferenceNumber(srn))(fakeRequest)
@@ -50,7 +50,7 @@ class DirectorEnterUTRControllerSpec extends ControllerSpecBase with Matchers {
       running(_.overrides(modules(getMandatoryEstablisherCompanyDirectorWithDirectorName) ++
         Seq[GuiceableModule](bind[Navigator].qualifiedWith(classOf[EstablishersCompanyDirector]).toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) {
+        )*)) {
         app =>
           val controller = app.injector.instanceOf[DirectorEnterUTRController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("utr", "1234567890"))

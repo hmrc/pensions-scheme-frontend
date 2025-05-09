@@ -130,8 +130,8 @@ class OldEstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Na
           row(HasCompanyPAYEId(0))(false, cyaCompanyDetails(NormalMode)),
           rowNoValue(CompanyNoCRNReasonId(0))(cyaCompanyDetails(NormalMode)),
           rowNoValue(CompanyEnterPAYEId(0))(cyaCompanyDetails(NormalMode)),
-          rowNoValue(CompanyAddressListId(0))(getCya(NormalMode, cyaCompanyAddressDetails(NormalMode))),
-          rowNoValueNewEstablisher(CompanyAddressListId(0))(getCya(NormalMode, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))))
+          rowNoValue(CompanyAddressListId(0))(getCya(cyaCompanyAddressDetails(NormalMode))),
+          rowNoValueNewEstablisher(CompanyAddressListId(0))(getCya(exitJourney(NormalMode, newEstablisher, 0, cyaCompanyAddressDetails(NormalMode))))
         )
 
       behave like navigatorWithRoutesForMode(CheckMode)(navigator, navigation ,EmptyOptionalSchemeReferenceNumber)
@@ -266,7 +266,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
 
   private def startDirectorJourney(mode: Mode, index: Index) = directorName(mode, index)
 
-  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, Index(0), EmptyOptionalSchemeReferenceNumber)
+  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, EmptyOptionalSchemeReferenceNumber)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
 
@@ -375,7 +375,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
 
   private def addCompanyDirectorsMoreThanTen =
-    UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
+    UserAnswers(validData(Seq.fill(10)(johnDoe)*))
 
   private def addOneCompanyDirectors =
     UserAnswers(validData(johnDoe))
@@ -384,7 +384,7 @@ object OldEstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.
   private def addOneCompanyDirectorsTrusteeAlsoDirector =
     UserAnswers(validData(johnDoe)).setOrException(TrusteeAlsoDirectorId(0))(1)
 
-  private def getCya(mode: Mode, cyaPage: Call) = cyaPage
+  private def getCya(cyaPage: Call) = cyaPage
 
   private def previousAddressRoutes(mode: Mode) =
     cyaCompanyAddressDetails(mode)

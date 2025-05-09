@@ -17,21 +17,21 @@
 package controllers.register.trustees.partnership
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.trustees.routes.PsaSchemeTaskListRegistrationTrusteeController
 import identifiers.register.trustees.partnership.{PartnershipEmailId, PartnershipPhoneId}
 import models.Mode.checkMode
-import models._
+import models.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.annotations.NoSuspendedCheck
 import utils.checkyouranswers.CheckYourAnswers.StringCYA
-import utils.{CountryOptions, FakeCountryOptions, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
@@ -92,7 +92,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
       "return OK and the correct view with full answers" when {
         "Normal Mode" in {
           running(_.overrides(modules(fullAnswers.dataRetrievalAction) ++
-            Seq[GuiceableModule](): _*)) {
+            Seq[GuiceableModule]()*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -109,7 +109,7 @@ class CheckYourAnswersPartnershipContactDetailsControllerSpec extends Controller
             bind[AuthAction].toInstance(FakeAuthAction),
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction))
-          running(_.overrides(ftBinding: _*)) {
+          running(_.overrides(ftBinding*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersPartnershipContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)

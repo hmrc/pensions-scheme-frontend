@@ -20,8 +20,8 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
-import controllers.actions._
-import controllers.register.trustees.individual.routes._
+import controllers.actions.*
+import controllers.register.trustees.individual.routes.*
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual.{TrusteeNameId, TrusteePreviousAddressId}
 import models.address.Address
@@ -35,9 +35,9 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.CSRFTokenHelper.addCSRFToken
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress

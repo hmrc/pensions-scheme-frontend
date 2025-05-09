@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.benefitsSecuredByInsurance
 
 class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -42,7 +42,7 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
   private val postCall = controllers.routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[benefitsSecuredByInsurance]
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, NormalMode, Some("Test Scheme Name"), postCall, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString()
 
   private def controller(
@@ -52,7 +52,6 @@ class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPag
     cache: UserAnswersService = FakeUserAnswersService
   ): BenefitsSecuredByInsuranceController =
     new BenefitsSecuredByInsuranceController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

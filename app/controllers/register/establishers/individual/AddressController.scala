@@ -55,7 +55,7 @@ class AddressController @Inject()(
                                  )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = routes.AddressController.onSubmit _
+  private[controllers] val postCall = routes.AddressController.onSubmit
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__establisher_individual_address_lede"
 

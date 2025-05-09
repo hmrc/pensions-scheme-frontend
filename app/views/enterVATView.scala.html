@@ -28,7 +28,7 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_], viewmodel: EnterVATViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[?], viewmodel: EnterVATViewModel, schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, viewmodel.title)) {
 

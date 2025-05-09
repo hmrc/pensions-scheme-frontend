@@ -87,7 +87,7 @@ class NinoControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, viewmodel, None)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, viewmodel, None)(fakeRequest, messages).toString
 
 
   "NinoController" must {

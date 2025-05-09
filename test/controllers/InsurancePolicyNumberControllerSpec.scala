@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -78,7 +78,7 @@ object InsurancePolicyNumberControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
-  private def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String = form => {
+  def viewAsString(base: SpecBase)(form: Form[?]): Form[?] => String = form => {
     val view = base.injector.instanceOf[insurancePolicyNumber]
     view(form, NormalMode, Some(companyName), None, postUrl, EmptyOptionalSchemeReferenceNumber)(base.fakeRequest, base.messages).toString()
   }
@@ -91,7 +91,6 @@ object InsurancePolicyNumberControllerSpec {
   ): InsurancePolicyNumberController = {
     val view = base.injector.instanceOf[insurancePolicyNumber]
     new InsurancePolicyNumberController(
-      base.frontendAppConfig,
       base.messagesApi,
       cache,
       navigator,

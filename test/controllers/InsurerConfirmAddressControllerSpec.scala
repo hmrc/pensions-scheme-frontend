@@ -40,7 +40,7 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
 
   val view = injector.instanceOf[manualAddress]
 
-  def viewAsString(form: Form[_]): Form[_] => String =
+  def viewAsString(form: Form[?]): Form[?] => String =
     form =>
       view(
         form,ManualAddressViewModel(

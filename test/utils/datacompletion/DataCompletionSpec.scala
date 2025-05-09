@@ -30,7 +30,7 @@ import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.JsValue
-import utils.{Enumerable, UserAnswers}
+import utils.{Enumerable, UserAnswers, UserAnswerOps}
 
 class DataCompletionSpec extends AnyWordSpec with Matchers with OptionValues with Enumerable.Implicits {
 

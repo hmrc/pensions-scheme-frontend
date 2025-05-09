@@ -46,7 +46,7 @@ class PartnerEnterNINOControllerSpec extends ControllerSpecBase {
     new PartnerEnterNINOController(frontendAppConfig, messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  private def viewAsString(form: Form[_] = form): String = {
+  private def viewAsString(form: Form[?] = form): String = {
     val viewmodel = NinoViewModel(
       postCall = PartnerEnterNINOController.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber),
       title = Message("messages__enterNINO", Message("messages__thePartner")),

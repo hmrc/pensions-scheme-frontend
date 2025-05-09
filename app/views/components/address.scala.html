@@ -25,7 +25,7 @@
     input_text: components.input_text
 )
 
-@(form: Form[_], options: Seq[InputOption])(implicit messages: Messages)
+@(form: Form[?], options: Seq[InputOption])(implicit messages: Messages)
 
 @input_text(
     field = form("addressLine1"),

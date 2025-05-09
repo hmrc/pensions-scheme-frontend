@@ -24,9 +24,9 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.emailAddress
 
@@ -48,7 +48,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
 
   private val view = injector.instanceOf[emailAddress]
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       CommonFormWithHintViewModel(
@@ -65,7 +65,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        running(_.overrides(modules(fullAnswers.dataRetrievalAction): _*)) {
+        running(_.overrides(modules(fullAnswers.dataRetrievalAction)*)) {
           app =>
           val controller = app.injector.instanceOf[PartnershipEmailController]
           val result = controller.onPageLoad(NormalMode, firstIndex, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -82,7 +82,7 @@ class PartnershipEmailControllerSpec extends ControllerSpecBase {
           modules(fullAnswers.dataRetrievalAction) ++
             Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[UserAnswersService].toInstance(FakeUserAnswersService)
-            ): _*)) {
+            )*)) {
           app =>
           val controller = app.injector.instanceOf[PartnershipEmailController]
           val postRequest = fakeRequest.withFormUrlEncodedBody(("email", email))

@@ -48,7 +48,7 @@ class PartnerEnterNINOController @Inject()(
                                           )(implicit val ec: ExecutionContext) extends NinoController with I18nSupport {
 
   private[controllers] val postCall = controllers.register.establishers.partnership.partner.routes
-    .PartnerEnterNINOController.onSubmit _
+    .PartnerEnterNINOController.onSubmit
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

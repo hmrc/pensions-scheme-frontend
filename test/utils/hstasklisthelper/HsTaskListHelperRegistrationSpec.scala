@@ -18,26 +18,26 @@ package utils.hstasklisthelper
 
 import config.FrontendAppConfig
 import helpers.DataCompletionHelper
-import identifiers._
+import identifiers.*
 import identifiers.register.trustees.individual.TrusteeNameId
-import models._
+import models.*
 import models.person.PersonName
 import models.register.SchemeType
 import models.register.establishers.EstablisherKind
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import utils.{Enumerable, UserAnswers}
-import viewmodels._
+import utils.{Enumerable, UserAnswerOps, UserAnswers}
+import viewmodels.*
 
 import java.time.{Clock, Instant, ZoneOffset}
 
 class HsTaskListHelperRegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with DataCompletionHelper with BeforeAndAfterEach {
 
-  import HsTaskListHelperRegistrationSpec._
+  import HsTaskListHelperRegistrationSpec.*
 
   private val mockSpokeCreationService = mock[SpokeCreationService]
   private val mockAppConfig = mock[FrontendAppConfig]

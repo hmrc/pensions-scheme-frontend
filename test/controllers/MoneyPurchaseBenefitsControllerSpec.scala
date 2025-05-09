@@ -44,7 +44,7 @@ class MoneyPurchaseBenefitsControllerSpec extends ControllerSpecBase {
     new MoneyPurchaseBenefitsController(messagesApi, FakeUserAnswersService, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, FakeAllowAccessProvider(), new DataRequiredActionImpl, formProvider, controllerComponents, view)
 
-  def viewAsString(form: Form[_] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, EmptyOptionalSchemeReferenceNumber),
+  def viewAsString(form: Form[?] = form): String = view(form, NormalMode, Some(schemeName), postCall(NormalMode, EmptyOptionalSchemeReferenceNumber),
                                                                                                  EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString
 
   private val validData = Json.obj(

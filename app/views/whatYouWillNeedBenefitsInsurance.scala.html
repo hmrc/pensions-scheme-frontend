@@ -15,19 +15,17 @@
  *@
 
 @import config.FrontendAppConfig
-@import controllers.routes._
+@import controllers.routes.WhatYouWillNeedBenefitsInsuranceController
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF => PlayFrontendFormWithCSRF}
 
 @this(
     layout: templates.Layout,
     formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    appConfig: FrontendAppConfig,
     submit_button: components.submit_button
 )
 
-@(schemeName: Option[String])(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String])(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__what_you_will_need_benefits__title")) {
 

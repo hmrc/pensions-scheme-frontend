@@ -74,8 +74,9 @@ object WorkingKnowledgeNavigatorSpec {
 
   private def checkYourAnswersPage = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
 
-  private def adviserEmail(mode: Mode): Call = controllers.routes.AdviserEmailAddressController.onPageLoad(NormalMode)
-  private def adviserPhone(mode: Mode): Call = controllers.routes.AdviserPhoneController.onPageLoad(NormalMode)
+  private def adviserEmail(mode: Mode = NormalMode): Call = controllers.routes.AdviserEmailAddressController.onPageLoad(mode)
+  
+  private def adviserPhone(mode: Mode = NormalMode): Call = controllers.routes.AdviserPhoneController.onPageLoad(mode)
 
   private def adviserCYA: Call = controllers.routes.AdviserCheckYourAnswersController.onPageLoad()
 }

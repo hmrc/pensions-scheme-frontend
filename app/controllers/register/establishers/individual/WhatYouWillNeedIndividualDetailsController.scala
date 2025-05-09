@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.individual
 
-import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.register.establishers.individual.routes._
@@ -30,16 +29,14 @@ import views.html.register.whatYouWillNeedIndividualDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedIndividualDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                           override val messagesApi: MessagesApi,
+class WhatYouWillNeedIndividualDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            allowAccess: AllowAccessActionProvider,
                                                            requireData: DataRequiredAction,
                                                            val view: whatYouWillNeedIndividualDetails,
                                                            val controllerComponents: MessagesControllerComponents
-                                                          ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                          ) extends FrontendBaseController with I18nSupport with Retrievals {
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
     implicit request =>

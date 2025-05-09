@@ -27,9 +27,9 @@ import navigators.Navigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -69,7 +69,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
   "Company Partner Address List Controller" must {
 
     "return Ok and the correct view on a GET request" in {
-      running(_.overrides(modules(dataRetrievalAction): _*)) { app =>
+      running(_.overrides(modules(dataRetrievalAction)*)) { app =>
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val view = app.injector.instanceOf[addressList]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -84,7 +84,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Company Address Post Code Lookup if no address data on a GET request" in {
-      running(_.overrides(modules(UserAnswers().dataRetrievalAction): _*)) { app =>
+      running(_.overrides(modules(UserAnswers().dataRetrievalAction)*)) { app =>
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
@@ -95,7 +95,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired controller when no session data exists on a GET request" in {
-      running(_.overrides(modules(dontGetAnyData): _*)) { app =>
+      running(_.overrides(modules(dontGetAnyData)*)) { app =>
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val result = controller.onPageLoad(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
@@ -108,7 +108,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dataRetrievalAction) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
@@ -123,7 +123,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(dontGetAnyData) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)
@@ -138,7 +138,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase {
       running(_.overrides(modules(getEmptyData) ++
         Seq[GuiceableModule](bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
         val controller = app.injector.instanceOf[PartnerAddressListController]
         val result = controller.onSubmit(NormalMode, establisherIndex = 0, partnerIndex = 0, EmptyOptionalSchemeReferenceNumber)(postRequest)

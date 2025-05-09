@@ -17,15 +17,15 @@
 package identifiers.register.establishers.company.director
 
 import base.SpecBase
-import models._
+import models.*
 import models.person.PersonName
 import models.requests.DataRequest
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, UserAnswers}
+import utils.checkyouranswers.Ops.*
+import utils.{CountryOptions, UserAnswerOps, UserAnswers}
 import viewmodels.{AnswerRow, Message}
 
 class DirectorEnterUTRIdSpec extends SpecBase {

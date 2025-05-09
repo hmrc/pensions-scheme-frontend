@@ -45,8 +45,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
                                              val auditService: AuditService,
                                              val controllerComponents: MessagesControllerComponents,
                                              val view: addressList
-                                            )(implicit val ec: ExecutionContext) extends AddressListController with
-  Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate() andThen getData() andThen requireData).async {
     implicit request =>
@@ -55,7 +54,7 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
 
   private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
     AddressListViewModel] = {
-    (AdviserAddressPostCodeLookupId and AdviserNameId).retrieve.map {
+     AdviserAddressPostCodeLookupId.and(AdviserNameId).retrieve.map {
       case addresses ~ name =>
         AddressListViewModel(
           postCall = routes.AdviserAddressListController.onSubmit(mode),

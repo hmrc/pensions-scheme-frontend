@@ -57,7 +57,6 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): OtherPartnersController =
     new OtherPartnersController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -70,7 +69,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       view
     )
   val submitUrl = controllers.register.establishers.partnership.routes.OtherPartnersController.onSubmit( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       NormalMode,

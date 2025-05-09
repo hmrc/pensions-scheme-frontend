@@ -28,7 +28,7 @@ import navigators.Navigator
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.investmentRegulatedScheme
 
 class InvestmentRegulatedSchemeControllerSpec extends SpecBase with ControllerWithQuestionPageBehaviours {
@@ -41,7 +41,7 @@ class InvestmentRegulatedSchemeControllerSpec extends SpecBase with ControllerWi
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private val view = injector.instanceOf[investmentRegulatedScheme]
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, NormalMode, Some(schemeName))(fakeRequest, messages).toString()
 
   private def controller(
@@ -51,7 +51,6 @@ class InvestmentRegulatedSchemeControllerSpec extends SpecBase with ControllerWi
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
   ): InvestmentRegulatedSchemeController =
     new InvestmentRegulatedSchemeController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

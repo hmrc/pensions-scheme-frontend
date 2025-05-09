@@ -74,7 +74,7 @@ class DirectorPreviousAddressListController @Inject()(override val appConfig: Fr
 
   private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, srn: OptionalSchemeReferenceNumber)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] =
-    (DirectorNameId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex,
+    DirectorNameId(establisherIndex, directorIndex).and(DirectorPreviousAddressPostcodeLookupId(establisherIndex,
       directorIndex)).retrieve.map {
       case name ~ addresses =>
         AddressListViewModel(

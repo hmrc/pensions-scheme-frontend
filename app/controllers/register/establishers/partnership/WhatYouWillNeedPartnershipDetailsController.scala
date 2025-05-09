@@ -16,9 +16,8 @@
 
 package controllers.register.establishers.partnership
 
-import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.{EmptyOptionalSchemeReferenceNumber, Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,16 +28,14 @@ import views.html.register.whatYouWillNeedPartnershipDetails
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class WhatYouWillNeedPartnershipDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                            override val messagesApi: MessagesApi,
+class WhatYouWillNeedPartnershipDetailsController @Inject()(override val messagesApi: MessagesApi,
                                                             authenticate: AuthAction,
                                                             getData: DataRetrievalAction,
                                                             allowAccess: AllowAccessActionProvider,
                                                             requireData: DataRequiredAction,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             val view: whatYouWillNeedPartnershipDetails
-                                                           ) extends FrontendBaseController with I18nSupport with
-  Retrievals {
+                                                           ) extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, index: Index): Action[AnyContent] = (authenticate() andThen
     getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

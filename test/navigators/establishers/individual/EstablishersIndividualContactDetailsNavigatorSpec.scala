@@ -92,7 +92,7 @@ object EstablishersIndividualContactDetailsNavigatorSpec extends SpecBase with M
   private val srn = Some(SchemeReferenceNumber("srn"))
 
   private def cyaContactDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
+    CheckYourAnswersContactDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
 }
 

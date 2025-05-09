@@ -36,5 +36,5 @@ object TypeOfBenefits {
   case object MoneyPurchaseDefinedMix extends WithName("opt3") with TypeOfBenefits
 
   implicit val enumerable: Enumerable[TypeOfBenefits] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

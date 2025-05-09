@@ -29,13 +29,13 @@
     submit_button: components.submit_button
 )
 
-@(form: Form[_],
+@(form: Form[?],
     schemeName:Option[String],
     dateToComplete: String,
     postCall: Call,
     srn: OptionalSchemeReferenceNumber,
     mode: Mode = UpdateMode
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__any_more_changes__title"))) {
 

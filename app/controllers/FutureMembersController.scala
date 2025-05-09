@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.FutureMembersFormProvider
@@ -34,8 +33,7 @@ import views.html.futureMembers
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
+class FutureMembersController @Inject()(override val messagesApi: MessagesApi,
                                         dataCacheConnector: UserAnswersCacheConnector,
                                         @AboutMembers navigator: Navigator,
                                         authenticate: AuthAction,
@@ -65,7 +63,7 @@ class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       SchemeNameId.retrieve.map { schemeName =>
         form(schemeName).bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(view(formWithErrors, mode, schemeName))),
           value =>
             dataCacheConnector.save(request.externalId, FutureMembersId, value).map(cacheMap =>

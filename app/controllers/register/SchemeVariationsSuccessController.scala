@@ -16,7 +16,6 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
 import connectors.UpdateSchemeCacheConnector
 import controllers.Retrievals
 import controllers.actions._
@@ -29,8 +28,7 @@ import views.html.register.schemeVariationsSuccess
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class SchemeVariationsSuccessController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
+class SchemeVariationsSuccessController @Inject()(override val messagesApi: MessagesApi,
                                                   cacheConnector: UpdateSchemeCacheConnector,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,

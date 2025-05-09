@@ -44,7 +44,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val formProvider = new OtherDirectorsFormProvider()
   val form = formProvider()
   val companyName = "test company name"
-  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit _
+  private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.OtherDirectorsController.onSubmit
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
@@ -59,7 +59,6 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): OtherDirectorsController =
     new OtherDirectorsController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -72,7 +71,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       NormalMode,

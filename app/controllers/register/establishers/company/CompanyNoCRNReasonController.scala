@@ -45,8 +45,7 @@ class CompanyNoCRNReasonController @Inject()(override val appConfig: FrontendApp
                                              formProvider: NoCompanyNumberFormProvider,
                                              val view: reason,
                                              val controllerComponents: MessagesControllerComponents
-                                            )(implicit val ec: ExecutionContext) extends ReasonController with
-  I18nSupport {
+                                            )(implicit val ec: ExecutionContext) extends ReasonController with I18nSupport {
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {

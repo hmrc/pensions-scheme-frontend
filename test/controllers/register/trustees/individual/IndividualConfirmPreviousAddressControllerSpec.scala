@@ -17,19 +17,19 @@
 package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.address.ConfirmAddressFormProvider
 import identifiers.register.trustees.ExistingCurrentAddressId
 import identifiers.register.trustees.individual.{IndividualConfirmPreviousAddressId, TrusteeNameId}
-import models._
+import models.*
 import models.address.Address
 import models.person.PersonName
 import play.api.data.Form
 import play.api.libs.json.JsResult
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FakeUserAnswersService
-import utils.{CountryOptions, FakeNavigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, UserAnswerOps, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ConfirmAddressViewModel
 import views.html.address.confirmPreviousAddress
@@ -83,7 +83,7 @@ class IndividualConfirmPreviousAddressControllerSpec extends ControllerSpecBase 
       view
     )
 
-  def viewAsString(form: Form[_] = form): String =
+  def viewAsString(form: Form[?] = form): String =
     view(
       form,
       viewmodel,

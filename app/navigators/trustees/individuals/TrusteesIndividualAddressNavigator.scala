@@ -38,14 +38,13 @@ class TrusteesIndividualAddressNavigator @Inject()(
   import TrusteesIndividualAddressNavigator._
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(NormalMode, from.userAnswers), from.id)
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
-    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers, EmptyOptionalSchemeReferenceNumber), from.id)
+    navigateTo(normalAndCheckModeRoutes(CheckMode, from.userAnswers), from.id)
 
   private def normalAndCheckModeRoutes(mode: SubscriptionMode,
-                                       ua: UserAnswers,
-                                       srn: OptionalSchemeReferenceNumber): PartialFunction[Identifier, Call] = {
+                                       ua: UserAnswers): PartialFunction[Identifier, Call] = {
     case IndividualPostCodeLookupId(index) =>
       IndividualAddressListController.onPageLoad(mode, index, EmptyOptionalSchemeReferenceNumber)
     case IndividualAddressListId(index) if mode == NormalMode =>

@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import services.{FakeUserAnswersService, UserAnswersService}
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers, UserAnswerOps}
 import views.html.insuranceCompanyName
 
 class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -46,7 +46,7 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
   private def postCall: Call = controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   private val view = injector.instanceOf[insuranceCompanyName]
-  private def viewAsString(form: Form[_]): Form[_] => String = form =>
+  def viewAsString(form: Form[?]): Form[?] => String = form =>
     view(form, NormalMode, Some(schemeName), postCall, EmptyOptionalSchemeReferenceNumber)(fakeRequest, messages).toString()
 
   private def controller(
@@ -56,7 +56,6 @@ class InsuranceCompanyNameControllerSpec extends ControllerWithQuestionPageBehav
     cache: UserAnswersService = FakeUserAnswersService
   ): InsuranceCompanyNameController =
     new InsuranceCompanyNameController(
-      frontendAppConfig,
       messagesApi,
       cache,
       navigator,

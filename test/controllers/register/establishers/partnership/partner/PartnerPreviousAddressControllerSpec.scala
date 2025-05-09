@@ -83,7 +83,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "render manualAddress from GET request" in {
       val postCall = routes.PartnerPreviousAddressController.onSubmit(NormalMode, establisherIndex, partnerIndex, EmptyOptionalSchemeReferenceNumber)
       running(_.overrides(modules(retrieval) ++
-        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions)): _*)) {
+        Seq[GuiceableModule](bind[CountryOptions].to(countryOptions))*)) {
         app =>
           val controller = app.injector.instanceOf[PartnerPreviousAddressController]
 
@@ -108,7 +108,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
             bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
             bind[UserAnswersService].toInstance(FakeUserAnswersService)
-          ): _*)) { app =>
+          )*)) { app =>
 
           val postRequest = fakeRequest.withFormUrlEncodedBody(
             ("addressLine1", address.addressLine1),
@@ -133,7 +133,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         Seq[GuiceableModule](bind[CountryOptions].to(countryOptions),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[UserAnswersService].toInstance(FakeUserAnswersService)
-        ): _*)) { app =>
+        )*)) { app =>
 
         val postRequest = fakeRequest.withFormUrlEncodedBody(
           ("addressLine1", address.addressLine1),

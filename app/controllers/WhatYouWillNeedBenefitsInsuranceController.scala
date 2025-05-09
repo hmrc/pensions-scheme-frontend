@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -27,8 +26,7 @@ import views.html.whatYouWillNeedBenefitsInsurance
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAppConfig,
-                                                           override val messagesApi: MessagesApi,
+class WhatYouWillNeedBenefitsInsuranceController @Inject()(override val messagesApi: MessagesApi,
                                                            authenticate: AuthAction,
                                                            getData: DataRetrievalAction,
                                                            val controllerComponents: MessagesControllerComponents,

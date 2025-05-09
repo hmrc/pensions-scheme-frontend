@@ -37,6 +37,6 @@ class IsDormantFormProviderSpec extends FormBehaviours {
         "value",
         Required -> "messages__is_dormant__error",
         Invalid -> "error.invalid"),
-      DeclarationDormant.options.map(_.value): _*)
+      DeclarationDormant.options.map(_.value)*)
   }
 }

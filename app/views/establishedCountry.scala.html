@@ -29,17 +29,16 @@
     appConfig: FrontendAppConfig,
     formHelper: PlayFrontendFormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
     govukSelect : GovukSelect,
     submit_button: components.submit_button
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     mode: Mode,
     options: Seq[InputOption],
     schemeName: String
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages("messages__established_country__title"))) {
 

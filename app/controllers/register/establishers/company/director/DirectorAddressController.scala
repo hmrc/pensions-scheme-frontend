@@ -53,11 +53,10 @@ class DirectorAddressController @Inject()(
                                            val auditService: AuditService,
                                            val controllerComponents: MessagesControllerComponents,
                                            val view: manualAddress
-                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with
-  I18nSupport {
+                                         )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
 
   protected val form: Form[Address] = formProvider()
-  private[controllers] val postCall = DirectorAddressController.onSubmit _
+  private[controllers] val postCall = DirectorAddressController.onSubmit
   private[controllers] val title: Message = "messages__common__confirmAddress__h1"
   private[controllers] val heading: Message = "messages__common__confirmAddress__h1"
   private[controllers] val hint: Message = "messages__directorAddressPostcodeLookup__lede"

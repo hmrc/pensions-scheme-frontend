@@ -150,7 +150,7 @@ class PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviou
         row(PartnerEnterUTRId(Index(0), index))(someRefValue, anyMoreChangesPage(OptionalSchemeReferenceNumber(Some(SchemeReferenceNumber(srn.get))))),
         row(PartnerNoUTRReasonId(Index(0), index))(someStringValue, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
         row(PartnerAddressId(Index(0), index))(someAddress, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
-        row(PartnerAddressId(Index(0), index))(someAddress, isThisPaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn))),
+        row(PartnerAddressId(Index(0), index))(someAddress, isThisPaPage(OptionalSchemeReferenceNumber(srn))),
         row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.UnderAYear, paPostcodeLookupPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
         row(PartnerAddressYearsId(Index(0), index))(value = AddressYears.OverAYear, emailPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
         row(PartnerPreviousAddressId(Index(0), index))(someAddress, cyaPage(CheckUpdateMode, OptionalSchemeReferenceNumber(srn)), Some(newPartnerUserAnswers)),
@@ -182,10 +182,10 @@ object PartnerNavigatorSpec extends SpecBase with Matchers with NavigatorBehavio
   }
 
   private val lessThan10Partners = UserAnswers(validData(johnDoe))
-  private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
+  private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe)*))
   private val newPartnerUserAnswers: UserAnswers = UserAnswers().set(IsNewPartnerId(Index(0), index))(value = true).asOpt.value
 
-  private def isThisPaPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =
+  private def isThisPaPage(srn: OptionalSchemeReferenceNumber): Call =
     PartnerConfirmPreviousAddressController.onPageLoad(Index(0), index, OptionalSchemeReferenceNumber(srn))
 
   private def otherPartnersPage(mode: Mode,  srn: OptionalSchemeReferenceNumber): Call =

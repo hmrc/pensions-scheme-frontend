@@ -29,14 +29,14 @@ import viewmodels.{Message, ReasonViewModel}
 import views.html.reason
 
 class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
-    private val schemeName = None
-    private def onwardRoute = controllers.routes.IndexController.onPageLoad
-    val formProvider = new ReasonFormProvider()
-    val name = "Test Name"
-    val form = formProvider("messages__reason__error_ninoRequired", name)
-    val index = Index(0)
-    val srn = None
-    val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
+  private val schemeName = None
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad
+  val formProvider = new ReasonFormProvider()
+  val name = "Test Name"
+  val form = formProvider("messages__reason__error_ninoRequired", name)
+  val index = Index(0)
+  val srn = None
+  val postCall = routes.TrusteeNoNINOReasonController.onSubmit(NormalMode, Index(0), OptionalSchemeReferenceNumber(srn))
 
   val viewmodel = ReasonViewModel(
     postCall = postCall,
@@ -61,7 +61,7 @@ class TrusteeNoNINOReasonControllerSpec extends ControllerSpecBase {
         view
       )
 
-    private def viewAsString(form: Form[_] = form) = view(form, viewmodel, schemeName)(fakeRequest, messages).toString
+    private def viewAsString(form: Form[?] = form) = view(form, viewmodel, schemeName)(fakeRequest, messages).toString
 
     "TrusteeNoNinoReasonController" must {
 

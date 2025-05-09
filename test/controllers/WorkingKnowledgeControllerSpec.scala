@@ -37,7 +37,6 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
   private val view = injector.instanceOf[workingKnowledge]
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WorkingKnowledgeController =
     new WorkingKnowledgeController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -48,7 +47,7 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[?] = form) = view(form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "WorkingKnowledgeController" must {
 

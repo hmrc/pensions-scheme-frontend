@@ -73,7 +73,7 @@ class MoneyPurchaseBenefitsController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
+          (formWithErrors: Form[?]) =>
             Future.successful(BadRequest(
               view(
                 form = formWithErrors,

@@ -17,22 +17,22 @@
 package navigators.establishers.partnership
 
 import base.SpecBase
-import controllers.register.establishers.partnership.routes._
-import controllers.register.establishers.routes._
+import controllers.register.establishers.partnership.routes.*
+import controllers.register.establishers.routes.*
 import identifiers.Identifier
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.partnership._
-import models._
+import identifiers.register.establishers.partnership.*
+import models.*
 import navigators.{Navigator, NavigatorBehaviour}
-import org.scalatest.prop._
+import org.scalatest.prop.*
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import utils.UserAnswers
+import utils.{UserAnswerOps, UserAnswers}
 
 class EstablisherPartnershipDetailsNavigatorSpec extends SpecBase with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
 
-  import EstablisherPartnershipDetailsNavigatorSpec._
+  import EstablisherPartnershipDetailsNavigatorSpec.*
 
   val navigator: Navigator =
     applicationBuilder(dataRetrievalAction = UserAnswers().dataRetrievalAction).build().injector.instanceOf[Navigator]
@@ -135,9 +135,9 @@ object EstablisherPartnershipDetailsNavigatorSpec extends OptionValues {
     AddEstablisherController.onPageLoad(Mode.journeyMode(mode), OptionalSchemeReferenceNumber(srn))
 
   private def hasVatPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
+    PartnershipHasVATController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 
   private def cyaPartnershipDetailsPage(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
-    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), Index(0), OptionalSchemeReferenceNumber(srn))
+    CheckYourAnswersPartnershipDetailsController.onPageLoad(Mode.journeyMode(mode), index, OptionalSchemeReferenceNumber(srn))
 }
 

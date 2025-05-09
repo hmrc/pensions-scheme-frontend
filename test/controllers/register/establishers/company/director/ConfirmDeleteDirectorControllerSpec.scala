@@ -154,7 +154,6 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new ConfirmDeleteDirectorController(
-      frontendAppConfig,
       messagesApi,
       FakeUserAnswersService,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -167,7 +166,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       view
     )
 
-  private def viewAsString(form: Form[_] = form) =
+  private def viewAsString(form: Form[?] = form) =
     view(
       form,
       directorName,

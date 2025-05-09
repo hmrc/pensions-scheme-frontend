@@ -17,18 +17,18 @@
 package controllers.register.establishers.individual
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
 import controllers.register.establishers.individual.routes.{EstablisherEmailController, EstablisherPhoneController}
 import models.Mode.checkMode
-import models._
+import models.*
 import models.person.PersonName
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import utils.UserAnswers
+import play.api.test.Helpers.*
+import utils.{UserAnswerOps, UserAnswers}
 import utils.annotations.NoSuspendedCheck
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
@@ -44,7 +44,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
   private val fullAnswers = UserAnswers().establishersIndividualName(Index(0), establisherName).
     establishersIndividualEmail(Index(0), email = email).establishersIndividualPhone(Index(0), phone = "1234")
 
-  private def submitUrl(mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Call =
+  private def submitUrl: Call =
     controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)
 
   private def answerSection(mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber): Seq[AnswerSection] = {
@@ -69,7 +69,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
 
   private val view = injector.instanceOf[checkYourAnswers]
 
-  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl(), hideButton: Boolean = false,
+  def viewAsString(answerSections: Seq[AnswerSection], srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber, postUrl: Call = submitUrl, hideButton: Boolean = false,
                    title:Message, h1:Message): String =
     view(
       CYAViewModel(
@@ -94,7 +94,7 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
           val bindings = modules(fullAnswers.dataRetrievalAction)
           val ftBinding: Seq[GuiceableModule] = Seq()
 
-          running(_.overrides((bindings ++ ftBinding): _*)) {
+          running(_.overrides((bindings ++ ftBinding)*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad( NormalMode, Index(0), EmptyOptionalSchemeReferenceNumber)(fakeRequest)
@@ -113,13 +113,13 @@ class CheckYourAnswersContactDetailsControllerSpec extends ControllerSpecBase wi
             bind(classOf[AllowAccessActionProvider]).qualifiedWith(classOf[NoSuspendedCheck]).toInstance(FakeAllowAccessProvider()),
             bind[DataRetrievalAction].toInstance(fullAnswers.dataRetrievalAction)
           )
-          running(_.overrides(ftBinding: _*)) {
+          running(_.overrides(ftBinding*)) {
             app =>
               val controller = app.injector.instanceOf[CheckYourAnswersContactDetailsController]
               val result = controller.onPageLoad(UpdateMode, Index(0), OptionalSchemeReferenceNumber(srn))(fakeRequest)
               status(result) mustBe OK
 
-              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl(UpdateMode, OptionalSchemeReferenceNumber(srn)), hideButton = true,
+              contentAsString(result) mustBe viewAsString(answerSection(UpdateMode, OptionalSchemeReferenceNumber(srn)), OptionalSchemeReferenceNumber(srn), submitUrl, hideButton = true,
                 title = Message("messages__contactDetailsFor", Message("messages__thePerson")),
                 h1 = Message("messages__contactDetailsFor", establisherName.fullName))
           }

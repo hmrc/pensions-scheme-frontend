@@ -30,11 +30,11 @@
 )
 
 @(
-    form: Form[_],
+    form: Form[?],
     viewModel: ConfirmAddressViewModel,
     countryOptions: CountryOptions,
     schemeName: Option[String]
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = titleWithErrors(form, messages(viewModel.title))) {
 

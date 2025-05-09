@@ -39,6 +39,6 @@ class FutureMembersFormProviderSpec extends FormBehaviours with SpecBase {
         "value",
         Required -> Message("messages__future_members__error_required", schemeName),
         Invalid -> "error.invalid"),
-      Members.options.map(_.value): _*)
+      Members.options.map(_.value)*)
   }
 }

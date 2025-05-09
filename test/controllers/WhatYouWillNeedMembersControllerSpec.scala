@@ -31,7 +31,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
   private val view = injector.instanceOf[whatYouWillNeedMembers]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedMembersController =
-    new WhatYouWillNeedMembersController(frontendAppConfig,
+    new WhatYouWillNeedMembersController(
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

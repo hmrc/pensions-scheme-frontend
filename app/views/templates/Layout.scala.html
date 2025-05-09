@@ -31,7 +31,6 @@
     hmrcStandardHeader: HmrcStandardHeader,
     standardBetaBanner: StandardBetaBanner,
     defaultMainContentLayout: TwoThirdsMainContent,
-    hmrcScripts: HmrcScripts,
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper
 )
@@ -41,7 +40,7 @@
     canSignOut: Boolean = true,
     showBackLink: Boolean = true,
     fullWidthLayout: Boolean = false
-)(mainContent: Html)(implicit request: Request[_], messages: Messages)
+)(mainContent: Html)(implicit request: Request[?], messages: Messages)
 
 @headScripts = {
     @if(timeoutEnabled) {

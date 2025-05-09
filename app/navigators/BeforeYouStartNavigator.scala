@@ -17,16 +17,15 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import controllers.routes._
-import identifiers._
+import controllers.routes.*
+import identifiers.*
 import models.register.SchemeType
 import models.{CheckMode, EmptyOptionalSchemeReferenceNumber, NormalMode, OptionalSchemeReferenceNumber}
 import utils.UserAnswers
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                        frontendAppConfig: FrontendAppConfig) extends AbstractNavigator {
+class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))

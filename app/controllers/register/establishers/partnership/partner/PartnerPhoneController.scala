@@ -45,10 +45,8 @@ class PartnerPhoneController @Inject()(
                                         formProvider: PhoneFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: phoneNumber
-                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with
-  I18nSupport {
-
-
+                                      )(implicit val ec: ExecutionContext) extends PhoneNumberController with I18nSupport {
+  
   protected val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =

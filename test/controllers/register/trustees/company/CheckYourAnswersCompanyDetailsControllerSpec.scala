@@ -17,22 +17,21 @@
 package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import controllers.behaviours.ControllerAllowChangeBehaviour
-import identifiers.register.trustees.company._
+import identifiers.register.trustees.company.*
+import models.*
 import models.Mode.checkMode
-import models._
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.mvc.Call
-import play.api.test.Helpers._
-import services.FakeUserAnswersService
-import utils._
+import play.api.test.Helpers.*
+import utils.*
 import viewmodels.{AnswerRow, AnswerSection, CYAViewModel, Message}
 import views.html.checkYourAnswers
 
 class CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase with ControllerAllowChangeBehaviour with BeforeAndAfterEach {
 
-  import CheckYourAnswersCompanyDetailsControllerSpec._
+  import CheckYourAnswersCompanyDetailsControllerSpec.*
 
   "Check Your Answers Company Details Controller " when {
     "when in registration journey" must {
@@ -283,15 +282,12 @@ object CheckYourAnswersCompanyDetailsControllerSpec extends ControllerSpecBase w
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  allowChangeHelper: AllowChangeHelper = ach): CheckYourAnswersCompanyDetailsController =
     new CheckYourAnswersCompanyDetailsController(
-      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       FakeAllowAccessProvider(),
       new DataRequiredActionImpl,
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute),
-      FakeUserAnswersService,
       allowChangeHelper,
       controllerComponents,
       view

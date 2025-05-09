@@ -17,16 +17,14 @@
 package navigators
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
+import models.*
 import models.register.establishers.EstablisherKind
-import models._
 import utils.{Enumerable, UserAnswers}
 
-class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                      config: FrontendAppConfig
-                                     ) extends AbstractNavigator with Enumerable.Implicits {
+class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector)
+  extends AbstractNavigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
 

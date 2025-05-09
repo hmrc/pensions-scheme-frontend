@@ -70,7 +70,7 @@ trait SpecBase
                         ): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
-        extraModules ++ modules(dataRetrievalAction): _*
+        extraModules ++ modules(dataRetrievalAction)*
       )
   }
 }

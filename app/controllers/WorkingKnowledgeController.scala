@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
@@ -35,9 +34,7 @@ import views.html.workingKnowledge
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WorkingKnowledgeController @Inject()(
-                                            appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
+class WorkingKnowledgeController @Inject()(override val messagesApi: MessagesApi,
                                             dataCacheConnector: UserAnswersCacheConnector,
                                             @BeforeYouStart navigator: Navigator,
                                             authenticate: AuthAction,
@@ -66,7 +63,7 @@ class WorkingKnowledgeController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate() andThen getData()).async {
     implicit request =>
       form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
+        (formWithErrors: Form[?]) =>
           Future.successful(BadRequest(view(formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
 

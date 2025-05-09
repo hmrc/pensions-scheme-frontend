@@ -19,11 +19,10 @@
 
 @this(
     layout: templates.Layout,
-    appConfig: FrontendAppConfig,
     button_link: components.button_link
 )
 
-@(schemeName: Option[String], srn: OptionalSchemeReferenceNumber, href: Call)(implicit request: Request[_], messages: Messages)
+@(schemeName: Option[String], srn: OptionalSchemeReferenceNumber, href: Call)(implicit request: Request[?], messages: Messages)
 
 @layout(pageTitle = messages("messages__variationDeclaration__title")) {
 
