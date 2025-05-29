@@ -59,10 +59,6 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq("-feature"),
     retrieveManaged := true
   )
-  .settings(resolvers ++= Seq(
-    Resolver.jcenterRepo
-  )
-  )
   .settings(
     // concatenate js
     Concat.groups := Seq(
