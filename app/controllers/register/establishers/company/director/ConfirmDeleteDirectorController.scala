@@ -53,8 +53,7 @@ class ConfirmDeleteDirectorController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { director =>
           if (director.isDeleted) {
-            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex,
-              srn)))
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex, srn)))
           } else {
             Future.successful(
               Ok(
@@ -88,14 +87,17 @@ class ConfirmDeleteDirectorController @Inject()(
               ))),
             value => {
               if (value) {
-                userAnswersService.save(mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy
-                (isDeleted = true)).flatMap { jsValue =>
-                  Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode,
-                    UserAnswers(jsValue), srn)))
+                userAnswersService.save(
+                  mode, srn, DirectorNameId(establisherIndex, directorIndex), director.copy(isDeleted = true)
+                ).flatMap { jsValue =>
+                  Future.successful(Redirect(
+                    navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, UserAnswers(jsValue), srn)
+                  ))
                 }
               } else {
-                Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode,
-                  request.userAnswers, srn)))
+                Future.successful(Redirect(
+                  navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), mode, request.userAnswers, srn)
+                ))
               }
             }
 

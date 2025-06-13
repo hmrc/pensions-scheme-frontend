@@ -25,7 +25,7 @@ trait JsLens {
     getAll(s).map {
       case Seq(value) =>
         value
-      case Seq(values@_*) =>
+      case Seq(values*) =>
         JsArray(values)
     }
   }

@@ -51,25 +51,27 @@ sealed trait Entity[ID] {
 case class DirectorEntity(id: DirectorNameId, name: String, isDeleted: Boolean,
                           isCompleted: Boolean, isNewEntity: Boolean, noOfRecords: Int) extends Entity[DirectorNameId] {
   override def editLink(mode: Mode, srn: OptionalSchemeReferenceNumber): Option[String] = (isNewEntity, isCompleted) match {
-    case (false, _) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController
-      .onPageLoad(
-      id.establisherIndex, id.directorIndex, mode, srn).url)
-    case (_, true) => Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController
-      .onPageLoad(
-      id.establisherIndex, id.directorIndex, mode, srn).url)
-    case (_, false) => Some(controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(
-      mode, id.establisherIndex, id.directorIndex, srn).url)
+    case (false, _) =>
+      Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController
+        .onPageLoad(id.establisherIndex, id.directorIndex, mode, srn).url)
+    case (_, true) =>
+      Some(controllers.register.establishers.company.director.routes.CheckYourAnswersController
+        .onPageLoad(id.establisherIndex, id.directorIndex, mode, srn).url)
+    case (_, false) =>
+      Some(controllers.register.establishers.company.director.routes.DirectorNameController
+        .onPageLoad(mode, id.establisherIndex, id.directorIndex, srn).url)
   }
 
   override def deleteLink(mode: Mode, srn: OptionalSchemeReferenceNumber): Option[String] = {
     mode match {
       case NormalMode | CheckMode =>
-        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
-          id.establisherIndex, id.directorIndex, mode, srn).url)
+        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController
+          .onPageLoad(id.establisherIndex, id.directorIndex, mode, srn).url)
       case UpdateMode | CheckUpdateMode if noOfRecords > 1 =>
-        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(
-          id.establisherIndex, id.directorIndex, mode, srn).url)
-      case _ => None
+        Some(controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController
+          .onPageLoad(id.establisherIndex, id.directorIndex, mode, srn).url)
+      case _ =>
+        None
     }
   }
 

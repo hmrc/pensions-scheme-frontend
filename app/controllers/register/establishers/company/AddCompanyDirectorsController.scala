@@ -48,49 +48,49 @@ class AddCompanyDirectorsController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
-    implicit request =>
-      val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      val completeDirectors = directors.filter(_.isCompleted)
-      val incompleteDirectors = directors.filterNot(_.isCompleted)
-      Future.successful(Ok(view(form, completeDirectors, incompleteDirectors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
-        mode, srn)))
-  }
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        val directors = request.userAnswers.allDirectorsAfterDelete(index)
+        val completeDirectors = directors.filter(_.isCompleted)
+        val incompleteDirectors = directors.filterNot(_.isCompleted)
+        Future.successful(Ok(view(form, completeDirectors, incompleteDirectors, existingSchemeName, postCall(mode, srn, index), request.viewOnly,
+          mode, srn)))
+    }
 
-  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] = (authenticate() andThen getData(mode,
-    srn) andThen requireData).async {
-    implicit request =>
-      val directors = request.userAnswers.allDirectorsAfterDelete(index)
-      val completeDirectors = directors.filter(_.isCompleted)
-      val incompleteDirectors = directors.filterNot(_.isCompleted)
-      if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
-        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))
-      }
-      else {
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[?]) =>
-            Future.successful(
-              BadRequest(
-                view(
-                  formWithErrors,
-                  completeDirectors,
-                  incompleteDirectors,
-                  existingSchemeName,
-                  postCall(mode, srn, index),
-                  request.viewOnly,
-                  mode,
-                  srn
+  def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        val directors = request.userAnswers.allDirectorsAfterDelete(index)
+        val completeDirectors = directors.filter(_.isCompleted)
+        val incompleteDirectors = directors.filterNot(_.isCompleted)
+        if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
+          Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers, srn)))
+        }
+        else {
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[?]) =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    completeDirectors,
+                    incompleteDirectors,
+                    existingSchemeName,
+                    postCall(mode, srn, index),
+                    request.viewOnly,
+                    mode,
+                    srn
+                  )
                 )
-              )
-            ),
-          value => {
-            Future.successful(request.userAnswers.set(AddCompanyDirectorsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
-              Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, updatedUA, srn))
+              ),
+            value => {
+              Future.successful(request.userAnswers.set(AddCompanyDirectorsId(index))(value).asOpt.getOrElse(request.userAnswers)).map { updatedUA =>
+                Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, updatedUA, srn))
+              }
             }
-          }
-        )
-      }
+          )
+        }
   }
 
   private def postCall: (Mode, OptionalSchemeReferenceNumber, Index) => Call = routes.AddCompanyDirectorsController.onSubmit
