@@ -23,7 +23,7 @@ import matchers.JsonMatchers
 import models.prefill.IndividualDetails
 import models.register.trustees.TrusteeKind
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.{JsArray, JsResultException, Json}
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
 
@@ -137,6 +137,19 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
           (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String] mustBe "User 4"
         }
       }
+    }
+
+    "throw JsResultException for bad JSON" in {
+      assertThrows[JsResultException](dataPrefillService.copyAllTrusteesToDirectors(
+        ua = UserAnswers(
+          Json.obj(
+            "trustees"     -> Json.arr(Json.obj("trusteeKind" -> "individual")),
+            "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
+          )
+        ),
+        seqIndexes = Seq(0),
+        establisherIndex = 0
+      ))
     }
   }
 
