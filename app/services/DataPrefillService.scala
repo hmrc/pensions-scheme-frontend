@@ -25,9 +25,11 @@ import models.person.PersonName
 import models.prefill.IndividualDetails
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
-import play.api.libs.functional.syntax._
+import play.api.Logging
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
+import play.api.libs.json.JsValue.jsValueToJsLookup
 import play.api.libs.json.Reads.JsObjectReducer
-import play.api.libs.json._
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UserAnswers}
 
@@ -36,7 +38,7 @@ import javax.inject.Inject
 import scala.collection.Set
 import scala.language.postfixOps
 
-class DataPrefillService @Inject()() extends Enumerable.Implicits {
+class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
 
   def copySelectedDirectorsToTrustees(ua: UserAnswers, seqIndexes: Seq[DirectorIdentifier]): UserAnswers = {
     val jsArrayWithAppendedTrustees = seqIndexes.foldLeft(JsArray()) { case (acc, di) =>
@@ -78,14 +80,25 @@ class DataPrefillService @Inject()() extends Enumerable.Implicits {
     val seqTrustees = (ua.json \ "trustees").validate[JsArray].asOpt match {
       case Some(arr) =>
         seqIndexes.map { index =>
-          arr.value(index).transform(copyTrusteeToDirector) match {
-            case JsSuccess(value, _) => value
-            case JsError(_) =>
-              Json.obj()
+          arr
+            .value
+            .filter(_
+              .\(TrusteeKindId.toString)
+              .validate[JsString]
+              .asOpt
+              .contains(JsString(TrusteeKind.Individual.toString))
+            )(index)
+            .transform(copyTrusteeToDirector) match {
+            case JsSuccess(value, _) =>
+              value
+            case JsError(errors) =>
+              logger.error("copyTrusteeToDirector failed")
+              throw JsResultException(errors)
           }
         }
       case _ => Nil
     }
+
     val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
       case Some(arr) => arr.value
       case _ => Nil
