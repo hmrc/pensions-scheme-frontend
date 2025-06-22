@@ -126,7 +126,7 @@ trait UaJsValueGenerators {
 
   def uaJsValueTrusteesCompanyIndividualCompany: Gen[JsObject] = for {
     trusteeCom    <- trusteeCompanyJsValueGen
-    trusteeInd    <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 1)
+    trusteeInd    <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 4)
     trusteeCom2   <- trusteeCompanyJsValueGen
     estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
   } yield {
@@ -137,14 +137,14 @@ trait UaJsValueGenerators {
   }
 
   def uaJsValueTrusteesIndividualCompanyIndividual: Gen[JsObject] = for {
-    trusteeInd1  <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 1)
-    trusteeCom  <- trusteeCompanyJsValueGen
-    trusteeInd2 <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 2)
+    trusteeInd1   <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 4)
+    trusteeCom    <- trusteeCompanyJsValueGen
+    trusteeInd2   <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 5)
     estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
   } yield {
     Json.obj(
       "establishers" -> Seq(estComDetails),
-      "trustees" -> (Seq(trusteeInd1) ++ Seq(trusteeCom) ++ Seq(trusteeInd2))
+      "trustees"     -> (Seq(trusteeInd1) ++ Seq(trusteeCom) ++ Seq(trusteeInd2))
     )
   }
 

@@ -132,15 +132,21 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
     "copy all the selected trustees to directors" in {
       forAll(uaJsValueWithNoNino) {
         ua => {
-          val result = dataPrefillService.copyAllTrusteesToDirectors(UserAnswers(ua), Seq(1), 0)
+          val result = dataPrefillService.copyAllTrusteesToDirectors(
+            ua               = UserAnswers(ua),
+            seqIndexes       = Seq(1),
+            establisherIndex = 0
+          )
+
           val path = result.json \ "establishers" \ 0
-          (path \ "director" \ 3 \ "directorDetails" \ "firstName").as[String] mustBe "Test"
-          (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String] mustBe "User 4"
+
+          (path \ "director").as[JsArray].value.length.mustBe(4)
+          (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String].mustBe("User 4")
         }
       }
     }
 
-    "copy correct trustees when comp ind comp" in {
+    "copy correct trustee when trustees list is a company, an individual, then a company" in {
       forAll(uaJsValueTrusteesCompanyIndividualCompany) {
         ua => {
           val result = dataPrefillService.copyAllTrusteesToDirectors(
@@ -148,13 +154,16 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
             seqIndexes       = Seq(0),
             establisherIndex = 0
           )
+
           val path = result.json \ "establishers" \ 0
-          (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 1")
+
+          (path \ "director").as[JsArray].value.length.mustBe(4)
+          (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String].mustBe("User 4")
         }
       }
     }
 
-    "copy correct trustees when ind comp ind" in {
+    "copy correct trustees when trustees list is an individual, a comp, then an individual" in {
       forAll(uaJsValueTrusteesIndividualCompanyIndividual) {
         ua => {
           val result = dataPrefillService.copyAllTrusteesToDirectors(
@@ -164,8 +173,10 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
           )
 
           val path = result.json \ "establishers" \ 0
-          (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 1")
-          (path \ "director" \ 1 \ "directorDetails" \ "lastName").as[String].mustBe("User 2")
+
+          (path \ "director").as[JsArray].value.length.mustBe(5)
+          (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String].mustBe("User 4")
+          (path \ "director" \ 4 \ "directorDetails" \ "lastName").as[String].mustBe("User 5")
         }
       }
     }
@@ -208,11 +219,13 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
             )),
           "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
         )),
-        seqIndexes = Seq(0),
+        seqIndexes       = Seq(0),
         establisherIndex = 0
       )
 
       val path = result.json \ "establishers" \ 0
+
+      (path \ "director").as[JsArray].value.length.mustBe(1)
       (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 2")
     }
 
