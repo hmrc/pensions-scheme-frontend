@@ -124,6 +124,30 @@ trait UaJsValueGenerators {
     )
   }
 
+  def uaJsValueTrusteesCompanyIndividualCompany: Gen[JsObject] = for {
+    trusteeCom    <- trusteeCompanyJsValueGen
+    trusteeInd    <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 1)
+    trusteeCom2   <- trusteeCompanyJsValueGen
+    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
+  } yield {
+    Json.obj(
+      "establishers" -> Seq(estComDetails),
+      "trustees"     -> (Seq(trusteeCom) ++ Seq(trusteeInd) ++ Seq(trusteeCom2))
+    )
+  }
+
+  def uaJsValueTrusteesIndividualCompanyIndividual: Gen[JsObject] = for {
+    trusteeInd1  <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 1)
+    trusteeCom  <- trusteeCompanyJsValueGen
+    trusteeInd2 <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 2)
+    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
+  } yield {
+    Json.obj(
+      "establishers" -> Seq(estComDetails),
+      "trustees" -> (Seq(trusteeInd1) ++ Seq(trusteeCom) ++ Seq(trusteeInd2))
+    )
+  }
+
   def uaJsValueWithTrusteeMatching: Gen[JsObject] = for {
     trusteeDetails <- trusteeIndividualJsValueGen(isNinoAvailable = true, 1)
     trusteeDetailsFour <- trusteeIndividualJsValueGen(isNinoAvailable = false, 4)
@@ -272,7 +296,7 @@ trait UaJsValueGenerators {
     email <- Gen.const("aaa@gmail.com")
     phone <- Gen.listOfN[Char](randomNumberFromRange(1, 24), Gen.numChar).map(_.mkString)
     address <- addressJsValueGen("trusteeAddressId")
-    date <- Gen.const(s"1999-0${index}-13")
+    date <- Gen.const(s"1999-0$index-13")
   } yield {
     Json.obj(
       "trusteeKind" -> "individual",
@@ -289,6 +313,30 @@ trait UaJsValueGenerators {
       "noUtrReason" -> "no utr",
       "trusteeAddressYears" -> "over_a_year"
     ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino, "trustee").as[JsObject]
+  }
+
+  def trusteeCompanyJsValueGen: Gen[JsObject] = for {
+    email <- Gen.const("aaa@gmail.com")
+    phone <- Gen.listOfN[Char](randomNumberFromRange(1, 24), Gen.numChar).map(_.mkString)
+    address <- addressJsValueGen("companyAddress")
+  } yield {
+    Json.obj(
+      "trusteeKind" -> "company",
+      "companyDetails" -> Json.obj(
+        "companyName" -> "Test Company"
+      ),
+      "hasCrn" -> false,
+      "hasUtr" -> false,
+      "hasVat" -> false,
+      "hasPaye" -> false,
+      "trusteesCompanyAddressYears" -> "over_a_year",
+      "companyContactDetails" -> Json.obj(
+        "emailAddress" -> email,
+        "phoneNumber" -> phone,
+      ),
+      "noUtrReason" -> "no utr",
+      "noCrnReason" -> "no crn",
+    ) ++ address.as[JsObject]
   }
 
   private def ninoJsValue(isNinoAvailable: Boolean, referenceOrNino: String, nodeName: String): JsValue = {

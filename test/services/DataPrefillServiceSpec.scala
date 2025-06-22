@@ -22,8 +22,9 @@ import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import matchers.JsonMatchers
 import models.prefill.IndividualDetails
 import models.register.trustees.TrusteeKind
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.{JsArray, JsResultException, Json}
+import play.api.libs.json.{JsArray, JsObject, JsResultException, Json}
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
 
@@ -139,18 +140,115 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
       }
     }
 
-    "throw JsResultException for bad JSON" in {
-      assertThrows[JsResultException](dataPrefillService.copyAllTrusteesToDirectors(
-        ua = UserAnswers(
-          Json.obj(
-            "trustees"     -> Json.arr(Json.obj("trusteeKind" -> "individual")),
-            "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
+    "copy correct trustees when comp ind comp" in {
+      forAll(uaJsValueTrusteesCompanyIndividualCompany) {
+        ua => {
+          val result = dataPrefillService.copyAllTrusteesToDirectors(
+            ua               = UserAnswers(ua),
+            seqIndexes       = Seq(0),
+            establisherIndex = 0
           )
-        ),
+          val path = result.json \ "establishers" \ 0
+          (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 1")
+        }
+      }
+    }
+
+    "copy correct trustees when ind comp ind" in {
+      forAll(uaJsValueTrusteesIndividualCompanyIndividual) {
+        ua => {
+          val result = dataPrefillService.copyAllTrusteesToDirectors(
+            ua               = UserAnswers(ua),
+            seqIndexes       = Seq(0, 1),
+            establisherIndex = 0
+          )
+
+          val path = result.json \ "establishers" \ 0
+          (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 1")
+          (path \ "director" \ 1 \ "directorDetails" \ "lastName").as[String].mustBe("User 2")
+        }
+      }
+    }
+
+    "not copy incomplete trustees" in {
+      val result = dataPrefillService.copyAllTrusteesToDirectors(
+        ua = UserAnswers(Json.obj(
+          "trustees" -> Json.arr(
+            Json.obj(
+              "trusteeKind" -> "individual",
+              "trusteeDetails" -> Json.obj(
+                "firstName" -> "Test",
+                "lastName" -> "User 1",
+                "isDeleted" -> false
+              )
+            ),
+            Json.obj(
+              "trusteeKind" -> "individual",
+              "trusteeDetails" -> Json.obj(
+                "firstName" -> "Test",
+                "lastName" -> "User 2",
+                "isDeleted" -> false
+              ),
+              "dateOfBirth" -> "1999-01-13",
+              "trusteeContactDetails" -> Json.obj(
+                "emailAddress" -> "aaa@gmail.com",
+                "phoneNumber" -> "84655836515901897551444"
+              ),
+              "hasUtr" -> false,
+              "noUtrReason" -> "no utr",
+              "trusteeAddressYears" -> "over_a_year",
+              "trusteeAddressId" -> Json.obj(
+                "addressLine1" -> "line1",
+                "addressLine2" -> "line2",
+                "postcode" -> "ZZ1 1ZZ",
+                "country" -> "IT"
+              ),
+              "hasNino" -> false,
+              "noNinoReason" -> "no nino"
+            )),
+          "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
+        )),
         seqIndexes = Seq(0),
         establisherIndex = 0
-      ))
+      )
+
+      val path = result.json \ "establishers" \ 0
+      (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 2")
     }
+
+//    "throw JsResultException for bad JSON" in {
+//      assertThrows[JsResultException](dataPrefillService.copyAllTrusteesToDirectors(
+//        ua = UserAnswers(Json.obj(
+//          "trustees" -> Json.arr(Json.obj(
+//            "trusteeKind" -> "individual",
+//              "trusteeDetails" -> Json.obj(
+//                "firstName" -> "Test",
+//                "lastName" -> "User 1",
+//                "isDeleted" -> false
+//              ),
+//            "dateOfBirth" -> "1999-01-13",
+//            "trusteeContactDetails" -> Json.obj(
+//              "emailAddress" -> "aaa@gmail.com",
+//              "phoneNumber" -> "84655836515901897551444"
+//            ),
+//            "hasUtr" -> false,
+//            "noUtrReason" -> "no utr",
+//            "trusteeAddressYears" -> "over_a_year",
+//            "trusteeAddressId" -> Json.obj(
+//              "addressLine1" -> "line1",
+//              "addressLine2" -> "line2",
+//              "postcode" -> "ZZ1 1ZZ",
+//              "country" -> "IT"
+//            ),
+//            "hasNino" -> false,
+//            "noNinoReason" -> "no nino"
+//          )),
+//          "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
+//        )),
+//        seqIndexes = Seq(0),
+//        establisherIndex = 0
+//      ))
+//    }
   }
 
   "getListOfDirectors" must {
