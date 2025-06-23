@@ -216,7 +216,8 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
               ),
               "hasNino" -> false,
               "noNinoReason" -> "no nino"
-            )),
+            )
+          ),
           "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
         )),
         seqIndexes       = Seq(0),
@@ -229,39 +230,21 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
       (path \ "director" \ 0 \ "directorDetails" \ "lastName").as[String].mustBe("User 2")
     }
 
-//    "throw JsResultException for bad JSON" in {
-//      assertThrows[JsResultException](dataPrefillService.copyAllTrusteesToDirectors(
-//        ua = UserAnswers(Json.obj(
-//          "trustees" -> Json.arr(Json.obj(
-//            "trusteeKind" -> "individual",
-//              "trusteeDetails" -> Json.obj(
-//                "firstName" -> "Test",
-//                "lastName" -> "User 1",
-//                "isDeleted" -> false
-//              ),
-//            "dateOfBirth" -> "1999-01-13",
-//            "trusteeContactDetails" -> Json.obj(
-//              "emailAddress" -> "aaa@gmail.com",
-//              "phoneNumber" -> "84655836515901897551444"
-//            ),
-//            "hasUtr" -> false,
-//            "noUtrReason" -> "no utr",
-//            "trusteeAddressYears" -> "over_a_year",
-//            "trusteeAddressId" -> Json.obj(
-//              "addressLine1" -> "line1",
-//              "addressLine2" -> "line2",
-//              "postcode" -> "ZZ1 1ZZ",
-//              "country" -> "IT"
-//            ),
-//            "hasNino" -> false,
-//            "noNinoReason" -> "no nino"
-//          )),
-//          "establishers" -> Json.arr(Json.obj("establisherKind" -> "company"))
-//        )),
-//        seqIndexes = Seq(0),
-//        establisherIndex = 0
-//      ))
-//    }
+    "not copy deleted trustees" in {
+      forAll(uaJsValueTrusteesDeletedAndNotDeleted) {
+        ua =>
+          val result = dataPrefillService.copyAllTrusteesToDirectors(
+            ua               = UserAnswers(ua),
+            seqIndexes       = Seq(0),
+            establisherIndex = 0
+          )
+
+          val path = result.json \ "establishers" \ 0
+
+          (path \ "director").as[JsArray].value.length.mustBe(4)
+          (path \ "director" \ 3 \ "directorDetails" \ "lastName").as[String].mustBe("User 5")
+      }
+    }
   }
 
   "getListOfDirectors" must {

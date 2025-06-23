@@ -148,6 +148,17 @@ trait UaJsValueGenerators {
     )
   }
 
+  def uaJsValueTrusteesDeletedAndNotDeleted: Gen[JsObject] = for {
+    deleted       <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 4, isDeleted = true)
+    notDeleted    <- trusteeIndividualJsValueGen(isNinoAvailable = false, index = 5)
+    estComDetails <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = false)
+  } yield {
+    Json.obj(
+      "establishers" -> Seq(estComDetails),
+      "trustees"     -> (Seq(deleted) ++ Seq(notDeleted))
+    )
+  }
+
   def uaJsValueWithTrusteeMatching: Gen[JsObject] = for {
     trusteeDetails <- trusteeIndividualJsValueGen(isNinoAvailable = true, 1)
     trusteeDetailsFour <- trusteeIndividualJsValueGen(isNinoAvailable = false, 4)
@@ -291,7 +302,7 @@ trait UaJsValueGenerators {
     ) ++ address.as[JsObject] ++ ninoJsValue(isNinoAvailable, referenceOrNino, "director").as[JsObject]
   }
 
-  def trusteeIndividualJsValueGen(isNinoAvailable: Boolean, index: Int): Gen[JsObject] = for {
+  def trusteeIndividualJsValueGen(isNinoAvailable: Boolean, index: Int, isDeleted: Boolean = false): Gen[JsObject] = for {
     referenceOrNino <- Gen.const(s"CS700${index}00A")
     email <- Gen.const("aaa@gmail.com")
     phone <- Gen.listOfN[Char](randomNumberFromRange(1, 24), Gen.numChar).map(_.mkString)
@@ -303,6 +314,7 @@ trait UaJsValueGenerators {
       "trusteeDetails" -> Json.obj(
         "firstName" -> "Test",
         "lastName" -> s"User $index",
+        "isDeleted" -> isDeleted
       ),
       "dateOfBirth" -> date,
       "trusteeContactDetails" -> Json.obj(

@@ -77,17 +77,17 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   }
 
   def copyAllTrusteesToDirectors(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
-    val trusteesIndexes: Seq[Int] =
-      allIndividualTrustees(ua).zipWithIndex.flatMap { case (trusteeIndividual, index) =>
-        if (!trusteeIndividual.isDeleted && trusteeIndividual.isComplete) Some(index) else None
+    val completeNotDeletedTrusteeIndexes: Seq[Int] =
+      allIndividualTrustees(ua).zipWithIndex.flatMap { case (trustee, index) =>
+        if (trustee.isComplete && !trustee.isDeleted) Some(index) else None
       }
 
     val seqTrustees: Seq[JsObject] =
       (ua.json \ TrusteesId.toString).validate[JsArray].asOpt match {
-        case Some(trusteesJsArray) =>
+        case Some(jsArray) =>
 
-          val filteredArr: collection.IndexedSeq[JsValue] =
-            trusteesJsArray
+          val trusteeIndividualsArr: collection.IndexedSeq[JsValue] =
+            jsArray
               .value
               .filter(_
                 .\(TrusteeKindId.toString)
@@ -95,15 +95,16 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
                 .asOpt
                 .contains(JsString(TrusteeKind.Individual.toString))
               )
+              
+          val completeNotDeletedTrustees: Seq[JsValue] =
+            completeNotDeletedTrusteeIndexes.map(trusteeIndividualsArr(_))
 
           seqIndexes.map { index =>
-            trusteesIndexes
-              .map(filteredArr(_))(index)
-              .transform(copyTrusteeToDirector) match {
+            completeNotDeletedTrustees(index).transform(copyTrusteeToDirector) match {
               case JsSuccess(value, _) =>
                 value
               case JsError(errors) =>
-                logger.error(s"copyTrusteeToDirector failed, index $index:\n ${errors.map(p => s"path: ${p._1} | error: ${p._2.map(_.messages)}\n")}")
+                logger.error(s"copyTrusteeToDirector failed, index $index:\n $errors")
                 throw JsResultException(errors)
             }
           }
