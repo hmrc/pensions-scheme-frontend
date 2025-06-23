@@ -77,39 +77,51 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   }
 
   def copyAllTrusteesToDirectors(ua: UserAnswers, seqIndexes: Seq[Int], establisherIndex: Int): UserAnswers = {
-    val seqTrustees = (ua.json \ "trustees").validate[JsArray].asOpt match {
-      case Some(arr) =>
-        seqIndexes.map { index =>
-          arr
-            .value
-            .filter(_
-              .\(TrusteeKindId.toString)
-              .validate[JsString]
-              .asOpt
-              .contains(JsString(TrusteeKind.Individual.toString))
-            )(index)
-            .transform(copyTrusteeToDirector) match {
-            case JsSuccess(value, _) =>
-              value
-            case JsError(errors) =>
-              logger.error("copyTrusteeToDirector failed")
-              throw JsResultException(errors)
+    val completeNotDeletedTrusteeIndexes: Seq[Int] =
+      allIndividualTrustees(ua).zipWithIndex.flatMap { case (trustee, index) =>
+        if (trustee.isComplete && !trustee.isDeleted) Some(index) else None
+      }
+
+    val seqTrustees: Seq[JsObject] =
+      (ua.json \ TrusteesId.toString).validate[JsArray].asOpt match {
+        case Some(jsArray) =>
+
+          val trusteeIndividualsArr: collection.IndexedSeq[JsValue] =
+            jsArray
+              .value
+              .filter(_
+                .\(TrusteeKindId.toString)
+                .validate[JsString]
+                .asOpt
+                .contains(JsString(TrusteeKind.Individual.toString))
+              )
+              
+          val completeNotDeletedTrustees: Seq[JsValue] =
+            completeNotDeletedTrusteeIndexes.map(trusteeIndividualsArr(_))
+
+          seqIndexes.map { index =>
+            completeNotDeletedTrustees(index).transform(copyTrusteeToDirector) match {
+              case JsSuccess(value, _) =>
+                value
+              case JsError(errors) =>
+                logger.error(s"copyTrusteeToDirector failed, index $index:\n $errors")
+                throw JsResultException(errors)
+            }
           }
-        }
-      case _ => Nil
-    }
+        case _ => Nil
+      }
 
-    val seqDirectors = (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
-      case Some(arr) => arr.value
-      case _ => Nil
-    }
+    val seqDirectors: collection.Seq[JsValue] =
+      (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
+        case Some(arr) => arr.value
+        case _ => Nil
+      }
 
-    val establisherTransformer = (__ \ "establishers").json.update(
-      __.read[JsArray].map { arr =>
+    val establisherTransformer: Reads[JsObject] =
+      (__ \ "establishers").json.update(__.read[JsArray].map { arr =>
         JsArray(arr.value.updated(establisherIndex, arr(establisherIndex).as[JsObject] ++
           Json.obj("director" -> (seqDirectors ++ seqTrustees))))
-      }
-    )
+      })
 
     transformUa(ua, establisherTransformer)
   }
@@ -122,53 +134,53 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   }
 
   private def copyDirectorToTrustee: Reads[JsObject] = {
-    (__ \ Symbol("trusteeDetails") \ Symbol("firstName")).json.copyFrom((__ \ Symbol("directorDetails") \ Symbol("firstName")).json.pick) and
-      (__ \ Symbol("trusteeDetails") \ Symbol("lastName")).json.copyFrom((__ \ Symbol("directorDetails") \ Symbol("lastName")).json.pick) and
-      (__ \ Symbol("trusteeKind")).json.put(JsString("individual")) and
-      (__ \ Symbol("trusteeContactDetails") \ Symbol("phoneNumber")).json.copyFrom((__ \ Symbol("directorContactDetails") \ Symbol("phoneNumber")).json.pick) and
-      (__ \ Symbol("trusteeContactDetails") \ Symbol("emailAddress")).json.copyFrom((__ \ Symbol("directorContactDetails") \ Symbol("emailAddress")).json.pick) and
-      (__ \ Symbol("trusteeAddressId")).json.copyFrom((__ \ Symbol("directorAddressId")).json.pick) and
-      (__ \ Symbol("trusteeAddressYears")).json.copyFrom((__ \ Symbol("companyDirectorAddressYears")).json.pick) and
-      ((__ \ Symbol("trusteePreviousAddress")).json.copyFrom((__ \ Symbol("previousAddress")).json.pick) orElse __.json.put(Json.obj())) and
+    (__ \ "trusteeDetails" \ "firstName").json.copyFrom((__ \ "directorDetails" \ "firstName").json.pick) and
+      (__ \ "trusteeDetails" \ "lastName").json.copyFrom((__ \ "directorDetails" \ "lastName").json.pick) and
+      (__ \ "trusteeKind").json.put(JsString("individual")) and
+      (__ \ "trusteeContactDetails" \ "phoneNumber").json.copyFrom((__ \ "directorContactDetails" \ "phoneNumber").json.pick) and
+      (__ \ "trusteeContactDetails" \ "emailAddress").json.copyFrom((__ \ "directorContactDetails" \ "emailAddress").json.pick) and
+      (__ \ "trusteeAddressId").json.copyFrom((__ \ "directorAddressId").json.pick) and
+      (__ \ "trusteeAddressYears").json.copyFrom((__ \ "companyDirectorAddressYears").json.pick) and
+      ((__ \ "trusteePreviousAddress").json.copyFrom((__ \ "previousAddress").json.pick) orElse __.json.put(Json.obj())) and
       (__ \ "hasNino").read[Boolean].flatMap {
         case true =>
-          (__ \ Symbol("hasNino")).json.copyFrom((__ \ Symbol("hasNino")).json.pick) and
-            (__ \ Symbol("trusteeNino")).json.copyFrom((__ \ Symbol("directorNino")).json.pick) reduce
+          (__ \ "hasNino").json.copyFrom((__ \ "hasNino").json.pick) and
+            (__ \ "trusteeNino").json.copyFrom((__ \ "directorNino").json.pick) reduce
         case false =>
-          (__ \ Symbol("hasNino")).json.copyFrom((__ \ Symbol("hasNino")).json.pick) and
-            (__ \ Symbol("noNinoReason")).json.copyFrom((__ \ Symbol("noNinoReason")).json.pick) reduce
+          (__ \ "hasNino").json.copyFrom((__ \ "hasNino").json.pick) and
+            (__ \ "noNinoReason").json.copyFrom((__ \ "noNinoReason").json.pick) reduce
       } and
       commonReads reduce
   }
 
   private def copyTrusteeToDirector: Reads[JsObject] = {
-    (__ \ Symbol("directorDetails") \ Symbol("firstName")).json.copyFrom((__ \ Symbol("trusteeDetails") \ Symbol("firstName")).json.pick) and
-      (__ \ Symbol("directorDetails") \ Symbol("lastName")).json.copyFrom((__ \ Symbol("trusteeDetails") \ Symbol("lastName")).json.pick) and
-      (__ \ Symbol("directorContactDetails") \ Symbol("phoneNumber")).json.copyFrom((__ \ Symbol("trusteeContactDetails") \ Symbol("phoneNumber")).json.pick) and
-      (__ \ Symbol("directorContactDetails") \ Symbol("emailAddress")).json.copyFrom((__ \ Symbol("trusteeContactDetails") \ Symbol("emailAddress")).json.pick) and
-      (__ \ Symbol("directorAddressId")).json.copyFrom((__ \ Symbol("trusteeAddressId")).json.pick) and
-      (__ \ Symbol("companyDirectorAddressYears")).json.copyFrom((__ \ Symbol("trusteeAddressYears")).json.pick) and
-      ((__ \ Symbol("previousAddress")).json.copyFrom((__ \ Symbol("trusteePreviousAddress")).json.pick) orElse __.json.put(Json.obj())) and
+    (__ \ "directorDetails" \ "firstName").json.copyFrom((__ \ "trusteeDetails" \ "firstName").json.pick) and
+      (__ \ "directorDetails" \ "lastName").json.copyFrom((__ \ "trusteeDetails" \ "lastName").json.pick) and
+      (__ \ "directorContactDetails" \ "phoneNumber").json.copyFrom((__ \ "trusteeContactDetails" \ "phoneNumber").json.pick) and
+      (__ \ "directorContactDetails" \ "emailAddress").json.copyFrom((__ \ "trusteeContactDetails" \ "emailAddress").json.pick) and
+      (__ \ "directorAddressId").json.copyFrom((__ \ "trusteeAddressId").json.pick) and
+      (__ \ "companyDirectorAddressYears").json.copyFrom((__ \ "trusteeAddressYears").json.pick) and
+      ((__ \ "previousAddress").json.copyFrom((__ \ "trusteePreviousAddress").json.pick) orElse __.json.put(Json.obj())) and
       (__ \ "hasNino").read[Boolean].flatMap {
         case true =>
-          (__ \ Symbol("hasNino")).json.copyFrom((__ \ Symbol("hasNino")).json.pick) and
-            (__ \ Symbol("directorNino")).json.copyFrom((__ \ Symbol("trusteeNino")).json.pick) reduce
+          (__ \ "hasNino").json.copyFrom((__ \ "hasNino").json.pick) and
+            (__ \ "directorNino").json.copyFrom((__ \ "trusteeNino").json.pick) reduce
         case false =>
-          (__ \ Symbol("hasNino")).json.copyFrom((__ \ Symbol("hasNino")).json.pick) and
-            (__ \ Symbol("noNinoReason")).json.copyFrom((__ \ Symbol("noNinoReason")).json.pick) reduce
+          (__ \ "hasNino").json.copyFrom((__ \ "hasNino").json.pick) and
+            (__ \ "noNinoReason").json.copyFrom((__ \ "noNinoReason").json.pick) reduce
       } and
       commonReads reduce
   }
 
   private def commonReads: Reads[JsObject] = {
-    (__ \ Symbol("dateOfBirth")).json.copyFrom((__ \ Symbol("dateOfBirth")).json.pick) and
+    (__ \ "dateOfBirth").json.copyFrom((__ \ "dateOfBirth").json.pick) and
       (__ \ "hasUtr").read[Boolean].flatMap {
         case true =>
-          (__ \ Symbol("hasUtr")).json.copyFrom((__ \ Symbol("hasUtr")).json.pick) and
-            (__ \ Symbol("utr")).json.copyFrom((__ \ Symbol("utr")).json.pick) reduce
+          (__ \ "hasUtr").json.copyFrom((__ \ "hasUtr").json.pick) and
+            (__ \ "utr").json.copyFrom((__ \ "utr").json.pick) reduce
         case false =>
-          (__ \ Symbol("hasUtr")).json.copyFrom((__ \ Symbol("hasUtr")).json.pick) and
-            (__ \ Symbol("noUtrReason")).json.copyFrom((__ \ Symbol("noUtrReason")).json.pick) reduce
+          (__ \ "hasUtr").json.copyFrom((__ \ "hasUtr").json.pick) and
+            (__ \ "noUtrReason").json.copyFrom((__ \ "noUtrReason").json.pick) reduce
       } reduce
   }
 
@@ -260,22 +272,21 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
       ua.isDirectorComplete(estIndex, directorIndex), Some(estIndex))
   )
 
-  def allIndividualTrustees(implicit ua: UserAnswers): Seq[IndividualDetails] = {
+  private def allIndividualTrustees(implicit ua: UserAnswers): Seq[IndividualDetails] =
     ua.json.validate[Seq[Option[IndividualDetails]]](readsTrustees) match {
       case JsSuccess(trustees, _) =>
         trustees.flatten
       case JsError(eee) => Nil
     }
-  }
 
   private def readsTrustees(implicit ua: UserAnswers): Reads[Seq[Option[IndividualDetails]]] = new Reads[Seq[Option[IndividualDetails]]] {
     private def readsIndividualTrustee(index: Int)(implicit ua: UserAnswers): Reads[Option[IndividualDetails]] = (
       (JsPath \ TrusteeNameId.toString).read[PersonName] and
         (JsPath \ TrusteeDOBId.toString).readNullable[LocalDate] and
         (JsPath \ TrusteeEnterNINOId.toString).readNullable[ReferenceValue]
-      ) ((trusteeName, dob, ninoReferenceVale) =>
+      ) ((trusteeName, dob, ninoReferenceValue) =>
       Some(IndividualDetails(
-        trusteeName.firstName, trusteeName.lastName, trusteeName.isDeleted, ninoReferenceVale.map(_.value), dob, index, ua.isTrusteeIndividualComplete(index)))
+        trusteeName.firstName, trusteeName.lastName, trusteeName.isDeleted, ninoReferenceValue.map(_.value), dob, index, ua.isTrusteeIndividualComplete(index)))
     )
 
     override def reads(json: JsValue): JsResult[Seq[Option[IndividualDetails]]] = {

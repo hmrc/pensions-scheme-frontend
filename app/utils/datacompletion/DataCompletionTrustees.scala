@@ -66,22 +66,35 @@ trait DataCompletionTrustees {
 
   def isTrusteeIndividualDetailsComplete(trusteeIndex: Int): Option[Boolean] = {
     isComplete(Seq(
-      isAnswerComplete(TrusteeDOBId(trusteeIndex)),
-      isAnswerComplete(TrusteeHasNINOId(trusteeIndex), TrusteeEnterNINOId(trusteeIndex), Some(TrusteeNoNINOReasonId
-      (trusteeIndex))),
-      isAnswerComplete(TrusteeHasUTRId(trusteeIndex), TrusteeUTRId(trusteeIndex), Some(TrusteeNoUTRReasonId
-      (trusteeIndex)))
+      isAnswerComplete(
+        TrusteeDOBId(trusteeIndex)
+      ),
+      isAnswerComplete(
+        TrusteeHasNINOId(trusteeIndex),
+        TrusteeEnterNINOId(trusteeIndex),
+        Some(TrusteeNoNINOReasonId(trusteeIndex))
+      ),
+      isAnswerComplete(
+        TrusteeHasUTRId(trusteeIndex),
+        TrusteeUTRId(trusteeIndex),
+        Some(TrusteeNoUTRReasonId(trusteeIndex))
+      )
     ))
   }
 
   def isTrusteeIndividualAddressComplete(index: Int): Option[Boolean] =
-    isAddressComplete(TrusteeAddressId(index),
+    isAddressComplete(
+      TrusteeAddressId(index),
       TrusteePreviousAddressId(index),
       TrusteeAddressYearsId(index),
-      None)
+      None
+    )
 
   def isTrusteeIndividualContactDetailsComplete(index: Int): Option[Boolean] =
-    isContactDetailsComplete(TrusteeEmailId(index), TrusteePhoneId(index))
+    isContactDetailsComplete(
+      TrusteeEmailId(index),
+      TrusteePhoneId(index)
+    )
 
   def isTrusteePartnershipComplete(index: Int): Boolean =
     isComplete(Seq(

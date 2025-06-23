@@ -18,8 +18,16 @@ package models.prefill
 
 import java.time.LocalDate
 
-case class IndividualDetails(firstName: String, lastName: String, isDeleted: Boolean, nino: Option[String],
-                             dob: Option[LocalDate], index: Int, isComplete: Boolean, mainIndex: Option[Int] = None) {
+case class IndividualDetails(
+                              firstName: String,
+                              lastName: String,
+                              isDeleted: Boolean,
+                              nino: Option[String],
+                              dob: Option[LocalDate],
+                              index: Int,
+                              isComplete: Boolean,
+                              mainIndex: Option[Int] = None
+                            ) {
   def fullName: String = s"$firstName $lastName"
 }
 
