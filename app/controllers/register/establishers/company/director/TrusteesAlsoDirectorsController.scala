@@ -58,6 +58,8 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits with Logging {
 
+  logger.info("TrusteesAlsoDirectorsController")
+
   private def renderView(status: Status,
                          seqTrustee: Seq[IndividualDetails],
                          eitherForm: Either[Form[List[Int]], Form[Int]],
@@ -91,7 +93,9 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber,establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
+        logger.info("TrusteesAlsoDirectorsController.onPageLoad")
         CompanyDetailsId(establisherIndex).and(SchemeNameId).retrieve.map { case companyName ~ schemeName =>
+          logger.info(s"TrusteesAlsoDirectorsController.onPageLoad - CompanyDetailsId($establisherIndex) - SchemeNameId retrieved successfully")
           val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
           if (seqTrustee.isEmpty) {
             Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
@@ -112,11 +116,13 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onSubmit(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
+        logger.info("TrusteesAlsoDirectorsController.onSubmit")
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
         request.userAnswers.get(CompanyDetailsId(establisherIndex)) match {
           case Some(companyName) =>
             request.userAnswers.get(SchemeNameId) match {
               case Some(schemeName) =>
+                logger.info(s"TrusteesAlsoDirectorsController.onSubmit - CompanyDetailsId($establisherIndex) - SchemeNameId retrieved successfully")
                 if (seqTrustee.size > 1) {
                   val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
                   boundForm.value match {
