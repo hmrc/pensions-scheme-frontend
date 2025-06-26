@@ -35,7 +35,7 @@ class LogoutController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = authenticate().async { implicit request =>
     sessionDataCacheConnector.removeAll.map { _ =>
-      Redirect(appConfig.serviceSignOut).withNewSession
+      Redirect(appConfig.serviceSignOut)
     }
   }
   def keepAlive: Action[AnyContent] = Action.async {
