@@ -74,8 +74,7 @@ class TrusteeHasNINOController @Inject()(val appConfig: FrontendAppConfig,
       implicit request =>
         TrusteeNameId(index).retrieve.map {
           trusteeName =>
-            post(TrusteeHasNINOId(index), mode, form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName
-              .fullName))
+            post(TrusteeHasNINOId(index), mode, form(trusteeName.fullName), viewModel(mode, index, srn, trusteeName.fullName))
         }
     }
 }

@@ -22,16 +22,26 @@
 @import utils.InputOption
 
 @this(
-    layout: templates.Layout,
-    formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    input_radio: components.input_radio,
-    submit_button: components.submit_button
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        input_radio: components.input_radio,
+        submit_button: components.submit_button
 )
 
-@(form: Form[?], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[InputOption], postCall: Call)(implicit request: Request[?], messages: Messages)
+@(
+        form: Form[?],
+        pageHeading: String,
+        titleMessage: String,
+        options: Seq[InputOption],
+        postCall: Call
+)(
+        implicit
+        request: Request[?],
+        messages: Messages
+)
 
-@layout( pageTitle = titleWithErrors(form, titleMessage)) {
+@layout(pageTitle = titleWithErrors(form, titleMessage)) {
 
     @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
@@ -39,18 +49,15 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @schemeName.map{sn=>
-            @input_radio(
-                field = form("value"),
-                legend = pageHeading,
-                legendAsHeading = true,
-                inputs = options
-            )
-        }
+        @input_radio(
+            field = form("value"),
+            legend = pageHeading,
+            legendAsHeading = true,
+            inputs = options
+        )
 
         @submit_button("site.save_and_continue", true)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
-
+        @components.return_link("messages__schemeTaskList__returnlink")
     }
 }

@@ -93,11 +93,19 @@ trait DataCompletionEstablishers extends DataCompletion {
 
   def isEstablisherIndividualDetailsComplete(establisherIndex: Int): Option[Boolean] =
     isComplete(Seq(
-      isAnswerComplete(EstablisherDOBId(establisherIndex)),
-      isAnswerComplete(EstablisherHasNINOId(establisherIndex), EstablisherEnterNINOId(establisherIndex), Some
-      (EstablisherNoNINOReasonId(establisherIndex))),
-      isAnswerComplete(EstablisherHasUTRId(establisherIndex), EstablisherUTRId(establisherIndex), Some
-      (EstablisherNoUTRReasonId(establisherIndex)))
+      isAnswerComplete(
+        EstablisherDOBId(establisherIndex)
+      ),
+      isAnswerComplete(
+        EstablisherHasNINOId(establisherIndex),
+        EstablisherEnterNINOId(establisherIndex),
+        Some(EstablisherNoNINOReasonId(establisherIndex))
+      ),
+      isAnswerComplete(
+        EstablisherHasUTRId(establisherIndex),
+        EstablisherUTRId(establisherIndex),
+        Some(EstablisherNoUTRReasonId(establisherIndex))
+      )
     ))
 
   def isEstablisherIndividualAddressComplete(index: Int): Option[Boolean] =
@@ -117,16 +125,28 @@ trait DataCompletionEstablishers extends DataCompletion {
     isComplete(Seq(
       isEstablisherPartnershipDetailsComplete(index),
       isEstablisherPartnershipAddressComplete(index),
-      isEstablisherPartnershipContactDetailsComplete(index))).getOrElse(false)
+      isEstablisherPartnershipContactDetailsComplete(index)
+    )).getOrElse(false)
 
   //ESTABLISHER PARTNERSHIP
   def isEstablisherPartnershipDetailsComplete(index: Int): Option[Boolean] =
     isComplete(
       Seq(
-        isAnswerComplete(PartnershipHasUTRId(index), PartnershipEnterUTRId(index), Some(PartnershipNoUTRReasonId
-        (index))),
-        isAnswerComplete(PartnershipHasVATId(index), PartnershipEnterVATId(index), None),
-        isAnswerComplete(PartnershipHasPAYEId(index), PartnershipEnterPAYEId(index), None)
+        isAnswerComplete(
+          PartnershipHasUTRId(index),
+          PartnershipEnterUTRId(index),
+          Some(PartnershipNoUTRReasonId(index))
+        ),
+        isAnswerComplete(
+          PartnershipHasVATId(index),
+          PartnershipEnterVATId(index),
+          None
+        ),
+        isAnswerComplete(
+          PartnershipHasPAYEId(index),
+          PartnershipEnterPAYEId(index),
+          None
+        )
       )
     )
 

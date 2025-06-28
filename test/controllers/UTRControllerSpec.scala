@@ -30,9 +30,10 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.mvc._
+import play.api.libs.json.*
+import play.api.mvc.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
@@ -43,7 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UTRControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
 
-  import UTRControllerSpec._
+  import UTRControllerSpec.*
 
   private val view = injector.instanceOf[utr]
   val viewmodel: UTRViewModel = UTRViewModel(
@@ -105,22 +106,30 @@ class UTRControllerSpec extends SpecBase with Matchers with OptionValues with Sc
 
     "return a redirect when the submitted data is valid" in {
 
-      import play.api.inject._
+      import play.api.inject.*
 
       running(_.overrides(
         bind[UserAnswersService].toInstance(FakeUserAnswersService),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
-          val request = FakeRequest().withFormUrlEncodedBody(
-            ("utr", "1234567890")
-          )
+          val request = FakeRequest().withFormUrlEncodedBody(("utr", "1234567890"))
           val controller = app.injector.instanceOf[TestController]
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual "www.example.com"
-          FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("1234567890", isEditable = true))
+          FakeUserAnswersService.getData.mustBe(
+            Json.obj(
+              "userAnswer" -> Json.obj(
+                FakeHasUTRIdentifier.toString -> true,
+                FakeIdentifier.toString -> Json.obj(
+                  "value" -> "1234567890",
+                  "isEditable" -> true
+                )
+              )
+            )
+          )
       }
     }
 
@@ -157,6 +166,7 @@ class UTRControllerSpec extends SpecBase with Matchers with OptionValues with Sc
 object UTRControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]
+  object FakeHasUTRIdentifier extends TypedIdentifier[Boolean]
 
   val companyName = "test company"
   class TestController @Inject()(
@@ -174,7 +184,7 @@ object UTRControllerSpec {
     }
 
     def onSubmit(viewmodel: UTRViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, viewmodel, formProvider())(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
+      post(FakeIdentifier, NormalMode, viewmodel, formProvider(), FakeHasUTRIdentifier)(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
     }
   }
 

@@ -97,6 +97,8 @@ trait FakeUserAnswersService extends UserAnswersService with Matchers with Optio
   def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
     data should contain(id.toString -> Json.toJson(value))
   }
+  
+  def getData: JsObject = data.map(x => Json.obj(x._1 -> x._2)).head
 
   def verifyNot(id: TypedIdentifier[?]): Unit = data should not contain key(id.toString)
 

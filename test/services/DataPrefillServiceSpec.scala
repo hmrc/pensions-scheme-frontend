@@ -22,9 +22,8 @@ import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
 import matchers.JsonMatchers
 import models.prefill.IndividualDetails
 import models.register.trustees.TrusteeKind
-import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import play.api.libs.json.{JsArray, JsObject, JsResultException, Json}
+import play.api.libs.json.{JsArray, JsObject, Json}
 import services.DataPrefillService.DirectorIdentifier
 import utils.{Enumerable, UaJsValueGenerators, UserAnswers}
 

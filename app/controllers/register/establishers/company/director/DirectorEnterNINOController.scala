@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId}
+import identifiers.register.establishers.company.director.{DirectorEnterNINOId, DirectorNameId, DirectorHasNINOId}
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
@@ -71,8 +71,13 @@ class DirectorEnterNINOController @Inject()(
       implicit request =>
         directorName(establisherIndex, directorIndex).retrieve.map {
           name =>
-            post(DirectorEnterNINOId(establisherIndex, directorIndex), mode, formProvider(name),
-              viewmodel(establisherIndex, directorIndex, mode, srn, name))
+            post(
+              DirectorEnterNINOId(establisherIndex, directorIndex),
+              mode,
+              formProvider(name),
+              viewmodel(establisherIndex, directorIndex, mode, srn, name),
+              DirectorHasNINOId(establisherIndex, directorIndex)
+            )
         }
     }
 

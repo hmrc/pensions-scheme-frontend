@@ -23,6 +23,7 @@ import models.{Mode, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.I18nSupport
+import play.api.libs.json.*
 import play.api.mvc.{AnyContent, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,14 +45,24 @@ trait NinoController extends FrontendBaseController with Retrievals with I18nSup
     Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, form: Form[ReferenceValue], viewmodel: NinoViewModel)
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, form: Form[ReferenceValue], viewmodel: NinoViewModel, hasNINOId: TypedIdentifier[Boolean])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
       value =>
-        userAnswersService.save(mode, viewmodel.srn, id, value.copy(isEditable = true)).map { cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn))
+        val ua: UserAnswers =
+          request
+            .userAnswers
+            .set(hasNINOId)(true)
+            .asOpt
+            .getOrElse(request.userAnswers)
+            .set(id)(value.copy(isEditable = true))
+            .asOpt
+            .getOrElse(request.userAnswers)
+        
+        userAnswersService.upsert(mode, viewmodel.srn, ua.json).map { _ =>
+          Redirect(navigator.nextPage(id, mode, ua, viewmodel.srn))
         }
     )
   }

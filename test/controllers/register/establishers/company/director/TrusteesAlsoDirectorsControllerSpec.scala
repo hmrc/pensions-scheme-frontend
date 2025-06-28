@@ -17,16 +17,15 @@
 package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.dataPrefill.DataPrefillRadioFormProvider
-import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, NormalMode}
+import models.prefill.IndividualDetails as DataPrefillIndividualDetails
+import models.{CompanyDetails, DataPrefillRadioOptions, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import navigators.{EstablishersCompanyNavigator, Navigator}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
@@ -34,7 +33,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DataPrefillService, UserAnswersService}
 import utils.UserAnswers
 import views.html.dataPrefillRadio
@@ -45,13 +44,11 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
   private val onwardRoute: Call = Call("GET", "/dummy")
   private val establisherIndex = 0
   private val companyDetails = CompanyDetails(companyName = "Wibble Inc")
-  private val schemeName = "aa"
 
   private val data =
     Some(
       UserAnswers(Json.obj())
         .setOrException(CompanyDetailsId(establisherIndex))(companyDetails)
-        .setOrException(SchemeNameId)(schemeName)
         .json
     )
 
@@ -110,7 +107,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneTrustee), postCall)(fakeRequest, messages).toString
+          view(form, pageHeading, titleMessage, DataPrefillRadioOptions(seqOneTrustee), postCall)(fakeRequest, messages).toString
       }
     }
 

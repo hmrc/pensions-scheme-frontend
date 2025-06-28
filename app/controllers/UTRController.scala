@@ -47,15 +47,26 @@ trait UTRController extends FrontendBaseController with Retrievals with I18nSupp
     Future.successful(Ok(view(preparedForm, viewmodel, existingSchemeName)))
   }
 
-  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue])
+  def post(id: TypedIdentifier[ReferenceValue], mode: Mode, viewmodel: UTRViewModel, form: Form[ReferenceValue], hasUTRId: TypedIdentifier[Boolean])
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[?]) =>
         Future.successful(BadRequest(view(formWithErrors, viewmodel, existingSchemeName))),
-      utr => {
-        userAnswersService.save(mode, viewmodel.srn, id, utr.copy(isEditable = true)).map(cacheMap =>
-          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap), viewmodel.srn)))
-      }
+      utr =>
+        val ua: UserAnswers =
+          request
+            .userAnswers
+            .set(hasUTRId)(true)
+            .asOpt
+            .getOrElse(request.userAnswers)
+            .set(id)(utr.copy(isEditable = true))
+            .asOpt
+            .getOrElse(request.userAnswers)
+
+        userAnswersService.upsert(mode, viewmodel.srn, ua.json).map { _ =>
+          Redirect(navigator.nextPage(id, mode, ua, viewmodel.srn))
+        }
+      
     )
   }
 

@@ -17,13 +17,12 @@
 package controllers.register.trustees
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.dataPrefill.DataPrefillRadioFormProvider
-import identifiers.SchemeNameId
-import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
-import models.{CompanyDetails, DataPrefillRadio, EmptyOptionalSchemeReferenceNumber, NormalMode}
+import models.prefill.IndividualDetails as DataPrefillIndividualDetails
+import models.{DataPrefillRadioOptions, EmptyOptionalSchemeReferenceNumber, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,7 +30,7 @@ import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsNull, JsValue, Json}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, UserAnswersService}
 import utils.UserAnswers
@@ -40,23 +39,14 @@ import views.html.dataPrefillRadio
 import scala.concurrent.Future
 
 class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with BeforeAndAfterEach with MockitoSugar {
-  private val companyDetails = CompanyDetails(companyName = "Wibble Inc")
-  private val schemeName = "aa"
-
-  private val data =
-    Some(
-      UserAnswers(Json.obj())
-        .setOrException(SchemeNameId)(schemeName)
-        .json
-    )
-
-  private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
   private val mockDataPrefillService = mock[DataPrefillService]
   private val mockUserAnswersService = mock[UserAnswersService]
 
+  private val dataRetrievalAction = new FakeDataRetrievalAction(Some(UserAnswers(Json.obj()).json))
+
   private val pageHeading = Messages("messages__trustees__prefill__title")
-  private val titleMessage = Messages("messages__trustees__prefill__heading", companyDetails.companyName)
+  private val titleMessage = Messages("messages__trustees__prefill__heading")
   private val postCall = controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onSubmit(0)
 
   private val seqOneEstablisherDirector = Seq(
@@ -105,7 +95,7 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
         )
 
         contentAsString(result) mustBe
-          view(form, Some(schemeName), pageHeading, titleMessage, DataPrefillRadio.radios(seqOneEstablisherDirector), postCall)(fakeRequest, messages).toString
+          view(form, pageHeading, titleMessage, DataPrefillRadioOptions(seqOneEstablisherDirector), postCall)(fakeRequest, messages).toString
       }
     }
 

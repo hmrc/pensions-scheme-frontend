@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.NinoController
 import controllers.actions._
 import forms.NINOFormProvider
-import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId}
+import identifiers.register.establishers.individual.{EstablisherEnterNINOId, EstablisherNameId, EstablisherHasNINOId}
 import models.person.PersonName
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
@@ -75,8 +75,13 @@ class EstablisherEnterNINOController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       EstablisherNameId(index).retrieve.map {
         details =>
-          post(EstablisherEnterNINOId(index), mode, formProvider(details.fullName), viewmodel(details, index, mode,
-            srn))
+          post(
+            EstablisherEnterNINOId(index),
+            mode,
+            formProvider(details.fullName),
+            viewmodel(details, index, mode, srn),
+            EstablisherHasNINOId(index)
+          )
       }
   }
 

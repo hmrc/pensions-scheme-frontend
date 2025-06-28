@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.*
 import forms.dataPrefill.{DataPrefillCheckboxFormProvider, DataPrefillRadioFormProvider}
-import identifiers.SchemeNameId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
 import models.*
@@ -57,28 +56,27 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                                                 config: FrontendAppConfig
                                                )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
   with I18nSupport with Retrievals with Enumerable.Implicits with Logging {
-
-  logger.info("TrusteesAlsoDirectorsController")
-
-  private def renderView(status: Status,
-                         seqTrustee: Seq[IndividualDetails],
-                         eitherForm: Either[Form[List[Int]], Form[Int]],
-                         establisherIndex: Int,
-                         companyName: CompanyDetails,
-                         schemeName: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  
+  private def renderView(
+                          status: Status,
+                          seqTrustee: Seq[IndividualDetails],
+                          eitherForm: Either[Form[List[Int]], Form[Int]],
+                          establisherIndex: Int,
+                          companyName: CompanyDetails
+                        )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     eitherForm match {
       case Left(form) =>
         val pageHeading = Messages("messages__directors__prefill__title")
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
-        val options = DataPrefillCheckbox.checkboxes(seqTrustee)
+        val options = DataPrefillCheckboxOptions(seqTrustee)
         val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
-        Future.successful(status(checkBoxView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        Future.successful(status(checkBoxView(form, pageHeading, titleMessage, options, postCall)))
       case Right(form) =>
         val pageHeading = Messages("messages__directors__prefill__title")
         val titleMessage = Messages("messages__directors__prefill__heading", companyName.companyName)
-        val options = DataPrefillRadio.radios(seqTrustee)
+        val options = DataPrefillRadioOptions(seqTrustee)
         val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
-        Future.successful(status(radioView(form, Some(schemeName), pageHeading, titleMessage, options, postCall)))
+        Future.successful(status(radioView(form, pageHeading, titleMessage, options, postCall)))
     }
   }
 
@@ -87,26 +85,27 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     if (seqTrustee.size > 1) {
       Left(formCheckBox(establisherIndex)(request.userAnswers, implicitly))
     } else {
-      Right(formRadio(establisherIndex))
+      Right(formRadio)
     }
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber,establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
-        logger.info("TrusteesAlsoDirectorsController.onPageLoad")
-        CompanyDetailsId(establisherIndex).and(SchemeNameId).retrieve.map { case companyName ~ schemeName =>
-          logger.info(s"TrusteesAlsoDirectorsController.onPageLoad - CompanyDetailsId($establisherIndex) - SchemeNameId retrieved successfully")
-          val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+        CompanyDetailsId(establisherIndex).retrieve.map { companyName =>
+          logger.info(s"TrusteesAlsoDirectorsController.onPageLoad - CompanyDetailsId($establisherIndex)")
+          val seqTrustee: Seq[IndividualDetails] =
+            dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+          
           if (seqTrustee.isEmpty) {
             Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
               .onPageLoad(mode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
           } else {
-            renderView(Ok,
-              seqTrustee,
-              getFormAsEither(seqTrustee, establisherIndex),
-              establisherIndex,
-              companyName,
-              schemeName
+            renderView(
+              status           = Ok,
+              seqTrustee       = seqTrustee,
+              eitherForm       = getFormAsEither(seqTrustee, establisherIndex),
+              establisherIndex = establisherIndex,
+              companyName      = companyName
             )
           }
         }
@@ -118,64 +117,52 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       implicit request =>
         logger.info("TrusteesAlsoDirectorsController.onSubmit")
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-        request.userAnswers.get(CompanyDetailsId(establisherIndex)) match {
-          case Some(companyName) =>
-            request.userAnswers.get(SchemeNameId) match {
-              case Some(schemeName) =>
-                logger.info(s"TrusteesAlsoDirectorsController.onSubmit - CompanyDetailsId($establisherIndex) - SchemeNameId retrieved successfully")
-                if (seqTrustee.size > 1) {
-                  val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
-                  boundForm.value match {
-                    case Some(value) if boundForm.errors.isEmpty =>
-                      def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
-                        request.userAnswers
-                      } else {
-                        dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
-                      }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
-
-                      userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
-                        Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
-                      }
-                    case _ =>
-                      renderView(BadRequest,
-                        seqTrustee,
-                        Left(boundForm),
-                        establisherIndex,
-                        companyName,
-                        schemeName
-                      )
-                  }
+        CompanyDetailsId(establisherIndex).retrieve.map { companyName =>
+          if (seqTrustee.size > 1) {
+            val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
+            boundForm.value match {
+              case Some(value) if boundForm.errors.isEmpty =>
+                def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
+                  request.userAnswers
                 } else {
-                  val boundForm: Form[Int] = formRadio(establisherIndex).bindFromRequest()
-                  boundForm.value match {
-                    case Some(value) if boundForm.errors.isEmpty =>
-                      def uaAfterCopy: UserAnswers = (if (value < 0) {
-                        request.userAnswers
-                      } else {
-                        dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
-                      }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+                  dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
+                }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
-                      userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
-                        Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
-                      }
-                    case _ =>
-                      renderView(BadRequest,
-                        seqTrustee,
-                        Right(boundForm),
-                        establisherIndex,
-                        companyName,
-                        schemeName
-                      )
-                  }
+                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
                 }
               case _ =>
-                logger.info(s"SchemeNameId failed")
-                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
+                renderView(
+                  BadRequest,
+                  seqTrustee,
+                  Left(boundForm),
+                  establisherIndex,
+                  companyName
+                )
             }
-          case _ =>
-            logger.info(s"CompanyDetailsId($establisherIndex) failed")
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-            
+          } else {
+            val boundForm: Form[Int] = formRadio.bindFromRequest()
+            boundForm.value match {
+              case Some(value) if boundForm.errors.isEmpty =>
+                def uaAfterCopy: UserAnswers = (if (value < 0) {
+                  request.userAnswers
+                } else {
+                  dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
+                }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+
+                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
+                }
+              case _ =>
+                renderView(
+                  BadRequest,
+                  seqTrustee,
+                  Right(boundForm),
+                  establisherIndex,
+                  companyName
+                )
+            }
+          }
         }
     }
 
@@ -190,6 +177,6 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     )
   }
   
-  def formRadio(index: Index): Form[Int] =
+  def formRadio: Form[Int] =
     formProviderRadio("messages__directors__prefill__single__error__required")
 }

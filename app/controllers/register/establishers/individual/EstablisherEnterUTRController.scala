@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions.{AllowAccessActionProvider, AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.UTRFormProvider
-import identifiers.register.establishers.individual.{EstablisherNameId, EstablisherUTRId}
+import identifiers.register.establishers.individual.{EstablisherHasUTRId, EstablisherNameId, EstablisherUTRId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -71,7 +71,13 @@ class EstablisherEnterUTRController @Inject()(override val appConfig: FrontendAp
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         EstablisherNameId(index).retrieve.map { details =>
-          post(EstablisherUTRId(index), mode, viewModel(mode, index, srn, details.fullName), form)
+          post(
+            EstablisherUTRId(index),
+            mode,
+            viewModel(mode, index, srn, details.fullName),
+            form,
+            EstablisherHasUTRId(index)
+          )
         }
     }
 }

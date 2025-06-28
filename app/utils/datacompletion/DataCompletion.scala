@@ -87,6 +87,16 @@ trait DataCompletion {
       case _ => Some(false)
     }
 
+  def isTrusteeIndividualAnswerComplete[A](yesNoQuestionId: TypedIdentifier[Boolean],
+                                           yesValueId: TypedIdentifier[A],
+                                           noReasonIdOpt: Option[TypedIdentifier[String]])(implicit reads: Reads[A]): Option[Boolean] =
+    (get(yesNoQuestionId), get(yesValueId), noReasonIdOpt) match {
+      case (None, None, _) => None
+      case (Some(true), Some(_), _) => Some(true)
+      case (Some(false), _, Some(noReasonId)) if get(noReasonId).isDefined => Some(true)
+      case _ => Some(false)
+    }
+
   def isTypeOfBenefitsCompleted: Option[Boolean] =
     get(TypeOfBenefitsId) match {
       case Some(Defined) =>

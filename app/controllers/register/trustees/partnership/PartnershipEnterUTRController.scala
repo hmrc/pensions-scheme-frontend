@@ -18,9 +18,9 @@ package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
 import controllers.UTRController
-import controllers.actions._
+import controllers.actions.*
 import forms.UTRFormProvider
-import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -58,7 +58,13 @@ class PartnershipEnterUTRController @Inject()(override val appConfig: FrontendAp
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         PartnershipDetailsId(index).retrieve.map { details =>
-          post(PartnershipEnterUTRId(index), mode, viewModel(mode, index, srn, details.name), form)
+          post(
+            PartnershipEnterUTRId(index),
+            mode,
+            viewModel(mode, index, srn, details.name),
+            form,
+            PartnershipHasUTRId(index)
+          )
         }
     }
 

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterUTRId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyEnterUTRId, HasCompanyUTRId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -72,7 +72,13 @@ class CompanyEnterUTRController @Inject()(override val appConfig: FrontendAppCon
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
-          post(CompanyEnterUTRId(index), mode, viewModel(mode, index, srn, companyName), form)
+          post(
+            CompanyEnterUTRId(index),
+            mode,
+            viewModel(mode, index, srn, companyName),
+            form,
+            HasCompanyUTRId(index)
+          )
         }
     }
 }
