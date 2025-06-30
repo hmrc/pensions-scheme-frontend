@@ -23,11 +23,13 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, ReferenceValue}
 import navigators.Navigator
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc._
+import play.api.libs.json.*
+import play.api.mvc.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{FakeUserAnswersService, UserAnswersService}
 import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, UserAnswers}
@@ -38,7 +40,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class NinoControllerSpec extends ControllerSpecBase {
+class NinoControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   override def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/")
 
@@ -51,6 +53,7 @@ class NinoControllerSpec extends ControllerSpecBase {
   )
 
   object FakeIdentifier extends TypedIdentifier[ReferenceValue]
+  object FakeHasNinoIdentifier extends TypedIdentifier[Boolean]
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad
 
@@ -73,7 +76,7 @@ class NinoControllerSpec extends ControllerSpecBase {
     }
 
     def onSubmit(mode: Mode, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, form, viewmodel)(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
+      post(FakeIdentifier, NormalMode, form, viewmodel, FakeHasNinoIdentifier)(DataRequest(fakeRequest, "cacheId", answers, Some(PsaId("A0000000"))))
     }
   }
 
@@ -88,6 +91,11 @@ class NinoControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[?] = form) = view(form, viewmodel, None)(fakeRequest, messages).toString
+
+  override def beforeEach(): Unit = {
+    FakeUserAnswersService.reset()
+    super.beforeEach()
+  }
 
 
   "NinoController" must {
@@ -111,9 +119,19 @@ class NinoControllerSpec extends ControllerSpecBase {
 
       val result = controller().onSubmit(NormalMode, UserAnswers(), postRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("CS700100A", isEditable = true))
+      status(result).mustBe(SEE_OTHER)
+      redirectLocation(result).mustBe(Some(onwardRoute.url))
+      FakeUserAnswersService.getData.mustBe(
+        Json.obj(
+          "userAnswer" -> Json.obj(
+            FakeHasNinoIdentifier.toString -> true,
+            FakeIdentifier.toString -> Json.obj(
+              "value" -> "CS700100A",
+              "isEditable" -> true
+            )
+          )
+        )
+      )
     }
 
     "return a Bad Request and errors invalid data is submitted" in {

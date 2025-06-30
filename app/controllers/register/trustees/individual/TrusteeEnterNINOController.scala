@@ -18,9 +18,9 @@ package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
 import controllers.NinoController
-import controllers.actions._
+import controllers.actions.*
 import forms.NINOFormProvider
-import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeNameId}
+import identifiers.register.trustees.individual.{TrusteeEnterNINOId, TrusteeHasNINOId, TrusteeNameId}
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
@@ -70,7 +70,13 @@ class TrusteeEnterNINOController @Inject()(
 
       fullNameOption.map {
         fullName =>
-          post(TrusteeEnterNINOId(index), mode, formProvider(fullName), viewmodel(fullName, index, mode, srn))
+          post(
+            TrusteeEnterNINOId(index),
+            mode,
+            formProvider(fullName),
+            viewmodel(fullName, index, mode, srn),
+            TrusteeHasNINOId(index)
+          )
       }
   }
 

@@ -18,9 +18,9 @@ package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
 import controllers.UTRController
-import controllers.actions._
+import controllers.actions.*
 import forms.UTRFormProvider
-import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorNameId}
+import identifiers.register.establishers.company.director.{DirectorEnterUTRId, DirectorHasUTRId, DirectorNameId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -63,8 +63,13 @@ class DirectorEnterUTRController @Inject()(
       implicit request =>
         DirectorNameId(establisherIndex, directorIndex).retrieve.map { details =>
           val directorName = details.fullName
-          post(DirectorEnterUTRId(establisherIndex, directorIndex), mode, viewModel(mode, establisherIndex,
-            directorIndex, srn, directorName), form)
+          post(
+            DirectorEnterUTRId(establisherIndex, directorIndex),
+            mode,
+            viewModel(mode, establisherIndex, directorIndex, srn, directorName),
+            form,
+            DirectorHasUTRId(establisherIndex, directorIndex),
+          )
         }
     }
 

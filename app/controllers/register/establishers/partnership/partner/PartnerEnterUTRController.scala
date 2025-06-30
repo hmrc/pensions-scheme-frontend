@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
 import controllers.UTRController
-import controllers.actions._
+import controllers.actions.*
 import forms.UTRFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerEnterUTRId, PartnerHasUTRId, PartnerNameId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -62,8 +62,13 @@ class PartnerEnterUTRController @Inject()(
       implicit request =>
         PartnerNameId(establisherIndex, partnerIndex).retrieve.map { details =>
           val partnerName = details.fullName
-          post(PartnerEnterUTRId(establisherIndex, partnerIndex), mode, viewModel(mode, establisherIndex,
-            partnerIndex, srn, partnerName), form)
+          post(
+            PartnerEnterUTRId(establisherIndex, partnerIndex),
+            mode,
+            viewModel(mode, establisherIndex, partnerIndex, srn, partnerName),
+            form,
+            PartnerHasUTRId(establisherIndex, partnerIndex)
+          )
         }
     }
 

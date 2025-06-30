@@ -24,16 +24,26 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 
 @this(
-    layout: templates.Layout,
-    formHelper: PlayFrontendFormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
-    submit_button: components.submit_button,
-    govukCheckboxes : GovukCheckboxes
+        layout: templates.Layout,
+        formHelper: PlayFrontendFormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        submit_button: components.submit_button,
+        govukCheckboxes: GovukCheckboxes
 )
 
-@(form: Form[?], schemeName: Option[String], pageHeading: String, titleMessage: String, options: Seq[CheckboxItem], postCall: Call)(implicit request: Request[?], messages: Messages)
+@(
+        form: Form[?],
+        pageHeading: String,
+        titleMessage: String,
+        options: Seq[CheckboxItem],
+        postCall: Call
+)(
+        implicit
+        request: Request[?],
+        messages: Messages
+)
 
-@layout( pageTitle = titleWithErrors(form, titleMessage)) {
+@layout(pageTitle = titleWithErrors(form, titleMessage)) {
 
     @formHelper(action = postCall, Symbol("autoComplete") -> "off") {
 
@@ -41,26 +51,23 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
-        @schemeName.map{sn=>
-
-            @govukCheckboxes(
-              Checkboxes(
-                fieldset = Some(Fieldset(
-                  legend = Some(Legend(
-                    content = Text(pageHeading),
-                    classes = "govuk-label--l",
-                    isPageHeading = true
-                  ))
-                )),
-                idPrefix = Some("value"),
-                items = options
-              ).withFormField(form("value"))
-            )
-        }
+        @govukCheckboxes(
+          Checkboxes(
+            fieldset = Some(Fieldset(
+              legend = Some(Legend(
+                content = Text(pageHeading),
+                classes = "govuk-label--l",
+                isPageHeading = true
+              ))
+            )),
+            idPrefix = Some("value"),
+            items = options
+          ).withFormField(form("value"))
+        )
 
         @submit_button("site.save_and_continue", true)
 
-        @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+        @components.return_link("messages__schemeTaskList__returnlink")
 
     }
 }

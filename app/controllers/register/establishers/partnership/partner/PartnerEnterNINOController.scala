@@ -18,9 +18,9 @@ package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
 import controllers.NinoController
-import controllers.actions._
+import controllers.actions.*
 import forms.NINOFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerNameId}
+import identifiers.register.establishers.partnership.partner.{PartnerEnterNINOId, PartnerHasNINOId, PartnerNameId}
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
@@ -82,7 +82,8 @@ class PartnerEnterNINOController @Inject()(
               PartnerEnterNINOId(establisherIndex, partnerIndex),
               mode,
               formProvider(name.fullName),
-              viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn)
+              viewmodel(name.fullName, establisherIndex, partnerIndex, mode, srn),
+              PartnerHasNINOId(establisherIndex, partnerIndex)
             )
         }
     }

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions._
 import forms.UTRFormProvider
-import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId}
+import identifiers.register.trustees.individual.{TrusteeNameId, TrusteeUTRId, TrusteeHasUTRId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
@@ -70,7 +70,13 @@ class TrusteeEnterUTRController @Inject()(val appConfig: FrontendAppConfig,
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         TrusteeNameId(index).retrieve.map { trusteeName =>
-          post(TrusteeUTRId(index), mode, viewModel(mode, index, srn, trusteeName.fullName), form)
+          post(
+            TrusteeUTRId(index),
+            mode,
+            viewModel(mode, index, srn, trusteeName.fullName),
+            form,
+            TrusteeHasUTRId(index)
+          )
         }
     }
 }

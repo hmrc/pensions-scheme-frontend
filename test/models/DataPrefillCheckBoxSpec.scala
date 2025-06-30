@@ -67,7 +67,7 @@ class DataPrefillCheckBoxSpec extends SpecBase {
           mainIndex = Some(1)
         )
       )
-      val result = DataPrefillCheckbox.checkboxes(values)
+      val result = DataPrefillCheckboxOptions(values)
       result.head.value mustBe "0"
       result(1).value mustBe "1"
       result(2).value mustBe "2"

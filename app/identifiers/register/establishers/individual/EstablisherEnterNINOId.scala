@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers._
+import identifiers.*
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
 import play.api.libs.json.JsPath

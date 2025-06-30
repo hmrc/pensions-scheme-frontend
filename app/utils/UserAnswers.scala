@@ -16,29 +16,29 @@
 
 package utils
 
-import identifiers._
+import identifiers.*
+import identifiers.register.establishers.company.CompanyDetailsId as EstablisherCompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorNameId, IsNewDirectorId}
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsNewPartnerId, PartnerNameId}
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherNewId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.partnership.PartnershipDetailsId as TrusteePartnershipDetailsId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.address.Address
 import models.person.PersonName
-import models.register._
+import models.register.*
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, Mode, PartnershipDetails, UpdateMode}
 import play.api.Logger
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
+import play.api.libs.json.Reads.*
 import play.api.mvc.Result
-import play.api.mvc.Results._
+import play.api.mvc.Results.*
 import utils.datacompletion.{DataCompletionEstablishers, DataCompletionTrustees}
 
 import scala.annotation.tailrec
@@ -92,8 +92,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   def removeAllOf[I <: TypedIdentifier.PathDependent](ids: List[I]): JsResult[UserAnswers] = {
 
     @tailrec
-    def removeRec[II <: TypedIdentifier.PathDependent](localIds: List[II], result: JsResult[UserAnswers])
-    : JsResult[UserAnswers] = {
+    def removeRec[II <: TypedIdentifier.PathDependent](localIds: List[II], result: JsResult[UserAnswers]): JsResult[UserAnswers] = {
       result match {
         case JsSuccess(_, path) =>
           localIds match {
@@ -176,7 +175,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   }
 
   //scalastyle:off method.length
-  def readTrustees: Reads[Seq[Trustee[?]]] = new Reads[Seq[Trustee[?]]] {
+  private def readTrustees: Reads[Seq[Trustee[?]]] = new Reads[Seq[Trustee[?]]] {
 
     private def noOfRecords: Int = json.validate((__ \ Symbol("trustees")).readNullable(__.read(
       Reads.seq((__ \ Symbol("trusteeKind")).read[String].flatMap {
@@ -191,29 +190,52 @@ final case class UserAnswers(json: JsValue = Json.obj())
     private def readsIndividual(index: Int): Reads[Trustee[?]] =
       (
         (JsPath \ TrusteeNameId.toString).read[PersonName] and
-          (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-        ) ((details, isNew) =>
-        TrusteeIndividualEntity(
-          TrusteeNameId(index), details.fullName, details.isDeleted,
-          isTrusteeIndividualComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
+        (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
+      )(
+        (details, isNew) =>
+          TrusteeIndividualEntity(
+            TrusteeNameId(index),
+            details.fullName, details.isDeleted,
+            isTrusteeIndividualComplete(index),
+            isNew.getOrElse(false),
+            noOfRecords,
+            schemeType
+          )
       )
 
-    private def readsCompany(index: Int): Reads[Trustee[?]] = (
-      (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
+    private def readsCompany(index: Int): Reads[Trustee[?]] =
+      (
+        (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isNew) => {
-      TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted,
-        isTrusteeCompanyComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
-    }
-    )
+      )(
+        (details, isNew) =>
+          TrusteeCompanyEntity(
+            CompanyDetailsId(index),
+            details.companyName,
+            details.isDeleted,
+            isTrusteeCompanyComplete(index),
+            isNew.getOrElse(false),
+            noOfRecords,
+            schemeType
+          )
+      )
 
-    private def readsPartnership(index: Int): Reads[Trustee[?]] = (
-      (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
+    private def readsPartnership(index: Int): Reads[Trustee[?]] =
+      (
+        (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
         (JsPath \ IsTrusteeNewId.toString).readNullable[Boolean]
-      ) ((details, isNew) => TrusteePartnershipEntity(
-      TrusteePartnershipDetailsId(index), details.name, details.isDeleted,
-      isTrusteePartnershipComplete(index), isNew.fold(false)(identity), noOfRecords, schemeType)
-    )
+      )(
+        (details, isNew) =>
+          TrusteePartnershipEntity(
+            TrusteePartnershipDetailsId(index),
+            details.name,
+            details.isDeleted,
+            isTrusteePartnershipComplete(index),
+            isNew.getOrElse(false),
+            noOfRecords,
+            schemeType
+          )
+      )
 
     private def readsSkeleton(index: Int): Reads[Trustee[?]] = new Reads[Trustee[?]] {
       override def reads(json: JsValue): JsResult[Trustee[?]] = {
@@ -237,7 +259,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForTrusteeKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults.toSeq)
+          asJsResultSeq(jsResults.toSeq, "readTrustees")
         case _ => JsSuccess(Nil)
       }
     }
@@ -295,7 +317,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
   }
 
   //scalastyle:off method.length
-  def readEstablishers(mode: Mode): Reads[Seq[Establisher[?]]] = new Reads[Seq[Establisher[?]]] {
+  private def readEstablishers(mode: Mode): Reads[Seq[Establisher[?]]] = new Reads[Seq[Establisher[?]]] {
 
     private def noOfRecords: Int = json.validate((__ \ Symbol("establishers")).readNullable(__.read(
       Reads.seq((__ \ Symbol("establisherKind")).read[String].flatMap {
@@ -356,7 +378,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForEstablisherKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults.toSeq)
+          asJsResultSeq(jsResults.toSeq, "readEstablishers")
         case _ => JsSuccess(Nil)
       }
     }
@@ -364,13 +386,13 @@ final case class UserAnswers(json: JsValue = Json.obj())
 
   private def notDeleted: Reads[JsBoolean] = __.read(JsBoolean(false))
 
-  private def asJsResultSeq[A](jsResults: Seq[JsResult[A]]): JsResult[Seq[A]] = {
+  private def asJsResultSeq[A](jsResults: Seq[JsResult[A]], defName: String): JsResult[Seq[A]] = {
     val allErrors = jsResults.collect {
       case JsError(errors) => errors
     }.flatten
 
     if (allErrors.nonEmpty) { // If any of JSON is invalid then log warning but return the valid ones
-      logger.warn("Errors in JSON: " + allErrors)
+      logger.warn(s"Errors in JSON from $defName: $allErrors")
     }
 
     JsSuccess(jsResults.collect {
@@ -453,18 +475,18 @@ final case class UserAnswers(json: JsValue = Json.obj())
 
   }
 
-  def isDirectorPartnerCompleted(establisherIndex: Int): Boolean = get(EstablisherKindId(establisherIndex)) match {
+  private def isDirectorPartnerCompleted(establisherIndex: Int): Boolean = get(EstablisherKindId(establisherIndex)) match {
     case Some(EstablisherKind.Company) => allDirectorsAfterDelete(establisherIndex).forall(_.isCompleted)
     case Some(EstablisherKind.Partnership) => allPartnersAfterDelete(establisherIndex).forall(_.isCompleted)
     case _ => true
   }
 
-  def allEstablishersCompleted(mode: Mode): Boolean =
+  private def allEstablishersCompleted(mode: Mode): Boolean =
     !allEstablishersAfterDelete(mode).zipWithIndex.collect { case (item, establisherIndex) =>
       item.isCompleted && isDirectorPartnerCompleted(establisherIndex)
     }.contains(false)
 
-  def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
+  private def isInsuranceCompleted: Boolean = get(BenefitsSecuredByInsuranceId) match {
     case Some(true) => !List(get(InvestmentRegulatedSchemeId), get(OccupationalPensionSchemeId), get(TypeOfBenefitsId),
       get(InsuranceCompanyNameId), get(InsurancePolicyNumberId), get(InsurerConfirmAddressId)).contains(None)
     case Some(false) => true
@@ -494,7 +516,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
         Nil
     }
 
-  def readPspEstablishers: Reads[Seq[String]] = new Reads[Seq[String]] {
+  private def readPspEstablishers: Reads[Seq[String]] = new Reads[Seq[String]] {
 
     private def readsIndividual: Reads[String] = (
       (JsPath \ "establisherDetails" \ "firstName").read[String] and
@@ -518,7 +540,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForEstablisherKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults.toSeq)
+          asJsResultSeq(jsResults.toSeq, "readPspEstablishers")
         case _ => JsSuccess(Nil)
       }
     }
@@ -533,7 +555,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
         Nil
     }
 
-  def readPspTrustees: Reads[Seq[String]] = new Reads[Seq[String]] {
+  private def readPspTrustees: Reads[Seq[String]] = new Reads[Seq[String]] {
 
     private def readsIndividual: Reads[String] =
       ((JsPath \ TrusteeNameId.toString \ "firstName").read[String] and
@@ -560,7 +582,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             readsForTrusteeKind.reads(jsValue)
           }
 
-          asJsResultSeq(jsResults.toSeq)
+          asJsResultSeq(jsResults.toSeq, "readPspTrustees")
         case _ => JsSuccess(Nil)
       }
     }

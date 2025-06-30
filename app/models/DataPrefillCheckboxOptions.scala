@@ -16,15 +16,22 @@
 
 package models
 
-import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
+import models.prefill.IndividualDetails
 import play.api.i18n.Messages
-import utils.InputOption
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 
-object DataPrefillRadio {
-  def radios(values: Seq[DataPrefillIndividualDetails])(implicit messages: Messages): Seq[InputOption] = {
-    val noneValue = "-1"
-    val items = values.map(indvDetails => InputOption(indvDetails.index.toString, indvDetails.fullName)) :+
-      InputOption(noneValue, messages("messages__prefill__label__none"))
-    items
+object DataPrefillCheckboxOptions {
+
+  def apply(values: Seq[IndividualDetails])(implicit messages: Messages): Seq[CheckboxItem] = {
+    values.zipWithIndex.map { case (individualDetails, index) =>
+      CheckboxItem(
+        content = Text(individualDetails.fullName),
+        value   = index.toString
+      )
+    } :+ CheckboxItem(
+      content = Text(messages("messages__prefill__label__none")),
+      value   = "-1"
+    )
   }
 }
