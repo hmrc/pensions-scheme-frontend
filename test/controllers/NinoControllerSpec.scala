@@ -23,6 +23,7 @@ import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{EmptyOptionalSchemeReferenceNumber, Mode, NormalMode, ReferenceValue}
 import navigators.Navigator
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.libs.json.*
@@ -39,7 +40,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class NinoControllerSpec extends ControllerSpecBase {
+class NinoControllerSpec extends ControllerSpecBase with BeforeAndAfterEach {
 
   override def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "/")
 
@@ -91,6 +92,11 @@ class NinoControllerSpec extends ControllerSpecBase {
 
   private def viewAsString(form: Form[?] = form) = view(form, viewmodel, None)(fakeRequest, messages).toString
 
+  override def beforeEach(): Unit = {
+    FakeUserAnswersService.reset()
+    super.beforeEach()
+  }
+
 
   "NinoController" must {
 
@@ -113,8 +119,8 @@ class NinoControllerSpec extends ControllerSpecBase {
 
       val result = controller().onSubmit(NormalMode, UserAnswers(), postRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
+      status(result).mustBe(SEE_OTHER)
+      redirectLocation(result).mustBe(Some(onwardRoute.url))
       FakeUserAnswersService.getData.mustBe(
         Json.obj(
           "userAnswer" -> Json.obj(

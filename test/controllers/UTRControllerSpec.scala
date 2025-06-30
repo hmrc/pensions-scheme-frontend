@@ -25,7 +25,7 @@ import models.requests.DataRequest
 import models.{NormalMode, ReferenceValue}
 import navigators.Navigator
 import org.apache.pekko.stream.Materializer
-import org.scalatest.OptionValues
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import play.api.i18n.MessagesApi
@@ -42,7 +42,7 @@ import views.html.utr
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UTRControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures {
+class UTRControllerSpec extends SpecBase with Matchers with OptionValues with ScalaFutures with BeforeAndAfterEach {
 
   import UTRControllerSpec.*
 
@@ -53,6 +53,11 @@ class UTRControllerSpec extends SpecBase with Matchers with OptionValues with Sc
     heading = "heading",
     hint = "legend"
   )
+
+  override def beforeEach(): Unit = {
+    FakeUserAnswersService.reset()
+    super.beforeEach()
+  }
 
   "get" must {
 
