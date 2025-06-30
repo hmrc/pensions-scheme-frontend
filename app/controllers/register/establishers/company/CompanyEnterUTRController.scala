@@ -62,7 +62,13 @@ class CompanyEnterUTRController @Inject()(
       implicit request =>
         CompanyDetailsId(index).retrieve.map { details =>
           val companyName = details.companyName
-          post(CompanyEnterUTRId(index), mode, viewModel(mode, index, srn, companyName), form, HasCompanyUTRId(index))
+          post(
+            CompanyEnterUTRId(index),
+            mode,
+            viewModel(mode, index, srn, companyName),
+            form,
+            HasCompanyUTRId(index)
+          )
         }
     }
 
