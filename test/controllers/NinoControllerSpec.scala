@@ -115,7 +115,6 @@ class NinoControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-//      FakeUserAnswersService.verify(FakeIdentifier, ReferenceValue("CS700100A", isEditable = true))
       FakeUserAnswersService.getData.mustBe(
         Json.obj(
           "userAnswer" -> Json.obj(

@@ -88,14 +88,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
         case Some(jsArray) =>
 
           val trusteeIndividualsArr: collection.IndexedSeq[JsValue] =
-            jsArray
-              .value
-              .filter(_
-                .\(TrusteeKindId.toString)
-                .validate[JsString]
-                .asOpt
-                .contains(JsString(TrusteeKind.Individual.toString))
-              )
+            filterTrusteeIndividuals(jsArray)
               
           val completeNotDeletedTrustees: Seq[JsValue] =
             completeNotDeletedTrusteeIndexes.map(trusteeIndividualsArr(_))
@@ -204,7 +197,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
 
   def getListOfTrusteesToBeCopied(establisherIndex: Int)(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     val filteredTrusteesSeq: Seq[IndividualDetails] =
-      allIndividualTrustees.filter(indv => !indv.isDeleted && indv.isComplete)
+      allIndividualTrustees.filter(indiv => !indiv.isDeleted && indiv.isComplete)
     
     val allDirectorsNotDeleted: collection.Seq[IndividualDetails] =
       (ua.json \ "establishers" \ establisherIndex \ "director").validate[JsArray].asOpt match {
@@ -326,35 +319,19 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
               UserAnswers(
                 (ua.json \ TrusteesId.toString).validate[JsArray].asOpt match {
                   case Some(jsArray) =>
-                    Json.obj(TrusteesId.toString -> JsArray(
-                      jsArray
-                        .value
-                        .filter(_
-                          .\(TrusteeKindId.toString)
-                          .validate[JsString]
-                          .asOpt
-                          .contains(JsString(TrusteeKind.Individual.toString))
-                        )
-                    ))
+                    Json.obj(TrusteesId.toString -> JsArray(filterTrusteeIndividuals(jsArray)))
                   case _ =>
                     ua.json
                 }
               ).isTrusteeIndividualComplete(index)
             ))
-      )
+        )
 
       override def reads(json: JsValue): JsResult[Seq[Option[IndividualDetails]]] =
         (ua.json \ TrusteesId.toString).validate[JsArray].asOpt match {
           case Some(jsArray) =>
             asJsResultSeq(
-              jsArray
-                .value
-                .filter(_
-                  .\(TrusteeKindId.toString)
-                  .validate[JsString]
-                  .asOpt
-                  .contains(JsString(TrusteeKind.Individual.toString))
-                )
+              filterTrusteeIndividuals(jsArray)
                 .zipWithIndex.map { case (jsValue, index) =>
                   readsIndividualTrustee(index).reads(jsValue)
                 }.toSeq
@@ -369,6 +346,21 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
       case JsSuccess(i, _) => i
     })
   }
+  
+  def filterTrusteeIndividuals(jsArray: JsArray): collection.IndexedSeq[JsValue] =
+    jsArray
+      .value
+      .filterNot(_
+        .as[JsObject]
+        .keys
+        .isEmpty
+      )
+      .filter(_
+        .\(TrusteeKindId.toString)
+        .validate[JsString]
+        .asOpt
+        .contains(JsString(TrusteeKind.Individual.toString))
+      )
 }
 
 object DataPrefillService {
