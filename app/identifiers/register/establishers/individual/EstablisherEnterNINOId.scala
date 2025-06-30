@@ -19,16 +19,13 @@ package identifiers.register.establishers.individual
 import identifiers.*
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import models.ReferenceValue
-import play.api.libs.json.{JsPath, JsResult}
+import play.api.libs.json.JsPath
 import utils.UserAnswers
 import utils.checkyouranswers.{CheckYourAnswers, CheckYourAnswersIndividual, ReferenceValueCYA}
 import viewmodels.{AnswerRow, Message}
 
 case class EstablisherEnterNINOId(index: Int) extends TypedIdentifier[ReferenceValue] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherEnterNINOId.toString
-
-  override def cleanup(value: Option[ReferenceValue], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    userAnswers.set(EstablisherHasNINOId(this.index))(true)
 }
 
 object EstablisherEnterNINOId {
