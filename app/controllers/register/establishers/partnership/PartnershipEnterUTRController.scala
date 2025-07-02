@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import controllers.UTRController
 import controllers.actions.*
 import forms.UTRFormProvider
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterUTRId}
-import identifiers.register.trustees.partnership.PartnershipHasUTRId
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipEnterUTRId, PartnershipHasUTRId}
 import models.{Index, Mode, OptionalSchemeReferenceNumber, ReferenceValue}
 import navigators.Navigator
 import play.api.data.Form
