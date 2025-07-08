@@ -92,7 +92,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.map { companyName =>
-          logger.info(s"TrusteesAlsoDirectorsController.onPageLoad - CompanyDetailsId($establisherIndex)")
+          logger.info(s"onPageLoad - successfully retrieved CompanyDetailsId($establisherIndex) sessionId: ${hc.sessionId.getOrElse("No session Id")}")
           val seqTrustee: Seq[IndividualDetails] =
             dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
           
@@ -115,55 +115,65 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onSubmit(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
-        logger.info("TrusteesAlsoDirectorsController.onSubmit")
         val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
-        CompanyDetailsId(establisherIndex).retrieve.map { companyName =>
-          if (seqTrustee.size > 1) {
-            val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
-            boundForm.value match {
-              case Some(value) if boundForm.errors.isEmpty =>
-                def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
-                  request.userAnswers
-                } else {
-                  dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
-                }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
-                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
-                }
-              case _ =>
-                renderView(
-                  BadRequest,
-                  seqTrustee,
-                  Left(boundForm),
-                  establisherIndex,
-                  companyName
-                )
-            }
-          } else {
-            val boundForm: Form[Int] = formRadio.bindFromRequest()
-            boundForm.value match {
-              case Some(value) if boundForm.errors.isEmpty =>
-                def uaAfterCopy: UserAnswers = (if (value < 0) {
-                  request.userAnswers
-                } else {
-                  dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
-                }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+        request.userAnswers.get(CompanyDetailsId(establisherIndex)) match {
+          case Some(companyName) =>
+            logger.info(
+              s"onSubmit - successfully retrieved CompanyDetailsId($establisherIndex) " +
+              s"sessionId: ${hc.sessionId.getOrElse("No session Id")}" +
+              s"seqTrustee.size = ${seqTrustee.size}"
+            )
+            if (seqTrustee.size > 1) {
+              val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
+              boundForm.value match {
+                case Some(value) if boundForm.errors.isEmpty =>
+                  def uaAfterCopy: UserAnswers = (if (value.headOption.getOrElse(-1) < 0) {
+                    request.userAnswers
+                  } else {
+                    dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, value, establisherIndex)
+                  }).setOrException(TrusteesAlsoDirectorsId(establisherIndex))(value)
 
-                userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
-                  Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
-                }
-              case _ =>
-                renderView(
-                  BadRequest,
-                  seqTrustee,
-                  Right(boundForm),
-                  establisherIndex,
-                  companyName
-                )
+                  userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                    Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
+                  }
+                case _ =>
+                  renderView(
+                    BadRequest,
+                    seqTrustee,
+                    Left(boundForm),
+                    establisherIndex,
+                    companyName
+                  )
+              }
+            } else {
+              val boundForm: Form[Int] = formRadio.bindFromRequest()
+              boundForm.value match {
+                case Some(value) if boundForm.errors.isEmpty =>
+                  def uaAfterCopy: UserAnswers = (if (value < 0) {
+                    request.userAnswers
+                  } else {
+                    dataPrefillService.copyAllTrusteesToDirectors(request.userAnswers, Seq(value), establisherIndex)
+                  }).setOrException(TrusteeAlsoDirectorId(establisherIndex))(value)
+
+                  userAnswersService.upsert(NormalMode, EmptyOptionalSchemeReferenceNumber, uaAfterCopy.json).map { _ =>
+                    Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), NormalMode, uaAfterCopy, EmptyOptionalSchemeReferenceNumber))
+                  }
+                case _ =>
+                  renderView(
+                    BadRequest,
+                    seqTrustee,
+                    Right(boundForm),
+                    establisherIndex,
+                    companyName
+                  )
+              }
             }
-          }
+          case _ =>
+            logger.info(s"onSubmit - failed to retrieve CompanyDetailsId($establisherIndex) sessionId: ${hc.sessionId.getOrElse("No session Id")}")
+            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
         }
+
     }
 
   private def formCheckBox(index: Index)(implicit ua: UserAnswers, messages: Messages): Form[List[Int]] = {
