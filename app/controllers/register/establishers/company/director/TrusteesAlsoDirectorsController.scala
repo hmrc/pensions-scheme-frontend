@@ -119,7 +119,11 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
 
         request.userAnswers.get(CompanyDetailsId(establisherIndex)) match {
           case Some(companyName) =>
-            logger.info(s"onSubmit - successfully retrieved CompanyDetailsId($establisherIndex) sessionId: ${hc.sessionId.getOrElse("No session Id")}")
+            logger.info(
+              s"onSubmit - successfully retrieved CompanyDetailsId($establisherIndex) " +
+              s"sessionId: ${hc.sessionId.getOrElse("No session Id")}" +
+              s"seqTrustee.size = ${seqTrustee.size}"
+            )
             if (seqTrustee.size > 1) {
               val boundForm: Form[List[Int]] = formCheckBox(establisherIndex)(request.userAnswers, implicitly).bindFromRequest()
               boundForm.value match {
