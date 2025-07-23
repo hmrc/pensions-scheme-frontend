@@ -45,11 +45,11 @@ class PsaSchemeTaskListRegistrationTrusteeController @Inject()(appConfig: Fronte
                                                                val controllerComponents: MessagesControllerComponents,
                                                                val viewRegistration: psaTaskListRegistrationTrustees,
                                                                hsTaskListHelperRegistration: HsTaskListHelperRegistration
-                                                                  )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController with I18nSupport with Retrievals {
+                                                              )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
-    (authenticate(Some(PSA)) andThen getData(mode, srn, refreshData = false) andThen allowAccess(srn)).async {
+    (authenticate(Some(PSA)) andThen getData(mode, srn) andThen allowAccess(srn)).async {
       implicit request =>
         val schemeNameOpt = request.userAnswers.flatMap(_.get(SchemeNameId))
 

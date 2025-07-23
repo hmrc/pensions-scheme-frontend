@@ -30,7 +30,7 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.*
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
@@ -88,7 +88,7 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
       Right(formRadio)
     }
 
-  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber,establisherIndex: Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber, establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.map { companyName =>

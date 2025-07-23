@@ -71,7 +71,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
       case Some(EstablisherKind.Company) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes
           .CompanyDetailsController.onPageLoad(mode, srn, index))
-      case Some(EstablisherKind.Indivdual) =>
+      case Some(EstablisherKind.Individual) =>
         NavigateTo.dontSave(controllers.register.establishers.individual.routes
           .EstablisherNameController.onPageLoad(mode, index, srn))
       case Some(EstablisherKind.Partnership) =>

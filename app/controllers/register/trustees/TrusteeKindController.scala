@@ -20,11 +20,12 @@ import controllers.Retrievals
 import controllers.actions.*
 import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId}
+import models.register.trustees.TrusteeKind
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Trustees
@@ -45,42 +46,45 @@ class TrusteeKindController @Inject()(
                                        formProvider: TrusteeKindFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        val view: trusteeKind
-                                     )(implicit val executionContext: ExecutionContext) extends
-  FrontendBaseController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+    with Retrievals
+    with I18nSupport
+    with Enumerable.Implicits {
 
   private val form = formProvider()
 
+  private def submitUrl(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
+
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-        Future.successful(Ok(view(preparedForm, mode, index, existingSchemeName, submitUrl, srn)))
+        val preparedForm: Form[TrusteeKind] =
+          request
+            .userAnswers
+            .get(TrusteeKindId(index))
+            .fold(form)(value => form.fill(value))
+
+        Ok(view(preparedForm, mode, index, existingSchemeName, submitUrl(mode, index, srn), srn))
     }
 
-  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[?]) => {
-          val submitUrl = controllers.register.trustees.routes.TrusteeKindController.onSubmit(mode, index, srn)
-          Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl, srn)))
-        },
-        value => {
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode, index, existingSchemeName, submitUrl(mode, index, srn), srn))),
+          value =>
+            val answers: UserAnswers =
+              request.userAnswers
+                .setOrException(IsTrusteeNewId(index))(true)
+                .setOrException(TrusteeKindId(index))(value)
 
-          request.userAnswers.upsert(IsTrusteeNewId(index))(value = true) {
-            _.upsert(TrusteeKindId(index))(value) { answers =>
-              userAnswersService.upsert(mode, srn, answers.json).map {
-                json =>
-                  Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(json), srn))
-              }
+            userAnswersService.upsert(mode, srn, answers.json).map {
+              jsValue =>
+                Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(jsValue), srn))
             }
-          }
-
-        }
-      )
-  }
+        )
+    }
 }

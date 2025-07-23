@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.writeableOf_JsValue
@@ -32,31 +32,29 @@ import utils.UserAnswers
 import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CacheConnector extends UserAnswersCacheConnector {
+trait CacheConnector extends UserAnswersCacheConnector with Logging {
 
   import CacheConnector._
-
-  private val logger = Logger(classOf[CacheConnector])
 
   val config: FrontendAppConfig
   val httpClientV2: HttpClientV2
 
-  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A
-                                               )(implicit fmt: Format[A],
-                                                 ec: ExecutionContext, hc: HeaderCarrier
-                                                ): Future[JsValue] = modify(cacheId, _.set(id)(value))
+  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+    modify(cacheId, _.set(id)(value))
 
-  override def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  override def upsert(cacheId: String, value: JsValue)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     modify(cacheId, _ => JsSuccess(UserAnswers(value)))
 
-  private[connectors] def modify(cacheId: String,
-                                 modification: UserAnswers => JsResult[UserAnswers]
-                                )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+  private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
+                                (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
     fetch(cacheId).flatMap {
       json =>
         modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
-            httpClientV2.post(url(cacheId))
+            httpClientV2
+              .post(url(cacheId))
               .withBody(updatedJson)
               .setHeader(headers(hc)*)
               .execute[HttpResponse].flatMap { response =>
@@ -72,10 +70,13 @@ trait CacheConnector extends UserAnswersCacheConnector {
         }
     }
 
-  override def fetch(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
-    httpClientV2.get(url(id))
+  override def fetch(id: String)
+                    (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2
+      .get(url(id))
       .setHeader(headers(hc)*)
-      .execute[HttpResponse].flatMap { response =>
+      .execute[HttpResponse]
+      .flatMap { response =>
         response.status match {
           case NOT_FOUND =>
             Future.successful(None)
@@ -86,20 +87,25 @@ trait CacheConnector extends UserAnswersCacheConnector {
         }
       }
 
-  override def remove[I <: TypedIdentifier[?]](cacheId: String, id: I
-                                              )(implicit ec: ExecutionContext, hc: HeaderCarrier
-                                              ): Future[JsValue] = modify(cacheId, _.remove(id))
+  override def remove[I <: TypedIdentifier[?]](cacheId: String, id: I)
+                                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+    modify(cacheId, _.remove(id))
 
-  override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
-    httpClientV2.delete(url(id))
+  override def removeAll(id: String)
+                        (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] =
+    httpClientV2
+      .delete(url(id))
       .setHeader(headers(hc)*)
       .execute[HttpResponse]
       .map(_ => Ok)
 
-  override def lastUpdated(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
-    httpClientV2.get(lastUpdatedUrl(id))
+  override def lastUpdated(id: String)
+                          (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+    httpClientV2
+      .get(lastUpdatedUrl(id))
       .setHeader(headers(hc)*)
-      .execute[HttpResponse].flatMap { response =>
+      .execute[HttpResponse]
+      .flatMap { response =>
         response.status match {
           case NOT_FOUND =>
             Future.successful(None)
@@ -121,7 +127,7 @@ object CacheConnector {
     Seq(hc.names.authorisation, hc.names.xRequestId, hc.names.xSessionId)
 
   val headers: HeaderCarrier => Seq[(String, String)] =
-    hc => hc.headers(names(hc)) ++ hc.withExtraHeaders(
-      ("content-type", "application/json")
-    ).extraHeaders
+    hc =>
+      hc.headers(names(hc)) ++
+        hc.withExtraHeaders(("content-type", "application/json")).extraHeaders
 }

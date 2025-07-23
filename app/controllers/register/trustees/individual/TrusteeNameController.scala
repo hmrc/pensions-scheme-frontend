@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Enumerable
+import utils.{Enumerable, UserAnswers}
 import viewmodels.{CommonFormWithHintViewModel, Message}
 import views.html.personName
 
@@ -47,38 +47,48 @@ class TrusteeNameController @Inject()(override val messagesApi: MessagesApi,
                                       formProvider: PersonNameFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: personName
-                                     )(implicit val executionContext: ExecutionContext) extends FrontendBaseController
-  with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val executionContext: ExecutionContext)
+  extends FrontendBaseController
+    with Retrievals
+    with I18nSupport
+    with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
-        val updatedForm = request.userAnswers.get(TrusteeNameId(index)).fold(form)(form.fill)
-        Future.successful(Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName)))
+        val updatedForm: Form[PersonName] =
+          request.userAnswers.get(TrusteeNameId(index)).fold(form)(form.fill)
+
+        Ok(view(updatedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
   private def form(implicit request: DataRequest[AnyContent]): Form[PersonName] =
     formProvider("messages__error__trustees")
 
-  private def viewmodel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber) = CommonFormWithHintViewModel(
-    TrusteeNameController.onSubmit(mode, index, srn),
-    Message("messages__trusteeName__title"),
-    Message("messages__trusteeName__heading")
-  )
+  private def viewmodel(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): CommonFormWithHintViewModel =
+    CommonFormWithHintViewModel(
+      TrusteeNameController.onSubmit(mode, index, srn),
+      Message("messages__trusteeName__title"),
+      Message("messages__trusteeName__heading")
+    )
 
 
-  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] = (authenticate() andThen getData
-  (mode, srn) andThen requireData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[?]) =>
-          Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
-        value =>
-          userAnswersService.save(mode, srn, TrusteeNameId(index), value).flatMap { _ =>
-            Future.successful(request.userAnswers.set(TrusteeNameId(index))(value).asOpt.getOrElse(request.userAnswers)).map{ updatedUA =>
-            Redirect(navigator.nextPage(TrusteeNameId(index), mode, updatedUA, srn))
+  def onSubmit(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
+    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+      implicit request =>
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
+          value =>
+            val answers: UserAnswers =
+              request
+                .userAnswers
+                .setOrException(TrusteeNameId(index))(value)
+
+            userAnswersService.upsert(mode, srn, answers.json).map {
+              json =>
+                Redirect(navigator.nextPage(TrusteeNameId(index), mode, UserAnswers(json), srn))
             }
-          }
-      )
-  }
+        )
+    }
 }

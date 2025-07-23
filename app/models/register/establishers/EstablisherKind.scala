@@ -23,7 +23,7 @@ sealed trait EstablisherKind
 
 object EstablisherKind {
   val values: Seq[EstablisherKind] = Seq(
-    Company, Indivdual, Partnership
+    Company, Individual, Partnership
   )
   val options: Seq[InputOption] = values.map {
     value =>
@@ -32,7 +32,7 @@ object EstablisherKind {
 
   case object Company extends WithName("company") with EstablisherKind
 
-  case object Indivdual extends WithName("individual") with EstablisherKind
+  case object Individual extends WithName("individual") with EstablisherKind
 
   case object Partnership extends WithName("partnership") with EstablisherKind
 
@@ -43,7 +43,7 @@ object EstablisherKind {
   implicit val jsLiteral: JavascriptLiteral[EstablisherKind] = new JavascriptLiteral[EstablisherKind] {
     override def to(value: EstablisherKind): String = value match {
       case Company => "Company"
-      case Indivdual => "Individual"
+      case Individual => "Individual"
       case Partnership => "Partnership"
     }
   }

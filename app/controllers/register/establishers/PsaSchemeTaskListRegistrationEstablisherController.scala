@@ -18,14 +18,14 @@ package controllers.register.establishers
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import identifiers.SchemeNameId
+import models.*
 import models.AuthEntity.PSA
 import models.OptionalSchemeReferenceNumber.toSrn
-import models._
 import models.requests.OptionalDataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.UserAnswers
 import utils.annotations.TaskList

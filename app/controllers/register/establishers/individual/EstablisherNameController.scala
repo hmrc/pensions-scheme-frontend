@@ -57,10 +57,12 @@ class EstablisherNameController @Inject()(
   def onPageLoad(mode: Mode, index: Index, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData) {
       implicit request =>
-        val preparedForm = request.userAnswers.get[PersonName](EstablisherNameId(index)) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
+        val preparedForm: Form[PersonName] =
+          request
+            .userAnswers
+            .get[PersonName](EstablisherNameId(index))
+            .fold(form)(value => form.fill(value))
+
         Ok(view(preparedForm, viewmodel(mode, index, srn), existingSchemeName))
     }
 
@@ -68,17 +70,18 @@ class EstablisherNameController @Inject()(
     (authenticate() andThen getData(mode, srn) andThen requireData).async {
       implicit request =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[?]) =>
+          formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
-          value => {
+          value =>
             userAnswersService.save(mode, srn, EstablisherNameId(index), value).flatMap {
-              cacheMap => mode match {
-                case NormalMode =>
-                  Future.successful(Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn)))
-                case _ => Future.successful(Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(cacheMap), srn)))
+              jsValue =>
+                mode match {
+                  case NormalMode =>
+                    Future.successful(Redirect(navigator.nextPage(EstablisherNameId(index), mode, UserAnswers(jsValue), srn)))
+                  case _ =>
+                    Future.successful(Redirect(oldNavigator.nextPage(EstablisherNameId(index), mode, UserAnswers(jsValue), srn)))
                 }
             }
-          }
         )
     }
 

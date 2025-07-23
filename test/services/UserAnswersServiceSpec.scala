@@ -19,20 +19,20 @@ package services
 import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors._
+import connectors.*
 import identifiers.TypedIdentifier
 import identifiers.register.trustees
 import identifiers.register.trustees.individual.TrusteeAddressId
-import models._
+import models.*
 import models.address.Address
 import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString, JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 
 class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar with BeforeAndAfter {
 
-  import UserAnswersServiceSpec._
+  import UserAnswersServiceSpec.*
 
   before(reset(subscriptionConnector))
 
@@ -268,7 +268,42 @@ class UserAnswersServiceSpec extends AsyncWordSpec with Matchers with MockitoSug
     }
   }
 
+  "removeEmptyObjectsAndIncompleteEntities" must {
+    "only remove empty objects and objects containing only entityKind and isNew" in {
 
+      val json: JsObject =
+        Json.obj(
+          "trustees" -> Json.arr(
+            Json.obj(),
+            Json.obj(
+              "isTrusteeNew" -> true,
+              "trusteeKind"  -> "individual"
+            ),
+            Json.obj(
+              "isTrusteeNew" -> true,
+              "trusteeKind"  -> "individual",
+              "key"          -> "value"
+            )
+          )
+        )
+
+      val filteredJson: JsValue =
+        testServiceEstAndTrustees.removeEmptyObjectsAndIncompleteEntities(
+          json          = json,
+          collectionKey = "trustees",
+          keySet        = Set("isTrusteeNew", "trusteeKind"),
+          externalId    = "externalId"
+        )
+
+      val parsedArray: collection.IndexedSeq[JsValue] =
+        (filteredJson \ "trustees").get.as[JsArray].value
+
+      parsedArray.size.mustBe(1)
+      parsedArray.head.as[JsObject].value("isTrusteeNew").mustBe(JsBoolean(true))
+      parsedArray.head.as[JsObject].value("trusteeKind").mustBe(JsString("individual"))
+      parsedArray.head.as[JsObject].value("key").mustBe(JsString("value"))
+    }
+  }
 }
 
 object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
@@ -325,13 +360,13 @@ object UserAnswersServiceSpec extends SpecBase with MockitoSugar {
   protected val lockConnector: PensionSchemeVarianceLockConnector = mock[PensionSchemeVarianceLockConnector]
   protected val viewConnector: SchemeDetailsReadOnlyCacheConnector = mock[SchemeDetailsReadOnlyCacheConnector]
 
-  protected lazy val testServiceNotAnnotated: UserAnswersService = new TestServiceNotAnnotated(subscriptionConnector,
-    updateConnector, lockConnector, viewConnector, frontendAppConfig)
+  protected lazy val testServiceNotAnnotated: UserAnswersService =
+    new TestServiceNotAnnotated(subscriptionConnector, updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
-  protected lazy val testServiceEstAndTrustees = new TestServiceEstAndTrustees(subscriptionConnector,
-    updateConnector, lockConnector, viewConnector, frontendAppConfig)
+  protected lazy val testServiceEstAndTrustees: TestServiceEstAndTrustees =
+    new TestServiceEstAndTrustees(subscriptionConnector, updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
-  protected lazy val testServiceInsurance = new TestServiceInsurance(subscriptionConnector,
-    updateConnector, lockConnector, viewConnector, frontendAppConfig)
+  protected lazy val testServiceInsurance: TestServiceInsurance =
+    new TestServiceInsurance(subscriptionConnector, updateConnector, lockConnector, viewConnector, frontendAppConfig)
 
 }
