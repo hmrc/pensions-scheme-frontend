@@ -340,16 +340,16 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   
   def filterTrusteeIndividuals(jsArray: JsArray): collection.IndexedSeq[JsValue] =
     DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
-        jsArray = jsArray,
-        keySet  = Set(IsTrusteeNewId.toString, TrusteeKindId.toString),
-        defName = "filterTrusteeIndividuals"
-      )
-      .filter(_
-        .\(TrusteeKindId.toString)
-        .validate[JsString]
-        .asOpt
-        .contains(JsString(TrusteeKind.Individual.toString))
-      )
+      jsArray = jsArray,
+      keySet  = Set(IsTrusteeNewId.toString, TrusteeKindId.toString),
+      defName = "filterTrusteeIndividuals"
+    )
+    .filter(_
+      .\(TrusteeKindId.toString)
+      .validate[JsString]
+      .asOpt
+      .contains(JsString(TrusteeKind.Individual.toString))
+    )
 }
 
 object DataPrefillService {
