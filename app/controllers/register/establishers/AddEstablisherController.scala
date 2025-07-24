@@ -29,6 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
+import utils.UserAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{Establishers, NoSuspendedCheck}
 import views.html.register.establishers.{addEstablisher, addEstablisherOld}
@@ -69,7 +70,7 @@ class AddEstablisherController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val json: JsValue =
+        val userAnswersWithCleanedEstablishers: JsValue =
           userAnswersService.removeEmptyObjectsAndIncompleteEntities(
             json          = request.userAnswers.json,
             collectionKey = EstablishersId.toString,
@@ -77,8 +78,8 @@ class AddEstablisherController @Inject()(override val messagesApi: MessagesApi,
             externalId    = request.externalId
           )
 
-        userAnswersService.upsert(mode, srn, json).map { _ =>
-          val establishers = request.userAnswers.allEstablishersAfterDelete(mode)
+        userAnswersService.upsert(mode, srn, userAnswersWithCleanedEstablishers).map { jsValue =>
+          val establishers = UserAnswers(jsValue).allEstablishersAfterDelete(mode)
           renderPage(establishers, mode, srn, formProvider(establishers), Ok)
         }
     }

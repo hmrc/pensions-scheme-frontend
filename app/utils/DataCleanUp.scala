@@ -22,28 +22,18 @@ import play.api.libs.json.*
 import scala.collection.Set
 
 object DataCleanUp extends Logging {
-  private def isEmptyCheck(jsValue: JsValue, defName: String): Boolean = {
-    val check: Boolean =
-      jsValue.as[JsObject].keys.isEmpty
 
-    logger.info(s"$defName empty json check returned $check")
+  def filterNotEmptyObjectsAndSubsetKeys(jsArray: JsArray, keySet: Set[String], defName: String): collection.IndexedSeq[JsValue] = {
+    val filteredCollection: collection.IndexedSeq[JsValue] =
+      jsArray
+        .value
+        .filterNot { jsValue =>
+          jsValue.as[JsObject].keys.isEmpty ||
+            (jsValue.as[JsObject].keys.size.equals(keySet.size) && jsValue.as[JsObject].keys.subsetOf(keySet))
+        }
 
-    check
+    logger.info(s"$defName: ${jsArray.value.size - filteredCollection.size} elements removed")
+
+    filteredCollection
   }
-
-  private def subsetCheck(jsValue: JsValue, keySet: Set[String], defName: String): Boolean = {
-    val check: Boolean =
-      jsValue.as[JsObject].keys.size.equals(keySet.size) && jsValue.as[JsObject].keys.subsetOf(keySet)
-
-    logger.info(s"$defName subset keys check returned $check")
-
-    check
-  }
-
-  def filterNotEmptyObjectsAndSubsetKeys(jsArray: JsArray, keySet: Set[String], defName: String): collection.IndexedSeq[JsValue] =
-    jsArray
-      .value
-      .filterNot { jsValue =>
-        isEmptyCheck(jsValue, defName) || subsetCheck(jsValue, keySet, defName)
-      }
 }

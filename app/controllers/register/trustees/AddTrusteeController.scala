@@ -32,6 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{NoSuspendedCheck, Trustees}
+import utils.UserAnswers
 import views.html.register.trustees.*
 
 import javax.inject.Inject
@@ -75,7 +76,7 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val json: JsValue =
+        val userAnswersWithCleanedTrustees: JsValue =
           userAnswersService.removeEmptyObjectsAndIncompleteEntities(
             json          = request.userAnswers.json,
             collectionKey = TrusteesId.toString,
@@ -83,9 +84,8 @@ class AddTrusteeController @Inject()(
             externalId    = request.externalId
           )
 
-        userAnswersService.upsert(mode, srn, json).map { _ =>
-          val trustees = request.userAnswers.allTrusteesAfterDelete
-          renderPage(trustees, mode, srn, form, Ok)
+        userAnswersService.upsert(mode, srn, userAnswersWithCleanedTrustees).map { jsValue =>
+          renderPage(UserAnswers(jsValue).allTrusteesAfterDelete, mode, srn, form, Ok)
         }
     }
 

@@ -80,14 +80,8 @@ class TrusteeNameController @Inject()(override val messagesApi: MessagesApi,
           formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, viewmodel(mode, index, srn), existingSchemeName))),
           value =>
-            val answers: UserAnswers =
-              request
-                .userAnswers
-                .setOrException(TrusteeNameId(index))(value)
-
-            userAnswersService.upsert(mode, srn, answers.json).map {
-              json =>
-                Redirect(navigator.nextPage(TrusteeNameId(index), mode, UserAnswers(json), srn))
+            userAnswersService.save(mode, srn, TrusteeNameId(index), value).map { jsValue =>
+              Redirect(navigator.nextPage(TrusteeNameId(index), mode, UserAnswers(jsValue), srn))
             }
         )
     }

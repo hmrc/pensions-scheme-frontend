@@ -28,10 +28,10 @@ import models.person.PersonName
 import models.register.*
 import models.register.SchemeType.SingleTrust
 import models.register.trustees.TrusteeKind
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.Mockito.when
-import org.mockito.ArgumentMatchers.any
 import play.api.data.Form
 import play.api.libs.json.*
 import play.api.mvc.Call
@@ -123,11 +123,13 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
           setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeKindId(0))(TrusteeKind.Individual).asOpt.value
               .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeKindId(1))(TrusteeKind.Individual).asOpt.value
           )
         ).json
 
-      when(mockUserAnswersService.removeEmptyObjectsAndIncompleteEntities(any(), any(), any(), any())(any(), any()))
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(trusteeList))
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
