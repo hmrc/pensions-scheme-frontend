@@ -669,7 +669,7 @@ class SpokeCreationServiceSpec
 
     "return all the spokes with appropriate links when establishers and NOT view only and srn is defined" in {
       val userAnswers = userAnswersWithSchemeName
-        .establisherKind(0, EstablisherKind.Indivdual)
+        .establisherKind(0, EstablisherKind.Individual)
         .establishersIndividualName(0, personName)
 
       val expectedSpoke =
@@ -684,7 +684,7 @@ class SpokeCreationServiceSpec
 
     "return all the spokes with appropriate links when establishers and NOT view only and no srn is defined" in {
       val userAnswers = userAnswersWithSchemeName
-        .establisherKind(0, EstablisherKind.Indivdual)
+        .establisherKind(0, EstablisherKind.Individual)
         .establishersIndividualName(0, personName)
 
       val expectedSpoke =
@@ -719,7 +719,7 @@ class SpokeCreationServiceSpec
 
     "return all the spokes with appropriate links when establishers and NOT view only and no srn is defined" in {
       val userAnswers = userAnswersWithSchemeName
-        .establisherKind(0, EstablisherKind.Indivdual)
+        .establisherKind(0, EstablisherKind.Individual)
         .establishersIndividualName(0, personName)
 
       val expectedSpoke =

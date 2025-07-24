@@ -82,7 +82,7 @@ class ConfirmDeleteEstablisherController @Inject()(
   private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers)
   : Option[DeletableEstablisher] = {
     establisherKind match {
-      case Indivdual => userAnswers.get(EstablisherNameId(index)).map(details =>
+      case Individual => userAnswers.get(EstablisherNameId(index)).map(details =>
         DeletableEstablisher(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details =>
         DeletableEstablisher(details.companyName, details.isDeleted))
@@ -102,7 +102,7 @@ class ConfirmDeleteEstablisherController @Inject()(
               updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex,
                 Some(companyDetails), None, None, mode, srn)
             }
-          case Indivdual =>
+          case Individual =>
             EstablisherNameId(establisherIndex).retrieve.map { establisherDetails =>
               updateEstablisherKind(establisherDetails.fullName, establisherKind, establisherIndex,
                 None, Some(establisherDetails), None, mode, srn)
@@ -140,7 +140,7 @@ class ConfirmDeleteEstablisherController @Inject()(
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers.json))(
               company => userAnswersService.save(mode, srn, CompanyDetailsId(establisherIndex),
                 company.copy (isDeleted = true)))
-            case Indivdual => establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
+            case Individual => establisherName.fold(Future.successful(dataRequest.userAnswers.json))(
               individual => userAnswersService.save(mode, srn, EstablisherNameId(establisherIndex),
                 individual.copy (isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers.json))(

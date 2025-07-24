@@ -17,25 +17,30 @@
 package controllers.register.trustees
 
 import controllers.ControllerSpecBase
-import controllers.actions._
+import controllers.actions.*
 import forms.register.trustees.AddTrusteeFormProvider
 import helpers.DataCompletionHelper
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeNameId
 import identifiers.register.trustees.{IsTrusteeNewId, TrusteeKindId, TrusteesId}
-import models._
+import models.*
 import models.person.PersonName
+import models.register.*
 import models.register.SchemeType.SingleTrust
-import models.register._
 import models.register.trustees.TrusteeKind
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import services.UserAnswersService
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.{addTrustee, addTrusteeOld}
+
+import scala.concurrent.Future
 
 class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHelper with BeforeAndAfterEach with MockitoSugar {
   appRunning()
@@ -60,6 +65,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
 
   private val view = injector.instanceOf[addTrustee]
   private val oldView = injector.instanceOf[addTrusteeOld]
+  private val mockUserAnswersService = mock[UserAnswersService]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddTrusteeController = {
     new AddTrusteeController(
@@ -73,7 +79,8 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
       formProvider,
       controllerComponents,
       view,
-      oldView
+      oldView,
+      mockUserAnswersService
     )
   }
 
@@ -116,9 +123,14 @@ class AddTrusteeControllerSpec extends ControllerSpecBase with DataCompletionHel
           setTrusteeCompletionStatus(isComplete = true, 0,
             UserAnswers()
               .set(TrusteeNameId(0))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeKindId(0))(TrusteeKind.Individual).asOpt.value
               .set(TrusteeNameId(1))(PersonName("fistName", "lastName")).asOpt.value
+              .set(TrusteeKindId(1))(TrusteeKind.Individual).asOpt.value
           )
         ).json
+
+      when(mockUserAnswersService.upsert(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(trusteeList))
 
       val trusteeController: AddTrusteeController = controller(new FakeDataRetrievalAction(Some(trusteeList)))
 

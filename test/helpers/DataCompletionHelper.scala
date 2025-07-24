@@ -134,7 +134,7 @@ trait DataCompletionHelper extends OptionValues {
   }
 
   protected def setCompleteEstIndividual(index: Int, ua: UserAnswers): UserAnswers = {
-    ua.establisherKind(index, EstablisherKind.Indivdual)
+    ua.establisherKind(index, EstablisherKind.Individual)
       .establishersIndividualName(index, PersonName("first", "last")).establishersIndividualDOB(index, LocalDate.now().minusYears(20))
       .establishersIndividualNino(index, ReferenceValue("AB100100A")).establishersIndividualUtr(index, ReferenceValue("1111111111")).
       establishersIndividualAddress(index, address).establishersIndividualAddressYears(index, AddressYears.OverAYear)
@@ -254,7 +254,7 @@ trait DataCompletionHelper extends OptionValues {
     def establisherIndividualEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {
       answers.establishersIndividualName(index, PersonName(s"first $index", s"last $index", isDeleted)).
         isEstablisherNew(index, flag = true).isEstablisherNew(index, flag = true)
-        .establisherKind(index, EstablisherKind.Indivdual)
+        .establisherKind(index, EstablisherKind.Individual)
     }
 
     def establisherPartnershipEntity(index: Int, isDeleted: Boolean = false): UserAnswers = {

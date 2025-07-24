@@ -33,7 +33,7 @@ import models.person._
 import models.register.SchemeType.SingleTrust
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
+import models.register.establishers.EstablisherKind.{Company, Individual, Partnership}
 import models.register.trustees.TrusteeKind
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
@@ -50,7 +50,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
 
       val allEstablisherEntities: Seq[Establisher[?]] = Seq(
         establisherEntity("Test Company", 0, Company, isComplete = true),
-        establisherEntity("Test Individual", 1, Indivdual, isComplete = true),
+        establisherEntity("Test Individual", 1, Individual, isComplete = true),
         establisherEntity("Test Partnership", 2, Partnership, isComplete = true)
       )
 
@@ -87,7 +87,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
             EstablisherNameId.toString ->
               PersonName("my", "name 1"),
             IsEstablisherNewId.toString -> true,
-            EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
+            EstablisherKindId.toString -> EstablisherKind.Individual.toString
           ),
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
@@ -99,7 +99,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
             EstablisherNameId.toString ->
               PersonName("my", "name 3"),
             IsEstablisherNewId.toString -> true,
-            EstablisherKindId.toString -> EstablisherKind.Indivdual.toString
+            EstablisherKindId.toString -> EstablisherKind.Individual.toString
           ),
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
@@ -112,8 +112,8 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
 
       val userAnswers = UserAnswers(json)
       val allEstablisherEntities: Seq[Establisher[?]] =
-        Seq(establisherEntity("my name 1", 0, Indivdual, countAfterDeleted = 2),
-          establisherEntity("my name 3", 2, Indivdual, countAfterDeleted = 2))
+        Seq(establisherEntity("my name 1", 0, Individual, countAfterDeleted = 2),
+          establisherEntity("my name 3", 2, Individual, countAfterDeleted = 2))
 
       userAnswers.allEstablishersAfterDelete(mode) mustEqual allEstablisherEntities
     }
@@ -356,7 +356,7 @@ class UserAnswersSpec extends AnyWordSpec with Matchers with OptionValues with E
       val answers =
         UserAnswers()
           .set(EstablisherNameId(0))(person).asOpt.value
-          .set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
+          .set(EstablisherKindId(0))(EstablisherKind.Individual).asOpt.value
           .set(EstablisherKindId(1))(EstablisherKind.Company)
           .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
           .asOpt
@@ -441,7 +441,7 @@ object UserAnswersSpec extends OptionValues with Enumerable.Implicits with JsonF
   private def establisherEntity(name: String, index: Int, establisherKind: EstablisherKind,
                                 isComplete: Boolean = false, countAfterDeleted : Int = 3): Establisher[?] = {
     establisherKind match {
-      case Indivdual =>
+      case Individual =>
         EstablisherIndividualEntity(EstablisherNameId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)
       case Company =>
         EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete, isNewEntity = true, countAfterDeleted)

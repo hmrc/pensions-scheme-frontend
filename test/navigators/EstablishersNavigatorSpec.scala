@@ -45,7 +45,7 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
           rowNoValue(AddEstablisherId(Some(true)))(establisherKind(NormalMode), ua = Some(addEstablishersTrue)),
           rowNoValue(AddEstablisherId(Some(false)))(taskList(NormalMode), ua = Some(addEstablishersFalse)),
           row(EstablisherKindId(0))(EstablisherKind.Company, companyDetails(NormalMode)),
-          row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(NormalMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Individual, individualName(NormalMode)),
           row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(NormalMode)),
 
           rowNoValue(ConfirmDeleteEstablisherId)(addEstablisher(NormalMode))
@@ -61,7 +61,7 @@ class EstablishersNavigatorSpec extends SpecBase with Matchers with NavigatorBeh
           rowNoValue(AddEstablisherId(Some(true)))(establisherKind(UpdateMode), ua = Some(addEstablishersTrue)),
           rowNoValue(AddEstablisherId(Some(false)))(taskList(UpdateMode), ua = Some(addEstablishersFalse)),
           row(EstablisherKindId(0))(EstablisherKind.Company, companyDetails(UpdateMode)),
-          row(EstablisherKindId(0))(EstablisherKind.Indivdual, individualName(UpdateMode)),
+          row(EstablisherKindId(0))(EstablisherKind.Individual, individualName(UpdateMode)),
           row(EstablisherKindId(0))(EstablisherKind.Partnership, partnershipDetails(UpdateMode)),
 
           rowNoValue(ConfirmDeleteEstablisherId)(controllers.routes.AnyMoreChangesController.onPageLoad(EmptyOptionalSchemeReferenceNumber))

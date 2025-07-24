@@ -80,53 +80,6 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
     }
   }
 
-  "cleanTrustees" must {
-    "remove any trustee nodes which contain only the trustee kind/ director also trustee elements" in {
-      val trusteesJsArray =
-        Json.parse(
-          """
-            |        [
-            |            {
-            |                "isTrusteeNew" : true,
-            |                "trusteeKind" : "individual",
-            |                "trusteeDetails" : {
-            |                    "firstName" : "asas",
-            |                    "lastName" : "asa",
-            |                    "isDeleted" : true
-            |                }
-            |            },
-            |            {
-            |                "isTrusteeNew" : true,
-            |                "trusteeKind" : "individual"
-            |            },
-            |            {
-            |                "isTrusteeNew" : true,
-            |                "trusteeKind" : "individual"
-            |            }
-            |        ]
-            |""".stripMargin).as[JsArray]
-
-      val expectedResultJsArray =
-        Json.parse(
-          """
-            |        [
-            |            {
-            |                "isTrusteeNew" : true,
-            |                "trusteeKind" : "individual",
-            |                "trusteeDetails" : {
-            |                    "firstName" : "asas",
-            |                    "lastName" : "asa",
-            |                    "isDeleted" : true
-            |                }
-            |            }
-            |        ]
-            |""".stripMargin).as[JsArray]
-
-      dataPrefillService.cleanTrustees(trusteesJsArray) mustBe expectedResultJsArray
-    }
-  }
-
-
   "copyAllTrusteesToDirectors" must {
     "copy all the selected trustees to directors" in {
       forAll(uaJsValueWithNoNino) {

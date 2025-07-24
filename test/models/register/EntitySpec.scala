@@ -146,7 +146,7 @@ class EntitySpec extends AnyWordSpecLike with Matchers with OptionValues {
     }
 
     "have correct delete link" in {
-      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Indivdual, EmptyOptionalSchemeReferenceNumber).url
+      val expectedDeleteLink = controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(NormalMode, 1, EstablisherKind.Individual, EmptyOptionalSchemeReferenceNumber).url
       individualEntity.deleteLink(NormalMode, EmptyOptionalSchemeReferenceNumber) mustBe Some(expectedDeleteLink)
     }
   }

@@ -35,8 +35,8 @@ import viewmodels._
 import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
 
-class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig) extends HsTaskListHelper(
-  spokeCreationService) {
+class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreationService, appConfig: FrontendAppConfig)
+  extends HsTaskListHelper(spokeCreationService) {
 
   import HsTaskListHelperRegistration._
 
@@ -108,8 +108,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     )
   }
 
-  protected[utils] def establisherSection(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int)
-  : SchemeDetailsTaskListEntitySection = {
+  private def establisherSection(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): SchemeDetailsTaskListEntitySection = {
     val seqEstablishers = userAnswers.allEstablishers(mode)
 
     if(index >= seqEstablishers.size) {
@@ -145,8 +144,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
-  protected[utils] def trusteeSection(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int)
-  : SchemeDetailsTaskListEntitySection = {
+  private def trusteeSection(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber, index: Int): SchemeDetailsTaskListEntitySection = {
     val seqTrustees = userAnswers.allTrustees
 
     if (seqTrustees.isEmpty || index >= seqTrustees.size) {
@@ -214,8 +212,7 @@ class HsTaskListHelperRegistration @Inject()(spokeCreationService: SpokeCreation
     }
   }
 
-  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber)
-  : Option[SchemeDetailsTaskListEntitySection] = {
+  private[utils] def addTrusteeHeaderToggleOff(userAnswers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[SchemeDetailsTaskListEntitySection] = {
     spokeCreationService.getAddTrusteeHeaderSpokesToggleOff(userAnswers, mode, srn, viewOnly = false) match {
       case Nil => None
       case trusteeHeaderSpokes => Some(
@@ -268,7 +265,7 @@ object HsTaskListHelperRegistration extends Enumerable.Implicits {
 
   private[utils] def totalSectionsEstablisher(userAnswers: UserAnswers, index: Int): Int = {
     userAnswers.get(EstablisherKindId(index)) match {
-      case Some(EstablisherKind.Indivdual) => 3
+      case Some(EstablisherKind.Individual) => 3
       case _ => 4
     }
   }
