@@ -18,30 +18,31 @@ package services
 
 import config.FrontendAppConfig
 import connectors.{PensionSchemeVarianceLockConnector, SchemeDetailsReadOnlyCacheConnector, UpdateSchemeCacheConnector, UserAnswersCacheConnector}
-import identifiers._
+import identifiers.*
+import identifiers.register.establishers.company.director.*
+import identifiers.register.establishers.company.{CompanyAddressYearsId as EstablisherCompanyAddressYearsId, CompanyPreviousAddressId as EstablisherCompanyPreviousAddressId}
+import identifiers.register.establishers.individual.{AddressYearsId as EstablisherIndividualAddressYearsId, PreviousAddressId as EstablisherIndividualPreviousAddressId}
+import identifiers.register.establishers.partnership.partner.*
+import identifiers.register.establishers.partnership.{PartnershipAddressYearsId as EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId as EstablisherPartnershipPreviousAddressId}
 import identifiers.register.establishers.IsEstablisherNewId
-import identifiers.register.establishers.company.director._
-import identifiers.register.establishers.company.{CompanyAddressYearsId => EstablisherCompanyAddressYearsId, CompanyPreviousAddressId => EstablisherCompanyPreviousAddressId}
-import identifiers.register.establishers.individual.{AddressYearsId => EstablisherIndividualAddressYearsId, PreviousAddressId => EstablisherIndividualPreviousAddressId}
-import identifiers.register.establishers.partnership.partner._
-import identifiers.register.establishers.partnership.{PartnershipAddressYearsId => EstablisherPartnershipAddressYearsId, PartnershipPreviousAddressId => EstablisherPartnershipPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId as TrusteeCompanyAddressYearsId, CompanyPreviousAddressId as TrusteeCompanyPreviousAddressId}
+import identifiers.register.trustees.individual.{TrusteeAddressYearsId as TrusteeIndividualAddressYearsId, TrusteePreviousAddressId as TrusteeIndividualPreviousAddressId}
+import identifiers.register.trustees.partnership.{PartnershipAddressYearsId as TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId as TrusteePartnershipPreviousAddressId}
 import identifiers.register.trustees.IsTrusteeNewId
-import identifiers.register.trustees.company.{CompanyAddressYearsId => TrusteeCompanyAddressYearsId, CompanyPreviousAddressId => TrusteeCompanyPreviousAddressId}
-import identifiers.register.trustees.individual.{TrusteeAddressYearsId => TrusteeIndividualAddressYearsId, TrusteePreviousAddressId => TrusteeIndividualPreviousAddressId}
-import identifiers.register.trustees.partnership.{PartnershipAddressYearsId => TrusteePartnershipAddressYearsId, PartnershipPreviousAddressId => TrusteePartnershipPreviousAddressId}
+import models.*
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.address.Address
 import models.requests.DataRequest
-import models._
-import play.api.libs.json._
+import play.api.Logging
+import play.api.libs.json.*
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.UserAnswers
+import utils.{DataCleanUp, UserAnswers}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-trait UserAnswersService {
+trait UserAnswersService extends Logging {
 
   def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
                                       (implicit fmt: Format[A],
@@ -82,39 +83,44 @@ trait UserAnswersService {
                                       request: DataRequest[AnyContent]
                                      ): Future[JsValue] =
     mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.remove(request.externalId, id)
-      case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
-    }
-
-  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                              request: DataRequest[AnyContent]): Future[JsValue] =
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.upsert(request.externalId, value)
-      case UpdateMode | CheckUpdateMode => lockAndCall(srn, updateSchemeCacheConnector.upsert(_, value))
-    }
-
-  private def lockAndCall(srn: OptionalSchemeReferenceNumber, f: String => Future[JsValue])(implicit
-                                                                             ec: ExecutionContext,
-                                                                             hc: HeaderCarrier,
-                                                                             request: DataRequest[AnyContent]
-  ): Future[JsValue] = (toSrn(srn), request.psaId) match {
-    case (Some(srnId), Some(psaId)) => lockConnector.lock(psaId.id, srnId).flatMap {
-      case VarianceLock => viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
-      case _ => Future(Json.obj())
-    }
-
-    case (None, _) => Future.failed(MissingSrnNumber)
-    case _ => Future.failed(MissingPsaId)
-  }
-
-  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue,
-             changeId: TypedIdentifier[Boolean])(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                 request: DataRequest[AnyContent]): Future[JsValue] =
-    mode match {
-      case NormalMode | CheckMode => subscriptionCacheConnector.upsert(request.externalId, value)
+      case NormalMode | CheckMode =>
+        subscriptionCacheConnector.remove(request.externalId, id)
       case UpdateMode | CheckUpdateMode =>
-        val answers = UserAnswers(value)
-          .set(changeId)(true).asOpt.getOrElse(UserAnswers(value))
+        lockAndCall(srn, updateSchemeCacheConnector.remove(_, id))
+    }
+
+  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
+    mode match {
+      case NormalMode | CheckMode =>
+        subscriptionCacheConnector.upsert(request.externalId, value)
+      case UpdateMode | CheckUpdateMode =>
+        lockAndCall(srn, updateSchemeCacheConnector.upsert(_, value))
+    }
+
+  private def lockAndCall(srn: OptionalSchemeReferenceNumber, f: String => Future[JsValue])
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
+    (toSrn(srn), request.psaId) match {
+      case (Some(srnId), Some(psaId)) =>
+        lockConnector.lock(psaId.id, srnId).flatMap {
+          case VarianceLock =>
+            viewConnector.removeAll(request.externalId).flatMap(_ => f(srnId))
+          case _ =>
+            Future(Json.obj())
+        }
+      case (None, _) =>
+        Future.failed(MissingSrnNumber)
+      case _ =>
+        Future.failed(MissingPsaId)
+    }
+
+  def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue, changeId: TypedIdentifier[Boolean])
+            (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
+    mode match {
+      case NormalMode | CheckMode =>
+        subscriptionCacheConnector.upsert(request.externalId, value)
+      case UpdateMode | CheckUpdateMode =>
+        val answers = UserAnswers(value).set(changeId)(true).asOpt.getOrElse(UserAnswers(value))
         lockAndCall(srn, updateSchemeCacheConnector.upsert(_, answers.json))
     }
 
@@ -152,6 +158,35 @@ trait UserAnswersService {
       directorIndex))
     case _ => None
   }
+  
+  def removeEmptyObjectsAndIncompleteEntities(json: JsValue, collectionKey: String, keySet: Set[String], externalId: String)
+                                             (implicit ec: ExecutionContext, hc: HeaderCarrier): JsValue =
+    (json \ collectionKey).validate[JsArray].asOpt match {
+      case Some(jsArray) =>
+
+        val filteredCollection: collection.IndexedSeq[JsValue] =
+          DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
+            jsArray = jsArray,
+            keySet  = keySet,
+            defName = "removeEmptyObjectsAndIncompleteEntities"
+          )
+
+        val reads: Reads[JsObject] =
+          (__ \ collectionKey)
+            .json
+            .update(__.read[JsArray].map(_ => JsArray(filteredCollection)))
+
+        json.transform(reads) match {
+          case JsSuccess(value, _) =>
+            logger.warn(s"$collectionKey filtering succeeded. ${jsArray.value.size - filteredCollection.size} elements removed")
+            value
+          case JsError(errors) =>
+            logger.warn(s"$collectionKey filtering failed: $errors")
+            json
+        }
+      case _ =>
+        json
+    }
 
   protected def subscriptionCacheConnector: UserAnswersCacheConnector
 
@@ -170,25 +205,19 @@ trait UserAnswersService {
 }
 
 @Singleton
-class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val
-                                                              subscriptionCacheConnector: UserAnswersCacheConnector,
-                                                              override val
-                                                              updateSchemeCacheConnector: UpdateSchemeCacheConnector,
-                                                              override val
-                                                              lockConnector: PensionSchemeVarianceLockConnector,
-                                                              override val
-                                                              viewConnector: SchemeDetailsReadOnlyCacheConnector,
+class UserAnswersServiceEstablishersAndTrusteesImpl @Inject()(override val subscriptionCacheConnector: UserAnswersCacheConnector,
+                                                              override val updateSchemeCacheConnector: UpdateSchemeCacheConnector,
+                                                              override val lockConnector: PensionSchemeVarianceLockConnector,
+                                                              override val viewConnector: SchemeDetailsReadOnlyCacheConnector,
                                                               override val appConfig: FrontendAppConfig
                                                              ) extends UserAnswersService {
 
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
-                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
-                                                request: DataRequest[AnyContent]): Future[JsValue] =
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
     save(mode, srn, id, value, EstablishersOrTrusteesChangedId)
 
-  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                                       request: DataRequest[AnyContent])
-  : Future[JsValue] =
+  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
     upsert(mode, srn, value, EstablishersOrTrusteesChangedId)
 }
 
@@ -200,13 +229,11 @@ class UserAnswersServiceInsuranceImpl @Inject()(override val subscriptionCacheCo
                                                 override val appConfig: FrontendAppConfig
                                                ) extends UserAnswersService {
   override def save[A, I <: TypedIdentifier[A]](mode: Mode, srn: OptionalSchemeReferenceNumber, id: I, value: A)
-                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier,
-                                                request: DataRequest[AnyContent]): Future[JsValue] =
+                                               (implicit fmt: Format[A], ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
     save(mode, srn, id, value, InsuranceDetailsChangedId)
 
-  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier,
-                                                                       request: DataRequest[AnyContent])
-  : Future[JsValue] =
+  override def upsert(mode: Mode, srn: OptionalSchemeReferenceNumber, value: JsValue)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: DataRequest[AnyContent]): Future[JsValue] =
     upsert(mode, srn, value, InsuranceDetailsChangedId)
 }
 

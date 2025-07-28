@@ -22,7 +22,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherNameId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
+import models.register.establishers.EstablisherKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
 import models.{Index, Mode, OptionalSchemeReferenceNumber}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -66,7 +66,7 @@ class AlreadyDeletedController @Inject()(
   : Either[Future[Result], String] = {
     establisherKind match {
       case Company => CompanyDetailsId(index).retrieve.map(_.companyName)
-      case Indivdual => EstablisherNameId(index).retrieve.map(_.fullName)
+      case Individual => EstablisherNameId(index).retrieve.map(_.fullName)
       case Partnership => PartnershipDetailsId(index).retrieve.map(_.name)
     }
   }

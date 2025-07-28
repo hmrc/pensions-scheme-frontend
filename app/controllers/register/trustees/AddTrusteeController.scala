@@ -18,24 +18,25 @@ package controllers.register.trustees
 
 import config.FrontendAppConfig
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.trustees.AddTrusteeId
+import identifiers.register.trustees.{AddTrusteeId, IsTrusteeNewId, TrusteeKindId, TrusteesId}
 import models.register.Trustee
 import models.requests.DataRequest
 import models.{Mode, NormalMode, OptionalSchemeReferenceNumber}
 import navigators.Navigator
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsResultException
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.UserAnswersService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.{NoSuspendedCheck, Trustees}
-import views.html.register.trustees._
+import utils.UserAnswers
+import views.html.register.trustees.*
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
@@ -48,11 +49,10 @@ class AddTrusteeController @Inject()(
                                       formProvider: AddTrusteeFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       val view: addTrustee,
-                                      val addTrusteeOldView: addTrusteeOld
+                                      val addTrusteeOldView: addTrusteeOld,
+                                      userAnswersService: UserAnswersService
                                     )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Retrievals {
-
-  private val logger = Logger(classOf[AddTrusteeController])
 
   private val form = formProvider()
 
@@ -60,48 +60,49 @@ class AddTrusteeController @Inject()(
                           trustees: Seq[Trustee[?]],
                           mode: Mode,
                           srn: OptionalSchemeReferenceNumber,
-                          form: Form[Boolean], status: Status)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-
-
+                          form: Form[Boolean],
+                          status: Status
+                        )(implicit request: DataRequest[AnyContent]): Result =
       mode match {
         case NormalMode =>
           val completeTrustees = trustees.filter(_.isCompleted)
           val incompleteTrustees = trustees.filterNot(_.isCompleted)
-          Future.successful(status(view(form, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn)))
-        case _ => Future.successful(status(addTrusteeOldView(form, mode, trustees, existingSchemeName, srn)))
+          status(view(form, mode, completeTrustees, incompleteTrustees, existingSchemeName, srn))
+        case _ =>
+          status(addTrusteeOldView(form, mode, trustees, existingSchemeName, srn))
       }
 
-  }
 
   def onPageLoad(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
     (authenticate() andThen getData(mode, srn) andThen allowAccess(srn) andThen requireData).async {
       implicit request =>
-        val trustees = request.userAnswers.allTrusteesAfterDelete
-        renderPage(trustees, mode, srn, form, Ok)
+        val userAnswersWithCleanedTrustees: JsValue =
+          userAnswersService.removeEmptyObjectsAndIncompleteEntities(
+            json          = request.userAnswers.json,
+            collectionKey = TrusteesId.toString,
+            keySet        = Set(IsTrusteeNewId.toString, TrusteeKindId.toString),
+            externalId    = request.externalId
+          )
+
+        userAnswersService.upsert(mode, srn, userAnswersWithCleanedTrustees).map { jsValue =>
+          renderPage(UserAnswers(jsValue).allTrusteesAfterDelete, mode, srn, form, Ok)
+        }
     }
 
   def onSubmit(mode: Mode, srn: OptionalSchemeReferenceNumber): Action[AnyContent] =
-    (authenticate() andThen getData(mode, srn) andThen requireData).async {
+    (authenticate() andThen getData(mode, srn) andThen requireData) {
       implicit request =>
 
         val trustees = request.userAnswers.allTrusteesAfterDelete
 
-        if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
-          Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn)))
-        else {
+        if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0) {
+          Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers, srn))
+        } else {
           form.bindFromRequest().fold(
-            formWithErrors => {
-              renderPage(trustees, mode, srn, formWithErrors, BadRequest)
-            },
+            formWithErrors =>
+              renderPage(trustees, mode, srn, formWithErrors, BadRequest),
             value =>
-              request.userAnswers.set(AddTrusteeId)(value).fold(
-                errors => {
-                  logger.error("Unable to set user answer", JsResultException(errors))
-                  Future.successful(InternalServerError)
-                },
-                userAnswers =>
-                  Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers, srn)))
-              )
+              Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers.setOrException(AddTrusteeId)(value), srn))
           )
         }
     }

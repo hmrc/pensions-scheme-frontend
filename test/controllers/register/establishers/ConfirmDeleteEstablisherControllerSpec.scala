@@ -44,7 +44,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "return OK and the correct view for a GET for individual" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val establisherIndex = Index(4)
-      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Indivdual, EmptyOptionalSchemeReferenceNumber)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode, establisherIndex, EstablisherKind.Individual, EmptyOptionalSchemeReferenceNumber)
       val result = controller(data).onPageLoad(NormalMode, establisherIndex, establisherKind, EmptyOptionalSchemeReferenceNumber)(fakeRequest)
 
       status(result) mustBe OK
@@ -199,7 +199,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = Index(0)
   private val establisherName = "John Doe"
-  private val establisherKind = EstablisherKind.Indivdual
+  private val establisherKind = EstablisherKind.Individual
   private val personDetails = person.PersonName("John", "Doe")
   private val personName = PersonName("John", "Doe")
   private val companyDetails = CompanyDetails("Test Ltd")
