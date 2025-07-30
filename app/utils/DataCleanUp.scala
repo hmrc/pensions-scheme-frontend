@@ -32,7 +32,9 @@ object DataCleanUp extends Logging {
             (jsValue.as[JsObject].keys.size.equals(keySet.size) && jsValue.as[JsObject].keys.subsetOf(keySet))
         }
 
-    logger.info(s"$defName: ${jsArray.value.size - filteredCollection.size} elements removed")
+    val removed = jsArray.value.size - filteredCollection.size
+
+    if (removed > 0) logger.info(s"$defName: $removed elements removed")
 
     filteredCollection
   }

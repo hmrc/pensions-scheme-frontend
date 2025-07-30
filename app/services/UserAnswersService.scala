@@ -178,7 +178,9 @@ trait UserAnswersService extends Logging {
 
         json.transform(reads) match {
           case JsSuccess(value, _) =>
-            logger.warn(s"$collectionKey filtering succeeded. ${jsArray.value.size - filteredCollection.size} elements removed")
+            val removed = jsArray.value.size - filteredCollection.size
+
+            if (removed > 0) logger.warn(s"$collectionKey filtering succeeded. $removed elements removed")
             value
           case JsError(errors) =>
             logger.warn(s"$collectionKey filtering failed: $errors")
