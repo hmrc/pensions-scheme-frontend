@@ -168,7 +168,7 @@ trait UserAnswersService extends Logging {
           DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
             jsArray = jsArray,
             keySet  = keySet,
-            defName = "removeEmptyObjectsAndIncompleteEntities"
+            defName = s"${this.getClass.getSimpleName}.removeEmptyObjectsAndIncompleteEntities"
           )
 
         val reads: Reads[JsObject] =
