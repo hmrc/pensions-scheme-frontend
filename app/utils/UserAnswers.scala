@@ -242,7 +242,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
               DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
                   jsArray = trustees, 
                   keySet  = Set(TrusteeKindId.toString, IsTrusteeNewId.toString),
-                  defName = "readTrustees"
+                  defName = s"${this.getClass.getSimpleName}.readTrustees"
                 )
                 .zipWithIndex
                 .map { case (jsValue, index) =>
@@ -402,7 +402,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
             DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
                 jsArray = establishers,
                 keySet  = Set(EstablisherKindId.toString, IsEstablisherNewId.toString),
-                defName = "readEstablishers"
+                defName = s"${this.getClass.getSimpleName}.readEstablishers"
               )
               .zipWithIndex
               .map { case (jsValue, index) =>

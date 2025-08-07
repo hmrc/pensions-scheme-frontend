@@ -115,7 +115,13 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
   def onSubmit(establisherIndex: Index): Action[AnyContent] =
     (authenticate() andThen getData(NormalMode, EmptyOptionalSchemeReferenceNumber) andThen allowAccess(EmptyOptionalSchemeReferenceNumber) andThen requireData).async {
       implicit request =>
-        val seqTrustee: Seq[IndividualDetails] = dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+
+        logger.info(s"onSubmit")
+
+        val seqTrustee: Seq[IndividualDetails] =
+          dataPrefillService.getListOfTrusteesToBeCopied(establisherIndex)(request.userAnswers)
+
+        logger.info(s"seqTrustee length: ${seqTrustee.length}")
 
         request.userAnswers.get(CompanyDetailsId(establisherIndex)) match {
           case Some(companyName) =>
