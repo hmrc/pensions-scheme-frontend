@@ -342,7 +342,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
     DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
       jsArray = jsArray,
       keySet  = Set(IsTrusteeNewId.toString, TrusteeKindId.toString),
-      defName = s"${this.getClass.getSimpleName}.filterTrusteeIndividuals"
+      defName = "DataPrefillService.filterTrusteeIndividuals"
     )
     .filter(_
       .\(TrusteeKindId.toString)
