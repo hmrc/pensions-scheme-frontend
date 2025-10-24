@@ -254,7 +254,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
       case JsSuccess(directorsWithEstablishers, _) if directorsWithEstablishers.nonEmpty =>
         directorsWithEstablishers.flatMap(_.toSeq).flatten
       case JsError(errors) =>
-        logger.warn(
+        logger.error(
           "readsDirectors failed:" +
             s"\npath(s) from JSON: ${errors.map(_._1.path.mkString(", "))}" +
             s"\nerror messages from JSON: ${errors.flatMap(_._2.map(_.messages.head))}"
@@ -323,7 +323,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
       case JsSuccess(trustees, _) =>
         trustees.flatten
       case JsError(errors) =>
-        logger.warn(
+        logger.error(
           "allIndividualTrustees readsTrustees failed: " +
             s"\npath(s) from JSON: ${errors.map(_._1.path.mkString(", "))}" +
             s"\nerror messages from JSON: ${errors.flatMap(_._2.map(_.messages.head))}"
