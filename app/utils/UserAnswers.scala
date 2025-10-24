@@ -453,7 +453,12 @@ final case class UserAnswers(json: JsValue = Json.obj())
       .set(id)(value)
       .fold(
         errors => {
-          logger.error("Unable to set user answer", JsResultException(errors))
+          logger.error(
+            "Unable to set user answer",
+            Exception(
+              s"path(s) from JSON: ${errors.map(_._1.path.mkString(", "))}" +
+                s"\nerror messages from JSON: ${errors.flatMap(_._2.map(_.messages.head))}"
+            ))
           Future.successful(InternalServerError)
         },
         userAnswers => fn(userAnswers)
