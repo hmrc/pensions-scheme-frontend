@@ -3,7 +3,7 @@ import sbt.*
 object AppDependencies {
 
   import play.sbt.PlayImport.*
-  private val bootstrapVersion = "10.3.0"
+  private val bootstrapVersion = "10.4.0"
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"                   %%  "play-conditional-form-mapping-play-30" % "3.3.0",
