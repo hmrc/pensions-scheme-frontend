@@ -78,12 +78,24 @@
 @govukLayout(
     pageTitle = Some(pageTitle + " - " + Messages("messages__pension_scheme_registration__title")),
     headBlock = Some(hmrcHead(headBlock = Some(headScripts))),
-    headerBlock = Some(hmrcStandardHeader(
-        serviceName = Some(messages("site.service_name")),
-        serviceUrl = Some(appConfig.managePensionsSchemeOverviewUrl.toString),
-        signOutUrl = if(canSignOut) Some(routes.LogoutController.onPageLoad.url) else None,
-        phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl))
-    )),
+    headerBlock =
+        if (appConfig.forceServiceNavigation) {
+            Some(hmrcStandardHeader(
+                signOutUrl = if(canSignOut) Some(routes.LogoutController.onPageLoad.url) else None,
+                phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl)),
+                serviceNavigation = Some(ServiceNavigation(
+                    serviceName = Some(messages("site.service_name")),
+                    serviceUrl = Some(appConfig.managePensionsSchemeOverviewUrl.toString)
+                ))
+            ))
+        } else {
+            Some(hmrcStandardHeader(
+                serviceName = Some(messages("site.service_name")),
+                serviceUrl = Some(appConfig.managePensionsSchemeOverviewUrl.toString),
+                signOutUrl = if(canSignOut) Some(routes.LogoutController.onPageLoad.url) else None,
+                phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUnauthenticatedUrl))
+            ))
+        },
     beforeContentBlock = Some(beforeContentBlock),
     scriptsBlock = Some(scripts),
     mainContentLayout = if(fullWidthLayout) None else Some(defaultMainContentLayout(_)),
