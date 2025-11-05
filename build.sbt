@@ -20,9 +20,13 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(scalaVersion := "3.6.4")
   .settings(
-    scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
-    scalacOptions += "-Wconf:src=routes/.*:s",
-    scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
+    scalacOptions ++= Seq(
+      "-Werror",
+      "-Wconf:msg=unused import&src=html/.*:s",
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:msg=Flag.*repeatedly:s",
+      "-Wconf:msg=Setting -Wunused set to all redundantly:s"
+    ),
   )
 
   .settings(

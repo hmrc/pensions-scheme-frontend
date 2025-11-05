@@ -86,6 +86,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
     runModeConfiguration
       .underlying.getString("urls.updateSchemeDetails")
   }"
+  lazy val forceServiceNavigation: Boolean = runModeConfiguration.getOptional[Boolean]("play-frontend-hmrc.forceServiceNavigation").getOrElse(false)
 
   def schemeDashboardUrl(request: DataRequest[?]): String = schemeDashboardUrl(request.psaId, request.pspId)
 
