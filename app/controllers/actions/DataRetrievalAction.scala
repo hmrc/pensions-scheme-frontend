@@ -17,12 +17,12 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import connectors._
-import identifiers.PsaMinimalFlagsId._
+import connectors.*
+import identifiers.PsaMinimalFlagsId.*
 import identifiers.racdac.IsRacDacId
 import identifiers.{PsaMinimalFlagsId, SchemeSrnId, SchemeStatusId}
+import models.*
 import models.OptionalSchemeReferenceNumber.toSrn
-import models._
 import models.requests.{AuthenticatedRequest, OptionalDataRequest}
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -55,16 +55,20 @@ class DataRetrievalImpl(
       case UpdateMode | CheckUpdateMode =>
         (toSrn(srn), request.psaId) match {
           case (Some(extractedSrn), Some(psaId)) =>
-            lockConnector.isLockByPsaIdOrSchemeId(psaId.id, extractedSrn).flatMap(optionLock =>
-              getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc))
-          case _ => Future(OptionalDataRequest(
-            request = request.request,
-            externalId = request.externalId,
-            userAnswers = None,
-            psaId = request.psaId,
-            pspId = request.pspId,
-            administratorOrPractitioner = request.administratorOrPractitioner
-          ))
+            lockConnector
+              .isLockByPsaIdOrSchemeId(psaId.id, extractedSrn)
+              .flatMap { optionLock =>
+                getOptionalDataRequest(extractedSrn, optionLock, psaId.id, refreshData)(request, hc)
+              }
+          case _ =>
+            Future(OptionalDataRequest(
+              request = request.request,
+              externalId = request.externalId,
+              userAnswers = None,
+              psaId = request.psaId,
+              pspId = request.pspId,
+              administratorOrPractitioner = request.administratorOrPractitioner
+            ))
         }
     }
   }
@@ -84,33 +88,38 @@ class DataRetrievalImpl(
           case _ =>
             lockConnector.releaseLock(psaId, srn).flatMap(_ => getRequestWithNoLock(srn, refresh, psaId))
         }
-      case (false, Some(VarianceLock)) => createOptionalRequest(updateConnector.fetch(srn), viewOnly = false)
-      case (_, Some(_)) => getRequestWithLock(srn, refresh, psaId)
-      case _ => getRequestWithNoLock(srn, refresh, psaId)
+      case (false, Some(VarianceLock)) =>
+        createOptionalRequest(updateConnector.fetch(srn), viewOnly = false)
+      case (_, Some(_)) =>
+        getRequestWithLock(srn, refresh, psaId)
+      case _ =>
+        getRequestWithNoLock(srn, refresh, psaId)
     }
 
 
   private def createOptionalRequest[A](f: Future[Option[JsValue]], viewOnly: Boolean)
                                       (implicit request: AuthenticatedRequest[A]): Future[OptionalDataRequest[A]] =
     f.map {
-      case None => OptionalDataRequest(
-        request = request.request,
-        externalId = request.externalId,
-        userAnswers = None,
-        psaId = request.psaId,
-        pspId = request.pspId,
-        viewOnly = viewOnly,
-        administratorOrPractitioner = request.administratorOrPractitioner
-      )
-      case Some(data) => OptionalDataRequest(
-        request = request.request,
-        externalId = request.externalId,
-        userAnswers = Some(UserAnswers(data)),
-        psaId = request.psaId,
-        pspId = request.pspId,
-        viewOnly = viewOnly,
-        administratorOrPractitioner = request.administratorOrPractitioner
-      )
+      case None =>
+        OptionalDataRequest(
+          request = request.request,
+          externalId = request.externalId,
+          userAnswers = None,
+          psaId = request.psaId,
+          pspId = request.pspId,
+          viewOnly = viewOnly,
+          administratorOrPractitioner = request.administratorOrPractitioner
+        )
+      case Some(data) =>
+        OptionalDataRequest(
+          request = request.request,
+          externalId = request.externalId,
+          userAnswers = Some(UserAnswers(data)),
+          psaId = request.psaId,
+          pspId = request.pspId,
+          viewOnly = viewOnly,
+          administratorOrPractitioner = request.administratorOrPractitioner
+        )
     }
 
   private def refreshBasedJsFetch[A](refresh: Boolean, srn: SchemeReferenceNumber, psaId: String)
@@ -327,9 +336,11 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
                                         lockConnector: PensionSchemeVarianceLockConnector,
                                         schemeDetailsConnector: SchemeDetailsConnector,
                                         minimalPsaConnector: MinimalPsaConnector
-                                       )(implicit ec: ExecutionContext) extends DataRetrievalAction {
+                                       )(implicit ec: ExecutionContext)
+  extends DataRetrievalAction {
   override def apply(mode: Mode, srn: OptionalSchemeReferenceNumber, refreshData: Boolean): DataRetrieval = {
-    new DataRetrievalImpl(dataConnector,
+    new DataRetrievalImpl(
+      dataConnector,
       viewConnector,
       updateConnector,
       lockConnector,
@@ -337,7 +348,8 @@ class DataRetrievalActionImpl @Inject()(dataConnector: UserAnswersCacheConnector
       minimalPsaConnector,
       mode,
       srn,
-      refreshData)
+      refreshData
+    )
   }
 }
 

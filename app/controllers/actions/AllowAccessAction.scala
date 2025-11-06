@@ -21,17 +21,18 @@ import config.FrontendAppConfig
 import connectors.PensionsSchemeConnector
 import handlers.ErrorHandlerWithReturnLinkToManage
 import identifiers.PsaMinimalFlagsId
-import identifiers.PsaMinimalFlagsId._
+import identifiers.PsaMinimalFlagsId.*
 import models.OptionalSchemeReferenceNumber.toSrn
 import models.requests.OptionalDataRequest
 import models.{OptionalSchemeReferenceNumber, PSAMinimalFlags, SchemeReferenceNumber, UpdateMode}
 import play.api.Logging
-import play.api.http.Status._
-import play.api.mvc.Results._
+import play.api.http.Status.*
+import play.api.mvc.Results.*
 import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,33 +42,43 @@ abstract class AllowAccessAction(srn: OptionalSchemeReferenceNumber,
                                  errorHandler: FrontendErrorHandler,
                                  allowPsa: Boolean,
                                  allowPsp: Boolean
-                                )(implicit val executionContext: ExecutionContext) extends
-  ActionFilter[OptionalDataRequest] with Logging {
+                                )(implicit val executionContext: ExecutionContext)
+  extends ActionFilter[OptionalDataRequest] with Logging {
 
-  protected def filter[A](request: OptionalDataRequest[A],
-                          destinationForNoUserAnswersAndSRN: => Option[Result],
-                          checkForSuspended: Boolean
+  protected def filter[A](
+                           request: OptionalDataRequest[A],
+                           destinationForNoUserAnswersAndSRN: => Option[Result],
+                           checkForSuspended: Boolean
                          ): Future[Option[Result]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val optionUA = request.userAnswers
+    val optionUA: Option[UserAnswers] =
+      request.userAnswers
 
-    val optionPsaMinimalFlagsId = optionUA.flatMap(_.get(PsaMinimalFlagsId))
+    val optionPsaMinimalFlags: Option[PSAMinimalFlags] =
+      optionUA.flatMap(_.get(PsaMinimalFlagsId))
 
-    (optionUA, optionPsaMinimalFlagsId, toSrn(srn)) match {
+    (optionUA, optionPsaMinimalFlags, toSrn(srn)) match {
       case (Some(_), Some(PSAMinimalFlags(true, false, _)), _) if checkForSuspended =>
         Future.successful(Some(Redirect(controllers.register.routes.CannotMakeChangesController.onPageLoad(srn))))
       case (Some(_), Some(PSAMinimalFlags(_, true, _)), _) =>
         Future.successful(Some(Redirect(config.youMustContactHMRCUrl)))
-      case (Some(_), _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN)
-      case (None, _, Some(extractedSRN)) => checkForAssociation(request, extractedSRN).map {
-        case None => destinationForNoUserAnswersAndSRN
-        case notAssociatedResult@Some(_) => notAssociatedResult
-      }
+      case (Some(_), _, Some(extractedSRN)) =>
+        checkForAssociation(request, extractedSRN)
+      case (None, _, Some(extractedSRN)) =>
+        checkForAssociation(request, extractedSRN).map {
+          case None =>
+            destinationForNoUserAnswersAndSRN
+          case notAssociatedResult@Some(_) =>
+            notAssociatedResult
+        }
       case _ =>
         request.psaId -> request.pspId match {
-          case (Some(_), _) if allowPsa => Future.successful(None)
-          case (_, Some(_)) if allowPsp => Future.successful(None)
+          case (Some(_), _) if allowPsa =>
+            Future.successful(None)
+          case (_, Some(_)) if allowPsp =>
+            Future.successful(None)
           case _ =>
             logger.warn("Prevented PSP access to PSA page")
             errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
@@ -75,13 +86,20 @@ abstract class AllowAccessAction(srn: OptionalSchemeReferenceNumber,
     }
   }
 
-  private def checkForAssociation[A](request: OptionalDataRequest[A],
-                                     extractedsrn: SchemeReferenceNumber)(implicit hc: HeaderCarrier): Future[Option[Result]] = {
+  private def checkForAssociation[A](request: OptionalDataRequest[A], extractedSrn: SchemeReferenceNumber)
+                                    (implicit hc: HeaderCarrier): Future[Option[Result]] = {
 
-    def isAllowed(req: Future[Either[HttpResponse, Boolean]]) = req.map {
-      case Right(true) => true
-      case _ => false
-    }.recover { _ => false}
+    def isAssociated(userId: String, srn: SchemeReferenceNumber, isPsa: Boolean)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
+      pensionsSchemeConnector
+        .checkForAssociation(userId, srn, isPsa)(using hc, ec, request)
+        .map {
+          case Right(true) => true
+          case _           => false
+        }
+        .recover { _ =>
+          false
+        }
 
     def optFtrToFtrOpt[T](x: Option[Future[T]]): Future[Option[T]] =
       x match {
@@ -89,28 +107,27 @@ abstract class AllowAccessAction(srn: OptionalSchemeReferenceNumber,
         case None    => Future.successful(None)
       }
 
-    val psaAllowedOpt = if(allowPsa) request.psaId.map { psaId =>
-      isAllowed(pensionsSchemeConnector.checkForAssociation(psaId.id, extractedsrn, isPsa = true)(hc, implicitly, request))
-    } else None
+    val psaAssociatedOptFut: Option[Future[Boolean]] =
+      if (allowPsa) request.psaId.map(psaId => isAssociated(psaId.id, extractedSrn, isPsa = true)) else None
 
-    val pspAllowedOpt = if (allowPsp) request.pspId.map { pspId =>
-      isAllowed(pensionsSchemeConnector.checkForAssociation(pspId.id, extractedsrn, isPsa = false)(hc, implicitly, request))
-    } else None
+    val pspAssociatedOptFut: Option[Future[Boolean]] =
+      if (allowPsp) request.pspId.map(pspId => isAssociated(pspId.id, extractedSrn, isPsa = false)) else None
 
-
-    val accessAllowed = for {
-      psaAllowed <- optFtrToFtrOpt(psaAllowedOpt)
-      pspAllowed <- optFtrToFtrOpt(pspAllowedOpt)
-    } yield {
-      psaAllowed -> pspAllowed match {
-        case (Some(true), _) => true
-        case (_, Some(true)) => true
-        case _ => false
+    val accessAllowed: Future[Boolean] =
+      for {
+        psaAllowed <- optFtrToFtrOpt(psaAssociatedOptFut)
+        pspAllowed <- optFtrToFtrOpt(pspAssociatedOptFut)
+      } yield {
+        psaAllowed -> pspAllowed match {
+          case (Some(true), _) => true
+          case (_, Some(true)) => true
+          case _ => false
+        }
       }
-    }
 
     accessAllowed.flatMap {
-      case true => Future.successful(None)
+      case true =>
+        Future.successful(None)
       case false =>
         logger.warn("Potentially prevented unauthorised access")
         errorHandler.onClientError(request, NOT_FOUND, "").map(Some.apply)
@@ -125,17 +142,16 @@ class AllowAccessActionMain(
                              errorHandler: FrontendErrorHandler,
                              allowPsa: Boolean,
                              allowPsp: Boolean
-                           )(implicit executionContext: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
+                           )(implicit executionContext: ExecutionContext)
+  extends AllowAccessAction(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
-  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-    filter(request,
-      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad
-      (UpdateMode, srn))),
+  override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] =
+    filter(
+      request = request,
+      destinationForNoUserAnswersAndSRN = Some(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(UpdateMode, srn))),
       checkForSuspended = true
     )
-  }
 }
 
 class AllowAccessActionTaskList(
@@ -145,8 +161,8 @@ class AllowAccessActionTaskList(
                                  errorHandler: FrontendErrorHandler,
                                  allowPsa: Boolean = true,
                                  allowPsp: Boolean = false
-                               )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
+                               )(implicit ec: ExecutionContext)
+  extends AllowAccessAction(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -164,8 +180,8 @@ class AllowAccessActionNoSuspendedCheck(
                                          errorHandler: FrontendErrorHandler,
                                          allowPsa: Boolean = true,
                                          allowPsp: Boolean = false
-                                       )(implicit ec: ExecutionContext) extends AllowAccessAction(srn,
-  pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
+                                       )(implicit ec: ExecutionContext)
+  extends AllowAccessAction(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp) {
 
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
@@ -181,7 +197,8 @@ class AllowAccessActionProviderMainImpl @Inject()(
                                                    pensionsSchemeConnector: PensionsSchemeConnector,
                                                    config: FrontendAppConfig,
                                                    errorHandler: ErrorHandlerWithReturnLinkToManage
-                                                 )(implicit ec: ExecutionContext) extends AllowAccessActionProvider {
+                                                 )(implicit ec: ExecutionContext)
+  extends AllowAccessActionProvider {
 
   def apply(srn: OptionalSchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionMain(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
@@ -192,8 +209,8 @@ class AllowAccessActionProviderTaskListImpl @Inject()(
                                                        pensionsSchemeConnector: PensionsSchemeConnector,
                                                        config: FrontendAppConfig,
                                                        errorHandler: ErrorHandlerWithReturnLinkToManage
-                                                     )(implicit ec: ExecutionContext) extends
-  AllowAccessActionProvider {
+                                                     )(implicit ec: ExecutionContext)
+  extends AllowAccessActionProvider {
 
   def apply(srn: OptionalSchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionTaskList(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)
@@ -204,8 +221,8 @@ class AllowAccessActionProviderNoSuspendedCheckImpl @Inject()(
                                                                pensionsSchemeConnector: PensionsSchemeConnector,
                                                                config: FrontendAppConfig,
                                                                errorHandler: ErrorHandlerWithReturnLinkToManage
-                                                             )(implicit ec: ExecutionContext) extends
-  AllowAccessActionProvider {
+                                                             )(implicit ec: ExecutionContext)
+  extends AllowAccessActionProvider {
 
   def apply(srn: OptionalSchemeReferenceNumber, allowPsa: Boolean = true, allowPsp: Boolean = false): AllowAccessAction = {
     new AllowAccessActionNoSuspendedCheck(srn, pensionsSchemeConnector, config, errorHandler, allowPsa, allowPsp)

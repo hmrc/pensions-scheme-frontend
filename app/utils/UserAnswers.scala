@@ -131,7 +131,7 @@ final case class UserAnswers(json: JsValue = Json.obj())
 
   def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] =
     allDirectors(establisherIndex)
-      .filterNot(directorEntity => directorEntity.isDeleted && !directorEntity.isCompleted)
+      .filterNot(directorEntity => directorEntity.isDeleted)
 
   def allPartners(establisherIndex: Int): Seq[Partner[?]] =
     getAllRecursive[PersonName](PartnerNameId.collectionPath(establisherIndex)).map {

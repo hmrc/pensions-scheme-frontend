@@ -108,8 +108,10 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(establisherCompanyRoutes.CompanyPhoneController.onPageLoad(mode, srn, index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(mode, index, from.userAnswers, srn)
-      case TrusteeAlsoDirectorId(index) => trusteeAlsoDirectorNav(from.userAnswers, index, NormalMode, srn)
-      case TrusteesAlsoDirectorsId(index) => trusteesAlsoDirectorsNav(from.userAnswers, index, NormalMode, srn)
+      case TrusteeAlsoDirectorId(index) =>
+        trusteeAlsoDirectorNav(from.userAnswers, index, mode, srn)
+      case TrusteesAlsoDirectorsId(index) =>
+        trusteesAlsoDirectorsNav(from.userAnswers, index, mode, srn)
       case OtherDirectorsId(_) =>
         if (mode == CheckMode || mode == NormalMode) {
           NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(mode, srn))
@@ -229,10 +231,9 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.dontSave(
       userAnswers.get(TrusteeAlsoDirectorId(index)) match {
         case Some(v) if v > -1 =>
-          controllers.register.establishers.company.routes.AddCompanyDirectorsController
-            .onPageLoad(mode, srn, index)
-        case _ => controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
+          controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
+        case _ =>
+          controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
       }
     )
   }
@@ -241,30 +242,19 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
     NavigateTo.dontSave(
       userAnswers.get(TrusteesAlsoDirectorsId(index)) match {
         case Some(v) if v.contains(-1) =>
-          controllers.register.establishers.company.director.routes.DirectorNameController
-            .onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
-
-        case _ => controllers.register.establishers.company.routes.AddCompanyDirectorsController
-          .onPageLoad(mode, srn, index)
+          controllers.register.establishers.company.director.routes.DirectorNameController.onPageLoad(mode, index, userAnswers.allDirectors(index).size, srn)
+        case _ =>
+          controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, srn, index)
       }
     )
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
     NavigateTo.dontSave(
-      if (answers.allDirectorsAfterDelete(index).isEmpty) {
-        controllers.register.establishers.company.director.routes.DirectorNameController
-          .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-      } else if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
+      if (answers.allDirectorsAfterDelete(index).length < appConfig.maxDirectors) {
         answers.get(AddCompanyDirectorsId(index)).map { addCompanyDirectors =>
           if (addCompanyDirectors) {
-            mode match {
-              case NormalMode | CheckMode =>
-                controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController
-                  .onPageLoad(mode, srn, index)
-              case _ => controllers.register.establishers.company.director.routes.DirectorNameController
-                .onPageLoad(mode, index, answers.allDirectors(index).size, srn)
-            }
+            controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onPageLoad(mode, srn, index)
           } else {
             if (mode == CheckMode || mode == NormalMode) {
               controllers.register.establishers.routes.PsaSchemeTaskListRegistrationEstablisherController.onPageLoad(index)

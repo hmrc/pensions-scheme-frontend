@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers.company.director
 
-import identifiers._
+import identifiers.*
 import identifiers.register.establishers.EstablishersId
 import models.Link
 import models.person.PersonName

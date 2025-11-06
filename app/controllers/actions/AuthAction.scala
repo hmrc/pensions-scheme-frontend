@@ -37,16 +37,19 @@ import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthImpl(override val authConnector: AuthConnector,
-                         config: FrontendAppConfig,
-                         sessionDataCacheConnector: SessionDataCacheConnector,
-                         val parser: BodyParsers.Default,
-                        authEntity: Option[AuthEntity])
-                              (implicit val executionContext: ExecutionContext) extends Auth with AuthorisedFunctions {
+class AuthImpl(
+                override val authConnector: AuthConnector,
+                config: FrontendAppConfig,
+                sessionDataCacheConnector: SessionDataCacheConnector,
+                val parser: BodyParsers.Default,
+                authEntity: Option[AuthEntity]
+              )(implicit val executionContext: ExecutionContext)
+  extends Auth
+    with AuthorisedFunctions {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised().retrieve(Retrievals.externalId and Retrievals.allEnrolments) {
       case Some(id) ~ enrolments =>
@@ -54,9 +57,8 @@ class AuthImpl(override val authConnector: AuthConnector,
       case _ =>
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
     } recover {
-      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(config
-        .managePensionsSchemeOverviewUrl.url)))
-
+      case _: NoActiveSession =>
+        Redirect(config.loginUrl, Map("continue" -> Seq(config.managePensionsSchemeOverviewUrl.url)))
       case _: InsufficientEnrolments =>
         Redirect(routes.UnauthorisedController.onPageLoad)
       case _: InsufficientConfidenceLevel =>
@@ -72,24 +74,40 @@ class AuthImpl(override val authConnector: AuthConnector,
     }
   }
 
-  private def createAuthRequest[A](id: String, enrolments: Enrolments, request: Request[A],
-                                   block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    (enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(p=>PsaId(p.value)),
-      enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(p=>PspId(p.value))) match {
-      case (psaId@Some(_), pspId@Some(_)) => handleWhereBothEnrolments(id, request, psaId, pspId, block)
-      case (None, pspId@Some(_)) => block(AuthenticatedRequest(request, id, None, pspId, Practitioner))
-      case (psaId@Some(_), None) => block(AuthenticatedRequest(request, id, psaId, None, Administrator))
-      case _ => Future.successful(Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad()))
+  private def createAuthRequest[A](
+                                    id: String,
+                                    enrolments: Enrolments,
+                                    request: Request[A],
+                                    block: AuthenticatedRequest[A] => Future[Result]
+                                  ): Future[Result] =
+    (
+      enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(p => PsaId(p.value)),
+      enrolments.getEnrolment("HMRC-PODSPP-ORG").flatMap(_.getIdentifier("PSPID")).map(p => PspId(p.value))
+    ) match {
+      case (psaId@Some(_), pspId@Some(_)) =>
+        handleWhereBothEnrolments(id, request, psaId, pspId, block)
+      case (None, pspId@Some(_)) =>
+        block(AuthenticatedRequest(request, id, None, pspId, Practitioner))
+      case (psaId@Some(_), None) =>
+        block(AuthenticatedRequest(request, id, psaId, None, Administrator))
+      case _ =>
+        Future.successful(Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad()))
     }
-  }
 
-  private def handleWhereBothEnrolments[A](id: String, request: Request[A],
-                                           psaId:Option[PsaId], pspId: Option[PspId],
-                     block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+  private def handleWhereBothEnrolments[A](
+                                            id: String,
+                                            request: Request[A],
+                                            psaId:Option[PsaId],
+                                            pspId: Option[PspId],
+                                            block: AuthenticatedRequest[A] => Future[Result]
+                                          ): Future[Result] = {
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
     sessionDataCacheConnector.fetch.flatMap { optionJsValue =>
       optionJsValue.map(UserAnswers.apply).flatMap(_.get(AdministratorOrPractitionerId)) match {
-        case None => Future.successful(Redirect(config.administratorOrPractitionerUrl))
+        case None =>
+          Future.successful(Redirect(config.administratorOrPractitionerUrl))
         case Some(aop) =>
           (aop, authEntity) match {
             case (Administrator, Some(PSP)) =>
@@ -100,7 +118,8 @@ class AuthImpl(override val authConnector: AuthConnector,
               Future.successful(
                 Redirect(Call("GET", config.cannotAccessPageAsPractitionerUrl(config.localFriendlyUrl(request.uri))))
               )
-            case _ => block(AuthenticatedRequest(request, id, psaId, pspId, aop))
+            case _ =>
+              block(AuthenticatedRequest(request, id, psaId, pspId, aop))
           }
       }
     }
@@ -109,18 +128,23 @@ class AuthImpl(override val authConnector: AuthConnector,
 }
 
 @ImplementedBy(classOf[AuthImpl])
-trait Auth extends ActionBuilder[AuthenticatedRequest, AnyContent] with ActionFunction[Request,
-  AuthenticatedRequest]
+trait Auth
+  extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest]
 
-case class IdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationException(msg)
+case class IdNotFound(msg: String = "PsaIdNotFound")
+  extends AuthorisationException(msg)
 
-class AuthActionImpl @Inject()(authConnector: AuthConnector,
-                               config: FrontendAppConfig,
-                               sessionDataCacheConnector: SessionDataCacheConnector,
-                               val parser: BodyParsers.Default)
-                              (implicit ec: ExecutionContext) extends AuthAction {
+class AuthActionImpl @Inject()(
+                                authConnector: AuthConnector,
+                                config: FrontendAppConfig,
+                                sessionDataCacheConnector: SessionDataCacheConnector,
+                                val parser: BodyParsers.Default
+                              )(implicit ec: ExecutionContext)
+  extends AuthAction {
 
-  override def apply(authEntity: Option[AuthEntity]): Auth = new AuthImpl(authConnector, config, sessionDataCacheConnector, parser, authEntity)
+    override def apply(authEntity: Option[AuthEntity]): Auth =
+      new AuthImpl(authConnector, config, sessionDataCacheConnector, parser, authEntity)
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
