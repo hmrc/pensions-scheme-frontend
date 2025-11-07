@@ -60,7 +60,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
 
   private val pageHeading = Messages("messages__directors__prefill__title")
   private val titleMessage = Messages("messages__directors__prefill__heading", companyDetails.companyName)
-  private val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(establisherIndex)
+  private val postCall = controllers.register.establishers.company.director.routes.TrusteesAlsoDirectorsController.onSubmit(NormalMode,EmptyOptionalSchemeReferenceNumber, establisherIndex)
 
   private val seqOneTrustee = Seq(
     DataPrefillIndividualDetails(
@@ -117,7 +117,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onPageLoad(NormalMode,EmptyOptionalSchemeReferenceNumber,0)(fakeRequest)
+        val result = controller.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber, 0)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorNameController
@@ -142,7 +142,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
           "value[0]" -> "1",
           "value[1]" -> "2"
         )
-        val result = controller.onSubmit(establisherIndex = 0)(request)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, establisherIndex = 0)(request)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
         verify(mockDataPrefillService, atLeastOnce).copyAllTrusteesToDirectors(any(), any(), any())
@@ -163,7 +163,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
         val request = fakeRequest.withFormUrlEncodedBody(
           "value[0]" -> "-1"
         )
-        val result = controller.onSubmit(establisherIndex = 0)(request)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, establisherIndex = 0)(request)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -182,7 +182,7 @@ class TrusteesAlsoDirectorsControllerSpec extends ControllerSpecBase with Before
       val allModules = modules(dataRetrievalAction) ++ extraModules
       running(_.overrides(allModules*)) { app =>
         val controller = app.injector.instanceOf[TrusteesAlsoDirectorsController]
-        val result = controller.onSubmit(establisherIndex = 0)(fakeRequest)
+        val result = controller.onSubmit(NormalMode, EmptyOptionalSchemeReferenceNumber, establisherIndex = 0)(fakeRequest)
         status(result) mustBe BAD_REQUEST
       }
     }

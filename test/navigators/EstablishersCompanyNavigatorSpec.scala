@@ -19,12 +19,12 @@ package navigators
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import controllers.register.establishers.company.director.routes
-import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.*
 import identifiers.register.establishers.company.director.{TrusteeAlsoDirectorId, TrusteesAlsoDirectorsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherNewId}
 import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier}
+import models.*
 import models.Mode.checkMode
-import models._
 import models.person.PersonName
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
@@ -38,9 +38,9 @@ import utils.{Enumerable, UserAnswers}
 //scalastyle:off line.size.limit
 //scalastyle:off magic.number
 
-class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with BeforeAndAfterEach with MockitoSugar {
+class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with NavigatorBehaviour with MockitoSugar {
 
-  import EstablishersCompanyNavigatorSpec._
+  import EstablishersCompanyNavigatorSpec.*
 
   val navigator: Navigator = applicationBuilder(dataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))).build().injector.instanceOf[Navigator]
 
@@ -72,11 +72,11 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(previousAddressRoutes(NormalMode)),
           rowNoValue(CompanyPreviousAddressId(0))(previousAddressRoutes(NormalMode)),
           rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(NormalMode)),
-          rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(NormalMode, 0)),
-          row(AddCompanyDirectorsId(0))(true, directorName(NormalMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, trusteesAlsoDirectors(NormalMode, EmptyOptionalSchemeReferenceNumber, 0)),
+          row(AddCompanyDirectorsId(0))(false, establisherTasklist),
           row(AddCompanyDirectorsId(0))(true, otherDirectors(NormalMode), ua = Some(addCompanyDirectorsMoreThanTen)),
-          rowNoValue(OtherDirectorsId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */ taskList(NormalMode)),
-          rowNoValue(CheckYourAnswersId(0))(/*if (NormalMode == UpdateMode) anyMoreChanges else */ addCompanyDirectors(0, NormalMode)),
+          rowNoValue(OtherDirectorsId(0))(taskList(NormalMode)),
+          rowNoValue(CheckYourAnswersId(0))(addCompanyDirectors(0, NormalMode)),
           rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, hasCompanyVat(NormalMode)),
           rowNoValue(CompanyEnterCRNId(0))(hasCompanyUTR(NormalMode)),
           rowNoValue(CompanyPhoneId(0))(cyaCompanyContactDetails(NormalMode)),
@@ -124,6 +124,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
           rowNoValue(CompanyPreviousAddressId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
           rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(exitJourney(NormalMode, emptyAnswers, 0, cyaCompanyAddressDetails(NormalMode))),
+          row(AddCompanyDirectorsId(0))(false, establisherTasklist),
           rowNoValue(OtherDirectorsId(0))(taskList(NormalMode)),
           rowNewEstablisher(CompanyEnterUTRId(0))(someRefValue, exitJourney(NormalMode, newEstablisher, 0, cyaCompanyDetails(NormalMode))),
           rowNoValue(CompanyEnterCRNId(0))(cyaCompanyDetails(NormalMode)),
@@ -164,8 +165,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
           rowNoValueNewEstablisher(CompanyPreviousAddressListId(0))(previousAddressRoutes(UpdateMode)),
           rowNoValue(CompanyPreviousAddressId(0))(previousAddressRoutes(UpdateMode)),
           rowNoValueNewEstablisher(CompanyPreviousAddressId(0))(previousAddressRoutes(UpdateMode)),
-          rowNoValue(AddCompanyDirectorsId(0))(startDirectorJourney(UpdateMode, 0)),
-          row(AddCompanyDirectorsId(0))(true, directorName(UpdateMode, 0)),
+          row(AddCompanyDirectorsId(0))(true, trusteesAlsoDirectors(UpdateMode, EmptyOptionalSchemeReferenceNumber, 0)),
           row(AddCompanyDirectorsId(0))(true, otherDirectors(UpdateMode), ua = Some(addCompanyDirectorsMoreThanTen)),
           rowNoValue(OtherDirectorsId(0))(anyMoreChanges),
           rowNoValue(CheckYourAnswersId(0))(anyMoreChanges),
@@ -234,7 +234,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with Matchers with Navig
 //noinspection MutatorLikeMethodIsParameterless
 //scalastyle:off number.of.methods
 object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Implicits {
-  private def rowNoValueNewEstablisher(id: TypedIdentifier.PathDependent)(call: Call): (id.type, UserAnswers, Call) = Tuple3(id, newEstablisher, call)
+  private def rowNoValueNewEstablisher(id: TypedIdentifier.PathDependent)(call: Call): (id.type, UserAnswers, Call) =
+    Tuple3(id, newEstablisher, call)
 
   private def rowNewEstablisher(id: TypedIdentifier.PathDependent)(value: id.Data, call: Call)(
     implicit writes: Writes[id.Data]): (id.type, UserAnswers, Call) = {
@@ -266,11 +267,14 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     )
   }
 
-  private def startDirectorJourney(mode: Mode, index: Index) = directorName(mode, index)
+  private def directorName(mode: Mode, index: Index) =
+    routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, EmptyOptionalSchemeReferenceNumber)
 
-  private def directorName(mode: Mode, index: Index) = routes.DirectorNameController.onPageLoad(mode, establisherIndex, index, EmptyOptionalSchemeReferenceNumber)
+  private def trusteesAlsoDirectors(mode: Mode, srn: OptionalSchemeReferenceNumber, establisherIndex: Index) =
+    routes.TrusteesAlsoDirectorsController.onPageLoad(mode, srn, establisherIndex)
 
-  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad
+  private def sessionExpired =
+    controllers.routes.SessionExpiredController.onPageLoad
 
   private def whatIsPAYE(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyEnterPAYEController.onPageLoad(mode, 0 ,EmptyOptionalSchemeReferenceNumber)
@@ -308,9 +312,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def hasBeenTrading(mode: Mode): Call =
     controllers.register.establishers.company.routes.HasBeenTradingCompanyController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def companyAddressList(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
+  private def companyAddressList(mode: Mode) =
+    controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def companyAddressYears(mode: Mode) = controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
+  private def companyAddressYears(mode: Mode) =
+    controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
   private def prevAddPostCodeLookup(mode: Mode) =
     controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
@@ -318,9 +324,11 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def companyPaList(mode: Mode) =
     controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def companyPhoneNumber(mode: Mode) = controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
+  private def companyPhoneNumber(mode: Mode) =
+    controllers.register.establishers.company.routes.CompanyPhoneController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
+  private def otherDirectors(mode: Mode) =
+    controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
   private def cyaCompanyDetails(mode: Mode) =
     controllers.register.establishers.company.routes.CheckYourAnswersCompanyDetailsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
@@ -331,7 +339,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
   private def cyaCompanyAddressDetails(mode: Mode) =
     controllers.register.establishers.company.routes.CheckYourAnswersCompanyAddressController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def anyMoreChanges = controllers.routes.AnyMoreChangesController.onPageLoad(EmptyOptionalSchemeReferenceNumber)
+  private def anyMoreChanges =
+    controllers.routes.AnyMoreChangesController.onPageLoad(EmptyOptionalSchemeReferenceNumber)
 
   private def exitJourney(mode: Mode, answers: UserAnswers, index: Int, cyaPage: Call) = {
     if (mode == NormalMode)
@@ -342,7 +351,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
       anyMoreChanges
   }
 
-  private def confirmPreviousAddress = controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0 ,EmptyOptionalSchemeReferenceNumber)
+  private def confirmPreviousAddress =
+    controllers.register.establishers.company.routes.CompanyConfirmPreviousAddressController.onPageLoad(0 ,EmptyOptionalSchemeReferenceNumber)
 
   private def addressYearsLessThanTwelveEdit(mode: Mode,
                                              userAnswers: UserAnswers) =
@@ -361,11 +371,14 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     }
 
 
-  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, index)
+  private def addCompanyDirectors(index: Int, mode: Mode) =
+    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, index)
 
-  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
+  private def isDormant(mode: Mode) =
+    controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber, 0)
 
-  private def taskList(mode: Mode): Call = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
+  private def taskList(mode: Mode): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode ,EmptyOptionalSchemeReferenceNumber)
 
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
@@ -373,8 +386,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).flatMap(
     _.set(IsEstablisherNewId(0))(true)).asOpt.value
 
-  private def addCompanyDirectorsFalseWithChanges = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false).flatMap(
-    _.set(EstablishersOrTrusteesChangedId)(true)).asOpt.value
+  private def addCompanyDirectorsFalseWithChanges = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false)
+    .flatMap(_.set(EstablishersOrTrusteesChangedId)(true)).asOpt.value
 
   private def addCompanyDirectorsFalseNewDir = addOneCompanyDirectors.set(AddCompanyDirectorsId(0))(false)
     .flatMap(_.set(IsEstablisherNewId(0))(true)).asOpt.value
@@ -384,7 +397,6 @@ object EstablishersCompanyNavigatorSpec extends OptionValues with Enumerable.Imp
 
   private def addOneCompanyDirectors =
     UserAnswers(validData(johnDoe))
-
 
   private def addOneCompanyDirectorsTrusteeAlsoDirector =
     UserAnswers(validData(johnDoe)).setOrException(TrusteeAlsoDirectorId(0))(1)

@@ -207,30 +207,10 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
 
   def getListOfTrusteesToBeCopied(establisherIndex: Int)(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     val filteredTrusteesSeq: Seq[IndividualDetails] =
-      allIndividualTrustees.filter(indiv => !indiv.isDeleted && indiv.isComplete)
-    
+      allIndividualTrustees.filter(trustee => !trustee.isDeleted && trustee.isComplete)
+
     val allDirectorsNotDeleted: collection.Seq[IndividualDetails] =
-      (ua.json \ EstablishersId.toString \ establisherIndex \ "director").validate[JsArray].asOpt match {
-        case Some(jsArray) =>
-          jsArray
-            .value
-            .zipWithIndex
-            .flatMap { case (jsValue, directorIndex) =>
-              jsValue.validate[IndividualDetails](readsDirector(establisherIndex, directorIndex)) match {
-                case JsSuccess(value, _) =>
-                  Some(value)
-                case JsError(errors) =>
-                  logger.error(
-                    "getListOfTrusteesToBeCopied readsDirector failed:" +
-                      s"\npath(s) from JSON: ${errors.map(_._1.path.mkString(", "))}" +
-                      s"\nerror messages from JSON: ${errors.flatMap(_._2.map(_.messages.head))}"
-                  )
-                  None
-              }
-            }.filter(indiv => !indiv.isDeleted && indiv.isComplete)
-        case _ =>
-          Nil
-      }
+      allDirectors.filter(director => !director.isDeleted && director.isComplete)
 
     filteredTrusteesSeq.filterNot { trustee =>
       trustee
