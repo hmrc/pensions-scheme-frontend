@@ -26,9 +26,9 @@ import identifiers.{EstablishersOrTrusteesChangedId, Identifier, TypedIdentifier
 import models.*
 import models.Mode.checkMode
 import models.person.PersonName
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableFor3
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
