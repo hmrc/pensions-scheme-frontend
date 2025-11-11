@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import models.prefill.{IndividualDetails => DataPrefillIndividualDetails}
+import models.prefill.IndividualDetails as DataPrefillIndividualDetails
 
 import java.time.LocalDate
 
@@ -72,7 +72,9 @@ class DataPrefillCheckBoxSpec extends SpecBase {
       result(1).value mustBe "1"
       result(2).value mustBe "2"
       result(3).value mustBe "3"
-      result(4).value mustBe "-1"
+      result(4).value mustBe ""
+      result(4).divider mustBe Some("or")
+      result(5).value mustBe "-1"
     }
 
   }
