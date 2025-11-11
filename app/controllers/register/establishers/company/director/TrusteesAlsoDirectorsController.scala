@@ -31,6 +31,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.*
+import play.twirl.api.Html
 import services.{DataPrefillService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.EstablishersCompany
@@ -62,31 +63,30 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
     with Logging {
 
   private def renderView(
-                          status: Status,
                           seqTrustee: Seq[IndividualDetails],
                           eitherForm: Either[Form[List[Int]], Form[Int]],
                           establisherIndex: Int,
                           companyName: CompanyDetails,
                           mode: Mode,
                           srn: OptionalSchemeReferenceNumber
-                        )(implicit request: DataRequest[AnyContent]): Future[Result] =
+                        )(implicit request: DataRequest[AnyContent]): Html =
     eitherForm match {
       case Left(formListInt) =>
-        Future.successful(status(checkBoxView(
+        checkBoxView(
           formListInt,
           Messages("messages__directors__prefill__title"),
           Messages("messages__directors__prefill__heading", companyName.companyName),
           DataPrefillCheckboxOptions(seqTrustee),
           routes.TrusteesAlsoDirectorsController.onSubmit(mode, srn, establisherIndex)
-        )))
+        )
       case Right(formInt) =>
-        Future.successful(status(radioView(
+        radioView(
           formInt,
           Messages("messages__directors__prefill__title"),
           Messages("messages__directors__prefill__heading", companyName.companyName),
           DataPrefillRadioOptions(seqTrustee),
           routes.TrusteesAlsoDirectorsController.onSubmit(mode, srn, establisherIndex)
-        )))
+        )
     }
 
   private def getFormAsEither(seqTrustee: Seq[IndividualDetails], establisherIndex: Int)
@@ -108,15 +108,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
             Future.successful(Redirect(controllers.register.establishers.company.director.routes.DirectorNameController
               .onPageLoad(mode, establisherIndex, request.userAnswers.allDirectors(establisherIndex).size, srn)))
           } else {
-            renderView(
-              status           = Ok,
-              seqTrustee       = seqTrustee,
-              eitherForm       = getFormAsEither(seqTrustee, establisherIndex),
-              establisherIndex = establisherIndex,
-              companyName      = companyName,
-              mode             = mode,
-              srn              = srn
-            )
+            Future.successful(Ok(renderView(
+              seqTrustee,
+              getFormAsEither(seqTrustee, establisherIndex),
+              establisherIndex,
+              companyName,
+              mode,
+              srn
+            )))
           }
         }
     }
@@ -147,15 +146,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   Redirect(navigator.nextPage(TrusteesAlsoDirectorsId(establisherIndex), mode, uaAfterCopy, srn))
                 }
               case _ =>
-                renderView(
-                  status           = BadRequest,
-                  seqTrustee       = seqTrustee,
-                  eitherForm       = Left(boundForm),
-                  establisherIndex = establisherIndex,
-                  companyName      = companyName,
-                  mode             = mode,
-                  srn              = srn
-                )
+                Future.successful(BadRequest(renderView(
+                  seqTrustee,
+                  Left(boundForm),
+                  establisherIndex,
+                  companyName,
+                  mode,
+                  srn
+                )))
             }
           } else {
             val boundForm: Form[Int] =
@@ -174,15 +172,14 @@ class TrusteesAlsoDirectorsController @Inject()(override val messagesApi: Messag
                   Redirect(navigator.nextPage(TrusteeAlsoDirectorId(establisherIndex), mode, uaAfterCopy, srn))
                 }
               case _ =>
-                renderView(
-                  status           = BadRequest,
-                  seqTrustee       = seqTrustee,
-                  eitherForm       = Right(boundForm),
-                  establisherIndex = establisherIndex,
-                  companyName      = companyName,
-                  mode             = mode,
-                  srn              = srn
-                )
+                Future.successful(BadRequest(renderView(
+                  seqTrustee,
+                  Right(boundForm),
+                  establisherIndex,
+                  companyName,
+                  mode,
+                  srn
+                )))
             }
           }
         }

@@ -18,8 +18,8 @@ package models
 
 import models.prefill.IndividualDetails
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ExclusiveCheckbox, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.{CheckboxBehaviour, CheckboxItem}
 
 object DataPrefillCheckboxOptions {
 
@@ -29,9 +29,15 @@ object DataPrefillCheckboxOptions {
         content = Text(individualDetails.fullName),
         value   = index.toString
       )
-    } :+ CheckboxItem(
-      content = Text(messages("messages__prefill__label__none")),
-      value   = "-1"
+    } :++ Seq(
+      CheckboxItem(
+        divider = Some("or")
+      ),
+      CheckboxItem(
+        content   = Text(messages("messages__prefill__label__none")),
+        value     = "-1",
+        behaviour = Some(ExclusiveCheckbox)
+      )
     )
   }
 }
