@@ -1890,11 +1890,10 @@ messages__directors__prefill__multi__error__moreThanTen = You can add up to 10 d
 messages__directors__prefill__multi__error__noneWithValue = Select the trustees that are also directors, or select "none of the above"
 
 messages__prefill__label__none = None of the above
+messages__prefill__divider = or
 taskList.establishers.complete = Establisher details are complete
 taskList.trustees.incomplete = Trustee details are incomplete
 taskList.trustees.complete = Trustee details are complete
-
-messages__prefill__label__none = None of the above
 
 messages__trustees__prefill__title = Which of these establishers is also a trustee?
 messages__trustees__prefill__heading = Which of these establishers is also a trustee?

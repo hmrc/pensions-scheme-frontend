@@ -31,7 +31,7 @@ object DataPrefillCheckboxOptions {
       )
     } :++ Seq(
       CheckboxItem(
-        divider = Some("or")
+        divider = Some(messages("messages__prefill__divider"))
       ),
       CheckboxItem(
         content   = Text(messages("messages__prefill__label__none")),
