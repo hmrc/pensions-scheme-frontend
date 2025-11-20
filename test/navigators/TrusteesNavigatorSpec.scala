@@ -52,7 +52,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           row(AddTrusteeId)(false, taskList(NormalMode, EmptyOptionalSchemeReferenceNumber), ua = Some(establishersOrTrusteesChanged)),
           rowNoValue(MoreThanTenTrusteesId)(taskList(NormalMode, EmptyOptionalSchemeReferenceNumber)),
           row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(NormalMode, EmptyOptionalSchemeReferenceNumber)),
-          row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees),
+          row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees(NormalMode, EmptyOptionalSchemeReferenceNumber)),
           row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(NormalMode, EmptyOptionalSchemeReferenceNumber)),
           row(HaveAnyTrusteesId)(true, trusteeKind(0, NormalMode, EmptyOptionalSchemeReferenceNumber), ua = Some(trustees(0))),
           row(HaveAnyTrusteesId)(true, trusteeKind(1, NormalMode, EmptyOptionalSchemeReferenceNumber), ua = Some(oneDeletedTrustee)),
@@ -73,7 +73,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
           rowNoValue(AddTrusteeId)(moreThanTenTrustees(UpdateMode, OptionalSchemeReferenceNumber(srn)), ua = Some(trustees(10))),
           row(AddTrusteeId)(false, taskList(UpdateMode, OptionalSchemeReferenceNumber(srn)), ua = Some(establishersOrTrusteesChanged)),
           row(TrusteeKindId(0))(TrusteeKind.Company, companyDetails(UpdateMode, OptionalSchemeReferenceNumber(srn))),
-          row(TrusteeKindId(0))(TrusteeKind.Individual, trusteeName(UpdateMode, OptionalSchemeReferenceNumber(srn))),
+          row(TrusteeKindId(0))(TrusteeKind.Individual, directorsAlsoTrustees(UpdateMode, OptionalSchemeReferenceNumber(srn))),
           row(TrusteeKindId(0))(TrusteeKind.Partnership, partnershipDetails(UpdateMode, OptionalSchemeReferenceNumber(srn))),
           rowNoValue(MoreThanTenTrusteesId)(controllers.routes.AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn))),
           rowNoValue(ConfirmDeleteTrusteeId)(controllers.routes.AnyMoreChangesController.onPageLoad(OptionalSchemeReferenceNumber(srn)))
@@ -91,9 +91,10 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private val srn          = Some(srnValue)
   private val index = 0
 
-  private def establishersOrTrusteesChanged = emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
+  private def establishersOrTrusteesChanged: UserAnswers =
+    emptyAnswers.set(EstablishersOrTrusteesChangedId)(true).asOpt.value
 
-  private def oneDeletedTrustee =
+  private def oneDeletedTrustee: UserAnswers =
     emptyAnswers
       .set(TrusteeNameId(0))(PersonName("first", "last", isDeleted = true))
       .asOpt
@@ -104,35 +105,35 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
       .addTrustee(true)
       .trustees(0)
 
-  private def oneTrustee =
+  private def oneTrustee: UserAnswers =
     emptyAnswers
       .haveAnyTrustees(true)
       .addTrustee(true)
       .trustees(1)
 
-  private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
+  private def trustees(howMany: Int): UserAnswers =
+    emptyAnswers.trustees(howMany)
 
-  private def addTrustee(mode: Mode, srn: OptionalSchemeReferenceNumber) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
+  private def addTrustee(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def companyDetails(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+  private def companyDetails(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, 0, OptionalSchemeReferenceNumber(srn))
 
-  private def partnershipDetails(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+  private def partnershipDetails(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, 0, OptionalSchemeReferenceNumber(srn))
 
-  private def moreThanTenTrustees(mode: Mode, srn: OptionalSchemeReferenceNumber) =
+  private def moreThanTenTrustees(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
-  private def trusteeName(mode: Mode, srn: OptionalSchemeReferenceNumber) =
-    controllers.register.trustees.individual.routes.TrusteeNameController.onPageLoad(mode, 0, OptionalSchemeReferenceNumber(srn))
+  private def directorsAlsoTrustees(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
+    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index, mode, srn)
 
-  private def directorsAlsoTrustees =
-    controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index)
-
-  private def trusteeKind(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber) =
+  private def trusteeKind(index: Int, mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
     controllers.register.trustees.routes.TrusteeKindController.onPageLoad(mode, index, OptionalSchemeReferenceNumber(srn))
 
-  private def taskList(mode: Mode, srn: OptionalSchemeReferenceNumber) = controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
+  private def taskList(mode: Mode, srn: OptionalSchemeReferenceNumber): Call =
+    controllers.routes.PsaSchemeTaskListController.onPageLoad(mode, OptionalSchemeReferenceNumber(srn))
 
   implicit class TrusteeUserAnswersOps(answers: UserAnswers) {
 
@@ -151,8 +152,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
     def trustees(howMany: Int): UserAnswers = {
       if (howMany == 0) {
         answers
-      }
-      else {
+      } else {
         (0 until howMany).foldLeft(answers) {
           case (newAnswers, i) =>
             newAnswers

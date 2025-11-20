@@ -19,20 +19,16 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import controllers.register.trustees.company.routes._
-import controllers.register.trustees.individual.routes._
-import controllers.register.trustees.routes._
-import controllers.routes._
-import identifiers.register.trustees._
-import models._
+import controllers.register.trustees.routes.*
+import controllers.routes.*
+import identifiers.register.trustees.*
+import models.*
 import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
 class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
                                   appConfig: FrontendAppConfig) extends AbstractNavigator with Enumerable.Implicits {
-
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = routes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
 
   protected def routes(from: NavigateFrom, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     from.id match {
@@ -46,19 +42,18 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         trusteeKindRoutes(index, from.userAnswers, mode, srn)
       case ConfirmDeleteTrusteeId =>
         redirectToAnyMoreChanges(AddTrusteeController.onPageLoad(mode, srn), mode, srn)
-      case _ => None
+      case _ =>
+        None
     }
 
-  private def redirectToAnyMoreChanges(normalModeRoutes: Call, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
+  private def redirectToAnyMoreChanges(normalModeRoutes: Call, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     if (mode == CheckMode || mode == NormalMode) {
       NavigateTo.dontSave(normalModeRoutes)
     } else {
       NavigateTo.dontSave(AnyMoreChangesController.onPageLoad(srn))
     }
-  }
 
-  private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
-
+  private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] =
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
         if (answers.allTrusteesAfterDelete.isEmpty) {
@@ -71,23 +66,18 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
-  }
 
-  private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = {
-    import controllers.register.trustees.routes._
-    val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
-
+  private def addTrusteeRoutes(answers: UserAnswers, mode: Mode, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     answers.get(AddTrusteeId) match {
       case Some(false) =>
         NavigateTo.dontSave(PsaSchemeTaskListController.onPageLoad(mode, srn))
       case Some(true) =>
         NavigateTo.dontSave(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
-      case None if trusteesLengthCompare >= 0 =>
+      case None if answers.allTrustees.lengthCompare(appConfig.maxTrustees) >= 0 =>
         NavigateTo.dontSave(MoreThanTenTrusteesController.onPageLoad(mode, srn))
       case None =>
         NavigateTo.dontSave(TrusteeKindController.onPageLoad(mode, answers.trusteesCount, srn))
     }
-  }
 
   private def trusteeKindRoutes(index: Int,
                                 answers: UserAnswers,
@@ -96,25 +86,25 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
                                ): Option[NavigateTo] = {
     answers.get(TrusteeKindId(index)) match {
       case Some(TrusteeKind.Company) =>
-        NavigateTo.dontSave(CompanyDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(mode, index, srn))
       case Some(TrusteeKind.Individual) =>
-        mode match {
-          case NormalMode => NavigateTo.dontSave(DirectorsAlsoTrusteesController.onPageLoad(index))
-          case _ => NavigateTo.dontSave(TrusteeNameController.onPageLoad(mode, index, srn))
-        }
-
+        NavigateTo.dontSave(controllers.register.trustees.routes.DirectorsAlsoTrusteesController.onPageLoad(index, mode, srn))
       case Some(TrusteeKind.Partnership) =>
-        NavigateTo.dontSave(controllers.register.trustees.partnership.routes
-          .PartnershipDetailsController.onPageLoad(mode, index, srn))
+        NavigateTo.dontSave(controllers.register.trustees.partnership.routes.PartnershipDetailsController.onPageLoad(mode, index, srn))
       case _ =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad)
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = None
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    routes(from, NormalMode, EmptyOptionalSchemeReferenceNumber)
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    None
 
   protected def updateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
     routes(from, UpdateMode, srn)
 
-  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] = None
+  protected def checkUpdateRouteMap(from: NavigateFrom, srn: OptionalSchemeReferenceNumber): Option[NavigateTo] =
+    None
 }

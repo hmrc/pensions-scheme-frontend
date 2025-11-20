@@ -45,8 +45,12 @@ GET         /:index/partnership/:mode/already-deleted/:srn        controllers.re
 
 GET         /:index/trustee-tasklist                              controllers.register.trustees.PsaSchemeTaskListRegistrationTrusteeController.onPageLoad(mode: Mode = NormalMode, index:Index, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
 
-GET         /:index/directors-also-trustees                       controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad(index: Index)
-POST        /:index/directors-also-trustees                       controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit(index: Index)
+GET         /:index/directors-also-trustees                       controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad(index: Index, mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+POST        /:index/directors-also-trustees                       controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit(index: Index, mode: Mode = NormalMode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+GET         /:index/:mode/directors-also-trustees                 controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad(index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+POST        /:index/:mode/directors-also-trustees                 controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit(index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber = EmptyOptionalSchemeReferenceNumber)
+GET         /:index/:mode/directors-also-trustees/:srn            controllers.register.trustees.DirectorsAlsoTrusteesController.onPageLoad(index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber)
+POST        /:index/:mode/directors-also-trustees/:srn            controllers.register.trustees.DirectorsAlsoTrusteesController.onSubmit(index: Index, mode: Mode, srn: OptionalSchemeReferenceNumber)
 
 ->          /                                                     trusteesCompany.Routes
 ->          /                                                     trusteesIndividual.Routes
