@@ -184,10 +184,10 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
 
   def getListOfDirectorsToBeCopied(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     val filteredDirectorsSeq: Seq[IndividualDetails] =
-      allDirectors.filter(dir => !dir.isDeleted && dir.isComplete)
+      allDirectors.filterNot(dir => dir.isDeleted || !dir.isComplete)
     
     filteredDirectorsSeq.filterNot { director =>
-      val allNonDeletedTrustees = allIndividualTrustees.filter(!_.isDeleted)
+      val allNonDeletedTrustees = allIndividualTrustees.filterNot(_.isDeleted)
 
       director
         .nino
@@ -207,10 +207,10 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
 
   def getListOfTrusteesToBeCopied(establisherIndex: Int)(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     val filteredTrusteesSeq: Seq[IndividualDetails] =
-      allIndividualTrustees.filter(trustee => !trustee.isDeleted && trustee.isComplete)
+      allIndividualTrustees.filter(trustee => !trustee.isDeleted || trustee.isComplete)
 
     val allDirectorsNotDeleted: collection.Seq[IndividualDetails] =
-      allDirectors.filter(director => !director.isDeleted && director.isComplete)
+      allDirectors.filter(director => !director.isDeleted || director.isComplete)
 
     filteredTrusteesSeq.filterNot { trustee =>
       trustee
