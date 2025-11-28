@@ -183,17 +183,18 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   }
 
   def getListOfDirectorsToBeCopied(implicit ua: UserAnswers): Seq[IndividualDetails] = {
-    val filteredDirectorsSeq: Seq[IndividualDetails] =
-      allDirectors.filterNot(dir => dir.isDeleted || !dir.isComplete)
-    
-    filteredDirectorsSeq.filterNot { director =>
-      val allNonDeletedTrustees = allIndividualTrustees.filterNot(_.isDeleted)
+    val completeNotDeletedDirectors: Seq[IndividualDetails] =
+      allDirectors.filter(director => !director.isDeleted && director.isComplete)
 
+    val completeNotDeletedTrustees: Seq[IndividualDetails] =
+      allIndividualTrustees.filter(trustee => !trustee.isDeleted && trustee.isComplete)
+
+    completeNotDeletedDirectors.filterNot { director =>
       director
         .nino
-        .map(ninoVal => allNonDeletedTrustees.exists(_.nino.contains(ninoVal)))
+        .map(ninoVal => completeNotDeletedTrustees.exists(_.nino.contains(ninoVal)))
         .getOrElse(
-          allNonDeletedTrustees.exists { trustee =>
+          completeNotDeletedTrustees.exists { trustee =>
             (trustee.dob, director.dob) match {
               case (Some(trusteeDob), Some(dirDob)) =>
                 trusteeDob.isEqual(dirDob) && trustee.fullName == director.fullName
@@ -206,18 +207,18 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
   }
 
   def getListOfTrusteesToBeCopied(establisherIndex: Int)(implicit ua: UserAnswers): Seq[IndividualDetails] = {
-    val filteredTrusteesSeq: Seq[IndividualDetails] =
-      allIndividualTrustees.filter(trustee => !trustee.isDeleted || trustee.isComplete)
+    val completeNotDeletedTrustees: Seq[IndividualDetails] =
+      allIndividualTrustees.filter(trustee => !trustee.isDeleted && trustee.isComplete)
 
-    val allDirectorsNotDeleted: collection.Seq[IndividualDetails] =
-      allDirectors.filter(director => !director.isDeleted || director.isComplete)
+    val completeNotDeletedDirectors: collection.Seq[IndividualDetails] =
+      allDirectors.filter(director => !director.isDeleted && director.isComplete)
 
-    filteredTrusteesSeq.filterNot { trustee =>
+    completeNotDeletedTrustees.filterNot { trustee =>
       trustee
         .nino
-        .map(ninoVal => allDirectorsNotDeleted.exists(_.nino.contains(ninoVal)))
+        .map(ninoVal => completeNotDeletedDirectors.exists(_.nino.contains(ninoVal)))
         .getOrElse(
-          allDirectorsNotDeleted.exists { director =>
+          completeNotDeletedDirectors.exists { director =>
             (trustee.dob, director.dob) match {
               case (Some(trusteeDob), Some(dirDob)) =>
                 dirDob.isEqual(trusteeDob) && trustee.fullName == director.fullName
