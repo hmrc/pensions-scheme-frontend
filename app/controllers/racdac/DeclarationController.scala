@@ -18,11 +18,11 @@ package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
 import config.FrontendAppConfig
-import connectors._
+import connectors.*
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import controllers.racdac.routes.DeclarationController
-import identifiers.racdac._
+import identifiers.racdac.*
 import identifiers.register.SubmissionReferenceNumberId
 import models.enumerations.SchemeJourneyType
 import models.requests.DataRequest
@@ -30,9 +30,9 @@ import models.{EmptyOptionalSchemeReferenceNumber, NormalMode, PSAMinimalFlags}
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
+import services.JsonCryptoService
 import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpErrorFunctions.is5xx
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
@@ -61,7 +61,7 @@ class DeclarationController @Inject()(
                                        minimalPsaConnector: MinimalPsaConnector,
                                        auditService: AuditService,
                                        val controllerComponents: MessagesControllerComponents,
-                                       crypto: ApplicationCrypto,
+                                       crypto: JsonCryptoService,
                                        config: FrontendAppConfig,
                                        val view: declaration
                                      )(implicit val executionContext: ExecutionContext)
@@ -131,8 +131,8 @@ class DeclarationController @Inject()(
   }
 
   private def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = URLEncoder.encode(crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
-    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response-racdac/$encryptedPsa"
+    val encryptedPsa = URLEncoder.encode(crypto.jsonCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
+    s"${config.pensionsSchemeUrl}/pensions-scheme/email-status-response-racdac/$encryptedPsa"
   }
 
   private def sendEmail(psaId: PsaId, schemeName: String)

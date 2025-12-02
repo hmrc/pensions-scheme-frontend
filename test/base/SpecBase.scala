@@ -17,23 +17,23 @@
 package base
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice._
+import org.scalatestplus.play.guice.*
 import play.api.Environment
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.inject.{Injector, bind}
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.ApplicationCrypto
+import services.JsonCryptoService
 
 trait SpecBase
   extends PlaySpec
     with GuiceOneAppPerSuite {
-  protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
+  protected def crypto: JsonCryptoService = injector.instanceOf[JsonCryptoService]
 
   def injector: Injector = app.injector
 

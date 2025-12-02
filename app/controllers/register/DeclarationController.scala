@@ -18,11 +18,11 @@ package controllers.register
 
 import audit.{AuditService, TcmpAuditEvent}
 import config.FrontendAppConfig
-import connectors._
+import connectors.*
 import controllers.Retrievals
-import controllers.actions._
+import controllers.actions.*
 import controllers.register.routes.DeclarationController
-import identifiers.register._
+import identifiers.register.*
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.{MoneyPurchaseBenefitsId, SchemeTypeId, TypeOfBenefitsId}
 import models.enumerations.SchemeJourneyType
@@ -30,16 +30,16 @@ import models.register.DeclarationDormant
 import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
-import models._
+import models.*
 import navigators.Navigator
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import play.twirl.api.HtmlFormat
+import services.JsonCryptoService
 import uk.gov.hmrc.crypto.PlainText
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HttpErrorFunctions._
+import uk.gov.hmrc.http.HttpErrorFunctions.*
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Register
@@ -65,7 +65,7 @@ class DeclarationController @Inject()(
                                        minimalPsaConnector: MinimalPsaConnector,
                                        val controllerComponents: MessagesControllerComponents,
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
-                                       crypto: ApplicationCrypto,
+                                       crypto: JsonCryptoService,
                                        val view: declaration,
                                        auditService: AuditService
                                      )(implicit val executionContext: ExecutionContext)
@@ -177,8 +177,8 @@ class DeclarationController @Inject()(
   }
 
   private def callbackUrl(psaId: PsaId): String = {
-    val encryptedPsa = URLEncoder.encode(crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
-    s"${appConfig.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
+    val encryptedPsa = URLEncoder.encode(crypto.jsonCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
+    s"${appConfig.pensionsSchemeUrl}/pensions-scheme/email-status-response/$encryptedPsa"
   }
 
 
