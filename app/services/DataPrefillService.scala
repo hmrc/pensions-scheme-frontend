@@ -211,7 +211,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
       allIndividualTrustees.filter(trustee => !trustee.isDeleted && trustee.isComplete)
 
     val completeNotDeletedDirectors: collection.Seq[IndividualDetails] =
-      allDirectors.filter(director => !director.isDeleted && director.isComplete)
+      directors(establisherIndex).filter(director => !director.isDeleted && director.isComplete)
 
     completeNotDeletedTrustees.filterNot { trustee =>
       trustee
@@ -229,6 +229,29 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
         )
     }
   }
+
+  private def directors(establisherIndex: Int)(implicit ua: UserAnswers): collection.Seq[IndividualDetails] =
+    (ua.json \ EstablishersId.toString \ establisherIndex \ "director").validate[JsArray].asOpt match {
+      case Some(jsArray) =>
+        jsArray
+          .value
+          .zipWithIndex
+          .flatMap { case (jsValue, directorIndex) =>
+            jsValue.validate[IndividualDetails](readsDirector(establisherIndex, directorIndex)) match {
+              case JsSuccess(value, _) =>
+                Some(value)
+              case JsError(errors) =>
+                logger.error(
+                  "getListOfTrusteesToBeCopied readsDirector failed:" +
+                    s"\npath(s) from JSON: ${errors.map(_._1.path.mkString(", "))}" +
+                    s"\nerror messages from JSON: ${errors.flatMap(_._2.map(_.messages.head))}"
+                )
+                None
+            }
+          }
+      case _ =>
+        Nil
+    }
 
   private def allDirectors(implicit ua: UserAnswers): Seq[IndividualDetails] = {
     ua.json.validate[Seq[Option[Seq[IndividualDetails]]]](readsDirectors) match {

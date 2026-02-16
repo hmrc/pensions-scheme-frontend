@@ -261,10 +261,16 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
         }
       }
     }
+
+    "return eligible trustees for each establisher company" in {
+      forAll(uaJsValueTwoEstablisherCompaniesThreeTrustees) {
+        ua =>
+          val result1 = dataPrefillService.getListOfTrusteesToBeCopied(0)(UserAnswers(ua))
+          val result2 = dataPrefillService.getListOfTrusteesToBeCopied(1)(UserAnswers(ua))
+
+          result1.length mustBe 1
+          result2.length mustBe 3
+      }
+    }
   }
 }
-
-
-
-
-

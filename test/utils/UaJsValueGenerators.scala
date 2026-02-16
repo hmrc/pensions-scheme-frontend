@@ -17,10 +17,10 @@
 package utils
 
 import org.scalacheck.Gen
-import play.api.libs.json.Reads._
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 trait UaJsValueGenerators {
   val addressLineGen: Gen[String] = Gen.listOfN[Char](35, Gen.alphaChar).map(_.mkString)
@@ -201,6 +201,18 @@ trait UaJsValueGenerators {
     )
   }
 
+  def uaJsValueTwoEstablisherCompaniesThreeTrustees: Gen[JsObject] = for {
+    trustee1 <- trusteeIndividualJsValueGen(isNinoAvailable = true, 1)
+    trustee2 <- trusteeIndividualJsValueGen(isNinoAvailable = true, 2)
+    trustee3 <- trusteeIndividualJsValueGen(isNinoAvailable = true, 3)
+    estComp1 <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = true)
+    estComp2 <- estCompanyWithNinoInDirJsValueGen(isNinoAvailable = true)
+  } yield {
+    Json.obj(
+      "trustees" -> Seq(trustee1, trustee2, trustee3),
+      "establishers" -> Seq(estComp1, estComp2.-("director")),
+    )
+  }
 
   def estCompanyWithNinoInDirJsValueGen(isNinoAvailable: Boolean): Gen[JsObject] = for {
     orgName <- nameGenerator
@@ -286,7 +298,7 @@ trait UaJsValueGenerators {
     referenceOrNino <- Gen.const(s"CS700${index}00A")
     contactDetails <- contactDetailsJsValueGen
     address <- addressJsValueGen("directorAddressId")
-    date <- Gen.const(s"1999-0${index}-13")
+    date <- Gen.const(s"1999-0$index-13")
   } yield {
     Json.obj(
       "directorDetails" -> Json.obj(
