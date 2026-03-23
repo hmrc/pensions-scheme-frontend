@@ -46,6 +46,7 @@ import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
+import views.html.register.ukResidencyDeclaration
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -67,7 +68,9 @@ class DeclarationController @Inject()(
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        crypto: JsonCryptoService,
                                        val view: declaration,
-                                       auditService: AuditService
+                                       val ukResidencyView: ukResidencyDeclaration,
+                                       auditService: AuditService,
+                                       config: FrontendAppConfig
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -82,7 +85,7 @@ class DeclarationController @Inject()(
       case Some(_) =>
         minimalPsaConnector.getMinimalFlags().map {
           case PSAMinimalFlags(_, true, false) => Some(Redirect(Call("GET", appConfig.youMustContactHMRCUrl)))
-          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET",appConfig.psaUpdateContactDetailsUrl)))
+          case PSAMinimalFlags(_, false, true) => Some(Redirect(Call("GET", appConfig.psaUpdateContactDetailsUrl)))
           case _ => None
         }
     }
@@ -94,11 +97,11 @@ class DeclarationController @Inject()(
       redirects.flatMap {
         case Some(result) => Future.successful(result)
         case _ =>
-        if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
-          showPage(Ok.apply)
-        } else {
-          Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
-        }
+          if (hsTaskListHelperRegistration.declarationEnabled(request.userAnswers)) {
+            showPage(Ok.apply)
+          } else {
+            Future.successful(Redirect(controllers.routes.PsaSchemeTaskListController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
+          }
       }
   }
 
@@ -120,14 +123,25 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            view(
-              isCompany = isEstCompany,
-              isDormant = isDeclarationDormant,
-              showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-              hasWorkingKnowledge = hasWorkingKnowledge,
-              schemeName = existingSchemeName,
-              href = href
-            )
+            if (config.podsUkResidency) {
+              ukResidencyView(
+                isCompany = isEstCompany,
+                isDormant = isDeclarationDormant,
+                showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
+                hasWorkingKnowledge = hasWorkingKnowledge,
+                schemeName = existingSchemeName,
+                href = href
+              )
+            } else {
+              view(
+                isCompany = isEstCompany,
+                isDormant = isDeclarationDormant,
+                showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
+                hasWorkingKnowledge = hasWorkingKnowledge,
+                schemeName = existingSchemeName,
+                href = href
+              )
+            }
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
@@ -168,7 +182,7 @@ class DeclarationController @Inject()(
         _ <- auditTcmp(psaId.id, request.userAnswers)
       } yield {
         Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-      })recoverWith {
+      }) recoverWith {
         case ex: UpstreamErrorResponse if is5xx(ex.statusCode) =>
           Future.successful(Redirect(controllers.routes.YourActionWasNotProcessedController.onPageLoad(NormalMode, EmptyOptionalSchemeReferenceNumber)))
         case _ =>

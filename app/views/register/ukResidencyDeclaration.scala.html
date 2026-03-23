@@ -1,0 +1,70 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+
+@this(
+    layout: templates.Layout,
+    button_link: components.button_link
+)
+
+@(
+    isCompany: Boolean,
+    isDormant: Boolean,
+    showMasterTrustDeclaration: Boolean,
+    hasWorkingKnowledge: Boolean,
+    schemeName: Option[String],
+    href: Call
+)(implicit request: Request[?], messages: Messages)
+
+@layout(pageTitle = messages("messages__ukResidency_declaration__title")) {
+
+    @components.heading(messages("messages__ukResidency_declaration__heading"))
+
+    @components.paragraph_text(messages("messages__ukResidency_declaration__declare"), para_id = Some("declaration_start"))
+
+    <ul class="govuk-list govuk-list--bullet">
+        @if(isCompany){
+            @if(isDormant){
+                <li>@messages("messages__ukResidency_declaration__statement1_dormant")</li>
+            } else {
+                <li>@messages("messages__ukResidency_declaration__statement1_not_dormant")</li>
+            }
+        }
+        <li>@messages("messages__ukResidency_declaration__statement2")</li>
+        <li>@messages("messages__ukResidency_declaration__statement3")</li>
+        <li>@messages("messages__ukResidency_declaration__statement4_ukResidency")</li>
+        <li>@messages("messages__ukResidency_declaration__statement5")</li>
+        <li>@messages("messages__ukResidency_declaration__statement6")</li>
+        <li>@messages("messages__ukResidency_declaration__statement7")</li>
+        <li>
+            @if(hasWorkingKnowledge){
+                    @messages("messages__ukResidency_declaration__statement8_working_knowledge")
+            } else {
+                    @messages("messages__ukResidency_declaration__statement8_no_working_knowledge")
+            }
+        </li>
+        <li>@messages("messages__ukResidency_declaration__statement9")</li>
+        @if(showMasterTrustDeclaration){
+            <li>@messages("messages__ukResidency_declaration__statement10")</li>
+        }
+    </ul>
+
+    @button_link("site.agree_and_continue", href.url, "submit")
+
+    @components.return_link("messages__schemeTaskList__returnlink", schemeName)
+
+}
