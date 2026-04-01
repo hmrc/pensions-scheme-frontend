@@ -40,6 +40,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
+import views.html.racdac.ukResidencyDeclaration
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -63,7 +64,8 @@ class DeclarationController @Inject()(
                                        val controllerComponents: MessagesControllerComponents,
                                        crypto: JsonCryptoService,
                                        config: FrontendAppConfig,
-                                       val view: declaration
+                                       val view: declaration,
+                                       val ukResidencyView: ukResidencyDeclaration
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -90,11 +92,19 @@ class DeclarationController @Inject()(
         case Some(result) => Future.successful(result)
         case _ =>
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            Ok(
-              view(
-                psaName = psaName,
-                href = DeclarationController.onClickAgree())
-            )
+            if (config.podsUkResidency) {
+              Ok(
+                ukResidencyView(
+                  psaName = psaName,
+                  href = DeclarationController.onClickAgree())
+              )
+            } else {
+              Ok(
+                view(
+                  psaName = psaName,
+                  href = DeclarationController.onClickAgree())
+              )
+            }
           }
       }
   }

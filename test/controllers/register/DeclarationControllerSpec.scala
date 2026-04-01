@@ -17,6 +17,7 @@
 package controllers.register
 
 import audit.{AuditService, TcmpAuditEvent}
+import config.FrontendAppConfig
 import connectors.*
 import controllers.ControllerSpecBase
 import controllers.actions.*
@@ -40,7 +41,7 @@ import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
-import views.html.register.declaration
+import views.html.register.{declaration, ukResidencyDeclaration}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,6 +56,7 @@ class DeclarationControllerSpec
   override protected def beforeEach(): Unit = {
     reset(mockHsTaskListHelperRegistration)
     when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
+    when(mockAppConfig.podsUkResidency).thenReturn(false)
   }
 
   "Declaration Controller" must {
@@ -90,6 +92,14 @@ class DeclarationControllerSpec
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
         FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
       }
+      "the establisher is an individual and ukResidency toggle is enabled" in {
+        when(mockAppConfig.podsUkResidency).thenReturn(true)
+        val result = controller(individualEst).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = false, isDormant = false)
+        FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
+      }
     }
 
     "return OK, the correct view and save the DeclarationDormant" when {
@@ -109,6 +119,24 @@ class DeclarationControllerSpec
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
+
+      "the establisher is a dormant company and ukResidency toggle is enabled" in {
+        when(mockAppConfig.podsUkResidency).thenReturn(true)
+        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = true, isDormant = true)
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
+      }
+
+      "the establisher is non dormant company and ukResidency toggle is enabled" in {
+        when(mockAppConfig.podsUkResidency).thenReturn(true)
+        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = true, isDormant = false)
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
+      }
     }
 
     "return OK and the correct view " when {
@@ -118,6 +146,13 @@ class DeclarationControllerSpec
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
+      }
+      "master trust and all the answers is complete and ukResidency toggle is enabled" in {
+        when(mockAppConfig.podsUkResidency).thenReturn(true)
+        val result = controller(dataWithMasterTrust).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
       }
     }
 
@@ -201,7 +236,7 @@ class DeclarationControllerSpec
 
         reset(mockEmailConnector)
 
-        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any(),any())(any(), any()))
+        when(mockEmailConnector.sendEmail(eqTo("test@test.com"), eqTo("pods_scheme_register"), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector).onClickAgree()(fakeRequest)) { _ =>
@@ -210,7 +245,7 @@ class DeclarationControllerSpec
             eqTo("test@test.com"),
             eqTo("pods_scheme_register"),
             eqTo(Map("srn" -> "S12345 67890", "psaName" -> "psa name")),
-            eqTo(psaId),any()
+            eqTo(psaId), any()
           )(any(), any())
 
         }
@@ -247,25 +282,27 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
   private val mockPensionSchemeConnector = mock[PensionsSchemeConnector]
+  private val mockAppConfig = mock[FrontendAppConfig]
 
   private val view = injector.instanceOf[declaration]
+  private val ukResidencyView = injector.instanceOf[ukResidencyDeclaration]
 
   private def uaWithBasicData: UserAnswers =
     setCompleteBeforeYouStart(
       isComplete = true,
       setCompleteMembers(
         isComplete = true,
-          setCompleteBenefits(
-            isComplete = true,
-            setCompleteEstIndividual(0, UserAnswers())
-          )
+        setCompleteBenefits(
+          isComplete = true,
+          setCompleteEstIndividual(0, UserAnswers())
         )
+      )
     )
       .set(HaveAnyTrusteesId)(false).asOpt.value
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,
-                         isSuspended:Boolean = true, isDeceased:Boolean = false, rlsFlag:Boolean = false
+                         isSuspended: Boolean = true, isDeceased: Boolean = false, rlsFlag: Boolean = false
                         ): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -282,12 +319,25 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockHsTaskListHelperRegistration,
       crypto,
       view,
-      mockAuditService
+      ukResidencyView,
+      mockAuditService,
+      mockAppConfig
     )
 
   private def viewAsString(isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     view(
+      isCompany,
+      isDormant,
+      showMasterTrustDeclaration,
+      hasWorkingKnowledge,
+      Some("Test Scheme"),
+      href
+    )(fakeRequest, messages).toString
+
+  private def ukResidencyViewAsString(isCompany: Boolean, isDormant: Boolean,
+                                      showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
+    ukResidencyView(
       isCompany,
       isDormant,
       showMasterTrustDeclaration,
@@ -354,13 +404,13 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
-    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId,callbackUrl: String)
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId, callbackUrl: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
       Future.successful(EmailSent)
     }
   }
 
-  private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased:Boolean, rlsFlag:Boolean) = new MinimalPsaConnector {
+  private def fakeMinimalPsaConnector(isSuspended: Boolean, isDeceased: Boolean, rlsFlag: Boolean) = new MinimalPsaConnector {
 
     override def getMinimalFlags()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PSAMinimalFlags] =
       Future.successful(PSAMinimalFlags(isSuspended = isSuspended, isDeceased = isDeceased, rlsFlag = rlsFlag))
