@@ -30,11 +30,11 @@
 
     @components.paragraph_text(messages("messages__declaration_racdac__declare"))
 
-    <ol class="govuk-list govuk-list--number">
+    <ul class="govuk-list govuk-list--bullet">
         <li>@messages("messages__declaration_racdac__statement1")</li>
         <li>@messages("messages__declaration_racdac__statement2")</li>
         <li>@messages("messages__declaration_racdac__statement3")</li>
-    </ol>
+    </ul>
 
     @button_link("site.agree_and_continue", href.url, "submit")
 

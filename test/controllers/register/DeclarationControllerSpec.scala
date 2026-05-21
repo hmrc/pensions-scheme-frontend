@@ -17,7 +17,6 @@
 package controllers.register
 
 import audit.{AuditService, TcmpAuditEvent}
-import config.FrontendAppConfig
 import connectors.*
 import controllers.ControllerSpecBase
 import controllers.actions.*
@@ -41,7 +40,7 @@ import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
-import views.html.register.{declaration, ukResidencyDeclaration}
+import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +55,6 @@ class DeclarationControllerSpec
   override protected def beforeEach(): Unit = {
     reset(mockHsTaskListHelperRegistration)
     when(mockHsTaskListHelperRegistration.declarationEnabled(any())).thenReturn(true)
-    when(mockAppConfig.podsUkResidency).thenReturn(false)
   }
 
   "Declaration Controller" must {
@@ -92,14 +90,6 @@ class DeclarationControllerSpec
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
         FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
       }
-      "the establisher is an individual and ukResidency toggle is enabled" in {
-        when(mockAppConfig.podsUkResidency).thenReturn(true)
-        val result = controller(individualEst).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = false, isDormant = false)
-        FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
-      }
     }
 
     "return OK, the correct view and save the DeclarationDormant" when {
@@ -119,40 +109,14 @@ class DeclarationControllerSpec
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
-
-      "the establisher is a dormant company and ukResidency toggle is enabled" in {
-        when(mockAppConfig.podsUkResidency).thenReturn(true)
-        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
-      }
-
-      "the establisher is non dormant company and ukResidency toggle is enabled" in {
-        when(mockAppConfig.podsUkResidency).thenReturn(true)
-        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = true, isDormant = false)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
-      }
     }
 
     "return OK and the correct view " when {
       "master trust and all the answers is complete" in {
-
         val result = controller(dataWithMasterTrust).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
-      }
-      "master trust and all the answers is complete and ukResidency toggle is enabled" in {
-        when(mockAppConfig.podsUkResidency).thenReturn(true)
-        val result = controller(dataWithMasterTrust).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe ukResidencyViewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
       }
     }
 
@@ -282,10 +246,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val mockHsTaskListHelperRegistration = mock[HsTaskListHelperRegistration]
   private val mockAuditService = mock[AuditService]
   private val mockPensionSchemeConnector = mock[PensionsSchemeConnector]
-  private val mockAppConfig = mock[FrontendAppConfig]
 
   private val view = injector.instanceOf[declaration]
-  private val ukResidencyView = injector.instanceOf[ukResidencyDeclaration]
 
   private def uaWithBasicData: UserAnswers =
     setCompleteBeforeYouStart(
@@ -319,25 +281,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockHsTaskListHelperRegistration,
       crypto,
       view,
-      ukResidencyView,
-      mockAuditService,
-      mockAppConfig
+      mockAuditService
     )
 
   private def viewAsString(isCompany: Boolean, isDormant: Boolean,
                            showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     view(
-      isCompany,
-      isDormant,
-      showMasterTrustDeclaration,
-      hasWorkingKnowledge,
-      Some("Test Scheme"),
-      href
-    )(fakeRequest, messages).toString
-
-  private def ukResidencyViewAsString(isCompany: Boolean, isDormant: Boolean,
-                                      showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
-    ukResidencyView(
       isCompany,
       isDormant,
       showMasterTrustDeclaration,

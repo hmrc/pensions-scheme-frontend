@@ -17,7 +17,6 @@
 package controllers.racdac
 
 import audit.{AuditService, RACDACSubmissionEmailEvent}
-import config.FrontendAppConfig
 import connectors.*
 import controllers.ControllerSpecBase
 import controllers.actions.*
@@ -40,7 +39,6 @@ import uk.gov.hmrc.http.HttpErrorFunctions.upstreamResponseMessage
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.{FakeNavigator, UserAnswerOps, UserAnswers}
 import views.html.racdac.declaration
-import views.html.racdac.ukResidencyDeclaration
 
 import scala.concurrent.Future
 
@@ -54,28 +52,16 @@ class DeclarationControllerSpec
 
   override protected def beforeEach(): Unit = {
     when(mockPensionAdministratorConnector.getPSAName(any(), any())).thenReturn(Future.successful(psaName))
-    when(mockAppConfig.podsUkResidency).thenReturn(false)
   }
 
   "onPageLoad" must {
-    "return OK and the correct view" when {
-      "ukResidency toggle is disabled" in {
+    "return OK and the correct view" in {
         when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
           .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
         val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
-      }
-      "ukResidency toggle is enabled" in {
-        when(mockAppConfig.podsUkResidency).thenReturn(true)
-        when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
-          .thenReturn(Future.successful(PSAMinimalFlags(isSuspended = false, isDeceased = false, rlsFlag = false)))
-        val result = controller(dataRetrievalAction).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe ukResidencyViewAsString()
-      }
     }
     "redirect to you must contact HMRC page when deceased flag is true" in {
       when(mockMinimalPsaConnector.getMinimalFlags()(any(), any()))
@@ -161,8 +147,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
   private val psaName = "A PSA"
   private val psaId = PsaId("A0000000")
   private val view = injector.instanceOf[declaration]
-  private val ukResidencyView = injector.instanceOf[ukResidencyDeclaration]
-  private val mockAppConfig = mock[FrontendAppConfig]
 
   private val schemeSubmissionResponse = SchemeSubmissionResponse(schemeReferenceNumber = SchemeReferenceNumber("srn"))
 
@@ -183,9 +167,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       mockAuditService,
       controllerComponents,
       crypto,
-      mockAppConfig,
-      view,
-      ukResidencyView
+      view
     )
 
   private def viewAsString(): String =
@@ -194,11 +176,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wi
       href
     )(fakeRequest, messages).toString
 
-  private def ukResidencyViewAsString(): String =
-    ukResidencyView(
-      psaName,
-      href
-    )(fakeRequest, messages).toString
 
   private def dataRetrievalAction: DataRetrievalAction = {
     UserAnswers()
