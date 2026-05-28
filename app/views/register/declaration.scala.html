@@ -36,7 +36,7 @@
 
     @components.paragraph_text(messages("messages__declaration__declare"), para_id = Some("declaration_start"))
 
-    <ol class="govuk-list govuk-list--number">
+    <ul class="govuk-list govuk-list--bullet">
         @if(isCompany){
             @if(isDormant){
                 <li>@messages("messages__declaration__statement1_dormant")</li>
@@ -61,7 +61,7 @@
         @if(showMasterTrustDeclaration){
             <li>@messages("messages__declaration__statement10")</li>
         }
-    </ol>
+    </ul>
 
     @button_link("site.agree_and_continue", href.url, "submit")
 

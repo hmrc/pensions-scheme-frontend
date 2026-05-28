@@ -46,8 +46,6 @@ import utils.annotations.Register
 import utils.hstasklisthelper.HsTaskListHelperRegistration
 import utils.{Enumerable, UserAnswers}
 import views.html.register.declaration
-import views.html.register.ukResidencyDeclaration
-
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
@@ -68,9 +66,7 @@ class DeclarationController @Inject()(
                                        hsTaskListHelperRegistration: HsTaskListHelperRegistration,
                                        crypto: JsonCryptoService,
                                        val view: declaration,
-                                       val ukResidencyView: ukResidencyDeclaration,
-                                       auditService: AuditService,
-                                       config: FrontendAppConfig
+                                       auditService: AuditService
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -123,25 +119,14 @@ class DeclarationController @Inject()(
       request.userAnswers.get(identifiers.DeclarationDutiesId) match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            if (config.podsUkResidency) {
-              ukResidencyView(
-                isCompany = isEstCompany,
-                isDormant = isDeclarationDormant,
-                showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-                hasWorkingKnowledge = hasWorkingKnowledge,
-                schemeName = existingSchemeName,
-                href = href
-              )
-            } else {
-              view(
-                isCompany = isEstCompany,
-                isDormant = isDeclarationDormant,
-                showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
-                hasWorkingKnowledge = hasWorkingKnowledge,
-                schemeName = existingSchemeName,
-                href = href
-              )
-            }
+            view(
+              isCompany = isEstCompany,
+              isDormant = isDeclarationDormant,
+              showMasterTrustDeclaration = request.userAnswers.get(SchemeTypeId).contains(MasterTrust),
+              hasWorkingKnowledge = hasWorkingKnowledge,
+              schemeName = existingSchemeName,
+              href = href
+            )
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

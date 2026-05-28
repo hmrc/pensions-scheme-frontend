@@ -40,7 +40,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.annotations.Racdac
 import utils.{Enumerable, UserAnswers}
 import views.html.racdac.declaration
-import views.html.racdac.ukResidencyDeclaration
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -63,9 +62,7 @@ class DeclarationController @Inject()(
                                        auditService: AuditService,
                                        val controllerComponents: MessagesControllerComponents,
                                        crypto: JsonCryptoService,
-                                       config: FrontendAppConfig,
-                                       val view: declaration,
-                                       val ukResidencyView: ukResidencyDeclaration
+                                       val view: declaration
                                      )(implicit val executionContext: ExecutionContext)
   extends FrontendBaseController
     with Retrievals
@@ -92,19 +89,11 @@ class DeclarationController @Inject()(
         case Some(result) => Future.successful(result)
         case _ =>
           pensionAdministratorConnector.getPSAName.map { psaName =>
-            if (config.podsUkResidency) {
-              Ok(
-                ukResidencyView(
-                  psaName = psaName,
-                  href = DeclarationController.onClickAgree())
-              )
-            } else {
-              Ok(
-                view(
-                  psaName = psaName,
-                  href = DeclarationController.onClickAgree())
-              )
-            }
+            Ok(
+              view(
+                psaName = psaName,
+                href = DeclarationController.onClickAgree())
+            )
           }
       }
   }
@@ -142,7 +131,7 @@ class DeclarationController @Inject()(
 
   private def callbackUrl(psaId: PsaId): String = {
     val encryptedPsa = URLEncoder.encode(crypto.jsonCrypto.encrypt(PlainText(psaId.value)).value, StandardCharsets.UTF_8.toString)
-    s"${config.pensionsSchemeUrl}/pensions-scheme/email-status-response-racdac/$encryptedPsa"
+    s"${appConfig.pensionsSchemeUrl}/pensions-scheme/email-status-response-racdac/$encryptedPsa"
   }
 
   private def sendEmail(psaId: PsaId, schemeName: String)

@@ -87,8 +87,7 @@ class FrontendAppConfig @Inject()(runModeConfiguration: Configuration, environme
       .underlying.getString("urls.updateSchemeDetails")
   }"
   lazy val forceServiceNavigation: Boolean = runModeConfiguration.getOptional[Boolean]("play-frontend-hmrc.forceServiceNavigation").getOrElse(false)
-  lazy val podsUkResidency: Boolean = runModeConfiguration.getOptional[Boolean]("pods.ukResidency").getOrElse(false)
- 
+
   def schemeDashboardUrl(request: DataRequest[?]): String = schemeDashboardUrl(request.psaId, request.pspId)
 
   def schemeDashboardUrl(psaId: Option[PsaId], pspId: Option[PspId]): String =
