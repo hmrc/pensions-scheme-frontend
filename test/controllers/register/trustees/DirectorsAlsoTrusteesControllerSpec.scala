@@ -29,7 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceableModule
-import play.api.libs.json.{JsNull, JsValue, Json}
+import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
 import play.api.test.Helpers.*
 import services.DataPrefillService.DirectorIdentifier
 import services.{DataPrefillService, UserAnswersService}
@@ -196,6 +196,39 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       }
     }
 
+    "save copied user answers containing existing company trustee when one director is chosen" in {
+      when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
+        .thenReturn(seqOneEstablisherDirector)
+      val uaAfterCopy = UserAnswers(Json.obj(
+        "trustees" -> Json.arr(
+          companyTrustee("Test & Co Trustees Ltd"),
+          copiedIndividualTrustee("Copied", "Director")
+        )
+      ))
+
+      val jsonCaptor: ArgumentCaptor[JsValue] = ArgumentCaptor.forClass(classOf[JsValue])
+
+      when(mockUserAnswersService.upsert(any(), any(), jsonCaptor.capture())(any(), any(), any()))
+        .thenReturn(Future.successful(JsNull))
+      when(mockDataPrefillService.copySelectedDirectorsToTrustees(any(), any())).thenReturn(uaAfterCopy)
+
+      val allModules = modules(dataRetrievalAction) ++ extraModules
+      running(_.overrides(allModules*)) { app =>
+        val controller = app.injector.instanceOf[DirectorsAlsoTrusteesController]
+        val request = fakeRequest.withFormUrlEncodedBody(
+          "value" -> "0"
+        )
+        val result = controller.onSubmit(index, NormalMode, EmptyOptionalSchemeReferenceNumber)(request)
+
+        status(result) mustBe SEE_OTHER
+        val savedJson = jsonCaptor.getValue
+        (savedJson \ "trustees" \ 0 \ "trusteeKind").as[String] mustBe "company"
+        (savedJson \ "trustees" \ 0 \ "companyDetails" \ "companyName").as[String] mustBe "Test & Co Trustees Ltd"
+        (savedJson \ "trustees" \ 1 \ "trusteeKind").as[String] mustBe "individual"
+        (savedJson \ "trustees" \ 1 \ "trusteeDetails" \ "firstName").as[String] mustBe "Copied"
+      }
+    }
+
     "behave correctly when one director and None chosen" in {
       when(mockDataPrefillService.getListOfDirectorsToBeCopied(any()))
         .thenReturn(seqOneEstablisherDirector)
@@ -231,4 +264,21 @@ class DirectorsAlsoTrusteesControllerSpec extends ControllerSpecBase with Before
       }
     }
   }
+
+  private def companyTrustee(companyName: String): JsObject =
+    Json.obj(
+      "trusteeKind" -> "company",
+      "companyDetails" -> Json.obj(
+        "companyName" -> companyName
+      )
+    )
+
+  private def copiedIndividualTrustee(firstName: String, lastName: String): JsObject =
+    Json.obj(
+      "trusteeKind" -> "individual",
+      "trusteeDetails" -> Json.obj(
+        "firstName" -> firstName,
+        "lastName" -> lastName
+      )
+    )
 }
