@@ -60,7 +60,7 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
     val trusteeTransformer: Reads[JsObject] =
       (__ \ TrusteesId.toString).json.update(__.read[JsArray].map {
         case existingTrustees@JsArray(_) =>
-          JsArray(filterTrusteeIndividuals(existingTrustees)) ++ jsArrayWithAppendedTrustees
+          JsArray(filterValidTrusteeObjects(existingTrustees)) ++ jsArrayWithAppendedTrustees
       }
     )
 
@@ -380,12 +380,15 @@ class DataPrefillService @Inject() extends Enumerable.Implicits with Logging {
     })
   }
   
-  private def filterTrusteeIndividuals(jsArray: JsArray): collection.IndexedSeq[JsValue] =
+  private def filterValidTrusteeObjects(jsArray: JsArray): collection.IndexedSeq[JsValue] =
     DataCleanUp.filterNotEmptyObjectsAndSubsetKeys(
       jsArray = jsArray,
       keySet  = Set(IsTrusteeNewId.toString, TrusteeKindId.toString),
-      defName = "DataPrefillService.filterTrusteeIndividuals"
+      defName = "DataPrefillService.filterValidTrusteeObjects"
     )
+
+  private def filterTrusteeIndividuals(jsArray: JsArray): collection.IndexedSeq[JsValue] =
+    filterValidTrusteeObjects(jsArray)
     .filter(_
       .\(TrusteeKindId.toString)
       .validate[JsString]

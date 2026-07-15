@@ -78,6 +78,53 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
           (path \ 3 \ "trusteeContactDetails" \ "phoneNumber").as[String] mustBe actualUA.get(DirectorPhoneNumberId(1, 0)).getOrElse("")
       }
     }
+
+    "preserve existing company trustees when copying selected directors to trustees" in {
+      val ua = Json.obj(
+        "establishers" -> Json.arr(Json.obj(
+          "director" -> Json.arr(director("Copied", "Director"))
+        )),
+        "trustees" -> Json.arr(companyTrustee("Test & Co Trustees Ltd"))
+      )
+
+      val result = dataPrefillService.copySelectedDirectorsToTrustees(
+        UserAnswers(ua),
+        Seq(DirectorIdentifier(establisherIndex = 0, directorIndex = 0))
+      )
+      val path = result.json \ "trustees"
+
+      (path \ 0 \ "trusteeKind").as[String] mustBe "company"
+      (path \ 0 \ "companyDetails" \ "companyName").as[String] mustBe "Test & Co Trustees Ltd"
+      (path \ 1 \ "trusteeKind").as[String] mustBe "individual"
+      (path \ 1 \ "trusteeDetails" \ "firstName").as[String] mustBe "Copied"
+      (path \ 1 \ "trusteeDetails" \ "lastName").as[String] mustBe "Director"
+    }
+
+    "remove empty and partial trustee objects when copying selected directors to trustees" in {
+      val ua = Json.obj(
+        "establishers" -> Json.arr(Json.obj(
+          "director" -> Json.arr(director("Copied", "Director"))
+        )),
+        "trustees" -> Json.arr(
+          companyTrustee("Test & Co Trustees Ltd"),
+          Json.obj(),
+          Json.obj(
+            "isTrusteeNew" -> true,
+            "trusteeKind" -> "company"
+          )
+        )
+      )
+
+      val result = dataPrefillService.copySelectedDirectorsToTrustees(
+        UserAnswers(ua),
+        Seq(DirectorIdentifier(establisherIndex = 0, directorIndex = 0))
+      )
+      val path = result.json \ "trustees"
+
+      path.as[JsArray].value.length.mustBe(2)
+      (path \ 0 \ "companyDetails" \ "companyName").as[String] mustBe "Test & Co Trustees Ltd"
+      (path \ 1 \ "trusteeDetails" \ "firstName").as[String] mustBe "Copied"
+    }
   }
 
   "copyAllTrusteesToDirectors" must {
@@ -273,4 +320,40 @@ class DataPrefillServiceSpec extends SpecBase with JsonMatchers with Enumerable.
       }
     }
   }
+
+  private def companyTrustee(companyName: String): JsObject =
+    Json.obj(
+      "trusteeKind" -> "company",
+      "companyDetails" -> Json.obj(
+        "companyName" -> companyName
+      )
+    )
+
+  private def director(firstName: String, lastName: String): JsObject =
+    Json.obj(
+      "directorDetails" -> Json.obj(
+        "firstName" -> firstName,
+        "lastName" -> lastName,
+        "isDeleted" -> false
+      ),
+      "dateOfBirth" -> "1999-01-13",
+      "directorContactDetails" -> Json.obj(
+        "emailAddress" -> "director@example.com",
+        "phoneNumber" -> "01234567890"
+      ),
+      "directorAddressId" -> Json.obj(
+        "addressLine1" -> "1 Test Street",
+        "addressLine2" -> "Test Town",
+        "postcode" -> "ZZ1 1ZZ",
+        "country" -> "GB"
+      ),
+      "companyDirectorAddressYears" -> "over_a_year",
+      "hasUtr" -> false,
+      "noUtrReason" -> "No UTR",
+      "hasNino" -> true,
+      "directorNino" -> Json.obj(
+        "value" -> "CS700100A",
+        "isEditable" -> false
+      )
+    )
 }
